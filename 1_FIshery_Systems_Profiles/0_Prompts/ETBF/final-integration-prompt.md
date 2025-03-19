@@ -1,5 +1,8 @@
 # Final Integration: Eastern Tuna and Billfish Fishery (ETBF) Systems Profile - Document Synthesis
 
+## Important Note on Formatting
+Before proceeding, please review the standardized formatting instructions in `../formatting-instructions.md`. These guidelines MUST be followed for all sections of this document to ensure consistency across the fishery systems profiles.
+
 ## Context
 Your task is to integrate the outputs from the five previous phases into a cohesive systems profile document. Before proceeding, you must:
 

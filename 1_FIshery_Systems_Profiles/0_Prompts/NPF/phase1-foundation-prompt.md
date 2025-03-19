@@ -1,184 +1,213 @@
 # Phase 1: Northern Prawn Fishery (NPF) Systems Profile - Foundation Setting
 
+## Phase Objective
+To establish the foundational understanding of the Northern Prawn Fishery (NPF) system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
+
 ## Project Context
-The Northern Prawn Fishery (NPF) is a major commercial fishery operating in Australia's tropical waters, targeting multiple prawn species. This analysis aims to establish the foundational understanding of the NPF system, including its management framework, stakeholder relationships, and key system components.
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Northern Prawn Fishery (NPF), one of Australia's most valuable commercial fisheries and a key component of the nation's tropical fisheries sector. This analysis will contribute to understanding future pathways and adaptation strategies for this critical fishery.
 
 ## Role and Approach
-As the foundation-setting analyst, you are responsible for:
-1. Establishing the system context and boundaries
-2. Analyzing key system components
-3. Mapping stakeholder relationships
-4. Documenting management frameworks
-5. Creating connections for future analyses
+As the foundation-setting analyst, you will:
+1. Establish the fundamental context of the NPF system
+2. Identify and analyze key system components and boundaries
+3. Map critical stakeholder relationships and influences
+4. Document the current management framework
+5. Create clear connection points for subsequent analyses
+
+This is Phase 1 of a 5-phase analysis:
+- Phase 1: Foundation Setting (Current Phase)
+- Phase 2: Core Variables Analysis
+- Phase 3: System Dynamics
+- Phase 4: Future Pathways
+- Phase 5: Market Analysis and Integration
+
+Expected output: ~2000 words with foundational tables and initial reference list.
 
 ## Source Guidance
 Please search for and review relevant sources from:
 
 1. Government Fisheries Agencies:
-- AFMA NPF management documents
-- State fisheries departments
-- Commonwealth fisheries policy
-Focus on: Management arrangements, policy frameworks, regulatory requirements
+- Australian Fisheries Management Authority (AFMA)
+- Department of Agriculture, Fisheries and Forestry
+- State fisheries departments in relevant jurisdictions
+Focus on: Management plans, annual reports, status reports, policy documents
 
 2. Research Organizations:
-- CSIRO fisheries research
-- University research programs
-- Industry research initiatives
-Focus on: Stock assessments, ecological studies, management effectiveness
+- CSIRO Marine Research
+- Fisheries Research & Development Corporation (FRDC)
+- Australian Institute of Marine Science (AIMS)
+Focus on: Stock assessments, fishery monitoring reports, research papers
 
 3. Industry Bodies:
 - NPF Industry Association
-- Commercial fishing organizations
-- Processing sector representatives
-Focus on: Industry perspectives, operational practices, economic performance
+- Seafood Industry Australia
+- Regional fishing organizations
+Focus on: Industry reports, position papers, economic data
 
-4. Environmental Organizations:
+4. Indigenous Organizations:
+- Traditional Owner groups in NPF regions
+- Indigenous fisheries organizations
+- Native Title Representative Bodies
+Focus on: Traditional fishing practices, cultural values, co-management approaches
+
+5. Environmental Organizations:
+- Environmental Protection Authorities
 - Conservation groups
 - Marine park authorities
-- Environmental research bodies
-Focus on: Environmental impacts, conservation measures, ecosystem interactions
+Focus on: Environmental impacts, sustainability assessments, monitoring programs
 
 ## Formatting Requirements
 
 ### Use Tables For:
-1. System Components:
-   - Component descriptions
-   - Key characteristics
-   - Relationships
-   - Management aspects
-   - Future considerations
+1. Structured Data Presentation:
+   - Geographic coverage and characteristics
+   - Stakeholder roles and relationships
+   - Management framework components
+   - Any quantitative or categorical data
+   - Comparative analyses across regions or groups
 
 2. Table Design Rules:
-   - Clear categorization
-   - Consistent formatting
-   - Quantitative data where available
-   - Source citations
-   - Confidence ratings
+   - Keep cell content concise (maximum 30 words)
+   - Use consistent terminology across all tables
+   - Include clear column headers
+   - Align similar information across related tables
+   - Use standard units and measurements
 
 ### Use Narrative Paragraphs For:
-1. System Context:
-   - Historical development
-   - Current status
-   - Key challenges
-   - Future outlook
-   - Strategic implications
+1. Contextual Information:
+   - Historical background
+   - System evolution and development
+   - Complex relationships
+   - Qualitative analyses
+   - Future implications
 
 2. Paragraph Structure Rules:
-   - Begin with context overview
-   - Detail key aspects
-   - Explain relationships
-   - Discuss challenges
-   - Outline opportunities
+   - Keep paragraphs focused (100-150 words)
+   - Start with a clear topic sentence
+   - Use bullet points for lists longer than 3 items
+   - Include specific examples and evidence
+   - End with implications or connections
 
 ### General Formatting:
-1. Component Categories:
-   - Biological: Green headings
-   - Economic: Blue headings
-   - Social: Purple headings
-   - Technical: Orange headings
+1. Hierarchy:
+   - Use consistent heading levels (H1 > H2 > H3)
+   - Main sections in H2 (#)
+   - Subsections in H3 (##)
+   - Table titles in H4 (###)
 
-2. Documentation Standards:
-   - Clear citations
-   - Data sources
-   - Confidence levels
-   - Knowledge gaps
-   - Future research needs
+2. Citations:
+   - In-text citations in square brackets [Author, Year]
+   - Multiple citations separated by semicolons
+   - Citations at end of relevant statements
 
 ## Required Outputs
 
-### 1. Executive Summary
-
-#### System Overview (300-400 words)
-Provide a comprehensive overview including:
-- Fishery description
-- Key characteristics
-- Management framework
-- Current status
-- Future outlook
+### 1. Executive Summary (300-400 words)
+Provide a comprehensive overview of the NPF that includes:
+- Historical context and development
+- Current significance to Australian fisheries
+- Key management frameworks and approaches
+- Major stakeholder groups and their roles
+- Critical challenges and opportunities
+- Future considerations and implications
 
 ### 2. System Boundaries
 
-#### Boundary Analysis (300-400 words)
-Define system boundaries including:
-- Spatial extent
-- Temporal scope
-- Component inclusion
-- External interfaces
-- System interactions
+#### Geographic Scope
+Describe the physical boundaries of the NPF, including:
+- Major fishing zones and their characteristics
+- Key ports and landing sites
+- Critical marine habitats and ecosystems
+- Jurisdictional boundaries and overlaps
+- Traditional sea country boundaries
 
-#### System Components Table
-| Component | Description | Key Characteristics | Management | Future Focus |
-|-----------|-------------|---------------------|------------|--------------|
-| Target Species | | | | |
-| Fishing Methods | | | | |
-| Management | | | | |
-| Environment | | | | |
-| Economics | | | | |
-| Social | | | | |
-| Technology | | | | |
+#### Geographic Coverage Table
+| Zone | Key Ports | Primary Species | Management Areas | Critical Habitats |
+|------|-----------|----------------|------------------|-------------------|
+| Northern | | | | |
+| Central | | | | |
+| Southern | | | | |
+| Offshore | | | | |
+| Processing | | | | |
+| Research | | | | |
+| Traditional | | | | |
 
 ### 3. Stakeholder Analysis
 
-#### Stakeholder Overview (300-400 words)
-Analyze stakeholder relationships including:
-- Key stakeholders
-- Roles and responsibilities
-- Relationships
-- Interests
-- Future engagement
+#### Stakeholder Landscape
+Provide a narrative overview of the stakeholder environment:
+- Historical relationships and development
+- Power dynamics and interactions
+- Key conflicts and resolutions
+- Emerging stakeholder groups
+- Indigenous perspectives
 
-#### Stakeholder Matrix
-| Stakeholder | Role | Interests | Influence | Engagement |
-|-------------|------|-----------|-----------|------------|
-| Fishers | | | | |
-| Managers | | | | |
-| Researchers | | | | |
-| Processors | | | | |
-| Indigenous | | | | |
-| Conservation | | | | |
-| Community | | | | |
+#### Stakeholder Analysis Table
+| Category | Primary Role | Influence Level | Key Interests | Relationships |
+|----------|-------------|-----------------|---------------|---------------|
+| Commercial Fishers | | | | |
+| Indigenous Groups | | | | |
+| Regulators | | | | |
+| Research Bodies | | | | |
+| Environmental NGOs | | | | |
+| Processors/Marketers | | | | |
+| Local Communities | | | | |
 
 ### 4. Management Framework
 
-#### Framework Analysis (300-400 words)
-Examine management framework including:
-- Policy structure
-- Regulatory requirements
-- Management tools
-- Compliance systems
-- Future development
+#### Governance Structure
+Describe the management and regulatory framework:
+- Key legislation and policies
+- Management bodies and their roles
+- Decision-making processes
+- Compliance mechanisms
+- Traditional management systems
 
-#### Management Components Table
-| Component | Description | Implementation | Effectiveness | Future Focus |
-|-----------|-------------|----------------|---------------|--------------|
-| Policy | | | | |
-| Regulation | | | | |
+#### Management Framework Table
+| Component | Description | Effectiveness | Challenges | Future Needs |
+|-----------|-------------|---------------|------------|--------------|
+| Legislation | | | | |
+| Policies | | | | |
+| Institutions | | | | |
+| Processes | | | | |
+| Environmental | | | | |
+| Biosecurity | | | | |
 | Monitoring | | | | |
-| Compliance | | | | |
-| Research | | | | |
-| Consultation | | | | |
-| Adaptation | | | | |
+| Traditional | | | | |
+
+#### Current management structure
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
+  * Current monitoring programs
+  * Research priorities and gaps
+  * Data collection systems
+  * Knowledge integration challenges
+  * Indigenous knowledge integration
+  * Technology adoption opportunities
+  * Capacity building needs
+  * Cross-sector research potential
 
 ## Cross-Phase Elements
-Mark findings for future phases:
-- [P2] Variable categories
-- [P3] System relationships
-- [P4] Intervention points
-- [P5] Integration opportunities
+Mark elements for future phases using:
+- [P2] Core variable to analyze
+- [P3] Dynamic relationship to explore
+- [P4] Potential intervention point
+- [P5] Market consideration
 
 ## Quality Requirements
-1. Each section must cite at least three sources
-2. Include quantitative data where available
-3. Rate confidence in information
-4. Note knowledge gaps
-5. Consider future implications
-6. Assess system uncertainties
+1. Every section must cite at least three sources
+2. Include only factual, documented information
+3. Note any data gaps or uncertainties
+4. Highlight conflicting information from sources
+5. Balance historical context with current state
+6. Consider future implications in each section
 
 ## Next Steps
-Phase 2 will analyze:
-1. Variable categories in detail
-2. Key relationships between variables
-3. System dynamics
-4. Cross-cutting themes
+Phase 2 will build on this foundation by:
+1. Analyzing each variable category in detail
+2. Expanding on identified relationships
+3. Developing detailed system dynamics
+4. Exploring cross-cutting themes
 
 ---END OF PHASE 1 PROMPT--- 

@@ -1,14 +1,14 @@
-# Phase 1: Salmon Systems Profile - Foundation Setting
+# Phase 1: Eastern Tuna and Billfish Fishery Systems Profile - Foundation Setting
 
 ## Phase Objective
-To establish the foundational understanding of the Salmon system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
+To establish the foundational understanding of the Eastern Tuna and Billfish Fishery (ETBF) system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
 
 ## Project Context
-You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Australian Salmon aquaculture sector, one of Australia's most valuable aquaculture industries and a key component of the nation's seafood production. This analysis will contribute to understanding future pathways and adaptation strategies for this critical sector.
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Eastern Tuna and Billfish Fishery (ETBF), one of Australia's most valuable offshore fisheries and a key component of the nation's tuna and billfish sector. This analysis will contribute to understanding future pathways and adaptation strategies for this critical fishery.
 
 ## Role and Approach
 As the foundation-setting analyst, you will:
-1. Establish the fundamental context of the Salmon system
+1. Establish the fundamental context of the ETBF system
 2. Identify and analyze key system components and boundaries
 3. Map critical stakeholder relationships and influences
 4. Document the current management framework
@@ -27,38 +27,33 @@ Expected output: ~2000 words with foundational tables and initial reference list
 Please search for and review relevant sources from:
 
 1. Government Fisheries Agencies:
-- Department of Agriculture, Water and the Environment
-- State Fisheries Departments
 - Australian Fisheries Management Authority (AFMA)
-- Department of Primary Industries and Water (Tasmania)
-Focus on: Management plans, biosecurity protocols, environmental regulations
+- Department of Agriculture, Fisheries and Forestry
+- State fisheries departments in relevant jurisdictions
+Focus on: Management plans, annual reports, status reports, policy documents
 
 2. Research Organizations:
 - CSIRO Marine Research
 - Fisheries Research & Development Corporation (FRDC)
 - Australian Institute of Marine Science (AIMS)
-- University of Tasmania
-Focus on: Stock assessments, environmental monitoring, disease research
+Focus on: Stock assessments, fishery monitoring reports, research papers
 
 3. Industry Bodies:
-- Salmon Tasmania
-- Australian Salmon Farmers Association
+- ETBF industry associations
 - Seafood Industry Australia
-- Australian Seafood Industry Forum
-Focus on: Industry reports, production data, market analysis
+- Regional fishing organizations
+Focus on: Industry reports, position papers, economic data
 
 4. Indigenous Organizations:
-- Traditional Owner groups in Salmon regions
+- Traditional Owner groups in ETBF regions
 - Indigenous fisheries organizations
 - Native Title Representative Bodies
-- Tasmanian Aboriginal Centre
 Focus on: Traditional fishing practices, cultural values, co-management approaches
 
 5. Environmental Organizations:
 - Environmental Protection Authorities
 - Conservation groups
 - Marine park authorities
-- Tasmanian EPA
 Focus on: Environmental impacts, sustainability assessments, monitoring programs
 
 ## Formatting Requirements
@@ -108,9 +103,9 @@ Focus on: Environmental impacts, sustainability assessments, monitoring programs
 ## Required Outputs
 
 ### 1. Executive Summary (300-400 words)
-Provide a comprehensive overview of the Salmon sector that includes:
+Provide a comprehensive overview of the ETBF that includes:
 - Historical context and development
-- Current significance to Australian aquaculture
+- Current significance to Australian fisheries
 - Key management frameworks and approaches
 - Major stakeholder groups and their roles
 - Critical challenges and opportunities
@@ -119,12 +114,12 @@ Provide a comprehensive overview of the Salmon sector that includes:
 ### 2. System Boundaries
 
 #### Geographic Scope
-Describe the physical boundaries of the Salmon sector, including:
-- Major production zones and their characteristics
-- Key facilities and infrastructure
-- Critical marine environments
-- Biosecurity zones and controls
-- Environmental protection areas
+Describe the physical boundaries of the ETBF, including:
+- Major fishing zones and their characteristics
+- Key ports and landing sites
+- Critical marine habitats and ecosystems
+- Jurisdictional boundaries and overlaps
+- Traditional sea country boundaries
 
 #### Geographic Coverage Table
 | Zone | Key Ports | Primary Species | Management Areas | Critical Habitats |
@@ -150,7 +145,7 @@ Provide a narrative overview of the stakeholder environment:
 #### Stakeholder Analysis Table
 | Category | Primary Role | Influence Level | Key Interests | Relationships |
 |----------|-------------|-----------------|---------------|---------------|
-| Producers | | | | |
+| Commercial Fishers | | | | |
 | Indigenous Groups | | | | |
 | Regulators | | | | |
 | Research Bodies | | | | |
@@ -181,9 +176,9 @@ Describe the management and regulatory framework:
 | Traditional | | | | |
 
 #### Current management structure
-#### Key management instruments
-#### Compliance mechanisms
-#### Monitoring and research framework
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
   * Current monitoring programs
   * Research priorities and gaps
   * Data collection systems

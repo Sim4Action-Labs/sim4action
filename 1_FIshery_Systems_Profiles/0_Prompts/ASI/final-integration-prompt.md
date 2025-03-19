@@ -1,4 +1,4 @@
-# Final Integration: Western Rock Lobster (WRL) Systems Profile - Document Synthesis
+# Final Integration: Australian Seafood Industry (ASI) Systems Profile - Document Synthesis
 
 ## Important Note on Formatting
 Before proceeding, please review the standardized formatting instructions in `../formatting-instructions.md`. These guidelines MUST be followed for all sections of this document to ensure consistency across the fishery systems profiles.

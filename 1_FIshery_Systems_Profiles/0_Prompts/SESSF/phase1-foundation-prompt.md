@@ -1,7 +1,10 @@
-# Phase 1: SESSF Systems Profile - Foundation Setting
+# Phase 1: Southern and Eastern Scalefish and Shark Fishery (SESSF) Systems Profile - Foundation Setting
+
+## Phase Objective
+To establish the foundational understanding of the SESSF system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
 
 ## Project Context
-You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Southern and Eastern Scalefish and Shark Fishery (SESSF), one of Australia's most valuable and complex fisheries. This analysis will contribute to understanding the future pathways and adaptation strategies for Australian fisheries.
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Southern and Eastern Scalefish and Shark Fishery (SESSF), one of Australia's most valuable and complex fisheries. This analysis will contribute to understanding future pathways and adaptation strategies for Australian fisheries.
 
 ## Role and Approach
 As the foundation-setting analyst, you will:
@@ -44,7 +47,14 @@ Focus on: Industry reports, position papers, economic data
 4. Indigenous Organizations:
 - Traditional Owner groups in SESSF regions
 - Indigenous fisheries organizations
+- Native Title Representative Bodies
 Focus on: Traditional fishing practices, cultural values, co-management approaches
+
+5. Environmental Organizations:
+- Environmental Protection Authorities
+- Conservation groups
+- Marine park authorities
+Focus on: Environmental impacts, sustainability assessments, monitoring programs
 
 ## Formatting Requirements
 
@@ -109,6 +119,7 @@ Describe the physical boundaries of the SESSF, including:
 - Key ports and landing sites
 - Critical marine habitats and ecosystems
 - Jurisdictional boundaries and overlaps
+- Traditional sea country boundaries
 
 #### Geographic Coverage Table
 | Region | Key Ports | Primary Species | Management Areas | Critical Habitats |
@@ -116,6 +127,10 @@ Describe the physical boundaries of the SESSF, including:
 | Eastern | | | | |
 | Southern | | | | |
 | Western | | | | |
+| Offshore | | | | |
+| Processing | | | | |
+| Research | | | | |
+| Traditional | | | | |
 
 ### 3. Stakeholder Analysis
 
@@ -125,6 +140,7 @@ Provide a narrative overview of the stakeholder environment:
 - Power dynamics and interactions
 - Key conflicts and resolutions
 - Emerging stakeholder groups
+- Indigenous perspectives
 
 #### Stakeholder Analysis Table
 | Category | Primary Role | Influence Level | Key Interests | Relationships |
@@ -135,6 +151,7 @@ Provide a narrative overview of the stakeholder environment:
 | Research Bodies | | | | |
 | Environmental NGOs | | | | |
 | Processors/Marketers | | | | |
+| Local Communities | | | | |
 
 ### 4. Management Framework
 
@@ -144,6 +161,7 @@ Describe the management and regulatory framework:
 - Management bodies and their roles
 - Decision-making processes
 - Compliance mechanisms
+- Traditional management systems
 
 #### Management Framework Table
 | Component | Description | Effectiveness | Challenges | Future Needs |
@@ -152,6 +170,23 @@ Describe the management and regulatory framework:
 | Policies | | | | |
 | Institutions | | | | |
 | Processes | | | | |
+| Environmental | | | | |
+| Biosecurity | | | | |
+| Monitoring | | | | |
+| Traditional | | | | |
+
+#### Current management structure
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
+  * Current monitoring programs
+  * Research priorities and gaps
+  * Data collection systems
+  * Knowledge integration challenges
+  * Indigenous knowledge integration
+  * Technology adoption opportunities
+  * Capacity building needs
+  * Cross-sector research potential
 
 ## Cross-Phase Elements
 Mark elements for future phases using:

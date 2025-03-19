@@ -1,5 +1,8 @@
 # Phase 5: Torres Strait Lobster Fishery (TSLF) Systems Profile - Market Integration Analysis
 
+## Phase Objective
+To analyze the market context and integration opportunities for the TSLF system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -31,24 +34,28 @@ Please search for and review relevant sources from:
 - Industry market reports
 - Trade statistics
 - Consumer research
+- Indigenous market studies
 Focus on: Market trends, consumer preferences, trade patterns
 
 2. Value Chain Sources:
 - Supply chain studies
 - Industry value analysis
 - Distribution research
+- Indigenous chain analysis
 Focus on: Value distribution, chain efficiency, market access
 
 3. Competitive Analysis Sources:
 - Industry competitiveness studies
 - Market positioning research
 - Strategic analysis reports
+- Indigenous competition
 Focus on: Competitive advantages, market positioning, strategic options
 
 4. Integration Sources:
 - Cross-sector studies
 - Industry integration research
 - Market development reports
+- Indigenous integration
 Focus on: Integration opportunities, market development, strategic partnerships
 
 ## Formatting Requirements
@@ -57,54 +64,53 @@ Focus on: Integration opportunities, market development, strategic partnerships
 1. Market Analysis:
    - Market segments
    - Growth rates
-   - Market shares
-   - Price trends
-   - Trade flows
+   - Value metrics
+   - Risk factors
+   - Opportunities
 
 2. Integration Assessment:
    - Integration points
    - Synergy potential
    - Implementation costs
-   - Risk factors
-   - Success metrics
+   - Risk levels
+   - Success factors
 
 ### Use Narrative Paragraphs For:
 1. Market Context:
+   - Industry overview
    - Market dynamics
    - Key trends
-   - Strategic implications
    - Future outlook
-   - Risk factors
+   - Strategic implications
 
 2. Paragraph Structure Rules:
-   - Begin with market overview
-   - Detail key trends
+   - Begin with context overview
+   - Detail key dynamics
    - Explain implications
-   - Discuss risks
-   - Project future
+   - Discuss challenges
+   - Outline opportunities
 
 ### General Formatting:
-1. Market Visualization:
-   - Use charts for trends
-   - Maps for distribution
-   - Diagrams for relationships
-   - Timeline indicators
-   - Value flow diagrams
+1. Analysis Categories:
+   - Market Position: Blue headings
+   - Value Chain: Green headings
+   - Competitive: Purple headings
+   - Integration: Orange headings
 
 2. Documentation Standards:
-   - Clear data sources
-   - Trend indicators
-   - Market segments
-   - Competitive position
-   - Integration points
+   - Clear metrics
+   - Data sources
+   - Analysis methods
+   - Confidence levels
+   - Knowledge gaps
 
 ## Required Outputs
 
 ### 1. Market Position Analysis
 
-#### Market Context Analysis (300-400 words)
-Analyze market position including:
-- Current market status
+#### Market Status Analysis (300-400 words)
+Analyze current market position including:
+- Market size and growth
 - Key market segments
 - Growth opportunities
 - Competitive position
@@ -112,19 +118,19 @@ Analyze market position including:
 - Future outlook
 
 #### Market Position Table
-| Segment | Size | Growth | Share | Trend | Priority |
-|---------|------|--------|-------|-------|----------|
-| Domestic | | | | | |
-| Export | | | | | |
-| Processing | | | | | |
-| Retail | | | | | |
-| Food Service | | | | | |
-| Specialty | | | | | |
-| Emerging | | | | | |
+| Aspect | Current Status | Growth Rate | Opportunities | Risks | Future Outlook |
+|--------|---------------|-------------|---------------|-------|----------------|
+| Domestic Market | | | | | |
+| Export Markets | | | | | |
+| Value-Added | | | | | |
+| Premium Segments | | | | | |
+| Emerging Markets | | | | | |
+| Sustainability | | | | | |
+| Innovation | | | | | |
 
 ### 2. Value Chain Analysis
 
-#### Value Chain Assessment (300-400 words)
+#### Chain Structure Analysis (300-400 words)
 Examine value chain structure including:
 - Chain components
 - Value distribution
@@ -134,37 +140,37 @@ Examine value chain structure including:
 - Improvement potential
 
 #### Value Chain Table
-| Component | Value | Cost | Margin | Risk | Priority |
-|-----------|-------|------|--------|------|----------|
+| Component | Description | Value Share | Efficiency | Integration | Risks |
+|-----------|-------------|-------------|------------|-------------|-------|
 | Production | | | | | |
 | Processing | | | | | |
 | Distribution | | | | | |
 | Marketing | | | | | |
 | Retail | | | | | |
 | Export | | | | | |
-| Support | | | | | |
+| Innovation | | | | | |
 
 ### 3. Competitive Position
 
 #### Competitive Analysis (300-400 words)
 Analyze competitive position including:
-- Current position
 - Key competitors
 - Competitive advantages
 - Market threats
 - Strategic options
 - Future positioning
+- Differentiation potential
 
 #### Competitive Position Table
-| Factor | Current | Target | Gap | Risk | Priority |
-|--------|---------|--------|-----|------|----------|
-| Cost | | | | | |
+| Aspect | Current Position | Strengths | Weaknesses | Opportunities | Threats |
+|--------|-----------------|------------|------------|---------------|---------|
+| Cost Position | | | | | |
 | Quality | | | | | |
 | Innovation | | | | | |
-| Brand | | | | | |
-| Distribution | | | | | |
-| Technology | | | | | |
 | Sustainability | | | | | |
+| Market Access | | | | | |
+| Brand | | | | | |
+| Technology | | | | | |
 
 ### 4. System Integration
 
@@ -175,22 +181,22 @@ Examine integration opportunities including:
 - Implementation costs
 - Integration risks
 - Success factors
-- Future possibilities
+- Future potential
 
 #### Integration Assessment Table
-| Area | Current | Potential | Cost | Risk | Priority |
-|------|---------|-----------|------|------|----------|
-| Supply Chain | | | | | |
-| Technology | | | | | |
-| Marketing | | | | | |
+| Integration | Description | Potential | Cost | Risks | Success Factors |
+|-------------|-------------|-----------|------|-------|-----------------|
+| Tourism | | | | | |
 | Research | | | | | |
-| Education | | | | | |
-| Policy | | | | | |
-| Innovation | | | | | |
+| Infrastructure | | | | | |
+| Resources | | | | | |
+| Monitoring | | | | | |
+| Emergency Response | | | | | |
+| Community Services | | | | | |
 
 ### 5. Strategic Recommendations
 
-#### Strategic Analysis (300-400 words)
+#### Strategy Development (300-400 words)
 Develop strategic recommendations including:
 - Key priorities
 - Implementation steps
@@ -200,32 +206,31 @@ Develop strategic recommendations including:
 - Timeline
 
 #### Strategic Recommendations Table
-| Priority | Action | Impact | Cost | Risk | Timeline |
-|----------|--------|---------|------|------|----------|
-| Short-term | | | | | |
-| Medium-term | | | | | |
-| Long-term | | | | | |
-| Critical | | | | | |
-| Enabling | | | | | |
-| Supporting | | | | | |
-| Cross-cutting | | | | | |
+| Priority | Action | Resources | Timeline | Risks | Success Metrics |
+|----------|--------|-----------|----------|-------|-----------------|
+| Market Development | | | | | |
+| Value Chain | | | | | |
+| Competitive Edge | | | | | |
+| Integration | | | | | |
+| Innovation | | | | | |
+| Sustainability | | | | | |
 
 ## Cross-Phase Elements
-Mark findings for Final Integration:
-- [FI] System-wide implications
-- [FI] Integration priorities
-- [FI] Implementation pathways
+Mark findings for final integration:
+- [Final] System-wide implications
+- [Final] Integration priorities
+- [Final] Implementation pathways
 
 ## Quality Requirements
 1. Each section must cite at least three sources
-2. Include market evidence
+2. Include market evidence where available
 3. Rate commercial viability
-4. Note implementation costs
-5. Consider integration challenges
-6. Assess long-term implications
+4. Estimate implementation costs
+5. Assess integration challenges
+6. Consider long-term implications
 
 ## Next Steps
-Final Integration will analyze:
+Final integration will analyze:
 1. System-wide implications
 2. Integration priorities
 3. Implementation pathways

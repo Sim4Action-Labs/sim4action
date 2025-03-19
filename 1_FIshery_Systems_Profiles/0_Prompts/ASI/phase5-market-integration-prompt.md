@@ -1,7 +1,7 @@
-# Phase 5: Western Rock Lobster (WRL) Systems Profile - Market Integration Analysis
+# Phase 5: Australian Seafood Industry (ASI) Systems Profile - Market Integration Analysis
 
 ## Phase Objective
-To analyze the market context and integration opportunities for the WRL system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+To analyze the market context and integration opportunities for the ASI system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
 
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
@@ -32,31 +32,31 @@ Please search for and review relevant sources from:
 
 1. Market Analysis Sources:
 - Industry market reports
+- Consumer trend studies
 - Trade statistics
-- Consumer research
-- Premium seafood markets
-Focus on: Market trends, consumer preferences, trade patterns
+- Industry-wide market research
+Focus on: Market dynamics, consumer preferences, trade patterns
 
 2. Value Chain Sources:
-- Supply chain studies
-- Industry value analysis
-- Distribution research
-- Premium chain analysis
-Focus on: Value distribution, chain efficiency, market access
+- Supply chain research
+- Processing studies
+- Distribution analysis
+- Industry chain analysis
+Focus on: Chain structure, value distribution, efficiency points
 
 3. Competitive Analysis Sources:
-- Industry competitiveness studies
-- Market positioning research
-- Strategic analysis reports
-- Premium competition
-Focus on: Competitive advantages, market positioning, strategic options
+- Competitor research
+- Market positioning studies
+- Industry benchmarking
+- Industry competition analysis
+Focus on: Competitive position, market share, differentiation
 
 4. Integration Sources:
-- Cross-sector studies
-- Industry integration research
-- Market development reports
-- Premium integration
-Focus on: Integration opportunities, market development, strategic partnerships
+- Cross-sector research
+- Industry collaboration studies
+- Partnership frameworks
+- Industry integration studies
+Focus on: Integration opportunities, collaboration models, synergies
 
 ## Formatting Requirements
 

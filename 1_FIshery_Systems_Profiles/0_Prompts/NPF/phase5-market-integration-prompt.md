@@ -1,5 +1,8 @@
 # Phase 5: Northern Prawn Fishery (NPF) Systems Profile - Market Integration Analysis
 
+## Phase Objective
+To analyze the market context and integration opportunities for the NPF system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 

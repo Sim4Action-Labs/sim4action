@@ -1,5 +1,8 @@
 # Phase 5: Salmon Systems Profile - Market Integration Analysis
 
+## Phase Objective
+To analyze the market context and integration opportunities for the Salmon system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -31,24 +34,28 @@ Please search for and review relevant sources from:
 - Industry market reports
 - Consumer trend studies
 - Trade statistics
+- Aquaculture market research
 Focus on: Market dynamics, consumer preferences, trade patterns
 
 2. Value Chain Sources:
 - Supply chain research
 - Processing studies
 - Distribution analysis
+- Aquaculture chain analysis
 Focus on: Chain structure, value distribution, efficiency points
 
 3. Competitive Analysis Sources:
 - Competitor research
 - Market positioning studies
 - Industry benchmarking
+- Aquaculture competition
 Focus on: Competitive position, market share, differentiation
 
 4. Integration Sources:
 - Cross-sector research
 - Industry collaboration studies
 - Partnership frameworks
+- Aquaculture integration
 Focus on: Integration opportunities, collaboration models, synergies
 
 ## Formatting Requirements
@@ -207,7 +214,6 @@ Develop strategic recommendations including:
 | Integration | | | | | |
 | Innovation | | | | | |
 | Sustainability | | | | | |
-| Risk Management | | | | | |
 
 ## Cross-Phase Elements
 Mark findings for final integration:

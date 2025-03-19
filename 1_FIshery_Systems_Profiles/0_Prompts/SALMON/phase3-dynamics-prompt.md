@@ -1,5 +1,8 @@
 # Phase 3: Salmon Systems Profile - System Dynamics Analysis
 
+## Phase Objective
+To analyze and map the dynamic relationships between system variables, identifying key feedback loops, time delays, and critical thresholds that govern the Salmon system's behavior. This phase reveals how different components of the system interact and influence each other over time.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -25,27 +28,31 @@ Before proceeding with this phase, you must:
 Please search for and review relevant sources from:
 
 1. Systems Analysis Sources:
-- Academic journals in aquaculture systems
-- Production modeling research
-- Environmental dynamics studies
+- Stock assessment models
+- Ecosystem dynamics research
+- Management effectiveness studies
+- Climate impact modeling
 Focus on: System models, feedback loops, dynamic relationships
 
 2. Time Series Sources:
-- Production monitoring programs
-- Environmental data series
-- Economic trend analyses
+- Stock monitoring data
+- Environmental records
+- Economic performance data
+- Social impact trends
 Focus on: Pattern identification, trend analysis, relationship studies
 
 3. Management Response Sources:
 - Policy evaluation studies
 - Management strategy research
-- Compliance effectiveness studies
+- Compliance effectiveness
+- Adaptation responses
 Focus on: Intervention impacts, policy outcomes, adaptation responses
 
 4. Threshold Research Sources:
-- Production threshold studies
+- Stock threshold studies
 - Environmental impact research
 - Economic viability thresholds
+- Social acceptance limits
 Focus on: Tipping points, critical thresholds, system boundaries
 
 ## Formatting Requirements
@@ -177,13 +184,13 @@ Examine system thresholds including:
 #### System Thresholds Table
 | Threshold | Current Status | Evidence | Risk Level | Management Response |
 |-----------|---------------|----------|------------|-------------------|
-| Production | | | | |
-| Environmental | | | | |
-| Disease | | | | |
-| Economic | | | | |
-| Social | | | | |
-| Technical | | | | |
-| Climate | | | | |
+| Production | | | | | |
+| Environmental | | | | | |
+| Disease | | | | | |
+| Economic | | | | | |
+| Social | | | | | |
+| Technical | | | | | |
+| Climate | | | | | |
 
 ## Cross-Phase Elements
 Mark findings for future phases:

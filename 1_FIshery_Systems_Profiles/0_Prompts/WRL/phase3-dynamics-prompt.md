@@ -1,5 +1,8 @@
 # Phase 3: Western Rock Lobster (WRL) Systems Profile - System Dynamics Analysis
 
+## Phase Objective
+To analyze and map the dynamic relationships between system variables, identifying key feedback loops, time delays, and critical thresholds that govern the WRL system's behavior. This phase reveals how different components of the system interact and influence each other over time.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -25,27 +28,31 @@ Before proceeding with this phase, you must:
 Please search for and review relevant sources from:
 
 1. Systems Analysis Sources:
-- Academic journals in systems science
-- Fisheries modeling research
-- Ecosystem dynamics studies
+- Stock assessment models
+- Ecosystem dynamics research
+- Management effectiveness studies
+- Climate impact modeling
 Focus on: System models, feedback loops, dynamic relationships
 
 2. Time Series Sources:
-- Long-term monitoring programs
-- Historical fishery data
-- Economic trend analyses
+- Stock monitoring data
+- Environmental records
+- Economic performance data
+- Social impact trends
 Focus on: Pattern identification, trend analysis, relationship studies
 
 3. Management Response Sources:
 - Policy evaluation studies
 - Management strategy research
-- Compliance effectiveness studies
+- Compliance effectiveness
+- Adaptation responses
 Focus on: Intervention impacts, policy outcomes, adaptation responses
 
 4. Threshold Research Sources:
-- Ecological threshold studies
-- Economic viability research
-- Social impact thresholds
+- Stock threshold studies
+- Environmental impact research
+- Economic viability thresholds
+- Social acceptance limits
 Focus on: Tipping points, critical thresholds, system boundaries
 
 ## Formatting Requirements
@@ -111,13 +118,13 @@ Analyze the fundamental system relationships including:
 #### Primary Relationships Table
 | Relationship | Direction | Strength | Evidence | Confidence | System Impact |
 |--------------|-----------|----------|----------|------------|---------------|
-| Stock-Effort | | | | | |
-| Price-Supply | | | | | |
-| Cost-Effort | | | | | |
-| Climate-Production | | | | | |
+| Stock-Environment | | | | | |
+| Production-Cost | | | | | |
+| Climate-Stock | | | | | |
 | Social-Economic | | | | | |
 | Technology-Adoption | | | | | |
 | Policy-Response | | | | | |
+| Market-Value | | | | | |
 
 ### 2. Feedback Loops
 
@@ -133,13 +140,13 @@ Examine the key feedback mechanisms including:
 #### Feedback Loops Table
 | Loop Name | Components | Type | Evidence | Strength | System Impact |
 |-----------|------------|------|----------|----------|---------------|
-| Effort-Catch | | | | | |
-| Price-Demand | | | | | |
+| Stock-Production | | | | | |
 | Cost-Revenue | | | | | |
+| Climate-Adaptation | | | | | |
 | Social-Ecological | | | | | |
 | Management-Response | | | | | |
 | Innovation-Adoption | | | | | |
-| Climate-Adaptation | | | | | |
+| Market-Value | | | | | |
 
 ### 3. Time Delays
 
@@ -155,13 +162,13 @@ Analyze system time delays including:
 #### Time Delays Table
 | Process | Delay Period | Evidence | Confidence | System Effect |
 |---------|-------------|----------|------------|---------------|
-| Stock Recovery | | | | |
-| Market Response | | | | |
-| Policy Impact | | | | |
-| Social Adaptation | | | | |
-| Technology Adoption | | | | |
-| Climate Response | | | | |
-| Infrastructure Development | | | | |
+| Stock Recovery | | | | | |
+| Market Response | | | | | |
+| Policy Impact | | | | | |
+| Environmental Recovery | | | | | |
+| Technology Adoption | | | | | |
+| Climate Response | | | | | |
+| Infrastructure Development | | | | | |
 
 ### 4. System Thresholds
 
@@ -177,13 +184,13 @@ Examine system thresholds including:
 #### System Thresholds Table
 | Threshold | Current Status | Evidence | Risk Level | Management Response |
 |-----------|---------------|----------|------------|-------------------|
-| Biological | | | | |
-| Economic | | | | |
-| Social | | | | |
-| Operational | | | | |
-| Institutional | | | | |
-| Environmental | | | | |
-| Technological | | | | |
+| Stock | | | | | |
+| Environmental | | | | | |
+| Economic | | | | | |
+| Social | | | | | |
+| Technical | | | | | |
+| Climate | | | | | |
+| Market | | | | | |
 
 ## Cross-Phase Elements
 Mark findings for future phases:

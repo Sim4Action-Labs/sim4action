@@ -1,5 +1,8 @@
 # Phase 4: Torres Strait Lobster Fishery (TSLF) Systems Profile - Future Pathways Analysis
 
+## Phase Objective
+To identify and analyze potential future pathways for the TSLF system, focusing on climate adaptation, management interventions, technological innovation, and indigenous knowledge integration. This phase develops strategic responses to system dynamics and charts possible trajectories for system evolution.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -81,12 +84,11 @@ Focus on: Traditional practices, knowledge integration, cultural values
    - Project outcomes
 
 ### General Formatting:
-1. Pathway Visualization:
-   - Use flowcharts for sequence
-   - Decision points marked
-   - Alternative routes shown
-   - Timeline indicators
-   - Resource requirements
+1. Pathway Categories:
+   - Climate Adaptation: Green headings
+   - Management: Blue headings
+   - Technology: Purple headings
+   - Indigenous: Orange headings
 
 2. Documentation Standards:
    - Clear success criteria

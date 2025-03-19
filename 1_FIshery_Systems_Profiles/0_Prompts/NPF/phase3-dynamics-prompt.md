@@ -1,5 +1,8 @@
 # Phase 3: Northern Prawn Fishery (NPF) Systems Profile - System Dynamics Analysis
 
+## Phase Objective
+To analyze and map the dynamic relationships between system variables, identifying key feedback loops, time delays, and critical thresholds that govern the NPF system's behavior. This phase reveals how different components of the system interact and influence each other over time.
+
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
@@ -181,13 +184,13 @@ Examine system thresholds including:
 #### System Thresholds Table
 | Threshold | Current Status | Evidence | Risk Level | Management Response |
 |-----------|---------------|----------|------------|-------------------|
-| Stock | | | | |
-| Environmental | | | | |
-| Economic | | | | |
-| Social | | | | |
-| Technical | | | | |
-| Climate | | | | |
-| Bycatch | | | | |
+| Stock | | | | | |
+| Environmental | | | | | |
+| Economic | | | | | |
+| Social | | | | | |
+| Technical | | | | | |
+| Climate | | | | | |
+| Bycatch | | | | | |
 
 ## Cross-Phase Elements
 Mark findings for future phases:

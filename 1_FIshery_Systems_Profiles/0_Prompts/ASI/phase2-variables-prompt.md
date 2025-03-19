@@ -1,10 +1,10 @@
-# Northern Prawn Fishery (NPF) Systems Profile - Phase 2: Core Variables Analysis
+# Phase 2: Australian Seafood Industry (ASI) Systems Profile - Core Variables Analysis
 
 ## Phase Objective
-To identify, analyze, and document the core variables that drive the NPF system across environmental, economic, social, and technical dimensions. This phase establishes measurable indicators and baseline conditions that will form the foundation for understanding system dynamics and future pathways.
+To identify, analyze, and document the core variables that drive the ASI system across environmental, economic, social, and technical dimensions. This phase establishes measurable indicators and baseline conditions that will form the foundation for understanding system dynamics and future pathways.
 
 ## Overview
-This document outlines the requirements for Phase 2 of the Northern Prawn Fishery (NPF) Systems Profile development process. Phase 2 focuses on identifying and analyzing key variables across environmental, economic, social, and technical dimensions. All variables must be expressed in measurable terms that can increase or decrease.
+This document outlines the requirements for Phase 2 of the Australian Seafood Industry (ASI) Systems Profile development process. Phase 2 focuses on identifying and analyzing key variables across environmental, economic, social, and technical dimensions. All variables must be expressed in measurable terms that can increase or decrease.
 
 ## Previous Phase Integration
 Before proceeding with this phase, you must:

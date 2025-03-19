@@ -1,11 +1,14 @@
-# Phase 1: Australian Seafood Systems Profile - Foundation Setting
+# Phase 1: Australian Seafood Industry (ASI) Systems Profile - Foundation Setting
+
+## Phase Objective
+To establish the foundational understanding of the ASI system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
 
 ## Project Context
-You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Australian Seafood sector, encompassing all major fisheries and aquaculture operations. This analysis will contribute to understanding the future pathways and adaptation strategies for Australia's $3.63 billion seafood industry.
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Australian Seafood Industry (ASI), encompassing multiple fisheries, aquaculture operations, and processing sectors. This analysis will contribute to understanding future pathways and adaptation strategies for this diverse and complex industry.
 
 ## Role and Approach
 As the foundation-setting analyst, you will:
-1. Establish the fundamental context of the Australian seafood system
+1. Establish the fundamental context of the ASI system
 2. Identify and analyze key system components and boundaries
 3. Map critical stakeholder relationships and influences
 4. Document the current management framework
@@ -26,7 +29,7 @@ Please search for and review relevant sources from:
 1. Government Fisheries Agencies:
 - Australian Fisheries Management Authority (AFMA)
 - Department of Agriculture, Fisheries and Forestry
-- State and Territory fisheries departments
+- State fisheries departments in relevant jurisdictions
 Focus on: Management plans, annual reports, status reports, policy documents
 
 2. Research Organizations:
@@ -37,14 +40,21 @@ Focus on: Stock assessments, fishery monitoring reports, research papers
 
 3. Industry Bodies:
 - Seafood Industry Australia
-- Australian Council of Prawn Fisheries
-- Australian Southern Bluefin Tuna Industry Association
+- Commercial fishing organizations
+- Processing sector representatives
 Focus on: Industry reports, position papers, economic data
 
 4. Indigenous Organizations:
-- Traditional Owner groups across Australia
+- Traditional Owner groups across regions
 - Indigenous fisheries organizations
+- Native Title Representative Bodies
 Focus on: Traditional fishing practices, cultural values, co-management approaches
+
+5. Environmental Organizations:
+- Environmental Protection Authorities
+- Conservation groups
+- Marine park authorities
+Focus on: Environmental impacts, sustainability assessments, monitoring programs
 
 ## Formatting Requirements
 
@@ -93,9 +103,9 @@ Focus on: Traditional fishing practices, cultural values, co-management approach
 ## Required Outputs
 
 ### 1. Executive Summary (300-400 words)
-Provide a comprehensive overview of the Australian seafood sector that includes:
+Provide a comprehensive overview of the ASI that includes:
 - Historical context and development
-- Current significance to Australian economy
+- Current significance to Australian fisheries
 - Key management frameworks and approaches
 - Major stakeholder groups and their roles
 - Critical challenges and opportunities
@@ -104,20 +114,23 @@ Provide a comprehensive overview of the Australian seafood sector that includes:
 ### 2. System Boundaries
 
 #### Geographic Scope
-Describe the physical boundaries of the Australian seafood sector, including:
-- Major fishing regions and their characteristics
+Describe the physical boundaries of the ASI, including:
+- Major fishing zones and their characteristics
 - Key ports and landing sites
 - Critical marine habitats and ecosystems
 - Jurisdictional boundaries and overlaps
+- Traditional sea country boundaries
 
 #### Geographic Coverage Table
-| Region | Key Ports | Primary Species | Management Areas | Critical Habitats |
-|--------|-----------|----------------|------------------|-------------------|
+| Zone | Key Ports | Primary Species | Management Areas | Critical Habitats |
+|------|-----------|----------------|------------------|-------------------|
 | Northern | | | | |
+| Central | | | | |
 | Southern | | | | |
-| Eastern | | | | |
-| Western | | | | |
 | Offshore | | | | |
+| Processing | | | | |
+| Research | | | | |
+| Traditional | | | | |
 
 ### 3. Stakeholder Analysis
 
@@ -127,17 +140,18 @@ Provide a narrative overview of the stakeholder environment:
 - Power dynamics and interactions
 - Key conflicts and resolutions
 - Emerging stakeholder groups
+- Indigenous perspectives
 
 #### Stakeholder Analysis Table
 | Category | Primary Role | Influence Level | Key Interests | Relationships |
 |----------|-------------|-----------------|---------------|---------------|
 | Commercial Fishers | | | | |
-| Aquaculturists | | | | |
 | Indigenous Groups | | | | |
 | Regulators | | | | |
 | Research Bodies | | | | |
 | Environmental NGOs | | | | |
 | Processors/Marketers | | | | |
+| Local Communities | | | | |
 
 ### 4. Management Framework
 
@@ -147,6 +161,7 @@ Describe the management and regulatory framework:
 - Management bodies and their roles
 - Decision-making processes
 - Compliance mechanisms
+- Traditional management systems
 
 #### Management Framework Table
 | Component | Description | Effectiveness | Challenges | Future Needs |
@@ -155,6 +170,23 @@ Describe the management and regulatory framework:
 | Policies | | | | |
 | Institutions | | | | |
 | Processes | | | | |
+| Environmental | | | | |
+| Biosecurity | | | | |
+| Monitoring | | | | |
+| Traditional | | | | |
+
+#### Current management structure
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
+  * Current monitoring programs
+  * Research priorities and gaps
+  * Data collection systems
+  * Knowledge integration challenges
+  * Indigenous knowledge integration
+  * Technology adoption opportunities
+  * Capacity building needs
+  * Cross-sector research potential
 
 ## Cross-Phase Elements
 Mark elements for future phases using:

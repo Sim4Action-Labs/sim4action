@@ -1,4 +1,7 @@
-# Phase 1: Torres Strait Lobster Fishery Systems Profile - Foundation Setting
+# Phase 1: Torres Strait Lobster Fishery (TSLF) Systems Profile - Foundation Setting
+
+## Phase Objective
+To establish the foundational understanding of the TSLF system by defining its geographic scope, mapping key stakeholders, documenting the management framework, and creating clear connection points for subsequent analyses. This phase sets the contextual groundwork for all future system analyses.
 
 ## Project Context
 You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to develop a comprehensive systems profile of the Torres Strait Lobster Fishery (TSLF), a culturally significant and economically important fishery managed through a unique partnership between Traditional Owners and the Australian Government. This analysis will contribute to understanding future pathways and adaptation strategies for this critical fishery.
@@ -27,25 +30,36 @@ Please search for and review relevant sources from:
 - Australian Fisheries Management Authority (AFMA)
 - Torres Strait Regional Authority (TSRA)
 - Department of Agriculture, Fisheries and Forestry
+- Queensland Department of Agriculture and Fisheries
 Focus on: Management plans, annual reports, status reports, policy documents
 
 2. Research Organizations:
 - CSIRO Marine Research
 - Fisheries Research & Development Corporation (FRDC)
 - Australian Institute of Marine Science (AIMS)
+- James Cook University
 Focus on: Stock assessments, fishery monitoring reports, research papers
 
 3. Industry Bodies:
 - Torres Strait Lobster Fishery Association
 - Seafood Industry Australia
 - Queensland Seafood Industry Association
+- Australian Seafood Industry Forum
 Focus on: Industry reports, position papers, economic data
 
 4. Indigenous Organizations:
 - Torres Strait Traditional Owner groups
 - Indigenous fisheries organizations
 - Native Title Representative Bodies
+- Torres Strait Regional Authority
 Focus on: Traditional fishing practices, cultural values, co-management approaches
+
+5. Environmental Organizations:
+- Environmental Protection Authorities
+- Conservation groups
+- Marine park authorities
+- Great Barrier Reef Marine Park Authority
+Focus on: Environmental impacts, sustainability assessments, monitoring programs
 
 ## Formatting Requirements
 
@@ -115,10 +129,12 @@ Describe the physical boundaries of the TSLF, including:
 #### Geographic Coverage Table
 | Zone | Key Ports | Primary Species | Management Areas | Critical Habitats |
 |------|-----------|----------------|------------------|-------------------|
-| Eastern | | | | |
-| Western | | | | |
 | Northern | | | | |
+| Central | | | | |
 | Southern | | | | |
+| Offshore | | | | |
+| Processing | | | | |
+| Research | | | | |
 | Traditional | | | | |
 
 ### 3. Stakeholder Analysis
@@ -141,6 +157,7 @@ Provide a narrative overview of the stakeholder environment:
 | Research Bodies | | | | |
 | Environmental NGOs | | | | |
 | Processors/Marketers | | | | |
+| Local Communities | | | | |
 
 ### 4. Management Framework
 
@@ -159,7 +176,23 @@ Describe the management and regulatory framework:
 | Policies | | | | |
 | Institutions | | | | |
 | Processes | | | | |
+| Environmental | | | | |
+| Biosecurity | | | | |
+| Monitoring | | | | |
 | Traditional | | | | |
+
+#### Current management structure
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
+  * Current monitoring programs
+  * Research priorities and gaps
+  * Data collection systems
+  * Knowledge integration challenges
+  * Indigenous knowledge integration
+  * Technology adoption opportunities
+  * Capacity building needs
+  * Cross-sector research potential
 
 ## Cross-Phase Elements
 Mark elements for future phases using:

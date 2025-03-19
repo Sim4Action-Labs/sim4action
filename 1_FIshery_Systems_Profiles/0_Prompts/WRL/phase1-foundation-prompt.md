@@ -47,6 +47,12 @@ Focus on: Industry reports, position papers, economic data
 - Indigenous fisheries organizations
 Focus on: Traditional fishing practices, cultural values, co-management approaches
 
+5. Environmental Organizations:
+- Environmental Protection Authorities
+- Conservation groups
+- Marine park authorities
+Focus on: Environmental impacts, sustainability assessments, monitoring programs
+
 ## Formatting Requirements
 
 ### Use Tables For:
@@ -119,6 +125,8 @@ Describe the physical boundaries of the WRL, including:
 | Central | | | | |
 | Southern | | | | |
 | Offshore | | | | |
+| Processing | | | | |
+| Research | | | | |
 | Traditional | | | | |
 
 ### 3. Stakeholder Analysis
@@ -159,7 +167,23 @@ Describe the management and regulatory framework:
 | Policies | | | | |
 | Institutions | | | | |
 | Processes | | | | |
+| Environmental | | | | |
+| Biosecurity | | | | |
+| Monitoring | | | | |
 | Traditional | | | | |
+
+#### Current management structure
+- Key management instruments
+- Compliance mechanisms
+- Monitoring and research framework
+  * Current monitoring programs
+  * Research priorities and gaps
+  * Data collection systems
+  * Knowledge integration challenges
+  * Indigenous knowledge integration
+  * Technology adoption opportunities
+  * Capacity building needs
+  * Cross-sector research potential
 
 ## Cross-Phase Elements
 Mark elements for future phases using:

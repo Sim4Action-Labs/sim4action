@@ -1,4 +1,31 @@
-# Phase 5: SESSF Systems Profile - Market Analysis and Integration
+# Phase 5: Southern and Eastern Scalefish and Shark Fishery (SESSF) Systems Profile - Market Integration Analysis
+
+## Phase Objective
+To analyze the market context and integration opportunities for the SESSF system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+
+## Previous Phase Integration
+Before proceeding with this phase, you must:
+
+1. Review and incorporate the outputs from Phase 4:
+   - Climate adaptation pathways and strategies
+   - Management intervention options
+   - Technology innovation pathways
+   - Indigenous knowledge integration approaches
+   - Cross-sector integration opportunities
+
+2. Use Phase 4 outputs to:
+   - Assess market implications of proposed pathways
+   - Evaluate economic viability of interventions
+   - Consider market opportunities from innovations
+   - Integrate indigenous perspectives in market strategies
+   - Identify market synergies from cross-sector integration
+
+3. Ensure market analysis:
+   - Aligns with identified future pathways
+   - Supports proposed management interventions
+   - Incorporates technological innovations
+   - Reflects indigenous knowledge and values
+   - Builds upon cross-sector opportunities
 
 ## Source Guidance
 Please search for and review relevant sources from:
@@ -7,187 +34,206 @@ Please search for and review relevant sources from:
 - Government trade statistics
 - Seafood market research
 - Industry market reports
+- Multi-species market studies
 Focus on: Market trends, trade patterns, consumer preferences
 
 2. Value Chain Sources:
 - Supply chain research
 - Processing sector studies
 - Distribution network analyses
+- Multi-species chain analysis
 Focus on: Value addition, efficiency, integration opportunities
 
 3. Competitive Analysis Sources:
 - Global market studies
 - Competitor research
 - Product differentiation analyses
+- Multi-species competition
 Focus on: Market position, competitive advantages, strategic opportunities
 
 4. Integration Sources:
 - Systems integration research
 - Cross-sector analyses
 - Implementation studies
+- Multi-species integration
 Focus on: Synthesis approaches, integration frameworks, success factors
 
 ## Formatting Requirements
 
 ### Use Tables For:
 1. Market Analysis:
-   - Product categories
-   - Price trends
-   - Volume data
-   - Market share
-   - Growth projections
+   - Market segments
+   - Growth rates
+   - Value metrics
+   - Risk factors
+   - Opportunities
 
 2. Integration Assessment:
-   - Supply chain nodes
-   - Value addition points
-   - Cost structures
-   - Market barriers
-   - Competitive factors
+   - Integration points
+   - Synergy potential
+   - Implementation costs
+   - Risk levels
+   - Success factors
 
 ### Use Narrative Paragraphs For:
 1. Market Context:
-   - Industry dynamics
-   - Consumer trends
-   - Regulatory environment
-   - Innovation impacts
-   - Future scenarios
+   - Industry overview
+   - Market dynamics
+   - Key trends
+   - Future outlook
+   - Strategic implications
 
 2. Paragraph Structure Rules:
-   - Begin with market overview
-   - Detail key trends
-   - Explain relationships
+   - Begin with context overview
+   - Detail key dynamics
+   - Explain implications
    - Discuss challenges
-   - Project opportunities
+   - Outline opportunities
 
 ### General Formatting:
-1. Market Visualization:
-   - Supply chain maps
-   - Value flow diagrams
-   - Market position matrices
-   - Trend graphs
-   - Relationship networks
+1. Analysis Categories:
+   - Market Position: Blue headings
+   - Value Chain: Green headings
+   - Competitive: Purple headings
+   - Integration: Orange headings
 
 2. Documentation Standards:
-   - Data timeframes
-   - Currency units
-   - Market definitions
-   - Source quality
+   - Clear metrics
+   - Data sources
+   - Analysis methods
    - Confidence levels
+   - Knowledge gaps
 
 ## Required Outputs
 
 ### 1. Market Position Analysis
 
-#### Market Context Overview (300-400 words)
-Analyze the market position including:
-- Current market status
+#### Market Status Analysis (300-400 words)
+Analyze current market position including:
+- Market size and growth
 - Key market segments
-- Competitive position
 - Growth opportunities
-- Market challenges
-- Future trends
+- Competitive position
+- Market risks
+- Future outlook
 
 #### Market Position Table
-| Market | Share | Trend | Evidence | Opportunity | Priority |
-|--------|--------|-------|----------|-------------|----------|
-| Domestic | | | | | |
-| Export | | | | | |
-| Emerging | | | | | |
-| Niche | | | | | |
+| Aspect | Current Status | Growth Rate | Opportunities | Risks | Future Outlook |
+|--------|---------------|-------------|---------------|-------|----------------|
+| Domestic Market | | | | | |
+| Export Markets | | | | | |
 | Value-Added | | | | | |
+| Premium Segments | | | | | |
+| Emerging Markets | | | | | |
+| Sustainability | | | | | |
+| Innovation | | | | | |
 
 ### 2. Value Chain Analysis
 
-#### Value Chain Overview (300-400 words)
-Examine the value chain including:
-- Current chain structure
-- Key processes
-- Value addition opportunities
-- Efficiency factors
-- Integration challenges
-- Future development
+#### Chain Structure Analysis (300-400 words)
+Examine value chain structure including:
+- Chain components
+- Value distribution
+- Efficiency points
+- Integration opportunities
+- Chain risks
+- Improvement potential
 
 #### Value Chain Table
-| Stage | Current State | Evidence | Challenges | Potential | Priority |
-|-------|--------------|----------|------------|-----------|----------|
+| Component | Description | Value Share | Efficiency | Integration | Risks |
+|-----------|-------------|-------------|------------|-------------|-------|
 | Production | | | | | |
 | Processing | | | | | |
 | Distribution | | | | | |
+| Marketing | | | | | |
 | Retail | | | | | |
-| Services | | | | | |
+| Export | | | | | |
+| Innovation | | | | | |
 
 ### 3. Competitive Position
 
-#### Competition Analysis (300-400 words)
-Analyze competitive factors including:
-- Market positioning
+#### Competitive Analysis (300-400 words)
+Analyze competitive position including:
+- Key competitors
 - Competitive advantages
-- Strategic challenges
-- Development opportunities
-- Risk factors
-- Future strategies
+- Market threats
+- Strategic options
+- Future positioning
+- Differentiation potential
 
-#### Competitive Analysis Table
-| Factor | Status | Evidence | Advantage | Risk | Priority |
-|--------|--------|----------|-----------|------|----------|
+#### Competitive Position Table
+| Aspect | Current Position | Strengths | Weaknesses | Opportunities | Threats |
+|--------|-----------------|------------|------------|---------------|---------|
+| Cost Position | | | | | |
 | Quality | | | | | |
-| Price | | | | | |
-| Access | | | | | |
-| Brand | | | | | |
 | Innovation | | | | | |
+| Sustainability | | | | | |
+| Market Access | | | | | |
+| Brand | | | | | |
+| Technology | | | | | |
 
 ### 4. System Integration
 
-#### Integration Strategy (300-400 words)
-Examine system integration including:
-- Current integration status
-- Key connection points
-- Implementation approaches
+#### Integration Analysis (300-400 words)
+Examine integration opportunities including:
+- Integration points
+- Synergy potential
+- Implementation costs
+- Integration risks
 - Success factors
-- Barriers
-- Future pathways
+- Future potential
 
-#### System Integration Table
-| Component | Market Link | Evidence | Priority | Action | Timeline |
-|-----------|------------|----------|----------|--------|----------|
-| Environmental | | | | | |
-| Economic | | | | | |
-| Social | | | | | |
-| Technical | | | | | |
-| Institutional | | | | | |
+#### Integration Assessment Table
+| Integration | Description | Potential | Cost | Risks | Success Factors |
+|-------------|-------------|-----------|------|-------|-----------------|
+| Tourism | | | | | |
+| Research | | | | | |
+| Infrastructure | | | | | |
+| Resources | | | | | |
+| Monitoring | | | | | |
+| Emergency Response | | | | | |
+| Community Services | | | | | |
 
 ### 5. Strategic Recommendations
 
-#### Implementation Strategy (300-400 words)
-Provide strategic guidance including:
+#### Strategy Development (300-400 words)
+Develop strategic recommendations including:
 - Key priorities
-- Implementation approach
+- Implementation steps
 - Resource requirements
+- Risk mitigation
 - Success metrics
-- Risk management
-- Future considerations
+- Timeline
 
-#### Final Recommendations Table
-| Category | Recommendation | Evidence | Priority | Timeline | Resources |
-|----------|---------------|----------|----------|----------|-----------|
-| Short-term | | | | | |
-| Medium-term | | | | | |
-| Long-term | | | | | |
-| Transformative | | | | | |
+#### Strategic Recommendations Table
+| Priority | Action | Resources | Timeline | Risks | Success Metrics |
+|----------|--------|-----------|----------|-------|-----------------|
+| Market Development | | | | | |
+| Value Chain | | | | | |
+| Competitive Edge | | | | | |
+| Integration | | | | | |
+| Innovation | | | | | |
+| Sustainability | | | | | |
+
+## Cross-Phase Elements
+Mark findings for final integration:
+- [Final] System-wide implications
+- [Final] Integration priorities
+- [Final] Implementation pathways
 
 ## Quality Requirements
 1. Each section must cite at least three sources
-2. Include market evidence
+2. Include market evidence where available
 3. Rate commercial viability
-4. Note implementation needs
-5. Consider integration challenges
-6. Assess long-term implications
+4. Estimate implementation costs
+5. Assess integration challenges
+6. Consider long-term implications
 
-## Integration Summary
-Provide clear links to:
-1. System boundaries (Phase 1)
-2. Core variables (Phase 2)
-3. System dynamics (Phase 3)
-4. Future pathways (Phase 4)
+## Next Steps
+Final integration will analyze:
+1. System-wide implications
+2. Integration priorities
+3. Implementation pathways
+4. Future scenarios
 
 ---END OF PHASE 5 PROMPT--- 
