@@ -24,6 +24,9 @@ Before proceeding with this phase, you must:
    - Considers temporal aspects of changes
    - Manages critical thresholds
 
+## Project Context
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to identify and analyze potential future pathways for the Western Rock Lobster (WRL) system, a complex system operating across multiple jurisdictions and ecological zones. This analysis will contribute to understanding how the fishery can adapt and evolve in response to climate change, technological innovation, and changing management approaches, while maintaining sustainable and profitable operations.
+
 ## Source Guidance
 Please search for and review relevant sources from:
 

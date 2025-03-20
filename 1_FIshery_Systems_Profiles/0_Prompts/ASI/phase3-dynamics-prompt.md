@@ -1,28 +1,34 @@
 # Phase 3: Australian Seafood Industry (ASI) Systems Profile - System Dynamics Analysis
 
 ## Phase Objective
-To analyze and map the dynamic relationships between system variables, identifying key feedback loops, time delays, and critical thresholds that govern the ASI system's behavior. This phase reveals how different components of the system interact and influence each other over time.
+To analyze and document the dynamic relationships and feedback loops within the ASI system, identifying key interactions between variables and their implications for system behavior and management.
 
 ## Previous Phase Integration
 Before proceeding with this phase, you must:
 
 1. Review and incorporate the outputs from Phase 2:
-   - Environmental variables and their current states
-   - Economic variables and trends
-   - Social variables and impacts
-   - Technical variables and capabilities
+   - Core variables identified
+   - Variable relationships mapped
+   - Baseline conditions established
+   - Measurement systems documented
+   - Indicators created
 
 2. Use Phase 2 outputs to:
-   - Identify key relationships between variables
-   - Map feedback loops between system components
-   - Analyze time delays in system processes
-   - Determine critical system thresholds
+   - Identify dynamic relationships
+   - Map feedback loops
+   - Analyze system behavior
+   - Document interactions
+   - Evaluate implications
 
 3. Ensure dynamics analysis:
-   - Builds upon identified variable relationships
-   - Addresses all key variables from Phase 2
-   - Considers confidence levels in variable data
-   - Incorporates identified knowledge gaps
+   - Builds on variable analysis
+   - Addresses all key relationships
+   - Considers feedback mechanisms
+   - Incorporates identified gaps
+   - Supports future pathways
+
+## Project Context
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to analyze the dynamic relationships and feedback loops within the Australian Seafood Industry (ASI) system, a complex system encompassing multiple fisheries, aquaculture operations, and supply chains across diverse regions. This analysis will contribute to understanding how system components interact and influence each other over time, shaping the industry's behavior and future potential.
 
 ## Source Guidance
 Please search for and review relevant sources from:

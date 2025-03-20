@@ -27,6 +27,9 @@ Before proceeding with this phase, you must:
    - Reflects indigenous knowledge and values
    - Builds upon cross-sector opportunities
 
+## Project Context
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to analyze the market context and integration opportunities for the Australian Seafood Industry (ASI) system, a complex system encompassing multiple fisheries, aquaculture operations, and supply chains across diverse regions. This analysis will contribute to understanding how the industry can create and capture value in domestic and international markets while maintaining sustainable and profitable operations.
+
 ## Source Guidance
 Please search for and review relevant sources from:
 
