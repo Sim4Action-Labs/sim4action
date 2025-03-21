@@ -1,242 +1,294 @@
 # Phase 5: Southern and Eastern Scalefish and Shark Fishery (SESSF) Systems Profile - Market Integration Analysis
 
-## Phase Objective
-To analyze the market context and integration opportunities for the SESSF system, examining current market position, value chain structure, competitive dynamics, and potential synergies with other sectors. This phase ensures that system interventions and pathways are commercially viable and create sustainable value.
+You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to analyze the market context and integration opportunities for the Southern and Eastern Scalefish and Shark Fishery (SESSF) system.
 
-## Previous Phase Integration
-Before proceeding with this phase, you must:
+## Role and Approach
+As the market integration analyst, you will:
+1. Analyze market position and dynamics
+2. Evaluate value chain structure
+3. Assess competitive position
+4. Identify integration opportunities
+5. Develop strategic recommendations
 
-1. Review and incorporate the outputs from Phase 4:
-   - Climate adaptation pathways and strategies
-   - Management intervention options
-   - Technology innovation pathways
-   - Indigenous knowledge integration approaches
-   - Cross-sector integration opportunities
+This is Phase 5 of a 5-phase analysis:
+- Phase 1: Foundation Elements Analysis
+- Phase 2: Core Variables Analysis
+- Phase 3: System Dynamics Analysis
+- Phase 4: Future Pathways Analysis
+- Phase 5: Market Integration Analysis (Current Phase)
 
-2. Use Phase 4 outputs to:
-   - Assess market implications of proposed pathways
-   - Evaluate economic viability of interventions
-   - Consider market opportunities from innovations
-   - Integrate indigenous perspectives in market strategies
-   - Identify market synergies from cross-sector integration
+Expected output: ~3000 words with market analysis tables and reference list.
 
-3. Ensure market analysis:
-   - Aligns with identified future pathways
-   - Supports proposed management interventions
-   - Incorporates technological innovations
-   - Reflects indigenous knowledge and values
-   - Builds upon cross-sector opportunities
+## Key Sources
+The following sources are particularly relevant for this analysis:
 
-## Project Context
-You are an expert research analyst working on the Blue Economy CRC's Futures of Seafood project. Your task is to analyze the market context and integration opportunities for the Southern and Eastern Scalefish and Shark Fishery (SESSF) system, a complex multi-species system operating across multiple jurisdictions and ecological zones. This analysis will contribute to understanding how the fishery can create and capture value in domestic and international markets while maintaining sustainable and profitable operations.
+### Market Analysis Sources
+1. Australian Bureau of Agricultural and Resource Economics and Sciences (ABARES)
+   - Market research reports
+   - Trade statistics
+   - Industry performance analysis
+   - Market trend analysis
+   - Consumer behavior studies
 
-## Source Guidance
-Please search for and review relevant sources from:
+2. Department of Agriculture, Fisheries and Forestry (DAFF)
+   - Export statistics
+   - Market access reports
+   - Trade agreements
+   - Industry development plans
+   - Market intelligence
 
-1. Market Analysis Sources:
-- Government trade statistics
-- Seafood market research
-- Industry market reports
-- Multi-species market studies
-Focus on: Market trends, trade patterns, consumer preferences
+3. Industry Organizations
+   - Seafood Industry Australia (SIA)
+   - Australian Fisheries Management Forum
+   - Southern Shark Industry Alliance
+   - Eastern Tuna and Billfish Fishery Association
 
-2. Value Chain Sources:
-- Supply chain research
-- Processing sector studies
-- Distribution network analyses
-- Multi-species chain analysis
-Focus on: Value addition, efficiency, integration opportunities
+### Value Chain Sources
+1. CSIRO
+   - Supply chain analysis
+   - Value chain mapping
+   - Efficiency studies
+   - Integration research
+   - Innovation pathways
 
-3. Competitive Analysis Sources:
-- Global market studies
-- Competitor research
-- Product differentiation analyses
-- Multi-species competition
-Focus on: Market position, competitive advantages, strategic opportunities
+2. Research Institutions
+   - University of Tasmania Institute for Marine and Antarctic Studies
+   - University of Queensland Centre for Marine Science
+   - University of Western Australia Oceans Institute
 
-4. Integration Sources:
-- Systems integration research
-- Cross-sector analyses
-- Implementation studies
-- Multi-species integration
-Focus on: Synthesis approaches, integration frameworks, success factors
+3. Industry Consultants
+   - Market research firms
+   - Supply chain specialists
+   - Value chain analysts
+   - Industry advisors
+
+### Competitive Analysis Sources
+1. International Organizations
+   - Food and Agriculture Organization (FAO)
+   - World Trade Organization (WTO)
+   - Regional fisheries organizations
+   - International market reports
+
+2. Market Research Firms
+   - Global market analysts
+   - Industry research groups
+   - Competitive intelligence providers
+   - Market trend forecasters
+
+3. Industry Associations
+   - International seafood organizations
+   - Regional trade associations
+   - Product-specific groups
+   - Market development bodies
+
+## Search Strategy
+
+IMPORTANT: You MUST conduct these five comprehensive searches in sequence. Each search must be executed separately, and findings must be thoroughly documented before moving to the next search.
+
+### Required Searches
+
+1. Market Position Search:
+Search for information about market position in the SESSF
+- This search will cover:
+  * Market size and growth
+  * Key market segments
+  * Growth opportunities
+  * Competitive position
+  * Market risks
+
+2. Value Chain Search:
+Search for information about value chain structure in the SESSF
+- This search will cover:
+  * Chain components
+  * Value distribution
+  * Efficiency points
+  * Integration opportunities
+  * Chain risks
+
+3. Competitive Position Search:
+Search for information about competitive position in the SESSF
+- This search will cover:
+  * Key competitors
+  * Competitive advantages
+  * Market threats
+  * Strategic options
+  * Future positioning
+
+4. Integration Opportunities Search:
+Search for information about integration opportunities in the SESSF
+- This search will cover:
+  * Integration points
+  * Synergy potential
+  * Implementation costs
+  * Integration risks
+  * Success factors
+
+5. Strategic Recommendations Search:
+Search for information about strategic recommendations for the SESSF
+- This search will cover:
+  * Key priorities
+  * Implementation steps
+  * Resource requirements
+  * Risk mitigation
+  * Success metrics
+
+SEARCH REQUIREMENTS:
+For each search:
+1. Review at least the first 20 results thoroughly
+2. Focus on finding:
+   - Market evidence
+   - Value chain data
+   - Competitive information
+   - Integration opportunities
+   - Strategic insights
+3. Document:
+   - Key findings
+   - Evidence quality
+   - Data sources
+   - Market trends
+   - Strategic implications
+4. Before moving to next search:
+   - Ensure all relevant aspects are covered
+   - Note which areas need more detail
+   - List key evidence sources
+   - Verify market insights
+
+QUALITY STANDARDS:
+1. All analysis must be evidence-based
+2. Prioritize recent data but include historical trends
+3. Document data sources and quality
+4. Note any knowledge gaps
+
+## Required Output Structure
+
+Your analysis MUST follow this exact structure and formatting. ALL headings and subheadings listed below MUST appear in your final text in exactly this order and format. DO NOT add, remove, or modify any headings or subheadings.
+
+### Table of Contents
+1. Title: "Southern and Eastern Scalefish and Shark Fishery: Market Integration Analysis"
+2. Executive Summary
+3. Main Sections
+   3.1 Market Overview
+   3.2 Market Position Analysis
+   3.3 Value Chain Analysis
+   3.4 Competitive Position Analysis
+   3.5 Integration Opportunities Analysis
+   3.6 Strategic Recommendations
+   3.7 Conclusion
+
+Title: "Southern and Eastern Scalefish and Shark Fishery: Market Integration Analysis"
+
+1. Executive Summary (3-4 paragraphs)
+   - First paragraph: Overview of market position
+   - Second paragraph: Key value chain characteristics
+   - Third paragraph: Major competitive dynamics
+   - Fourth paragraph: Integration opportunities
+
+2. Main Sections (each with required subsections):
+
+### 3.1 Market Overview (4-5 paragraphs)
+Present as a narrative section that includes:
+- First paragraph: Introduction to market analysis approach
+- Second paragraph: Key market characteristics
+- Third paragraph: Market trends and dynamics
+- Fourth paragraph: Market opportunities and challenges
+- Fifth paragraph: Future market outlook
+
+### 3.2 Market Position Analysis
+Present as a table with the following structure:
+
+| Aspect | Current Status | Growth Rate | Opportunities | Risks | Future Outlook |
+|--------|---------------|-------------|---------------|-------|----------------|
+| [Aspect 1] | [Status] | [Rate] | [Opportunities] | [Risks] | [Outlook] |
+| [Aspect 2] | | | | | |
+| ... | | | | | | |
+
+### 3.3 Value Chain Analysis
+Present as a table with the following structure:
+
+| Component | Description | Value Share | Efficiency | Integration | Risks |
+|-----------|-------------|-------------|------------|-------------|-------|
+| [Component 1] | [Description] | [Share] | [High/Medium/Low] | [High/Medium/Low] | [High/Medium/Low] |
+| [Component 2] | | | | | |
+| ... | | | | | | |
+
+### 3.4 Competitive Position Analysis
+Present as a table with the following structure:
+
+| Aspect | Current Position | Strengths | Weaknesses | Opportunities | Threats |
+|--------|-----------------|------------|------------|---------------|---------|
+| [Aspect 1] | [Position] | [Strengths] | [Weaknesses] | [Opportunities] | [Threats] |
+| [Aspect 2] | | | | | |
+| ... | | | | | | |
+
+### 3.5 Integration Opportunities Analysis
+Present as a table with the following structure:
+
+| Integration | Description | Potential | Cost | Risks | Success Factors |
+|-------------|-------------|-----------|------|-------|-----------------|
+| [Integration 1] | [Description] | [High/Medium/Low] | [High/Medium/Low] | [High/Medium/Low] | [Factors] |
+| [Integration 2] | | | | | |
+| ... | | | | | | |
+
+### 3.6 Strategic Recommendations
+Present as a table with the following structure:
+
+| Priority | Action | Resources | Timeline | Risks | Success Metrics |
+|----------|--------|-----------|----------|-------|-----------------|
+| [Priority 1] | [Action] | [Resources] | [Timeline] | [High/Medium/Low] | [Metrics] |
+| [Priority 2] | | | | | |
+| ... | | | | | | |
+
+### 3.7 Conclusion (3-4 paragraphs)
+- First paragraph: Summary of key market insights
+- Second paragraph: Value chain implications
+- Third paragraph: Strategic priorities
+- Fourth paragraph: Recommendations for market development
 
 ## Formatting Requirements
 
-### Use Tables For:
-1. Market Analysis:
-   - Market segments
-   - Growth rates
-   - Value metrics
-   - Risk factors
-   - Opportunities
-
-2. Integration Assessment:
-   - Integration points
-   - Synergy potential
-   - Implementation costs
-   - Risk levels
-   - Success factors
-
-### Use Narrative Paragraphs For:
-1. Market Context:
-   - Industry overview
-   - Market dynamics
-   - Key trends
-   - Future outlook
-   - Strategic implications
-
-2. Paragraph Structure Rules:
-   - Begin with context overview
-   - Detail key dynamics
-   - Explain implications
-   - Discuss challenges
-   - Outline opportunities
-
-### General Formatting:
-1. Analysis Categories:
-   - Market Position: Blue headings
-   - Value Chain: Green headings
-   - Competitive: Purple headings
-   - Integration: Orange headings
-
-2. Documentation Standards:
-   - Clear metrics
-   - Data sources
-   - Analysis methods
-   - Confidence levels
-   - Knowledge gaps
-
-## Required Outputs
-
-### 1. Market Position Analysis
-
-#### Market Status Analysis (300-400 words)
-Analyze current market position including:
-- Market size and growth
-- Key market segments
-- Growth opportunities
-- Competitive position
-- Market risks
-- Future outlook
-
-#### Market Position Table
-| Aspect | Current Status | Growth Rate | Opportunities | Risks | Future Outlook |
-|--------|---------------|-------------|---------------|-------|----------------|
-| Domestic Market | | | | | |
-| Export Markets | | | | | |
-| Value-Added | | | | | |
-| Premium Segments | | | | | |
-| Emerging Markets | | | | | |
-| Sustainability | | | | | |
-| Innovation | | | | | |
-
-### 2. Value Chain Analysis
-
-#### Chain Structure Analysis (300-400 words)
-Examine value chain structure including:
-- Chain components
-- Value distribution
-- Efficiency points
-- Integration opportunities
-- Chain risks
-- Improvement potential
-
-#### Value Chain Table
-| Component | Description | Value Share | Efficiency | Integration | Risks |
-|-----------|-------------|-------------|------------|-------------|-------|
-| Production | | | | | |
-| Processing | | | | | |
-| Distribution | | | | | |
-| Marketing | | | | | |
-| Retail | | | | | |
-| Export | | | | | |
-| Innovation | | | | | |
-
-### 3. Competitive Position
-
-#### Competitive Analysis (300-400 words)
-Analyze competitive position including:
-- Key competitors
-- Competitive advantages
-- Market threats
-- Strategic options
-- Future positioning
-- Differentiation potential
-
-#### Competitive Position Table
-| Aspect | Current Position | Strengths | Weaknesses | Opportunities | Threats |
-|--------|-----------------|------------|------------|---------------|---------|
-| Cost Position | | | | | |
-| Quality | | | | | |
-| Innovation | | | | | |
-| Sustainability | | | | | |
-| Market Access | | | | | |
-| Brand | | | | | |
-| Technology | | | | | |
-
-### 4. System Integration
-
-#### Integration Analysis (300-400 words)
-Examine integration opportunities including:
-- Integration points
-- Synergy potential
-- Implementation costs
-- Integration risks
-- Success factors
-- Future potential
-
-#### Integration Assessment Table
-| Integration | Description | Potential | Cost | Risks | Success Factors |
-|-------------|-------------|-----------|------|-------|-----------------|
-| Tourism | | | | | |
-| Research | | | | | |
-| Infrastructure | | | | | |
-| Resources | | | | | |
-| Monitoring | | | | | |
-| Emergency Response | | | | | |
-| Community Services | | | | | |
-
-### 5. Strategic Recommendations
-
-#### Strategy Development (300-400 words)
-Develop strategic recommendations including:
-- Key priorities
-- Implementation steps
-- Resource requirements
-- Risk mitigation
-- Success metrics
-- Timeline
-
-#### Strategic Recommendations Table
-| Priority | Action | Resources | Timeline | Risks | Success Metrics |
-|----------|--------|-----------|----------|-------|-----------------|
-| Market Development | | | | | |
-| Value Chain | | | | | |
-| Competitive Edge | | | | | |
-| Integration | | | | | |
-| Innovation | | | | | |
-| Sustainability | | | | | |
-
-## Cross-Phase Elements
-Mark findings for final integration:
-- [Final] System-wide implications
-- [Final] Integration priorities
-- [Final] Implementation pathways
+1. Use markdown formatting for all sections and subsections
+2. Present all information in clear, concise narrative paragraphs
+3. Use consistent citation format: [1], [2], etc.
+4. Include source links in a References section
+5. Use bullet points only for lists within narrative sections
+6. Maintain consistent heading hierarchy (H1, H2, H3)
+7. Include clear section breaks with horizontal rules (---)
+8. Follow the exact heading structure provided above
+9. DO NOT modify or add any headings or subheadings
+10. Ensure each section and subsection is clearly labeled with the exact heading provided
 
 ## Quality Requirements
-1. Each section must cite at least three sources
-2. Include market evidence where available
-3. Rate commercial viability
-4. Estimate implementation costs
-5. Assess integration challenges
-6. Consider long-term implications
 
-## Next Steps
-Final integration will analyze:
-1. System-wide implications
-2. Integration priorities
-3. Implementation pathways
-4. Future scenarios
+1. All analysis must be evidence-based
+2. Market descriptions must be clear and precise
+3. Data sources must be reliable and verifiable
+4. Trends must be well-documented
+5. Opportunities must be realistic
+6. Risks must be assessed
+7. Recommendations must be actionable
+8. Document any uncertainties
+9. Include diverse data sources
+10. Consider data quality and reliability
+11. Ensure all required headings are included
+12. Use a minimum of 15 different sources
+13. Include diverse types of sources
+14. Cross-reference multiple sources for each analysis
+15. Verify all market insights
 
----END OF PHASE 5 PROMPT--- 
+## Other Important Research Requirements
+
+1. Consider market trends
+2. Address sustainability aspects
+3. Identify market opportunities
+4. Consider indigenous perspectives
+5. Highlight innovation potential
+6. Address regulatory requirements
+7. Consider social impacts
+8. Include international comparisons
+9. Reference technical specifications
+10. Consider historical context
+11. Address future uncertainties
+
+## Final Instructions
+
+You are expected to conduct extensive research to analyze the market integration of the Southern and Eastern Scalefish and Shark Fishery (SESSF) using ALL available web search sources. The analysis should be comprehensive and well-researched, drawing from as many relevant sources as possible to ensure thorough coverage of all market aspects. Remember to strictly follow the heading structure and include all required sections and subsections in the exact order specified. Your goal is to produce the most comprehensive and well-researched market integration analysis possible by conducting extensive research across multiple platforms and databases.
