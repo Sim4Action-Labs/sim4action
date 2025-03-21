@@ -1,10 +1,5 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
 
-# 
-
----
-
-# Southern and Eastern Scalefish and Shark Fishery: System Dynamics Analysis
+# Southern and Eastern Scalefish and Shark Fishery: Phase 3 - System Dynamics Analysis
 
 ## Executive Summary
 
@@ -135,51 +130,31 @@ Significant knowledge gaps identified through this analysis include: the complex
 
 Recommendations for system monitoring and management include: developing more integrated data collection approaches that can track variables across environmental, economic, and social domains; implementing adaptive management frameworks explicitly designed to account for feedback mechanisms and time delays; incorporating ecosystem indicators into harvest strategy design and evaluation; expanding climate adaptation planning to address distributional shifts and productivity changes; and creating more inclusive governance processes that can integrate diverse knowledge systems, including indigenous perspectives. The transition from single-species to multi-species harvest strategies currently underway represents an important step toward more holistic management but should be expanded to incorporate broader ecosystem considerations and explicit recognition of system dynamics principles.
 
+## References
+
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/998f1ac2-f677-4b83-989b-2cea9eb1de1e/paste.txt
+[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/998f1ac2-f677-4b83-989b-2cea9eb1de1e/paste.txt
+[3] https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
+[4] https://www.frdc.com.au/sites/default/files/products/2011-032-DLD.pdf
+[5] https://www.frdc.com.au/sites/default/files/products/2014-203-DLD.pdf
+[6] https://www.publish.csiro.au/MF/pdf/MF23024
+[7] https://www.afma.gov.au/sites/default/files/2024-03/HSE-AFMA-Report-Aug-2009.pdf
+[8] https://www.agriculture.gov.au/agriculture-land/fisheries/domestic/south-east-trawl-fishery-sap
+[9] https://www.fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
+[10] https://fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
+[11] https://www.tsra.gov.au/the-tsra/programs/environmental-management/traditional-ecological-knowledge-project/
+[12] https://fish.gov.au/Archived-Reports/2012/reports/Documents/AFMA_2009c.pdf
+[13] https://www.nacc.com.au/wp-content/uploads/2018/06/Sharing-Noongar-Knowledge-Part-5-TEK.pdf
+[14] https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
+[15] https://www.afma.gov.au/sites/default/files/2023-02/2023-sessf-species-summaries.pdf
+[16] https://www.afma.gov.au/sites/default/files/2023-02/sessf_management_arrangements_booklet_2022_may_save.pdf
+[17] https://whichfish.com.au/risk-scores/blue-eye-trevalla-scalefish-hook-sector/
+[18] https://www.afma.gov.au/sites/default/files/2023-01/2022 SESSF Species Summaries.pdf
+[19] https://www.frdc.com.au/sites/default/files/products/2018-017-DLD.pdf
+[20] https://www.afma.gov.au/sites/default/files/2023-02/2021 SESSF Species Summaries.pdf
+[21] https://www.nature.com/articles/s41598-021-93843-z
+[22] https://www.afma.gov.au/sites/default/files/2024-04/SESSF-Management-Arrangements-Booklet-2024.pdf
+[23] https://www.frdc.com.au/sites/default/files/products/2016-146-DLD.pdf
+
 <div style="text-align: center">⁂</div>
-
-[^1]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/998f1ac2-f677-4b83-989b-2cea9eb1de1e/paste.txt
-
-[^2]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/998f1ac2-f677-4b83-989b-2cea9eb1de1e/paste.txt
-
-[^3]: https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
-
-[^4]: https://www.frdc.com.au/sites/default/files/products/2011-032-DLD.pdf
-
-[^5]: https://www.frdc.com.au/sites/default/files/products/2014-203-DLD.pdf
-
-[^6]: https://www.publish.csiro.au/MF/pdf/MF23024
-
-[^7]: https://www.afma.gov.au/sites/default/files/2024-03/HSE-AFMA-Report-Aug-2009.pdf
-
-[^8]: https://www.agriculture.gov.au/agriculture-land/fisheries/domestic/south-east-trawl-fishery-sap
-
-[^9]: https://www.fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
-
-[^10]: https://fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
-
-[^11]: https://www.tsra.gov.au/the-tsra/programs/environmental-management/traditional-ecological-knowledge-project/
-
-[^12]: https://fish.gov.au/Archived-Reports/2012/reports/Documents/AFMA_2009c.pdf
-
-[^13]: https://www.nacc.com.au/wp-content/uploads/2018/06/Sharing-Noongar-Knowledge-Part-5-TEK.pdf
-
-[^14]: https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
-
-[^15]: https://www.afma.gov.au/sites/default/files/2023-02/2023-sessf-species-summaries.pdf
-
-[^16]: https://www.afma.gov.au/sites/default/files/2023-02/sessf_management_arrangements_booklet_2022_may_save.pdf
-
-[^17]: https://whichfish.com.au/risk-scores/blue-eye-trevalla-scalefish-hook-sector/
-
-[^18]: https://www.afma.gov.au/sites/default/files/2023-01/2022 SESSF Species Summaries.pdf
-
-[^19]: https://www.frdc.com.au/sites/default/files/products/2018-017-DLD.pdf
-
-[^20]: https://www.afma.gov.au/sites/default/files/2023-02/2021 SESSF Species Summaries.pdf
-
-[^21]: https://www.nature.com/articles/s41598-021-93843-z
-
-[^22]: https://www.afma.gov.au/sites/default/files/2024-04/SESSF-Management-Arrangements-Booklet-2024.pdf
-
-[^23]: https://www.frdc.com.au/sites/default/files/products/2016-146-DLD.pdf
 

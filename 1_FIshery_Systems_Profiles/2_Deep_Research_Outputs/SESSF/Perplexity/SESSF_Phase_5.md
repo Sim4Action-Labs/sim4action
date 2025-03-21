@@ -1,14 +1,8 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# 
-
----
-
-# Southern and Eastern Scalefish and Shark Fishery: Market Integration Analysis
+# Southern and Eastern Scalefish and Shark Fishery: Phase 5 - Market Integration Analysis
 
 ## Executive Summary
 
-The Southern and Eastern Scalefish and Shark Fishery (SESSF) is a complex, multi-sector fishery that plays a significant role in Australia's seafood industry. With a gross value of production exceeding \$500 million annually, representing about 23% of Australia's total fisheries production, the SESSF is a critical component of the national seafood market[^3]. The fishery faces several challenges, including climate change impacts, with the region warming at over three times the global average, necessitating adaptive management strategies[^1].
+The Southern and Eastern Scalefish and Shark Fishery (SESSF) is a complex, multi-sector fishery that plays a significant role in Australia's seafood industry. With a gross value of production exceeding \$500 million annually, representing about 23% of Australia's total fisheries production, the SESSF is a critical component of the national seafood market[3]. The fishery faces several challenges, including climate change impacts, with the region warming at over three times the global average, necessitating adaptive management strategies[1].
 
 The SESSF value chain is characterized by multiple components, from harvesting to processing and distribution, with efficiency and integration opportunities varying across segments. The South East Trawl Fishery (SETF), a major sector within SESSF, contributes significantly to fresh fish supply in Melbourne and Sydney markets, with an estimated port price catch revenue of around \$50 million[^4].
 
@@ -96,23 +90,17 @@ Recommendations for market development include investing in value-adding process
 
 The future success of the SESSF will depend on its ability to adapt to changing environmental conditions, respond to market trends, and implement innovative management approaches. By focusing on these key areas, the fishery can enhance its resilience, improve its economic performance, and continue to play a vital role in Australia's seafood industry.
 
+## References
+
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/be637500-6997-447a-9ffb-548ea380dd11/paste.txt
+[2] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/be637500-6997-447a-9ffb-548ea380dd11/paste.txt
+[3] https://www.semanticscholar.org/paper/84c621c6d4848d7434f9f5eea0e8b9efae0cf399
+[4] https://www.aph.gov.au/DocumentStore.ashx?id=9651f2ab-061b-4113-862a-823b620e5865&subId=704086
+[5] https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
+[6] https://www.dpi.nsw.gov.au/__data/assets/pdf_file/0004/797683/SFTTWG-Meeting-2_Draft-outcomes-for-WG-comment_FINAL-for-DPI-website-.pdf
+[7] https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
+[8] https://www.frdc.com.au/sites/default/files/products/2018-017-DLD.pdf
+[9] https://www.frdc.com.au/project/2018-017
+
 <div style="text-align: center">⁂</div>
-
-[^1]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/be637500-6997-447a-9ffb-548ea380dd11/paste.txt
-
-[^2]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/be637500-6997-447a-9ffb-548ea380dd11/paste.txt
-
-[^3]: https://www.semanticscholar.org/paper/84c621c6d4848d7434f9f5eea0e8b9efae0cf399
-
-[^4]: https://www.aph.gov.au/DocumentStore.ashx?id=9651f2ab-061b-4113-862a-823b620e5865\&subId=704086
-
-[^5]: https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
-
-[^6]: https://www.dpi.nsw.gov.au/__data/assets/pdf_file/0004/797683/SFTTWG-Meeting-2_Draft-outcomes-for-WG-comment_FINAL-for-DPI-website-.pdf
-
-[^7]: https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
-
-[^8]: https://www.frdc.com.au/sites/default/files/products/2018-017-DLD.pdf
-
-[^9]: https://www.frdc.com.au/project/2018-017
 

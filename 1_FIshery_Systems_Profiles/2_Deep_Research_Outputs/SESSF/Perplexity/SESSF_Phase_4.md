@@ -1,10 +1,4 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# 
-
----
-
-# Southern and Eastern Scalefish and Shark Fishery: Future Pathways Analysis
+# Southern and Eastern Scalefish and Shark Fishery: Phase 4 - Future Pathways Analysis
 
 The Southern and Eastern Scalefish and Shark Fishery (SESSF) faces significant challenges and opportunities in a changing climate. As a recognized global climate change hotspot, waters in this region are warming at more than three times the global average, with significant ecosystem-level impacts already evident. This analysis identifies and evaluates potential future pathways for the SESSF system, focusing on climate adaptation, management interventions, technological innovation, indigenous integration, and cross-sector integration. Key findings indicate that while climate impacts will continue to reshape the fishery, strategic adaptations across multiple dimensions can enhance system resilience. All viable pathways require increased monitoring capacity, flexible management approaches, and cross-jurisdictional coordination to maximize adaptive capacity in this dynamic system.
 
@@ -78,59 +72,35 @@ Critical success factors include strong governance arrangements that allow for t
 
 The findings of this analysis suggest that development of an integrated, multi-faceted adaptation strategy for the SESSF should be prioritized. This strategy should incorporate both short-term tactical responses to immediate climate impacts and longer-term strategic responses to projected changes in ecosystem structure and function. By implementing a diverse portfolio of adaptation measures across the identified pathways, the SESSF can enhance its resilience to climate change and position itself for sustainable operation in a changing ocean environment[^19].
 
+## References
+
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/c3a203c3-5ae7-4dea-95cb-6260bc7298d7/paste.txt
+[2] https://www.semanticscholar.org/paper/69dd18d1179acec0b0e4029f003d27fa40f6d558
+[3] https://www.utas.edu.au/__data/assets/pdf_file/0005/1656635/Tasmanian-Scalefish-Fishery-Ecological-Risk-Assessment-2016.pdf
+[4] https://www.cakex.org/sites/default/files/documents/Atlantis-SEAP Report - Appendix 3 - Results & Barriers to adaptation.pdf
+[5] https://www.publish.csiro.au/MF/fulltext/MF23024
+[6] https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
+[7] https://www.afma.gov.au/sites/default/files/2023-02/sessf_management_arrangements_booklet_2022_may_save.pdf
+[8] https://tasfisheriesresearch.org/fishery-management/
+[9] https://www.semanticscholar.org/paper/496053f1f772554838f5dcebb630c5c2060674e3
+[10] https://www.semanticscholar.org/paper/d0cf854300ec145a5ee7b13fcfd08289a25977de
+[11] https://www.semanticscholar.org/paper/aac120961acdb2407e1c57c5d814e4b7912e2432
+[12] https://www.semanticscholar.org/paper/64b4ca015cf0e4daa9391d1f05a6c87dc0c67670
+[13] https://www.semanticscholar.org/paper/a19e51cb0e39ea302be31eb4dc86cfec1430c65d
+[14] https://nesp2climate.com.au/climate-adaptation/
+[15] https://www.redmap.org.au/article/the-impacts-of-climate-change-on-south-east-australian-fisheries/
+[16] https://www.afma.gov.au/sites/default/files/2023-02/climate-impacts-south-east-fisheries-factsheet.pdf
+[17] https://nesp2climate.com.au/australias-first-stocktake-of-climate-adaptation-activities/
+[18] https://www.frdc.com.au/project/2016-059
+[19] https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/07/Climate_Adaptation_Handbook_Updated_June11_2021_WEB.pdf
+[20] https://pubmed.ncbi.nlm.nih.gov/34078174/
+[21] https://www.semanticscholar.org/paper/6a25a2e9bf9c19d4a516a904d8baa3fe8cf709d5
+[22] https://pubmed.ncbi.nlm.nih.gov/34397654/
+[23] https://pubmed.ncbi.nlm.nih.gov/33054603/
+[24] https://www.semanticscholar.org/paper/ca731f0837c9fbc2044fd9e1f4ec24c570f5c5b9
+[25] https://www.semanticscholar.org/paper/0594fcc6c78160e24dfd6848e941d68e00058fc8
+[26] https://www.wafic.org.au/resources/west-coast-demersal-scalefish-facts/
+[27] https://pir.sa.gov.au/__data/assets/pdf_file/0012/442002/Draft_MSF_Harvest_Strategy_Framework_for_consultation_-_October_2023.pdf
+
 <div style="text-align: center">⁂</div>
-
-[^1]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/c3a203c3-5ae7-4dea-95cb-6260bc7298d7/paste.txt
-
-[^2]: https://www.semanticscholar.org/paper/69dd18d1179acec0b0e4029f003d27fa40f6d558
-
-[^3]: https://www.utas.edu.au/__data/assets/pdf_file/0005/1656635/Tasmanian-Scalefish-Fishery-Ecological-Risk-Assessment-2016.pdf
-
-[^4]: https://www.cakex.org/sites/default/files/documents/Atlantis-SEAP Report - Appendix 3 - Results \& Barriers to adaptation.pdf
-
-[^5]: https://www.publish.csiro.au/MF/fulltext/MF23024
-
-[^6]: https://www.afma.gov.au/sites/default/files/2023-02/SESSF Five Year Strategic Research Plan 2021-2025.pdf
-
-[^7]: https://www.afma.gov.au/sites/default/files/2023-02/sessf_management_arrangements_booklet_2022_may_save.pdf
-
-[^8]: https://tasfisheriesresearch.org/fishery-management/
-
-[^9]: https://www.semanticscholar.org/paper/496053f1f772554838f5dcebb630c5c2060674e3
-
-[^10]: https://www.semanticscholar.org/paper/d0cf854300ec145a5ee7b13fcfd08289a25977de
-
-[^11]: https://www.semanticscholar.org/paper/aac120961acdb2407e1c57c5d814e4b7912e2432
-
-[^12]: https://www.semanticscholar.org/paper/64b4ca015cf0e4daa9391d1f05a6c87dc0c67670
-
-[^13]: https://www.semanticscholar.org/paper/a19e51cb0e39ea302be31eb4dc86cfec1430c65d
-
-[^14]: https://nesp2climate.com.au/climate-adaptation/
-
-[^15]: https://www.redmap.org.au/article/the-impacts-of-climate-change-on-south-east-australian-fisheries/
-
-[^16]: https://www.afma.gov.au/sites/default/files/2023-02/climate-impacts-south-east-fisheries-factsheet.pdf
-
-[^17]: https://nesp2climate.com.au/australias-first-stocktake-of-climate-adaptation-activities/
-
-[^18]: https://www.frdc.com.au/project/2016-059
-
-[^19]: https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/07/Climate_Adaptation_Handbook_Updated_June11_2021_WEB.pdf
-
-[^20]: https://pubmed.ncbi.nlm.nih.gov/34078174/
-
-[^21]: https://www.semanticscholar.org/paper/6a25a2e9bf9c19d4a516a904d8baa3fe8cf709d5
-
-[^22]: https://pubmed.ncbi.nlm.nih.gov/34397654/
-
-[^23]: https://pubmed.ncbi.nlm.nih.gov/33054603/
-
-[^24]: https://www.semanticscholar.org/paper/ca731f0837c9fbc2044fd9e1f4ec24c570f5c5b9
-
-[^25]: https://www.semanticscholar.org/paper/0594fcc6c78160e24dfd6848e941d68e00058fc8
-
-[^26]: https://www.wafic.org.au/resources/west-coast-demersal-scalefish-facts/
-
-[^27]: https://pir.sa.gov.au/__data/assets/pdf_file/0012/442002/Draft_MSF_Harvest_Strategy_Framework_for_consultation_-_October_2023.pdf
 

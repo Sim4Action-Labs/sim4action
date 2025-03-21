@@ -1,10 +1,4 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" class="logo" width="120"/>
-
-# 
-
----
-
-# Southern and Eastern Scalefish and Shark Fishery: Core Variables Analysis
+# Southern and Eastern Scalefish and Shark Fishery: Phase 2 - Core Variables Analysis
 
 The Southern and Eastern Scalefish and Shark Fishery (SESSF) represents one of Australia's most significant fishing operations, extending across a vast geographic area and encompassing multiple fishing methods, target species, and management approaches. This analysis identifies and documents the core variables that influence the SESSF system as part of the Blue Economy CRC's Futures of Seafood project, providing essential information for understanding system dynamics and developing effective management strategies for future sustainability.
 
@@ -130,51 +124,29 @@ Notable information gaps identified include: the socioeconomic impacts of fisher
 
 Based on this variables analysis, several recommendations emerge for improving monitoring and management approaches. First, there is a need to enhance social and cultural data collection to match the sophistication of environmental and economic monitoring. Second, variable monitoring should be increasingly integrated across domains to better understand system interactions and feedbacks. Third, climate adaptation should be more systematically incorporated into variable monitoring frameworks to support forward-looking management[^13][^17]. Fourth, indigenous knowledge variables should be developed in partnership with indigenous communities to ensure cultural appropriateness and mutual benefit. Finally, the non-recovery of some stocks despite management interventions suggests a need to reevaluate single-species Management Strategy Evaluations and develop approaches that better account for climate change impacts and ecosystem dynamics[^8][^13], supporting the Blue Economy CRC's aims for sustainable industry development and innovative management approaches.
 
-<div style="text-align: center">⁂</div>
+## References
 
-[^1]: https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/26831910-08ed-4303-bc18-bbbaf8d5e2a9/paste.txt
-
-[^2]: https://www.semanticscholar.org/paper/71254571636fa0a2b423ed323d5db901f88a21f8
-
-[^3]: https://www.environment.nsw.gov.au/-/media/OEH/Corporate-Site/Documents/Water/Estuaries/assessing-estuary-ecosystem-health-sampling-data-analysis-reporting-protocols-160250.pdf
-
-[^4]: https://pir.sa.gov.au/__data/assets/pdf_file/0011/232301/Abundance_for_School_Shark_Stock_Assessment_Report_-_FINAL.pdf
-
-[^5]: https://fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
-
-[^6]: https://www.semanticscholar.org/paper/e8becb15b2fd19374bc8d5207a191a59ca7d63f4
-
-[^7]: https://www.afma.gov.au/sites/default/files/2024-02/climatereport-sessf-nov23.pdf
-
-[^8]: https://www.afma.gov.au/sites/default/files/2023-01/2022 SESSF Species Summaries.pdf
-
-[^9]: https://library.dpird.wa.gov.au/cgi/viewcontent.cgi?article=1016\&context=fr_rr
-
-[^10]: https://arxiv.org/abs/2312.05971
-
-[^11]: https://www.hlw.org.au/resources/downloads/seq-s-report-card-technical-reports/452-southeast-queensland-estuarine-fish-surveys-2023
-
-[^12]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11329755/
-
-[^13]: https://www.afma.gov.au/sites/default/files/2023-06/2023-SESSF-species-summaries-June-2023.pdf
-
-[^14]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11755323/
-
-[^15]: https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
-
-[^16]: https://www.semanticscholar.org/paper/e3c659c573c9268fbeb69aea4b5ce3183c8e27b1
-
-[^17]: https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/07/Climate_Adaptation_Handbook_Updated_June11_2021_WEB.pdf
-
-[^18]: https://www.semanticscholar.org/paper/0146b851f881c46b6b216a2bc3039ed665281e54
-
-[^19]: https://www.semanticscholar.org/paper/e8d527f851cf1d919d056fd1148f7b7fe87d56d6
-
-[^20]: https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/09/CSIRO-2018-Nontechnical_summary_climate_projections_Australian_fisheries.pdf
-
-[^21]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11199919/
-
-[^22]: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10199456/
-
-[^23]: https://www.semanticscholar.org/paper/df01574ec5a64db0857d4f8c432a8b3b83130ce7
+[1] https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/46603617/26831910-08ed-4303-bc18-bbbaf8d5e2a9/paste.txt
+[2] https://www.semanticscholar.org/paper/71254571636fa0a2b423ed323d5db901f88a21f8
+[3] https://www.environment.nsw.gov.au/-/media/OEH/Corporate-Site/Documents/Water/Estuaries/assessing-estuary-ecosystem-health-sampling-data-analysis-reporting-protocols-160250.pdf
+[4] https://pir.sa.gov.au/__data/assets/pdf_file/0011/232301/Abundance_for_School_Shark_Stock_Assessment_Report_-_FINAL.pdf
+[5] https://fish.gov.au/Archived-Reports/2014/Documents/2014_refs/Day, 2010 - Eastern School Whiting Assessment - on pages 190 - 249.pdf
+[6] https://www.semanticscholar.org/paper/e8becb15b2fd19374bc8d5207a191a59ca7d63f4
+[7] https://www.afma.gov.au/sites/default/files/2024-02/climatereport-sessf-nov23.pdf
+[8] https://www.afma.gov.au/sites/default/files/2023-01/2022 SESSF Species Summaries.pdf
+[9] https://library.dpird.wa.gov.au/cgi/viewcontent.cgi?article=1016&context=fr_rr
+[10] https://arxiv.org/abs/2312.05971
+[11] https://www.hlw.org.au/resources/downloads/seq-s-report-card-technical-reports/452-southeast-queensland-estuarine-fish-surveys-2023
+[12] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11329755/
+[13] https://www.afma.gov.au/sites/default/files/2023-06/2023-SESSF-species-summaries-June-2023.pdf
+[14] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11755323/
+[15] https://www.agriculture.gov.au/abares/research-topics/fisheries/fishery-status/scalefish-shark-fishery
+[16] https://www.semanticscholar.org/paper/e3c659c573c9268fbeb69aea4b5ce3183c8e27b1
+[17] https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/07/Climate_Adaptation_Handbook_Updated_June11_2021_WEB.pdf
+[18] https://www.semanticscholar.org/paper/0146b851f881c46b6b216a2bc3039ed665281e54
+[19] https://www.semanticscholar.org/paper/e8d527f851cf1d919d056fd1148f7b7fe87d56d6
+[20] https://research.csiro.au/cor/wp-content/uploads/sites/282/2021/09/CSIRO-2018-Nontechnical_summary_climate_projections_Australian_fisheries.pdf
+[21] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11199919/
+[22] https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10199456/
+[23] https://www.semanticscholar.org/paper/df01574ec5a64db0857d4f8c432a8b3b83130ce7
 
