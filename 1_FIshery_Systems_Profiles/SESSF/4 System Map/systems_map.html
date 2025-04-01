@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SESSF Systems Map</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #graph {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .node {
+            cursor: move;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            transition: opacity 0.3s;
+        }
+        .node.dimmed circle {
+            opacity: 0.3;
+        }
+        .node text {
+            font-size: 10px;
+            fill: #333;
+            text-shadow: 0 1px 3px rgba(255,255,255,0.7);
+        }
+        .node.focal circle {
+            r: 12;
+            stroke-width: 3px;
+        }
+        .node.focal text {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .node.dimmed text {
+            opacity: 0.3;
+        }
+        .node.highlighted circle {
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .link {
+            stroke-opacity: 0.6;
+            fill: none;
+            transition: stroke-opacity 0.3s;
+            marker-end: none;
+        }
+        .link.highlighted {
+            stroke-opacity: 1;
+        }
+        .link.dimmed {
+            stroke-opacity: 0.1;
+        }
+        .link.SameDirection { 
+            stroke: #28a745;
+            marker-end: url(#arrow-SameDirection);
+        }
+        .link.OppositeDirection { 
+            stroke: #dc3545;
+            marker-end: url(#arrow-OppositeDirection);
+        }
+        .link.Variable { 
+            stroke: #6c757d;
+            marker-end: url(#arrow-Variable);
+        }
+        .link.Strong { stroke-width: 4; }
+        .link.Medium { stroke-width: 2; }
+        .link.Weak { stroke-width: 0.5; }
+        #tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            pointer-events: none;
+            font-size: 12px;
+            max-width: 300px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #legend {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .legend-item {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 200px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px 10px;
+            text-align: left;
+        }
+        button:hover {
+            background-color: #f0f0f0;
+        }
+        #error-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+        #filters {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 200px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        .filter-section {
+            margin-bottom: 15px;
+        }
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+        .filter-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .filter-button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .filter-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        .filter-button:hover {
+            background-color: #f0f0f0;
+        }
+        .filter-button.active:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="graph"></div>
+    <div id="tooltip"></div>
+    <div id="legend"></div>
+    <div id="controls">
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="resetView()">Reset View</button>
+        <button onclick="resetFilters()">Reset Filters</button>
+    </div>
+    <div id="filters">
+        <div class="filter-section">
+            <h4>Relationship Strength</h4>
+            <button class="filter-button" onclick="filterStrength('Strong')">Strong</button>
+            <button class="filter-button" onclick="filterStrength('Medium')">Medium</button>
+            <button class="filter-button" onclick="filterStrength('Weak')">Weak</button>
+        </div>
+        <div class="filter-section">
+            <h4>Variable Categories</h4>
+            <button class="filter-button" onclick="filterCategory('Stock')">Stock</button>
+            <button class="filter-button" onclick="filterCategory('Environmental')">Environmental</button>
+            <button class="filter-button" onclick="filterCategory('Economic')">Economic</button>
+            <button class="filter-button" onclick="filterCategory('Social')">Social</button>
+            <button class="filter-button" onclick="filterCategory('Technical')">Technical</button>
+            <button class="filter-button" onclick="filterCategory('Market')">Market</button>
+            <button class="filter-button" onclick="filterCategory('Indigenous')">Indigenous</button>
+            <button class="filter-button" onclick="filterCategory('Management')">Management</button>
+            <button class="filter-button" onclick="filterCategory('Ecosystem')">Ecosystem</button>
+        </div>
+    </div>
+    <div id="error-message"></div>
+
+    <script>
+        // Global variables
+        let simulation;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        let transform = d3.zoomIdentity;
+        // Initialize filter sets
+        let activeStrengths = new Set();
+        let activeCategories = new Set();
+
+        // Create SVG
+        const svg = d3.select("#graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Add zoom behavior
+        const zoom = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .on("zoom", zoomed);
+
+        svg.call(zoom);
+
+        // Create container group for all elements
+        const container = svg.append("g");
+
+        // Add arrow markers with opacity
+        svg.append("defs").selectAll("marker")
+            .data(["SameDirection", "OppositeDirection", "Variable"])
+            .enter().append("marker")
+            .attr("id", d => `arrow-${d}`)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 20)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .attr("class", d => `arrow-marker ${d}`)
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", d => d === "SameDirection" ? "#28a745" : d === "OppositeDirection" ? "#dc3545" : "#6c757d")
+            .style("opacity", 0.6);  // Default opacity
+
+        // Error handling function
+        function showError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.textContent = message;
+            errorDiv.style.display = "block";
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 5000);
+        }
+
+        try {
+            // Embedded data
+            const data = {
+                "nodes": [
+                    {"id": "V1", "name": "Stock Biomass", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V2", "name": "Recruitment Rate", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V3", "name": "Mortality Rate", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V4", "name": "Catch Limit", "category": "Management", "color": "#800080"},
+                    {"id": "V5", "name": "Fishing Mortality", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V6", "name": "Growth Rate", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V7", "name": "Catch Volume", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V8", "name": "Profit Level", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V9", "name": "Fleet Size", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V10", "name": "Efficiency", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V11", "name": "Ocean Temperature", "category": "Environmental", "color": "#008000"},
+                    {"id": "V12", "name": "Species Distribution", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V13", "name": "Fishing Patterns", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V14", "name": "Market Price", "category": "Market", "color": "#800000"},
+                    {"id": "V15", "name": "Fishing Effort", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V17", "name": "Food Web Structure", "category": "Ecosystem", "color": "#006400"},
+                    {"id": "V18", "name": "Predation Rate", "category": "Ecosystem", "color": "#006400"},
+                    {"id": "V19", "name": "Stock Recovery", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V20", "name": "Technology Adoption", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V21", "name": "Catchability", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V22", "name": "Import Volume", "category": "Market", "color": "#800000"},
+                    {"id": "V23", "name": "Domestic Supply", "category": "Market", "color": "#800000"},
+                    {"id": "V24", "name": "Quota Value", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V25", "name": "Investment Level", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V26", "name": "Enforcement Level", "category": "Management", "color": "#800080"},
+                    {"id": "V27", "name": "Compliance Rate", "category": "Management", "color": "#800080"},
+                    {"id": "V28", "name": "Illegal Catch", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V29", "name": "Climate Change Impact", "category": "Environmental", "color": "#008000"},
+                    {"id": "V30", "name": "Stock Status", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V31", "name": "Primary Productivity", "category": "Ecosystem", "color": "#006400"},
+                    {"id": "V32", "name": "Quota Trading", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V34", "name": "Spatial Stock Depletion", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V35", "name": "Habitat Degradation", "category": "Ecosystem", "color": "#006400"},
+                    {"id": "V36", "name": "Species Abundance", "category": "Stock", "color": "#ff0000"},
+                    {"id": "V37", "name": "Ecosystem Function", "category": "Ecosystem", "color": "#006400"},
+                    {"id": "V38", "name": "Social License", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V39", "name": "Management Restrictions", "category": "Management", "color": "#800080"},
+                    {"id": "V40", "name": "Economic Performance", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V41", "name": "Sea Surface Temperature", "category": "Environmental", "color": "#008000"},
+                    {"id": "V42", "name": "Bottom Temperature", "category": "Environmental", "color": "#008000"},
+                    {"id": "V43", "name": "Chlorophyll-a", "category": "Environmental", "color": "#008000"},
+                    {"id": "V44", "name": "Southern Oscillation Index", "category": "Environmental", "color": "#008000"},
+                    {"id": "V45", "name": "Southern Annular Mode", "category": "Environmental", "color": "#008000"},
+                    {"id": "V46", "name": "Diatom:Dinoflagellate Ratio", "category": "Environmental", "color": "#008000"},
+                    {"id": "V47", "name": "Ocean Acidification", "category": "Environmental", "color": "#008000"},
+                    {"id": "V48", "name": "Ocean Currents", "category": "Environmental", "color": "#008000"},
+                    {"id": "V49", "name": "Upwelling Intensity", "category": "Environmental", "color": "#008000"},
+                    {"id": "V50", "name": "Oxygen Levels", "category": "Environmental", "color": "#008000"},
+                    {"id": "V51", "name": "Extreme Weather Events", "category": "Environmental", "color": "#008000"},
+                    {"id": "V52", "name": "Gross Value of Production", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V53", "name": "Net Economic Returns", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V54", "name": "Total Factor Productivity", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V56", "name": "Operating Costs", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V57", "name": "Employment", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V58", "name": "Fleet Capacity", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V59", "name": "Export Value", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V60", "name": "Financial Performance", "category": "Economic", "color": "#0000ff"},
+                    {"id": "V61", "name": "Employment in Fishery", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V63", "name": "Community Economic Dependence", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V64", "name": "Indigenous Participation", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V65", "name": "Gender Composition", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V66", "name": "Age Structure", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V67", "name": "Fisher Wellbeing", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V68", "name": "Community Perceptions", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V69", "name": "Food Security Contribution", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V70", "name": "Cultural Heritage Value", "category": "Social", "color": "#ff69b4"},
+                    {"id": "V71", "name": "Fishing Methods", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V73", "name": "Catch Per Unit Effort", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V74", "name": "Discard Rates", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V75", "name": "Gear Selectivity", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V76", "name": "Vessel Capacity", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V77", "name": "Electronic Monitoring", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V78", "name": "Spatial Management", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V79", "name": "Observer Coverage", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V80", "name": "Harvest Strategy", "category": "Technical", "color": "#4b0082"},
+                    {"id": "V81", "name": "Species Price", "category": "Market", "color": "#800000"},
+                    {"id": "V82", "name": "Market Competition", "category": "Market", "color": "#800000"},
+                    {"id": "V83", "name": "Consumer Preferences", "category": "Market", "color": "#800000"},
+                    {"id": "V84", "name": "Distribution Channels", "category": "Market", "color": "#800000"},
+                    {"id": "V85", "name": "Market Concentration", "category": "Market", "color": "#800000"},
+                    {"id": "V86", "name": "Export Markets", "category": "Market", "color": "#800000"},
+                    {"id": "V87", "name": "Value Addition", "category": "Market", "color": "#800000"},
+                    {"id": "V88", "name": "Product Substitutability", "category": "Market", "color": "#800000"},
+                    {"id": "V89", "name": "Certification Status", "category": "Market", "color": "#800000"},
+                    {"id": "V90", "name": "Price Volatility", "category": "Market", "color": "#800000"},
+                    {"id": "V91", "name": "Traditional Ecological Knowledge", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V92", "name": "Cultural Fishing Practices", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V93", "name": "Indigenous Governance", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V94", "name": "Cultural Values Mapping", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V95", "name": "Indigenous Economic Participation", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V96", "name": "Traditional Seasonal Indicators", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V97", "name": "Sea Country Management", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V98", "name": "Cultural Harvest Levels", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V99", "name": "Knowledge Transmission", "category": "Indigenous", "color": "#daa520"},
+                    {"id": "V100", "name": "Indigenous Research Partnerships", "category": "Indigenous", "color": "#daa520"}
+                ],
+                "links": [
+                    {"source": "V1", "target": "V2", "type": "SameDirection", "strength": "Strong", "description": "Stock Biomass → Recruitment Rate"},
+                    {"source": "V2", "target": "V1", "type": "SameDirection", "strength": "Strong", "description": "Recruitment Rate → Stock Biomass"},
+                    {"source": "V3", "target": "V1", "type": "OppositeDirection", "strength": "Strong", "description": "Mortality Rate → Stock Biomass"},
+                    {"source": "V1", "target": "V4", "type": "SameDirection", "strength": "Medium", "description": "Stock Biomass → Catch Limit"},
+                    {"source": "V4", "target": "V5", "type": "OppositeDirection", "strength": "Medium", "description": "Catch Limit → Fishing Mortality"},
+                    {"source": "V5", "target": "V1", "type": "OppositeDirection", "strength": "Strong", "description": "Fishing Mortality → Stock Biomass"},
+                    {"source": "V6", "target": "V1", "type": "SameDirection", "strength": "Medium", "description": "Growth Rate → Stock Biomass"},
+                    {"source": "V7", "target": "V8", "type": "SameDirection", "strength": "Medium", "description": "Catch Volume → Profit Level"},
+                    {"source": "V8", "target": "V9", "type": "SameDirection", "strength": "Medium", "description": "Profit Level → Fleet Size"},
+                    {"source": "V9", "target": "V10", "type": "SameDirection", "strength": "Medium", "description": "Fleet Size → Efficiency"},
+                    {"source": "V10", "target": "V7", "type": "SameDirection", "strength": "Medium", "description": "Efficiency → Catch Volume"},
+                    {"source": "V11", "target": "V12", "type": "SameDirection", "strength": "Medium", "description": "Ocean Temperature → Species Distribution"},
+                    {"source": "V12", "target": "V13", "type": "SameDirection", "strength": "Medium", "description": "Species Distribution → Fishing Pattern"},
+                    {"source": "V13", "target": "V7", "type": "SameDirection", "strength": "Medium", "description": "Fishing Pattern → Catch Volume"},
+                    {"source": "V7", "target": "V14", "type": "OppositeDirection", "strength": "Medium", "description": "Catch Volume → Market Price"},
+                    {"source": "V14", "target": "V15", "type": "SameDirection", "strength": "Medium", "description": "Market Price → Fishing Effort"},
+                    {"source": "V15", "target": "V7", "type": "SameDirection", "strength": "Medium", "description": "Fishing Effort → Catch Volume"},
+                    {"source": "V5", "target": "V17", "type": "OppositeDirection", "strength": "Weak", "description": "Fishing Mortality → Food Web Structure"},
+                    {"source": "V17", "target": "V18", "type": "SameDirection", "strength": "Weak", "description": "Food Web Structure → Predation Rate"},
+                    {"source": "V18", "target": "V2", "type": "OppositeDirection", "strength": "Weak", "description": "Predation Rate → Recruitment Rate"},
+                    {"source": "V7", "target": "V20", "type": "SameDirection", "strength": "Medium", "description": "Catch Volume → Technology Adoption"},
+                    {"source": "V20", "target": "V21", "type": "SameDirection", "strength": "Medium", "description": "Technology Adoption → Catchability"},
+                    {"source": "V21", "target": "V7", "type": "SameDirection", "strength": "Medium", "description": "Catchability → Catch Volume"},
+                    {"source": "V7", "target": "V23", "type": "SameDirection", "strength": "Medium", "description": "Catch Volume → Domestic Supply"},
+                    {"source": "V23", "target": "V14", "type": "OppositeDirection", "strength": "Medium", "description": "Domestic Supply → Market Price"},
+                    {"source": "V14", "target": "V22", "type": "SameDirection", "strength": "Medium", "description": "Market Price → Import Volume"},
+                    {"source": "V1", "target": "V24", "type": "SameDirection", "strength": "Medium", "description": "Stock Biomass → Quota Value"},
+                    {"source": "V24", "target": "V25", "type": "SameDirection", "strength": "Medium", "description": "Quota Value → Investment Level"},
+                    {"source": "V25", "target": "V7", "type": "SameDirection", "strength": "Medium", "description": "Investment Level → Catch Volume"},
+                    {"source": "V26", "target": "V27", "type": "SameDirection", "strength": "Medium", "description": "Enforcement Level → Compliance Rate"},
+                    {"source": "V27", "target": "V28", "type": "OppositeDirection", "strength": "Medium", "description": "Compliance Rate → Illegal Catch"},
+                    {"source": "V28", "target": "V1", "type": "OppositeDirection", "strength": "Medium", "description": "Illegal Catch → Stock Biomass"},
+                    {"source": "V41", "target": "V11", "type": "SameDirection", "strength": "Medium", "description": "Sea Surface Temperature → Ocean Temperature"},
+                    {"source": "V42", "target": "V1", "type": "Variable", "strength": "Medium", "description": "Bottom Temperature → Stock Biomass"},
+                    {"source": "V43", "target": "V2", "type": "SameDirection", "strength": "Medium", "description": "Chlorophyll-a → Recruitment Rate"},
+                    {"source": "V44", "target": "V48", "type": "Variable", "strength": "Medium", "description": "Southern Oscillation Index → Ocean Currents"},
+                    {"source": "V45", "target": "V51", "type": "SameDirection", "strength": "Medium", "description": "Southern Annular Mode → Extreme Weather Events"},
+                    {"source": "V46", "target": "V17", "type": "Variable", "strength": "Medium", "description": "Diatom:Dinoflagellate Ratio → Food Web Structure"},
+                    {"source": "V47", "target": "V1", "type": "OppositeDirection", "strength": "Medium", "description": "Ocean Acidification → Stock Biomass"},
+                    {"source": "V48", "target": "V12", "type": "SameDirection", "strength": "Medium", "description": "Ocean Currents → Species Distribution"},
+                    {"source": "V49", "target": "V43", "type": "SameDirection", "strength": "Medium", "description": "Upwelling Intensity → Chlorophyll-a"},
+                    {"source": "V50", "target": "V1", "type": "SameDirection", "strength": "Medium", "description": "Oxygen Levels → Stock Biomass"},
+                    {"source": "V51", "target": "V15", "type": "OppositeDirection", "strength": "Medium", "description": "Extreme Weather Events → Fishing Effort"},
+                    {"source": "V52", "target": "V8", "type": "SameDirection", "strength": "Strong", "description": "Gross Value of Production → Profit Level"},
+                    {"source": "V53", "target": "V9", "type": "SameDirection", "strength": "Medium", "description": "Net Economic Returns → Fleet Size"},
+                    {"source": "V54", "target": "V10", "type": "SameDirection", "strength": "Medium", "description": "Total Factor Productivity → Efficiency"},
+                    {"source": "V49", "target": "V12", "type": "Variable", "strength": "Medium", "description": "Upwelling Intensity → Species Distribution"},
+                    {"source": "V50", "target": "V12", "type": "SameDirection", "strength": "Strong", "description": "Oxygen Levels → Species Distribution"},
+                    {"source": "V46", "target": "V2", "type": "Variable", "strength": "Medium", "description": "Diatom:Dinoflagellate Ratio → Recruitment Rate"},
+                    {"source": "V44", "target": "V12", "type": "Variable", "strength": "Medium", "description": "Southern Oscillation Index → Species Distribution"},
+                    {"source": "V48", "target": "V2", "type": "Variable", "strength": "Strong", "description": "Ocean Currents → Recruitment Rate"},
+                    {"source": "V49", "target": "V1", "type": "SameDirection", "strength": "Medium", "description": "Upwelling Intensity → Stock Biomass"},
+                    {"source": "V45", "target": "V31", "type": "Variable", "strength": "Medium", "description": "Southern Annular Mode → Primary Productivity"},
+                    {"source": "V47", "target": "V2", "type": "OppositeDirection", "strength": "Medium", "description": "Ocean Acidification → Recruitment Rate"},
+                    {"source": "V53", "target": "V63", "type": "SameDirection", "strength": "Strong", "description": "Net Economic Returns → Community Economic Dependence"},
+                    {"source": "V57", "target": "V63", "type": "SameDirection", "strength": "Strong", "description": "Employment → Community Economic Dependence"},
+                    {"source": "V60", "target": "V67", "type": "SameDirection", "strength": "Medium", "description": "Financial Performance → Fisher Wellbeing"},
+                    {"source": "V24", "target": "V63", "type": "Variable", "strength": "Medium", "description": "Quota Value → Community Economic Dependence"},
+                    {"source": "V54", "target": "V57", "type": "Variable", "strength": "Medium", "description": "Total Factor Productivity → Employment"},
+                    {"source": "V56", "target": "V67", "type": "OppositeDirection", "strength": "Medium", "description": "Operating Costs → Fisher Wellbeing"},
+                    {"source": "V60", "target": "V68", "type": "SameDirection", "strength": "Medium", "description": "Financial Performance → Community Perceptions"},
+                    {"source": "V57", "target": "V66", "type": "Variable", "strength": "Medium", "description": "Employment → Age Structure"},
+                    {"source": "V53", "target": "V65", "type": "Variable", "strength": "Medium", "description": "Net Economic Returns → Gender Composition"},
+                    {"source": "V79", "target": "V27", "type": "SameDirection", "strength": "Strong", "description": "Observer Coverage → Compliance Rate"},
+                    {"source": "V71", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Fishing Methods → Management Restrictions"},
+                    {"source": "V76", "target": "V4", "type": "Variable", "strength": "Medium", "description": "Vessel Capacity → Catch Limit"},
+                    {"source": "V75", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Gear Selectivity → Management Restrictions"},
+                    {"source": "V80", "target": "V26", "type": "SameDirection", "strength": "Medium", "description": "Harvest Strategy → Enforcement Level"},
+                    {"source": "V79", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Observer Coverage → Management Restrictions"},
+                    {"source": "V76", "target": "V26", "type": "SameDirection", "strength": "Medium", "description": "Vessel Capacity → Enforcement Level"},
+                    {"source": "V78", "target": "V39", "type": "Variable", "strength": "Strong", "description": "Spatial Management → Management Restrictions"},
+                    {"source": "V77", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Electronic Monitoring → Management Restrictions"},
+                    {"source": "V9", "target": "V58", "type": "SameDirection", "strength": "Medium", "description": "Fleet Size → Fleet Capacity"},
+                    {"source": "V63", "target": "V61", "type": "SameDirection", "strength": "Medium", "description": "Community Economic Dependence → Employment in Fishery"},
+                    {"source": "V64", "target": "V93", "type": "SameDirection", "strength": "Medium", "description": "Indigenous Participation → Indigenous Governance"},
+                    {"source": "V65", "target": "V67", "type": "Variable", "strength": "Medium", "description": "Gender Composition → Fisher Wellbeing"},
+                    {"source": "V66", "target": "V99", "type": "Variable", "strength": "Medium", "description": "Age Structure → Knowledge Transmission"},
+                    {"source": "V67", "target": "V15", "type": "Variable", "strength": "Medium", "description": "Fisher Wellbeing → Fishing Effort"},
+                    {"source": "V68", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Community Perceptions → Management Restrictions"},
+                    {"source": "V69", "target": "V23", "type": "SameDirection", "strength": "Medium", "description": "Food Security Contribution → Domestic Supply"},
+                    {"source": "V70", "target": "V68", "type": "SameDirection", "strength": "Medium", "description": "Cultural Heritage Value → Community Perceptions"},
+                    {"source": "V71", "target": "V75", "type": "Variable", "strength": "Medium", "description": "Fishing Methods → Gear Selectivity"},
+                    {"source": "V15", "target": "V73", "type": "Variable", "strength": "Medium", "description": "Fishing Effort → Catch Per Unit Effort"},
+                    {"source": "V73", "target": "V1", "type": "SameDirection", "strength": "Medium", "description": "Catch Per Unit Effort → Stock Biomass"},
+                    {"source": "V74", "target": "V3", "type": "SameDirection", "strength": "Medium", "description": "Discard Rates → Mortality Rate"},
+                    {"source": "V75", "target": "V74", "type": "OppositeDirection", "strength": "Medium", "description": "Gear Selectivity → Discard Rates"},
+                    {"source": "V76", "target": "V15", "type": "SameDirection", "strength": "Medium", "description": "Vessel Capacity → Fishing Effort"},
+                    {"source": "V77", "target": "V27", "type": "SameDirection", "strength": "Medium", "description": "Electronic Monitoring → Compliance Rate"},
+                    {"source": "V78", "target": "V1", "type": "SameDirection", "strength": "Medium", "description": "Spatial Management → Stock Biomass"},
+                    {"source": "V79", "target": "V74", "type": "OppositeDirection", "strength": "Medium", "description": "Observer Coverage → Discard Rates"},
+                    {"source": "V80", "target": "V4", "type": "Variable", "strength": "Medium", "description": "Harvest Strategy → Catch Limit"},
+                    {"source": "V81", "target": "V8", "type": "SameDirection", "strength": "Medium", "description": "Species Price → Profit Level"},
+                    {"source": "V82", "target": "V81", "type": "OppositeDirection", "strength": "Medium", "description": "Market Competition → Species Price"},
+                    {"source": "V83", "target": "V81", "type": "Variable", "strength": "Medium", "description": "Consumer Preferences → Species Price"},
+                    {"source": "V84", "target": "V81", "type": "Variable", "strength": "Medium", "description": "Distribution Channels → Species Price"},
+                    {"source": "V85", "target": "V81", "type": "Variable", "strength": "Medium", "description": "Market Concentration → Species Price"},
+                    {"source": "V86", "target": "V59", "type": "SameDirection", "strength": "Medium", "description": "Export Markets → Export Value"},
+                    {"source": "V87", "target": "V81", "type": "SameDirection", "strength": "Medium", "description": "Value Addition → Species Price"},
+                    {"source": "V88", "target": "V81", "type": "Variable", "strength": "Medium", "description": "Product Substitutability → Species Price"},
+                    {"source": "V89", "target": "V81", "type": "SameDirection", "strength": "Medium", "description": "Certification Status → Species Price"},
+                    {"source": "V90", "target": "V8", "type": "OppositeDirection", "strength": "Medium", "description": "Price Volatility → Profit Level"},
+                    {"source": "V91", "target": "V1", "type": "Variable", "strength": "Medium", "description": "Traditional Ecological Knowledge → Stock Biomass"},
+                    {"source": "V92", "target": "V71", "type": "Variable", "strength": "Medium", "description": "Cultural Fishing Practices → Fishing Methods"},
+                    {"source": "V93", "target": "V80", "type": "Variable", "strength": "Medium", "description": "Indigenous Governance → Harvest Strategy"},
+                    {"source": "V94", "target": "V78", "type": "Variable", "strength": "Medium", "description": "Cultural Values Mapping → Spatial Management"},
+                    {"source": "V95", "target": "V64", "type": "SameDirection", "strength": "Medium", "description": "Indigenous Economic Participation → Indigenous Participation"},
+                    {"source": "V96", "target": "V15", "type": "Variable", "strength": "Medium", "description": "Traditional Seasonal Indicators → Fishing Effort"},
+                    {"source": "V97", "target": "V78", "type": "Variable", "strength": "Medium", "description": "Sea Country Management → Spatial Management"},
+                    {"source": "V98", "target": "V7", "type": "Variable", "strength": "Medium", "description": "Cultural Harvest Levels → Catch Volume"},
+                    {"source": "V99", "target": "V91", "type": "SameDirection", "strength": "Medium", "description": "Knowledge Transmission → Traditional Ecological Knowledge"},
+                    {"source": "V100", "target": "V91", "type": "SameDirection", "strength": "Medium", "description": "Indigenous Research Partnerships → Traditional Ecological Knowledge"},
+                    {"source": "V9", "target": "V15", "type": "SameDirection", "strength": "Strong", "description": "Fleet Size → Fishing Effort"},
+                    {"source": "V9", "target": "V56", "type": "SameDirection", "strength": "Medium", "description": "Fleet Size → Operating Costs"},
+                    {"source": "V9", "target": "V61", "type": "SameDirection", "strength": "Medium", "description": "Fleet Size → Employment in Fishery"},
+                    {"source": "V58", "target": "V7", "type": "SameDirection", "strength": "Strong", "description": "Fleet Capacity → Catch Volume"},
+                    {"source": "V58", "target": "V12", "type": "Variable", "strength": "Medium", "description": "Fleet Capacity → Investment Level"},
+                    {"source": "V86", "target": "V81", "type": "Variable", "strength": "Strong", "description": "Export Markets → Species Price"},
+                    {"source": "V86", "target": "V82", "type": "SameDirection", "strength": "Medium", "description": "Export Markets → Market Competition"},
+                    {"source": "V59", "target": "V8", "type": "SameDirection", "strength": "Strong", "description": "Export Value → Profit Level"},
+                    {"source": "V59", "target": "V12", "type": "SameDirection", "strength": "Medium", "description": "Export Value → Investment Level"},
+                    {"source": "V59", "target": "V63", "type": "SameDirection", "strength": "Medium", "description": "Export Value → Community Economic Dependence"},
+                    {"source": "V36", "target": "V1", "type": "SameDirection", "strength": "Strong", "description": "Species Abundance → Stock Biomass"},
+                    {"source": "V36", "target": "V73", "type": "SameDirection", "strength": "Strong", "description": "Species Abundance → Catch Per Unit Effort"},
+                    {"source": "V36", "target": "V37", "type": "Variable", "strength": "Medium", "description": "Species Abundance → Ecosystem Function"},
+                    {"source": "V34", "target": "V1", "type": "OppositeDirection", "strength": "Strong", "description": "Spatial Stock Depletion → Stock Biomass"},
+                    {"source": "V34", "target": "V13", "type": "Variable", "strength": "Medium", "description": "Spatial Stock Depletion → Fishing Patterns"},
+                    {"source": "V34", "target": "V78", "type": "Variable", "strength": "Strong", "description": "Spatial Stock Depletion → Spatial Management"},
+                    {"source": "V32", "target": "V31", "type": "Variable", "strength": "Strong", "description": "Climate Change Impact → Primary Productivity"},
+                    {"source": "V32", "target": "V2", "type": "Variable", "strength": "Strong", "description": "Climate Change Impact → Recruitment Rate"},
+                    {"source": "V37", "target": "V17", "type": "SameDirection", "strength": "Strong", "description": "Ecosystem Function → Food Web Structure"},
+                    {"source": "V37", "target": "V31", "type": "SameDirection", "strength": "Medium", "description": "Ecosystem Function → Primary Productivity"},
+                    {"source": "V37", "target": "V35", "type": "OppositeDirection", "strength": "Medium", "description": "Ecosystem Function → Habitat Degradation"},
+                    {"source": "V30", "target": "V1", "type": "Variable", "strength": "Strong", "description": "Stock Status → Stock Biomass"},
+                    {"source": "V30", "target": "V39", "type": "Variable", "strength": "Strong", "description": "Stock Status → Management Restrictions"},
+                    {"source": "V30", "target": "V4", "type": "Variable", "strength": "Strong", "description": "Stock Status → Catch Limit"},
+                    {"source": "V30", "target": "V38", "type": "Variable", "strength": "Medium", "description": "Stock Status → Social License"},
+                    {"source": "V41", "target": "V9", "type": "Variable", "strength": "Medium", "description": "Quota Trading → Fleet Size"},
+                    {"source": "V41", "target": "V40", "type": "Variable", "strength": "Strong", "description": "Quota Trading → Economic Performance"},
+                    {"source": "V19", "target": "V1", "type": "SameDirection", "strength": "Strong", "description": "Stock Recovery → Stock Biomass"},
+                    {"source": "V19", "target": "V4", "type": "Variable", "strength": "Medium", "description": "Stock Recovery → Catch Limit"},
+                    {"source": "V40", "target": "V12", "type": "SameDirection", "strength": "Strong", "description": "Economic Performance → Investment Level"},
+                    {"source": "V40", "target": "V61", "type": "SameDirection", "strength": "Medium", "description": "Economic Performance → Employment in Fishery"},
+                    {"source": "V40", "target": "V63", "type": "Variable", "strength": "Strong", "description": "Economic Performance → Community Economic Dependence"},
+                    {"source": "V35", "target": "V37", "type": "OppositeDirection", "strength": "Strong", "description": "Habitat Degradation → Ecosystem Function"},
+                    {"source": "V35", "target": "V2", "type": "OppositeDirection", "strength": "Medium", "description": "Habitat Degradation → Recruitment Rate"},
+                    {"source": "V35", "target": "V39", "type": "Variable", "strength": "Medium", "description": "Habitat Degradation → Management Restrictions"},
+                    {"source": "V29", "target": "V11", "type": "SameDirection", "strength": "Strong", "description": "Climate Change Impact → Ocean Temperature"},
+                    {"source": "V29", "target": "V47", "type": "SameDirection", "strength": "Strong", "description": "Climate Change Impact → Ocean Acidification"},
+                    {"source": "V29", "target": "V51", "type": "SameDirection", "strength": "Strong", "description": "Climate Change Impact → Extreme Weather Events"},
+                    {"source": "V29", "target": "V12", "type": "Variable", "strength": "Strong", "description": "Climate Change Impact → Species Distribution"},
+                    {"source": "V29", "target": "V1", "type": "Variable", "strength": "Medium", "description": "Climate Change Impact → Stock Biomass"},
+                    {"source": "V29", "target": "V6", "type": "Variable", "strength": "Medium", "description": "Climate Change Impact → Growth Rate"},
+                    {"source": "V29", "target": "V31", "type": "Variable", "strength": "Strong", "description": "Climate Change Impact → Primary Productivity"},
+                    {"source": "V29", "target": "V2", "type": "Variable", "strength": "Strong", "description": "Climate Change Impact → Recruitment Rate"},
+                    {"source": "V32", "target": "V24", "type": "Variable", "strength": "Strong", "description": "Quota Trading → Quota Value"},
+                    {"source": "V32", "target": "V9", "type": "Variable", "strength": "Medium", "description": "Quota Trading → Fleet Size"},
+                    {"source": "V32", "target": "V8", "type": "Variable", "strength": "Medium", "description": "Quota Trading → Profit Level"},
+                    {"source": "V32", "target": "V25", "type": "Variable", "strength": "Medium", "description": "Quota Trading → Investment Level"},
+                    {"source": "V32", "target": "V40", "type": "Variable", "strength": "Strong", "description": "Quota Trading → Economic Performance"}
+                ]
+            };
+
+            // Adjust force simulation parameters for the larger dataset
+            simulation = d3.forceSimulation(data.nodes)
+                .force("link", d3.forceLink(data.links)
+                    .id(d => d.id)
+                    .distance(150)  // Increased distance for better spacing
+                    .strength(0.3)) // Reduced strength for more flexibility
+                .force("charge", d3.forceManyBody()
+                    .strength(-400) // Increased repulsion
+                    .distanceMax(800)) // Increased maximum distance
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collision", d3.forceCollide().radius(40)) // Increased collision radius
+                .on("tick", ticked);
+
+            // Create links
+            const links = container.append("g")
+                .selectAll("path")
+                .data(data.links.map(link => ({
+                    ...link,
+                    type: link.type === "SameDirection" ? "SameDirection" : 
+                          link.type === "OppositeDirection" ? "OppositeDirection" : "Variable"
+                })))
+                .enter().append("path")
+                .attr("class", d => `link ${d.type} ${d.strength}`)
+                .attr("marker-end", d => {
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                    const categoryMatch = activeCategories.size === 0 || 
+                        (activeCategories.has(d.source.category) || activeCategories.has(d.target.category));
+                    
+                    if (activeStrengths.size === 0 && activeCategories.size === 0) {
+                        return `url(#arrow-${d.type})`;
+                    }
+                    if (!strengthMatch || !categoryMatch) {
+                        return 'none';  // Hide arrows for filtered out links
+                    }
+                    return `url(#arrow-${d.type})`;
+                });
+
+            // Create nodes
+            const nodes = container.append("g")
+                .selectAll(".node")
+                .data(data.nodes)
+                .enter().append("g")
+                .attr("class", d => `node${d.id === "V1" ? " focal" : ""}`)
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            nodes.append("circle")
+                .attr("r", d => d.id === "V1" ? 12 : 8)
+                .style("fill", d => d.color);
+
+            nodes.append("text")
+                .attr("dx", d => d.id === "V1" ? 16 : 12)
+                .attr("dy", ".35em")
+                .style("font-size", d => d.id === "V1" ? "14px" : "10px")
+                .style("font-weight", d => d.id === "V1" ? "bold" : "normal")
+                .text(d => d.name);
+
+            // Create legend
+            const categories = Array.from(new Set(data.nodes.map(d => d.category)));
+            const relationshipTypes = ["Same Direction", "Opposite Direction", "Variable"];
+            const strengths = ["Strong", "Medium", "Weak"];
+
+            const legend = d3.select("#legend");
+            
+            // Node categories
+            legend.append("div")
+                .style("font-weight", "bold")
+                .text("Variable Categories");
+            
+            categories.forEach(category => {
+                const color = data.nodes.find(d => d.category === category).color;
+                legend.append("div")
+                    .attr("class", "legend-item")
+                    .html(`<span class="legend-color" style="background-color: ${color}"></span>${category}`);
+            });
+
+            // Relationship types
+            legend.append("div")
+                .style("font-weight", "bold")
+                .style("margin-top", "10px")
+                .text("Relationship Types");
+            
+            relationshipTypes.forEach(type => {
+                const color = type === "Same Direction" ? "#28a745" : type === "Opposite Direction" ? "#dc3545" : "#6c757d";
+                legend.append("div")
+                    .attr("class", "legend-item")
+                    .html(`<span class="legend-color" style="background-color: ${color}"></span>${type}`);
+            });
+
+            // Relationship strengths
+            legend.append("div")
+                .style("font-weight", "bold")
+                .style("margin-top", "10px")
+                .text("Relationship Strengths");
+            
+            strengths.forEach(strength => {
+                legend.append("div")
+                    .attr("class", "legend-item")
+                    .html(`<div style="border-top: ${strength === "Strong" ? "4px" : strength === "Medium" ? "2px" : "0.5px"} solid #666; width: 20px; display: inline-block; margin-right: 5px;"></div>${strength}`);
+            });
+
+            // Tooltip behavior
+            nodes.on("mouseover", function(event, d) {
+                const tooltip = d3.select("#tooltip");
+                tooltip.style("display", "block")
+                    .html(`
+                        <div style="font-weight: bold; margin-bottom: 8px;">${d.name}</div>
+                        <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">ID: ${d.id} | Category: ${d.category}</div>
+                        <div style="font-size: 0.9em; margin-bottom: 8px; color: #333;">
+                            ${getVariableDefinition(d.id)}
+                        </div>
+                        <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">Relationships:</div>
+                    `);
+                
+                const connections = data.links.filter(link => 
+                    link.source.id === d.id || link.target.id === d.id
+                );
+                
+                if (connections.length > 0) {
+                    connections.forEach(link => {
+                        const relationshipColor = link.type === "SameDirection" ? "#2ecc71" : 
+                                                link.type === "OppositeDirection" ? "#e74c3c" : "#95a5a6";
+                        
+                        // Check if this relationship matches active filters
+                        const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(link.strength);
+                        const categoryMatch = activeCategories.size === 0 || 
+                            (activeCategories.has(link.source.category) || activeCategories.has(link.target.category));
+                        const isHighlighted = strengthMatch && categoryMatch;
+                        
+                        tooltip.append("div")
+                            .style("color", relationshipColor)
+                            .style("font-weight", isHighlighted ? "bold" : "normal")
+                            .style("opacity", isHighlighted ? "1.0" : "0.5")
+                            .text(`${link.source.id === d.id ? "→" : "←"} ${link.source.id === d.id ? link.target.name : link.source.name} (${link.type}, ${link.strength})`);
+                    });
+                }
+                
+                const [x, y] = d3.pointer(event, document.body);
+                tooltip.style("left", (x + 10) + "px")
+                       .style("top", (y + 10) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select("#tooltip").style("display", "none");
+            });
+
+            // Update positions on tick
+            function ticked() {
+                links.attr("d", d => {
+                    const dx = d.target.x - d.source.x;
+                    const dy = d.target.y - d.source.y;
+                    const dr = Math.sqrt(dx * dx + dy * dy);
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+                });
+
+                nodes.attr("transform", d => `translate(${d.x},${d.y})`);
+            }
+
+        } catch (error) {
+            showError("Error initializing visualization: " + error.message);
+            console.error("Error initializing visualization:", error);
+        }
+
+        // Zoom functions
+        function zoomed(event) {
+            transform = event.transform;
+            container.attr("transform", transform);
+        }
+
+        function zoomIn() {
+            svg.transition().duration(750).call(zoom.scaleBy, 1.2);
+        }
+
+        function zoomOut() {
+            svg.transition().duration(750).call(zoom.scaleBy, 0.8);
+        }
+
+        function resetView() {
+            svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        }
+
+        // Drag functions
+        function dragstarted(event, d) {
+            if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active && simulation) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Window resize handler
+        window.addEventListener('resize', function() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            svg.attr("width", width)
+               .attr("height", height);
+            
+            if (simulation) {
+                simulation.force("center", d3.forceCenter(width / 2, height / 2));
+                simulation.alpha(0.3).restart();
+            }
+        });
+
+        // Add isolated variables analysis
+        function analyzeIsolatedVariables() {
+            const connectionCounts = {};
+            
+            // Count connections for each variable
+            data.nodes.forEach(node => {
+                connectionCounts[node.id] = 0;
+            });
+            
+            data.links.forEach(link => {
+                connectionCounts[link.source.id]++;
+                connectionCounts[link.target.id]++;
+            });
+            
+            // Identify isolated and weakly connected variables
+            const isolated = [];
+            const weaklyConnected = [];
+            
+            Object.entries(connectionCounts).forEach(([id, count]) => {
+                const node = data.nodes.find(n => n.id === id);
+                if (count === 0) {
+                    isolated.push({id, name: node.name, category: node.category});
+                } else if (count <= 2) {
+                    weaklyConnected.push({id, name: node.name, category: node.category, connections: count});
+                }
+            });
+            
+            // Display results
+            const analysisDiv = document.createElement('div');
+            analysisDiv.style.position = 'fixed';
+            analysisDiv.style.bottom = '20px';
+            analysisDiv.style.left = '20px';
+            analysisDiv.style.backgroundColor = 'white';
+            analysisDiv.style.padding = '15px';
+            analysisDiv.style.borderRadius = '4px';
+            analysisDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            analysisDiv.style.maxHeight = '80vh';
+            analysisDiv.style.overflowY = 'auto';
+            
+            let html = '<h3>Isolated Variables Analysis</h3>';
+            
+            if (isolated.length > 0) {
+                html += '<h4>Completely Isolated Variables (0 connections):</h4>';
+                isolated.forEach(v => {
+                    html += `<div>${v.name} (${v.id}) - ${v.category}</div>`;
+                });
+            }
+            
+            if (weaklyConnected.length > 0) {
+                html += '<h4>Weakly Connected Variables (1-2 connections):</h4>';
+                weaklyConnected.forEach(v => {
+                    html += `<div>${v.name} (${v.id}) - ${v.category} (${v.connections} connections)</div>`;
+                });
+            }
+            
+            analysisDiv.innerHTML = html;
+            document.body.appendChild(analysisDiv);
+        }
+
+        // Call the analysis function after the visualization is loaded
+        setTimeout(analyzeIsolatedVariables, 1000);
+
+        // Replace single filter variables with arrays for multiple selection
+        function filterStrength(strength) {
+            if (activeStrengths.has(strength)) {
+                activeStrengths.delete(strength);
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn.textContent === strength) btn.classList.remove('active');
+                });
+            } else {
+                activeStrengths.add(strength);
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn.textContent === strength) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            updateVisualization();
+        }
+
+        function filterCategory(category) {
+            if (activeCategories.has(category)) {
+                activeCategories.delete(category);
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn.textContent === category) btn.classList.remove('active');
+                });
+            } else {
+                activeCategories.add(category);
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn.textContent === category) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+            updateVisualization();
+        }
+
+        function resetFilters() {
+            activeStrengths.clear();
+            activeCategories.clear();
+            d3.selectAll('.filter-button').classed('active', false);
+            updateVisualization();
+        }
+
+        function updateVisualization() {
+            // Update links visibility
+            container.selectAll('.link')
+                .style('stroke-opacity', d => {
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                    const categoryMatch = activeCategories.size === 0 || 
+                        (activeCategories.has(d.source.category) || activeCategories.has(d.target.category));
+                    
+                    if (activeStrengths.size === 0 && activeCategories.size === 0) return 0.6;
+                    if (!strengthMatch || !categoryMatch) return 0.1;
+                    return 1;
+                })
+                .style('marker-end', d => {
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                    const categoryMatch = activeCategories.size === 0 || 
+                        (activeCategories.has(d.source.category) || activeCategories.has(d.target.category));
+                    
+                    if (activeStrengths.size === 0 && activeCategories.size === 0) {
+                        return `url(#arrow-${d.type})`;
+                    }
+                    if (!strengthMatch || !categoryMatch) {
+                        return 'none';  // Hide arrows for filtered out links
+                    }
+                    return `url(#arrow-${d.type})`;
+                });
+
+            // Update nodes visibility
+            container.selectAll('.node')
+                .style('opacity', d => {
+                    if (activeCategories.size === 0) return 1;
+                    return activeCategories.has(d.category) ? 1 : 0.3;
+                });
+        }
+
+        // Add function to get variable definitions
+        function getVariableDefinition(variableId) {
+            const definitions = {
+                "V1": "The total weight or number of fish in a population, measured in tonnes or numbers. Critical for determining sustainable harvest levels and stock status.",
+                "V2": "The rate at which young fish enter the fishable population, influenced by spawning success, larval survival, and environmental conditions.",
+                "V3": "The rate at which fish die from natural causes and fishing, including both target and non-target species mortality.",
+                "V4": "The maximum amount of fish that can be caught, set through TACs.",
+                "V5": "The proportion of fish removed by fishing activities, measured as a rate of removal from the population.",
+                "V6": "The rate at which individual fish increase in size, affected by food availability, temperature, and other environmental conditions.",
+                "V7": "The total amount of fish caught, including both retained and discarded catch, measured in tonnes.",
+                "V8": "The financial returns from fishing operations after accounting for costs.",
+                "V9": "The number of active fishing vessels in the fishery, which has decreased by approximately 60% between 2000-2021.",
+                "V10": "The effectiveness of fishing operations in catching target species while minimizing bycatch and environmental impact.",
+                "V11": "The temperature of ocean waters, with surface temperatures having increased by 1.2°C since 1950 in the region.",
+                "V12": "The spatial and temporal distribution of fish populations, increasingly influenced by climate change and ocean warming.",
+                "V13": "The spatial and temporal distribution of fishing effort, influenced by regulations, weather, and fish availability.",
+                "V14": "The price received for fishery products at various market levels.",
+                "V15": "The amount of fishing activity, measured in days fished, hours trawled, hook-hours, or net-hours.",
+                "V17": "The network of feeding relationships between species.",
+                "V18": "The rate at which species are consumed by predators.",
+                "V19": "The process of rebuilding depleted fish populations to sustainable levels, often measured against biological reference points.",
+                "V20": "The uptake of new fishing technologies and methods, including electronic monitoring and gear modifications.",
+                "V21": "The ease with which fish can be caught, influenced by gear type, fish behavior, and environmental conditions.",
+                "V22": "The amount of competing seafood products imported into Australia.",
+                "V23": "The amount of seafood available for domestic consumption.",
+                "V24": "The market value of individual transferable quotas, reflecting expected profitability.",
+                "V25": "The amount of capital invested in fishing operations and infrastructure.",
+                "V26": "The intensity of management rule enforcement.",
+                "V27": "The degree to which fishers follow management rules.",
+                "V28": "Unauthorized fishing activities, including exceeding quotas and fishing in closed areas.",
+                "V29": "The effects of climate change on marine ecosystems, including warming, acidification, and changing current patterns.",
+                "V30": "The current condition of a fish stock relative to reference points (B20, B40, B48), indicating whether it is sustainably fished, overfished, or rebuilding.",
+                "V31": "The rate of production of organic matter by phytoplankton.",
+                "V32": "The buying and selling of fishing quotas between operators.",
+                "V34": "The localized reduction in fish abundance due to concentrated fishing effort in specific areas.",
+                "V35": "The loss or damage to marine habitats.",
+                "V36": "The number or biomass of fish present in a given area, influenced by both natural and human factors.",
+                "V37": "The processes and services provided by marine ecosystems.",
+                "V38": "The level of public acceptance and support for fishing operations.",
+                "V39": "Various rules and regulations limiting fishing activities.",
+                "V40": "The overall financial health of the fishery, including profitability and efficiency.",
+                "V41": "The temperature of the ocean surface layer, critical for species distribution and ecosystem productivity.",
+                "V42": "The temperature at the ocean floor, particularly important for demersal species.",
+                "V43": "A measure of phytoplankton biomass and primary productivity in the ocean.",
+                "V44": "A measure of El Niño/La Niña development and intensity, affecting ocean conditions.",
+                "V45": "An indicator of north-south movement of westerly winds, affecting storm patterns.",
+                "V46": "The ratio between major phytoplankton groups, indicating food web structure.",
+                "V47": "The decrease in ocean pH due to CO2 absorption, affecting marine organisms.",
+                "V48": "The direction and strength of major ocean currents, including the East Australian Current.",
+                "V49": "The strength of nutrient-rich water upwelling events.",
+                "V50": "The concentration of dissolved oxygen in seawater, declining with warming.",
+                "V51": "The frequency and intensity of storms, floods, and marine heatwaves.",
+                "V52": "The total market value of fishery products at landing, approximately $86 million in 2019-20.",
+                "V53": "Profits after accounting for all costs and opportunity costs of capital and labor.",
+                "V54": "A measure of efficiency in converting inputs to outputs in the fishery.",
+                "V56": "The costs associated with fishing operations including fuel, labor, and maintenance.",
+                "V57": "The number of people employed in the fishery, measured in full-time equivalents.",
+                "V58": "The total fishing power of the fleet, including vessel numbers and characteristics.",
+                "V59": "The value of fishery products sold to international markets.",
+                "V60": "Various measures of economic success including profit margins and return on investment.",
+                "V61": "The number of people directly employed in harvesting operations.",
+                "V63": "The degree to which coastal communities rely on the fishery for economic activity.",
+                "V64": "The level of indigenous involvement in commercial fishing operations.",
+                "V65": "The gender breakdown of fishery participants.",
+                "V66": "The age distribution of fishery participants.",
+                "V67": "Measures of physical and mental health among fishing industry participants.",
+                "V68": "Public attitudes toward the fishery and its operations.",
+                "V69": "The fishery's contribution to regional and national food supply.",
+                "V70": "The significance of fishing traditions to community identity.",
+                "V71": "The types of gear and techniques used, including trawl, Danish seine, longline, and gillnet operations.",
+                "V73": "The amount of catch obtained per unit of fishing effort, used as an index of stock abundance.",
+                "V74": "The proportion of catch returned to sea, varying by sector and target species.",
+                "V75": "The ability of fishing gear to target specific species or sizes while minimizing bycatch.",
+                "V76": "The fishing power of individual vessels, measured by engine power and gross tonnage.",
+                "V77": "The use of cameras and sensors to monitor fishing activities and catch composition.",
+                "V78": "The use of area-based management tools including closures and marine parks.",
+                "V79": "The proportion of fishing trips monitored by independent observers.",
+                "V80": "The framework for setting catch limits and management measures based on stock status.",
+                "V81": "The average landed value per unit weight for different species.",
+                "V82": "The level of competition from imports and alternative products.",
+                "V83": "Consumer demand patterns for seafood products.",
+                "V84": "The pathways through which products move from harvest to consumer.",
+                "V85": "The degree of market power in the supply chain.",
+                "V86": "International destinations for fishery products.",
+                "V87": "Processing that increases product value.",
+                "V88": "The degree to which species can be substituted for each other.",
+                "V89": "The eco-certification status of fishery products.",
+                "V90": "The degree of price fluctuation over time.",
+                "V91": "Indigenous understanding of marine ecosystems and species.",
+                "V92": "Traditional methods and protocols for fishing activities.",
+                "V93": "Indigenous participation in fishery management decisions.",
+                "V94": "Documentation of culturally significant marine areas.",
+                "V95": "Indigenous involvement in commercial fishing operations.",
+                "V96": "Indigenous knowledge of environmental cues for fishing.",
+                "V97": "Indigenous approaches to marine resource stewardship.",
+                "V98": "The volume of catch for cultural purposes.",
+                "V99": "The transfer of traditional knowledge between generations.",
+                "V100": "Collaborative research incorporating indigenous perspectives."
+            };
+            return definitions[variableId] || "Definition not available";
+        }
+    </script>
+</body>
+</html> 
