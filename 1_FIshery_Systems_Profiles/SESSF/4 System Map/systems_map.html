@@ -115,17 +115,23 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 1000;
-            width: 200px;
+            width: 150px;
         }
-        button {
+        #controls button {
             display: block;
             width: 100%;
             margin: 5px 0;
             padding: 8px 10px;
-            text-align: left;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        button:hover {
-            background-color: #f0f0f0;
+        #controls button:hover {
+            background-color: #e9ecef;
         }
         #error-message {
             position: fixed;
@@ -141,9 +147,9 @@
         }
         #filters {
             position: fixed;
-            top: 160px; /* Reduced from 240px to start higher */
+            top: 160px;
             left: 20px;
-            bottom: 20px; /* Maintain bottom spacing */
+            bottom: 20px;
             background-color: white;
             padding: 20px;
             border-radius: 4px;
@@ -156,15 +162,45 @@
         }
         .filter-section {
             margin-bottom: 0;
+            border: 1px solid #eee;
+            border-radius: 4px;
         }
         .filter-section:not(:last-child) {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 20px; /* Increased padding */
+            padding-bottom: 0;
         }
-        .filter-section h4 {
-            margin: 0 0 12px 0; /* Increased bottom margin */
+        .filter-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px 4px 0 0;
+        }
+        .filter-section-header h4 {
+            margin: 0;
             font-size: 14px;
             font-weight: bold;
+        }
+        .filter-section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 10px;
+        }
+        .filter-section-content.expanded {
+            max-height: 300px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .filter-section-toggle {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #666;
         }
         .filter-button {
             display: flex;
@@ -223,45 +259,25 @@
         .filter-button.active .arrow-indicator::after {
             border-left-color: white;
         }
+        /* Remove the navigation container styling since we're using the filters div */
         #navigation {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            width: 200px;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
+            display: none; /* Hide completely rather than removing to avoid breaking any references */
         }
-        .nav-button {
-            display: block;
-            width: 100%;
-            margin: 5px 0;
-            padding: 8px 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-            cursor: pointer;
-            font-size: 12px;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-        .nav-button:hover {
-            background-color: #f0f0f0;
-        }
+        /* Keep the nav-button styling for use with filter-button */
         .nav-button.active {
             background-color: #007bff;
             color: white;
             border-color: #0056b3;
         }
-        .nav-section {
-            margin-bottom: 15px;
+        /* Style for combined filter-button and nav-button classes */
+        .filter-button.nav-button {
+            display: flex;
+            align-items: center;
         }
-        .nav-section:last-child {
-            margin-bottom: 0;
+        .filter-button.nav-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
         }
         #logo {
             position: fixed;
@@ -272,216 +288,68 @@
             height: auto;
             margin-bottom: 0; /* Remove extra margin */
         }
-        
-        #diffusion-controls {
-            position: fixed;
-            right: 240px;
-            bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 1000;
-            width: 280px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .diffusion-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .diffusion-section h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-        }
-        
-        #perturbation-selector, #direction-selector, #simulation-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        #node-selector {
+        /* Styles for causal modeling controls */
+        .causal-select {
             width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-        }
-        
-        .direction-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .direction-button, .simulation-button {
-            padding: 8px 12px;
+            padding: 6px 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 12px;
+            background-color: white;
+        }
+
+        .causal-direction-btn {
+            flex: 1;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
             background-color: white;
             cursor: pointer;
-            font-size: 14px;
             transition: all 0.2s ease;
         }
-        
-        .direction-button:hover, .simulation-button:hover {
-            background-color: #f0f0f0;
-        }
-        
-        .direction-button.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #0056b3;
-        }
-        
-        #increase-btn.active {
+
+        #increaseBtn.active {
             background-color: #28a745;
             color: white;
             border-color: #1e7e34;
         }
-        
-        #decrease-btn.active {
+
+        #decreaseBtn.active {
             background-color: #dc3545;
             color: white;
             border-color: #bd2130;
         }
-        
-        .slider-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 5px;
-        }
-        
-        .slider-container label {
-            flex: 0 0 70px;
+
+        .causal-sim-btn {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
             font-size: 12px;
-        }
-        
-        .slider-container input {
-            flex: 1;
-        }
-        
-        .slider-container span {
-            flex: 0 0 20px;
-            text-align: right;
-            font-size: 12px;
-        }
-        
-        .node .impact-ring {
-            fill: none;
-            stroke-width: 3;
-            r: 14;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        
-        .node .impact-ring.increase {
-            stroke: #28a745;
-        }
-        
-        .node .impact-ring.decrease {
-            stroke: #dc3545;
-        }
-        
-        .node .impact-value {
-            font-size: 10px;
-            text-anchor: middle;
-            dominant-baseline: central;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        #simulation-info {
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 20px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 14px;
-            text-align: center;
-            display: none;
+        .causal-sim-btn:hover:not([disabled]) {
+            background-color: #e9ecef;
         }
-        
-        .link.diffusion-path {
-            stroke-opacity: 0.9 !important;
-            stroke-dasharray: 5, 2;
-            animation: flow 1s linear infinite;
-            z-index: 100 !important;
-            stroke-width: 3px !important;
+
+        .causal-sim-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-        
-        .link.diffusion-path.increase {
-            stroke: #28a745 !important;
+
+        #startSimBtn.active {
+            background-color: #28a745;
+            color: white;
+            border-color: #1e7e34;
         }
-        
-        .link.diffusion-path.decrease {
-            stroke: #dc3545 !important;
-        }
-        
-        @keyframes flow {
-            0% {
-                stroke-dashoffset: 7;
-            }
-            100% {
-                stroke-dashoffset: 0;
-            }
-        }
-        
-        #diffusion-legend {
-            position: fixed;
-            left: 20px;
-            bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            font-size: 12px;
-            z-index: 1000;
-            display: none;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-        
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            border-radius: 50%;
-        }
-        
-        .legend-line {
-            width: 30px;
-            height: 2px;
-            margin-right: 10px;
-        }
-        
-        .legend-ring {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 3px solid;
-            margin-right: 10px;
-            background-color: transparent;
-        }
-        
-        #legend {
-            right: 560px;
+
+        #pauseSimBtn.active {
+            background-color: #ffc107;
+            color: #212529;
+            border-color: #d39e00;
         }
     </style>
 </head>
@@ -496,145 +364,130 @@
         <button onclick="resetView()">Reset View</button>
         <button onclick="resetFilters()">Reset Filters</button>
     </div>
-    <div id="navigation">
-        <div class="nav-section">
-            <h4>Storyline Navigation</h4>
-            <button class="nav-button" onclick="toggleRelationships()" id="toggleRelationshipsBtn">Hide Relationships</button>
-            <button class="nav-button" onclick="focusOnFocalNode()" id="focusFocalBtn">Show Focal Node</button>
-            <button class="nav-button" onclick="focusOnCategory('Stock')" id="focusStockBtn">Show Stock Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Environmental')" id="focusEnvironmentalBtn">Show Environmental Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Economic')" id="focusEconomicBtn">Show Economic Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Social')" id="focusSocialBtn">Show Social Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Technical')" id="focusTechnicalBtn">Show Technical Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Market')" id="focusMarketBtn">Show Market Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Indigenous')" id="focusIndigenousBtn">Show Indigenous Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Management')" id="focusManagementBtn">Show Management Variables</button>
-            <button class="nav-button" onclick="focusOnCategory('Ecosystem')" id="focusEcosystemBtn">Show Ecosystem Variables</button>
-            <button class="nav-button" onclick="showAllCategories()" id="showAllBtn">Show All Variables</button>
-        </div>
-    </div>
-    
-    <!-- Token Diffusion Controls -->
-    <div id="diffusion-controls">
-        <div class="diffusion-section">
-            <h4>Causal Scenario Modeling</h4>
-            <div id="perturbation-selector">
-                <label for="node-selector">Select Variable:</label>
-                <select id="node-selector">
-                    <option value="">-- Select a variable --</option>
-                </select>
-                <button id="refresh-dropdown" style="margin-left: 5px; padding: 2px 8px; font-size: 12px;">Refresh</button>
-            </div>
-            <div id="direction-selector">
-                <label>Initial Change:</label>
-                <div class="direction-buttons">
-                    <button id="increase-btn" class="direction-button">Increase ↑</button>
-                    <button id="decrease-btn" class="direction-button">Decrease ↓</button>
-                </div>
-            </div>
-            <div id="simulation-controls">
-                <button id="run-simulation-btn" class="simulation-button">Run Simulation</button>
-                <button id="reset-simulation-btn" class="simulation-button">Reset</button>
-                <div class="slider-container">
-                    <label for="propagation-steps">Max Steps:</label>
-                    <input type="range" id="propagation-steps" min="1" max="10" value="5">
-                    <span id="steps-value">5</span>
-                </div>
-                <div class="slider-container">
-                    <label for="simulation-speed">Speed:</label>
-                    <input type="range" id="simulation-speed" min="1" max="10" value="5">
-                    <span id="speed-value">5</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div id="filters">
         <div class="filter-section">
-            <h4>Relationship Types</h4>
-            <button class="filter-button" onclick="filterType('SameDirection')">
-                <div class="arrow-indicator" style="background-color: #28a745; color: #28a745;"></div>Same Direction
-            </button>
-            <button class="filter-button" onclick="filterType('OppositeDirection')">
-                <div class="arrow-indicator" style="background-color: #dc3545; color: #dc3545;"></div>Opposite Direction
-            </button>
-            <button class="filter-button" onclick="filterType('Variable')">
-                <div class="arrow-indicator" style="background-color: #6c757d; color: #6c757d;"></div>Variable
-            </button>
+            <div class="filter-section-header" onclick="toggleFilterSection(this)">
+                <h4>Relationship Types</h4>
+                <span class="filter-section-toggle">+</span>
+            </div>
+            <div class="filter-section-content">
+                <button class="filter-button" onclick="filterType('SameDirection')">
+                    <div class="arrow-indicator" style="background-color: #28a745; color: #28a745;"></div>Same Direction
+                </button>
+                <button class="filter-button" onclick="filterType('OppositeDirection')">
+                    <div class="arrow-indicator" style="background-color: #dc3545; color: #dc3545;"></div>Opposite Direction
+                </button>
+                <button class="filter-button" onclick="filterType('Variable')">
+                    <div class="arrow-indicator" style="background-color: #6c757d; color: #6c757d;"></div>Variable
+                </button>
+            </div>
         </div>
         <div class="filter-section">
-            <h4>Relationship Strength</h4>
-            <button class="filter-button" onclick="filterStrength('Strong')">
-                <div style="border-top: 4px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Strong
-            </button>
-            <button class="filter-button" onclick="filterStrength('Medium')">
-                <div style="border-top: 2px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Medium
-            </button>
-            <button class="filter-button" onclick="filterStrength('Weak')">
-                <div style="border-top: 0.5px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Weak
-            </button>
+            <div class="filter-section-header" onclick="toggleFilterSection(this)">
+                <h4>Relationship Strength</h4>
+                <span class="filter-section-toggle">+</span>
+            </div>
+            <div class="filter-section-content">
+                <button class="filter-button" onclick="filterStrength('Strong')">
+                    <div style="border-top: 4px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Strong
+                </button>
+                <button class="filter-button" onclick="filterStrength('Medium')">
+                    <div style="border-top: 2px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Medium
+                </button>
+                <button class="filter-button" onclick="filterStrength('Weak')">
+                    <div style="border-top: 0.5px solid #666; width: 20px; display: inline-block; margin-right: 8px; vertical-align: middle;"></div>Weak
+                </button>
+            </div>
         </div>
         <div class="filter-section">
-            <h4>Variable Categories</h4>
-            <button class="filter-button" onclick="filterCategory('Stock')">
-                <span class="color-dot" style="background-color: #ff0000"></span>Stock
-            </button>
-            <button class="filter-button" onclick="filterCategory('Environmental')">
-                <span class="color-dot" style="background-color: #008000"></span>Environmental
-            </button>
-            <button class="filter-button" onclick="filterCategory('Economic')">
-                <span class="color-dot" style="background-color: #0000ff"></span>Economic
-            </button>
-            <button class="filter-button" onclick="filterCategory('Social')">
-                <span class="color-dot" style="background-color: #ff69b4"></span>Social
-            </button>
-            <button class="filter-button" onclick="filterCategory('Technical')">
-                <span class="color-dot" style="background-color: #4b0082"></span>Technical
-            </button>
-            <button class="filter-button" onclick="filterCategory('Market')">
-                <span class="color-dot" style="background-color: #800000"></span>Market
-            </button>
-            <button class="filter-button" onclick="filterCategory('Indigenous')">
-                <span class="color-dot" style="background-color: #daa520"></span>Indigenous
-            </button>
-            <button class="filter-button" onclick="filterCategory('Management')">
-                <span class="color-dot" style="background-color: #800080"></span>Management
-            </button>
-            <button class="filter-button" onclick="filterCategory('Ecosystem')">
-                <span class="color-dot" style="background-color: #006400"></span>Ecosystem
-            </button>
+            <div class="filter-section-header" onclick="toggleFilterSection(this)">
+                <h4>Variable Categories</h4>
+                <span class="filter-section-toggle">+</span>
+            </div>
+            <div class="filter-section-content">
+                <button class="filter-button" onclick="filterCategory('Stock')">
+                    <span class="color-dot" style="background-color: #ff0000"></span>Stock
+                </button>
+                <button class="filter-button" onclick="filterCategory('Environmental')">
+                    <span class="color-dot" style="background-color: #008000"></span>Environmental
+                </button>
+                <button class="filter-button" onclick="filterCategory('Economic')">
+                    <span class="color-dot" style="background-color: #0000ff"></span>Economic
+                </button>
+                <button class="filter-button" onclick="filterCategory('Social')">
+                    <span class="color-dot" style="background-color: #ff69b4"></span>Social
+                </button>
+                <button class="filter-button" onclick="filterCategory('Technical')">
+                    <span class="color-dot" style="background-color: #4b0082"></span>Technical
+                </button>
+                <button class="filter-button" onclick="filterCategory('Market')">
+                    <span class="color-dot" style="background-color: #800000"></span>Market
+                </button>
+                <button class="filter-button" onclick="filterCategory('Indigenous')">
+                    <span class="color-dot" style="background-color: #daa520"></span>Indigenous
+                </button>
+                <button class="filter-button" onclick="filterCategory('Management')">
+                    <span class="color-dot" style="background-color: #800080"></span>Management
+                </button>
+                <button class="filter-button" onclick="filterCategory('Ecosystem')">
+                    <span class="color-dot" style="background-color: #006400"></span>Ecosystem
+                </button>
+            </div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-section-header" onclick="toggleFilterSection(this)">
+                <h4>Causal Modeling</h4>
+                <span class="filter-section-toggle">+</span>
+            </div>
+            <div class="filter-section-content">
+                <div class="causal-control-group">
+                    <label for="causalVariable" style="display: block; margin-bottom: 5px; font-size: 12px;">Select Variable:</label>
+                    <select id="causalVariable" class="causal-select">
+                        <option value="">-- Select a variable --</option>
+                        <!-- Will be populated with all variables -->
+                    </select>
+                </div>
+                <div class="causal-control-group" style="margin-top: 10px;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px;">Change Direction:</label>
+                    <div style="display: flex; gap: 5px;">
+                        <button id="increaseBtn" class="causal-direction-btn" onclick="selectDirection('increase')">Increase</button>
+                        <button id="decreaseBtn" class="causal-direction-btn" onclick="selectDirection('decrease')">Decrease</button>
+                    </div>
+                </div>
+                <div class="causal-control-group" style="margin-top: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-size: 12px;">Simulation Controls:</label>
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <button id="startSimBtn" class="causal-sim-btn" onclick="startSimulation()">Start Simulation</button>
+                        <button id="pauseSimBtn" class="causal-sim-btn" onclick="pauseSimulation()" disabled>Pause Simulation</button>
+                        <button id="resetSimBtn" class="causal-sim-btn" onclick="resetSimulation()">Reset Simulation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="filter-section">
+            <div class="filter-section-header" onclick="toggleFilterSection(this)">
+                <h4>Storyline Navigation</h4>
+                <span class="filter-section-toggle">+</span>
+            </div>
+            <div class="filter-section-content">
+                <button class="filter-button nav-button" onclick="toggleRelationships()" id="toggleRelationshipsBtn">Hide Relationships</button>
+                <button class="filter-button nav-button" onclick="focusOnFocalNode()" id="focusFocalBtn">Show Focal Node</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Stock')" id="focusStockBtn">Show Stock Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Environmental')" id="focusEnvironmentalBtn">Show Environmental Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Economic')" id="focusEconomicBtn">Show Economic Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Social')" id="focusSocialBtn">Show Social Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Technical')" id="focusTechnicalBtn">Show Technical Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Market')" id="focusMarketBtn">Show Market Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Indigenous')" id="focusIndigenousBtn">Show Indigenous Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Management')" id="focusManagementBtn">Show Management Variables</button>
+                <button class="filter-button nav-button" onclick="focusOnCategory('Ecosystem')" id="focusEcosystemBtn">Show Ecosystem Variables</button>
+                <button class="filter-button nav-button" onclick="showAllCategories()" id="showAllBtn">Show All Variables</button>
+            </div>
         </div>
     </div>
     <div id="error-message"></div>
-    <div id="simulation-info"></div>
-    
-    <div id="diffusion-legend">
-        <h4>Causal Impact Legend</h4>
-        <div class="legend-item">
-            <div class="legend-ring" style="border-color: #28a745;"></div>
-            <span>Variable Increase</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-ring" style="border-color: #dc3545;"></div>
-            <span>Variable Decrease</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-line" style="background-color: #28a745; stroke-dasharray: 5, 2;"></div>
-            <span>Positive Causal Flow</span>
-        </div>
-        <div class="legend-item">
-            <div class="legend-line" style="background-color: #dc3545; stroke-dasharray: 5, 2;"></div>
-            <span>Negative Causal Flow</span>
-        </div>
-    </div>
 
     <script>
-        // Global debug flag
-        const DEBUG = true;
-        
-        // Load data from JSON file or initialize data if file not provided
-        let data = {};
-
         // Global variables
         let simulation;
         const width = window.innerWidth;
@@ -951,8 +804,8 @@
                 ]
             };
 
-            // Setup force simulation
-            const simulation = d3.forceSimulation(data.nodes)
+            // Adjust force simulation parameters for the larger dataset
+            simulation = d3.forceSimulation(data.nodes)
                 .force("link", d3.forceLink(data.links)
                     .id(d => d.id)
                     .distance(150)  // Increased distance for better spacing
@@ -963,51 +816,6 @@
                 .force("center", d3.forceCenter(width / 2, height / 2))
                 .force("collision", d3.forceCollide().radius(40)) // Increased collision radius
                 .on("tick", ticked);
-            
-            function ticked() {
-                // Update link positions
-                link
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
-                
-                // Update node positions
-                node
-                    .attr("transform", d => `translate(${d.x}, ${d.y})`);
-                
-                // Update category hulls if they exist
-                updateCategoryHulls();
-                
-                // Update impact ring positions if simulation is running
-                if (simulationRunning || Object.keys(nodeImpacts).length > 0) {
-                    updateImpactRingPositions();
-                }
-            }
-            
-            // Function to update impact rings to follow node positions
-            function updateImpactRingPositions() {
-                d3.selectAll('.node').each(function() {
-                    const node = d3.select(this);
-                    
-                    // Ensure the impact ring and value are properly positioned (at 0,0 relative to the node group)
-                    node.select('.impact-ring')
-                        .attr('cx', 0)
-                        .attr('cy', 0);
-                    
-                    node.select('.impact-value')
-                        .attr('x', 0)
-                        .attr('y', 0);
-                });
-            }
-            
-            // Make sure to call this once during setup
-            function updateCategoryHulls() {
-                // Update hull paths if they exist
-                if (typeof drawCategoryHulls === 'function') {
-                    drawCategoryHulls();
-                }
-            }
 
             // Create links
             const links = container.append("g")
@@ -1677,772 +1485,132 @@
                 .style('marker-end', d => `url(#arrow-${d.type})`);
         }
 
-        // Token Diffusion Algorithm Variables
-        let simulationRunning = false;
-        let simulationStep = 0;
-        let maxSteps = 5;
-        let simulationSpeed = 5;
-        let selectedNode = null;
-        let selectedDirection = null;
-        let nodeImpacts = {};
-        let diffusionQueue = [];
-        let processedPaths = new Set();
-        let causalPaths = new Set();
-        
-        // Initialize node selector
-        function initializeTokenDiffusion() {
-            if (DEBUG) console.log("Initializing token diffusion UI");
+        // Add the toggle filter section function in the script section
+        function toggleFilterSection(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.filter-section-toggle');
             
-            const nodeSelector = document.getElementById('node-selector');
-            if (DEBUG) console.log("Node selector found:", !!nodeSelector);
-            
-            // Clear existing options first
-            while (nodeSelector.firstChild) {
-                nodeSelector.removeChild(nodeSelector.firstChild);
-            }
-            
-            // Add default empty option
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.textContent = "-- Select a variable --";
-            nodeSelector.appendChild(defaultOption);
-            
-            // Get nodes from different possible sources
-            let nodesToUse = [];
-            
-            // First try: data.nodes
-            if (data.nodes && Array.isArray(data.nodes) && data.nodes.length > 0) {
-                console.log("Using data.nodes for dropdown");
-                nodesToUse = data.nodes;
-            } 
-            // Second try: simulation nodes
-            else if (simulation && simulation.nodes().length > 0) {
-                console.log("Using simulation nodes for dropdown");
-                nodesToUse = simulation.nodes();
-            } 
-            // Third try: extract directly from DOM
-            else {
-                console.log("Extracting nodes from DOM");
-                const extractedNodes = [];
-                d3.selectAll('.node').each(function(d) {
-                    if (d) extractedNodes.push(d);
-                });
-                
-                if (extractedNodes.length > 0) {
-                    console.log(`Extracted ${extractedNodes.length} nodes from DOM`);
-                    nodesToUse = extractedNodes;
-                } else {
-                    console.error("No nodes found in any source");
-                    showError("Error: No nodes data available for simulation");
-                    return;
-                }
-            }
-            
-            // Debug output
-            if (DEBUG) {
-                console.log(`Initializing selector with ${nodesToUse.length} nodes`);
-                console.log("Sample node:", nodesToUse[0]);
-                console.log("All nodes:", nodesToUse);
-            }
-            
-            // Sort nodes by category and then by name for better organization
-            const sortedNodes = [...nodesToUse].sort((a, b) => {
-                const catA = a.category || 'Uncategorized';
-                const catB = b.category || 'Uncategorized';
-                if (catA === catB) {
-                    const nameA = a.name || a.id || '';
-                    const nameB = b.name || b.id || '';
-                    return nameA.localeCompare(nameB);
-                }
-                return catA.localeCompare(catB);
-            });
-            
-            // Add options to the selector, grouped by category
-            let currentCategory = '';
-            let currentOptgroup = null;
-            
-            sortedNodes.forEach(node => {
-                // Handle both string and object references
-                const nodeId = typeof node.id === 'string' ? node.id : (node.id ? node.id.toString() : 'unknown');
-                const nodeName = node.name || nodeId;
-                const nodeCategory = node.category || 'Uncategorized';
-                
-                if (nodeCategory !== currentCategory) {
-                    currentOptgroup = document.createElement('optgroup');
-                    currentOptgroup.label = nodeCategory;
-                    nodeSelector.appendChild(currentOptgroup);
-                    currentCategory = nodeCategory;
-                }
-                
-                const option = document.createElement('option');
-                option.value = nodeId;
-                option.textContent = `${nodeName} (${nodeId})`;
-                currentOptgroup.appendChild(option);
-            });
-            
-            // Debug output
-            console.log(`Selector initialized with ${nodeSelector.options.length} options`);
-            
-            // Ensure all nodes have impact rings
-            ensureImpactRings();
-            
-            // Add event listeners
-            nodeSelector.addEventListener('change', onNodeSelect);
-            document.getElementById('increase-btn').addEventListener('click', () => setDirection('increase'));
-            document.getElementById('decrease-btn').addEventListener('click', () => setDirection('decrease'));
-            document.getElementById('run-simulation-btn').addEventListener('click', toggleSimulation);
-            document.getElementById('reset-simulation-btn').addEventListener('click', resetSimulation);
-            
-            // Setup sliders
-            const stepsSlider = document.getElementById('propagation-steps');
-            const stepsValue = document.getElementById('steps-value');
-            stepsSlider.addEventListener('input', () => {
-                maxSteps = parseInt(stepsSlider.value);
-                stepsValue.textContent = maxSteps;
-            });
-            
-            const speedSlider = document.getElementById('simulation-speed');
-            const speedValue = document.getElementById('speed-value');
-            speedSlider.addEventListener('input', () => {
-                simulationSpeed = parseInt(speedSlider.value);
-                speedValue.textContent = simulationSpeed;
-            });
-            
-            // Show the diffusion legend and help text
-            document.getElementById('diffusion-legend').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('diffusion-legend').style.display = 'none';
-            }, 5000);
-        }
-        
-        // Create impact rings for all nodes
-        function ensureImpactRings() {
-            d3.selectAll('.node').each(function(d) {
-                const node = d3.select(this);
-                
-                // Remove existing impact rings and values first to prevent duplication
-                node.selectAll('.impact-ring').remove();
-                node.selectAll('.impact-value').remove();
-                
-                // Add impact ring
-                node.append('circle')
-                    .attr('class', 'impact-ring')
-                    .attr('r', 14)
-                    .style('opacity', 0);
-                
-                // Add impact value
-                node.append('text')
-                    .attr('class', 'impact-value')
-                    .attr('dy', '.35em')
-                    .style('opacity', 0);
-            });
-            
-            console.log("Created impact rings for all nodes");
-        }
-        
-        function updateNodeVisuals(nodeId) {
-            const impact = nodeImpacts[nodeId];
-            if (!impact) {
-                console.error("No impact data for node", nodeId);
-                return;
-            }
-            
-            // Find node element by ID
-            const nodeElement = d3.selectAll('.node').filter(d => {
-                if (!d) return false;
-                const dId = typeof d.id === 'string' ? d.id : (d.id ? d.id.toString() : null);
-                return dId === nodeId;
-            });
-            
-            if (nodeElement.empty()) {
-                console.error("Could not find node element for", nodeId);
-                return;
-            }
-            
-            // Update impact ring
-            const impactRing = nodeElement.select('.impact-ring');
-            if (impactRing.empty()) {
-                console.error("No impact ring for node", nodeId);
-                return;
-            }
-            
-            impactRing
-                .classed('increase', impact.value > 0)
-                .classed('decrease', impact.value < 0)
-                .style('opacity', Math.abs(impact.value))
-                .attr('stroke-width', Math.abs(impact.value) * 4 + 1);
-            
-            // Update impact value
-            const impactValue = nodeElement.select('.impact-value');
-            if (impactValue.empty()) {
-                console.error("No impact value for node", nodeId);
-                return;
-            }
-            
-            const displayValue = (impact.value > 0 ? '+' : '') + impact.value.toFixed(2);
-            impactValue
-                .text(displayValue)
-                .style('opacity', 1)
-                .style('fill', impact.value > 0 ? '#28a745' : '#dc3545');
-        }
-        
-        function resetSimulation(resetUI = true) {
-            // Stop any running simulation
-            simulationRunning = false;
-            simulationStep = 0;
-            
-            // Clear data structures
-            nodeImpacts = {};
-            diffusionQueue = [];
-            processedPaths = new Set();
-            causalPaths = new Set();
-            
-            // Reset visual elements
-            d3.selectAll('.impact-ring')
-                .style('opacity', 0)
-                .classed('increase', false)
-                .classed('decrease', false);
-                
-            d3.selectAll('.impact-value')
-                .style('opacity', 0)
-                .text('');
-                
-            // Reset link styling
-            d3.selectAll('.link')
-                .classed('diffusion-path', false)
-                .classed('increase', false)
-                .classed('decrease', false);
-            
-            // Hide simulation info
-            document.getElementById('simulation-info').style.display = 'none';
-            
-            // Hide legend
-            document.getElementById('diffusion-legend').style.display = 'none';
-            
-            if (resetUI) {
-                // Reset UI controls
-                document.getElementById('run-simulation-btn').textContent = 'Run Simulation';
-                document.getElementById('node-selector').disabled = false;
-                document.getElementById('increase-btn').disabled = false;
-                document.getElementById('decrease-btn').disabled = false;
-                document.getElementById('propagation-steps').disabled = false;
-                document.getElementById('simulation-speed').disabled = false;
-            }
-        }
-        
-        function onNodeSelect() {
-            const nodeSelector = document.getElementById('node-selector');
-            const nodeId = nodeSelector.value;
-            
-            if (!nodeId) {
-                selectedNode = null;
-                updateRunButtonState();
-                return;
-            }
-            
-            // Find the corresponding node in all possible sources
-            let foundNode = null;
-            
-            // Check data.nodes
-            if (data.nodes && Array.isArray(data.nodes)) {
-                foundNode = data.nodes.find(n => {
-                    const nId = typeof n.id === 'string' ? n.id : (n.id ? n.id.toString() : null);
-                    return nId === nodeId;
-                });
-            }
-            
-            // Check simulation nodes if not found
-            if (!foundNode && simulation && simulation.nodes().length > 0) {
-                foundNode = simulation.nodes().find(n => {
-                    const nId = typeof n.id === 'string' ? n.id : (n.id ? n.id.toString() : null);
-                    return nId === nodeId;
-                });
-            }
-            
-            // As a last resort, check DOM nodes
-            if (!foundNode) {
-                let domNode = null;
-                d3.selectAll('.node').each(function(d) {
-                    if (d && (d.id === nodeId || d.id?.toString() === nodeId)) {
-                        domNode = d;
-                    }
-                });
-                if (domNode) foundNode = domNode;
-            }
-            
-            if (foundNode) {
-                selectedNode = foundNode;
-                console.log(`Selected node:`, foundNode);
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                toggle.textContent = '+';
             } else {
-                console.error(`Could not find node with id ${nodeId}`);
-                selectedNode = null;
+                content.classList.add('expanded');
+                toggle.textContent = '−';
+            }
+        }
+
+        // Add extra initialization to expand the first section by default
+        document.addEventListener('DOMContentLoaded', function() {
+            // Expand the first filter section by default
+            const firstFilterHeader = document.querySelector('.filter-section-header');
+            if (firstFilterHeader) {
+                toggleFilterSection(firstFilterHeader);
             }
             
-            // If a direction is already selected, enable the run button
-            updateRunButtonState();
+            // Populate causal variable dropdown with all nodes
+            populateCausalVariableDropdown();
+        });
+
+        // Functions for causal modeling
+        function populateCausalVariableDropdown() {
+            const dropdown = document.getElementById('causalVariable');
+            if (!dropdown) return;
+            
+            // Clear existing options except the first placeholder
+            while (dropdown.options.length > 1) {
+                dropdown.remove(1);
+            }
+            
+            // Sort nodes alphabetically by name for easier selection
+            const sortedNodes = [...data.nodes].sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Add options for each node
+            sortedNodes.forEach(node => {
+                const option = document.createElement('option');
+                option.value = node.id;
+                option.text = `${node.name} (${node.id})`;
+                dropdown.add(option);
+            });
         }
-        
-        function setDirection(direction) {
-            // Toggle direction buttons
-            const increaseBtn = document.getElementById('increase-btn');
-            const decreaseBtn = document.getElementById('decrease-btn');
+
+        // Variables to track simulation state
+        let simulationRunning = false;
+        let selectedVariable = null;
+        let changeDirection = null;
+
+        // Direction selection
+        function selectDirection(direction) {
+            changeDirection = direction;
+            
+            // Update button states
+            const increaseBtn = document.getElementById('increaseBtn');
+            const decreaseBtn = document.getElementById('decreaseBtn');
             
             if (direction === 'increase') {
                 increaseBtn.classList.add('active');
                 decreaseBtn.classList.remove('active');
-                selectedDirection = 'increase';
             } else {
-                decreaseBtn.classList.add('active');
                 increaseBtn.classList.remove('active');
-                selectedDirection = 'decrease';
-            }
-            
-            // If a node is already selected, enable the run button
-            updateRunButtonState();
-        }
-        
-        function updateRunButtonState() {
-            const runButton = document.getElementById('run-simulation-btn');
-            if (selectedNode && selectedDirection) {
-                runButton.disabled = false;
-                runButton.style.opacity = 1;
-            } else {
-                runButton.disabled = true;
-                runButton.style.opacity = 0.5;
+                decreaseBtn.classList.add('active');
             }
         }
-        
-        function toggleSimulation() {
-            if (simulationRunning) {
-                pauseSimulation();
-            } else {
-                startSimulation();
-            }
-        }
-        
+
+        // Simulation control functions - these are stubs that will be implemented later
         function startSimulation() {
-            if (!selectedNode || !selectedDirection) return;
+            const variableDropdown = document.getElementById('causalVariable');
+            selectedVariable = variableDropdown.value;
             
-            // Update UI
+            if (!selectedVariable) {
+                alert('Please select a variable first');
+                return;
+            }
+            
+            if (!changeDirection) {
+                alert('Please select a change direction (increase or decrease)');
+                return;
+            }
+            
             simulationRunning = true;
-            document.getElementById('run-simulation-btn').textContent = 'Pause';
-            document.getElementById('node-selector').disabled = true;
-            document.getElementById('increase-btn').disabled = true;
-            document.getElementById('decrease-btn').disabled = true;
-            document.getElementById('propagation-steps').disabled = true;
-            document.getElementById('simulation-speed').disabled = true;
             
-            // Show legend
-            document.getElementById('diffusion-legend').style.display = 'block';
+            // Update button states
+            document.getElementById('startSimBtn').disabled = true;
+            document.getElementById('pauseSimBtn').disabled = false;
+            document.getElementById('startSimBtn').classList.add('active');
             
-            // Initialize simulation
-            resetSimulation(false);
-            
-            // Recreate impact rings to ensure they exist
-            ensureImpactRings();
-            
-            // Set initial impact for selected node
-            const initialValue = selectedDirection === 'increase' ? 1.0 : -1.0;
-            nodeImpacts[selectedNode.id] = {
-                value: initialValue,
-                step: 0,
-                processed: false
-            };
-            
-            // Add first node to queue
-            diffusionQueue.push({
-                nodeId: selectedNode.id,
-                parentId: null,
-                step: 0,
-                pathImpact: initialValue
-            });
-            
-            // Update the initial node visuals
-            updateNodeVisuals(selectedNode.id);
-            
-            // Show simulation info
-            const simInfo = document.getElementById('simulation-info');
-            simInfo.textContent = `Simulating impact of ${selectedDirection === 'increase' ? 'increasing' : 'decreasing'} ${selectedNode.name}`;
-            simInfo.style.display = 'block';
-            
-            // Start simulation with slight delay to ensure UI updates first
-            setTimeout(processNextDiffusionStep, 100);
+            // Future implementation will go here
+            console.log(`Starting simulation: ${changeDirection} in ${selectedVariable}`);
         }
-        
+
         function pauseSimulation() {
             simulationRunning = false;
-            document.getElementById('run-simulation-btn').textContent = 'Continue';
+            
+            // Update button states
+            document.getElementById('startSimBtn').disabled = false;
+            document.getElementById('pauseSimBtn').disabled = true;
+            document.getElementById('startSimBtn').classList.remove('active');
+            
+            // Future implementation will go here
+            console.log('Pausing simulation');
         }
-        
-        function processNextDiffusionStep() {
-            if (!simulationRunning) return;
-            
-            // If queue is empty or we've reached max steps, end simulation
-            if (diffusionQueue.length === 0) {
-                finishSimulation();
-                return;
-            }
-            
-            // Process next node in queue
-            const currentItem = diffusionQueue.shift();
-            const { nodeId, parentId, step, pathImpact } = currentItem;
-            
-            // If we've exceeded max steps, skip this node
-            if (step > maxSteps) {
-                // Continue with next item
-                setTimeout(processNextDiffusionStep, 1000 / simulationSpeed);
-                return;
-            }
-            
-            // Check if this specific path has been processed
-            const pathKey = parentId ? `${parentId}->${nodeId}` : `start->${nodeId}`;
-            if (processedPaths.has(pathKey)) {
-                // Continue with next item
-                setTimeout(processNextDiffusionStep, 1000 / simulationSpeed);
-                return;
-            }
-            
-            // Mark this path as processed
-            processedPaths.add(pathKey);
-            
-            // If there's a parent, highlight the link between parent and this node
-            if (parentId) {
-                highlightCausalPath(parentId, nodeId, pathImpact > 0);
-            }
-            
-            // Update node impact
-            if (!nodeImpacts[nodeId]) {
-                nodeImpacts[nodeId] = {
-                    value: pathImpact,
-                    step: step,
-                    processed: false
-                };
-            } else if (nodeImpacts[nodeId].step <= step) {
-                // Combine effects based on sign
-                // If same sign, strengthen effect; if opposite, weaken effect
-                const existingImpact = nodeImpacts[nodeId].value;
-                const newImpact = existingImpact + pathImpact;
-                
-                // Cap impact between -1.0 and 1.0
-                nodeImpacts[nodeId].value = Math.max(-1.0, Math.min(1.0, newImpact));
-                nodeImpacts[nodeId].step = step;
-            }
-            
-            // Update visual representation
-            updateNodeVisuals(nodeId);
-            
-            // If node was already processed, don't add its connections again
-            if (nodeImpacts[nodeId].processed) {
-                // Continue with next item
-                setTimeout(processNextDiffusionStep, 1000 / simulationSpeed);
-                return;
-            }
-            
-            // Mark node as processed
-            nodeImpacts[nodeId].processed = true;
-            
-            // Find all outgoing connections from all possible sources
-            let outgoingLinks = [];
-            
-            // Check in data.links
-            if (data.links && Array.isArray(data.links)) {
-                outgoingLinks = data.links.filter(link => {
-                    const sourceId = typeof link.source === 'object' ? 
-                        (link.source.id ? link.source.id.toString() : null) : 
-                        (link.source ? link.source.toString() : null);
-                    return sourceId === nodeId;
-                });
-            }
-            
-            // If no links found, try from DOM
-            if (outgoingLinks.length === 0) {
-                d3.selectAll('.link').each(function(d) {
-                    if (d) {
-                        const sourceId = typeof d.source === 'object' ? 
-                            (d.source.id ? d.source.id.toString() : null) : 
-                            (d.source ? d.source.toString() : null);
-                        
-                        if (sourceId === nodeId) {
-                            outgoingLinks.push(d);
-                        }
-                    }
-                });
-            }
-            
-            // Calculate next step
-            const nextStep = step + 1;
-            
-            // Add connected nodes to queue
-            outgoingLinks.forEach(link => {
-                const targetId = typeof link.target === 'object' ? 
-                    (link.target.id ? link.target.id.toString() : null) : 
-                    (link.target ? link.target.toString() : null);
-                
-                if (!targetId) return;
-                
-                // Skip if target is the parent to avoid immediate cycles
-                if (targetId === parentId) return;
-                
-                // Calculate impact magnitude based on relationship strength
-                let strengthMultiplier;
-                switch (link.strength) {
-                    case "Strong": strengthMultiplier = 0.8; break;
-                    case "Medium": strengthMultiplier = 0.5; break;
-                    case "Weak": strengthMultiplier = 0.3; break;
-                    default: strengthMultiplier = 0.5;
-                }
-                
-                // Calculate impact direction based on relationship type and current node impact
-                let directionMultiplier;
-                const currentImpact = nodeImpacts[nodeId].value;
-                const isCurrentPositive = currentImpact > 0;
-                
-                switch (link.type) {
-                    case "SameDirection":
-                        // Same direction preserves sign
-                        directionMultiplier = isCurrentPositive ? 1 : -1;
-                        break;
-                    case "OppositeDirection":
-                        // Opposite direction reverses sign
-                        directionMultiplier = isCurrentPositive ? -1 : 1;
-                        break;
-                    case "Variable":
-                        // Variable relationship has 50% chance of each direction
-                        // For deterministic results, use nodeId or other factor to determine
-                        const hash = nodeId.charCodeAt(0) + targetId.charCodeAt(0);
-                        directionMultiplier = hash % 2 === 0 ? 1 : -1;
-                        // Apply to current impact sign
-                        directionMultiplier = isCurrentPositive ? directionMultiplier : -directionMultiplier;
-                        break;
-                    default:
-                        directionMultiplier = 1;
-                }
-                
-                // Calculate new impact
-                const newImpact = Math.abs(currentImpact) * strengthMultiplier * directionMultiplier;
-                
-                // Add to queue
-                diffusionQueue.push({
-                    nodeId: targetId,
-                    parentId: nodeId,
-                    step: nextStep,
-                    pathImpact: newImpact
-                });
-            });
-            
-            // Process next item with delay based on simulation speed
-            setTimeout(processNextDiffusionStep, 1000 / simulationSpeed);
-        }
-        
-        function highlightCausalPath(sourceId, targetId, isPositive) {
-            // Find the link between source and target
-            const relevantLink = d3.selectAll('.link').filter(d => {
-                if (!d) return false;
-                
-                const sourceMatch = (typeof d.source === 'object' && 
-                    (d.source.id === sourceId || d.source.id?.toString() === sourceId)) || 
-                    (typeof d.source === 'string' && 
-                    (d.source === sourceId || d.source?.toString() === sourceId));
-                
-                const targetMatch = (typeof d.target === 'object' && 
-                    (d.target.id === targetId || d.target.id?.toString() === targetId)) || 
-                    (typeof d.target === 'string' && 
-                    (d.target === targetId || d.target?.toString() === targetId));
-                
-                return sourceMatch && targetMatch;
-            });
-            
-            // Add path key to causal paths
-            causalPaths.add(`${sourceId}->${targetId}`);
-            
-            if (relevantLink.empty()) {
-                console.warn(`No link found between ${sourceId} and ${targetId}`);
-                return;
-            }
-            
-            // Style the link - force redraw by removing and reapplying classes
-            relevantLink
-                .classed('diffusion-path', false)
-                .classed('increase', false)
-                .classed('decrease', false)
-                .classed('diffusion-path', true)
-                .classed(isPositive ? 'increase' : 'decrease', true);
-                
-            // Bring to front by re-appending
-            relevantLink.each(function() {
-                const link = d3.select(this);
-                const parentNode = this.parentNode;
-                if (parentNode) {
-                    parentNode.appendChild(this);
-                }
-            });
-        }
-        
-        function finishSimulation() {
+
+        function resetSimulation() {
             simulationRunning = false;
             
-            // Update simulation info
-            const simInfo = document.getElementById('simulation-info');
-            simInfo.textContent = `Simulation complete: ${Object.keys(nodeImpacts).length} variables affected across ${causalPaths.size} causal pathways`;
+            // Reset UI state
+            document.getElementById('causalVariable').value = '';
+            document.getElementById('increaseBtn').classList.remove('active');
+            document.getElementById('decreaseBtn').classList.remove('active');
+            document.getElementById('startSimBtn').disabled = false;
+            document.getElementById('pauseSimBtn').disabled = true;
+            document.getElementById('startSimBtn').classList.remove('active');
             
-            // Update run button
-            document.getElementById('run-simulation-btn').textContent = 'Run Again';
+            // Reset variables
+            selectedVariable = null;
+            changeDirection = null;
             
-            // Re-enable controls but keep node/direction selection
-            document.getElementById('node-selector').disabled = false;
-            document.getElementById('increase-btn').disabled = false;
-            document.getElementById('decrease-btn').disabled = false;
-            document.getElementById('propagation-steps').disabled = false;
-            document.getElementById('simulation-speed').disabled = false;
+            // Future implementation will go here
+            console.log('Resetting simulation');
         }
-        
-        // Extract nodes directly from SVG elements
-        function extractNodesFromDOM() {
-            console.log("Extracting nodes directly from SVG elements");
-            const extractedNodes = [];
-            const nodeElements = document.querySelectorAll('.node');
-            
-            console.log(`Found ${nodeElements.length} node elements in DOM`);
-            
-            nodeElements.forEach(el => {
-                try {
-                    // Try to get data directly from the element's __data__ property
-                    if (el.__data__) {
-                        extractedNodes.push(el.__data__);
-                    } 
-                    // Otherwise try to extract data from attributes and text
-                    else {
-                        const id = el.getAttribute('id') || 
-                            el.querySelector('text')?.textContent || 
-                            `node_${extractedNodes.length}`;
-                            
-                        const name = el.querySelector('text')?.textContent || id;
-                        
-                        // Try to get category from fill color or class names
-                        let category = 'Uncategorized';
-                        const circle = el.querySelector('circle');
-                        if (circle) {
-                            const fill = circle.getAttribute('fill');
-                            if (fill === '#ff0000') category = 'Stock';
-                            else if (fill === '#008000') category = 'Environmental';
-                            else if (fill === '#0000ff') category = 'Economic';
-                            else if (fill === '#ff69b4') category = 'Social';
-                            else if (fill === '#4b0082') category = 'Technical';
-                            else if (fill === '#800000') category = 'Market';
-                            else if (fill === '#daa520') category = 'Indigenous';
-                            else if (fill === '#800080') category = 'Management';
-                            else if (fill === '#006400') category = 'Ecosystem';
-                        }
-                        
-                        extractedNodes.push({
-                            id: id,
-                            name: name,
-                            category: category
-                        });
-                    }
-                } catch (e) {
-                    console.error("Error extracting node data:", e);
-                }
-            });
-            
-            console.log(`Successfully extracted ${extractedNodes.length} nodes`);
-            return extractedNodes;
-        }
-        
-        // Initialize token diffusion after the visualization is loaded
-        function setupDiffusionModule() {
-            if (DEBUG) console.log("Setting up diffusion module");
-            
-            try {
-                console.log("Setting up diffusion module...");
-                
-                // Try multiple methods to get nodes data
-                let nodesFound = false;
-                
-                // Method 1: Use existing data object
-                if (data && data.nodes && Array.isArray(data.nodes) && data.nodes.length > 0) {
-                    if (DEBUG) console.log(`Using existing data.nodes array with ${data.nodes.length} items`);
-                    if (DEBUG) console.log("Sample node:", data.nodes[0]);
-                    nodesFound = true;
-                }
-                // Method 2: Use simulation nodes
-                else if (simulation && simulation.nodes().length > 0) {
-                    console.log(`Using simulation nodes with ${simulation.nodes().length} items`);
-                    if (typeof data !== 'object') data = {};
-                    data.nodes = simulation.nodes();
-                    nodesFound = true;
-                }
-                // Method 3: Extract from DOM
-                else {
-                    const extractedNodes = extractNodesFromDOM();
-                    if (extractedNodes.length > 0) {
-                        if (typeof data !== 'object') data = {};
-                        data.nodes = extractedNodes;
-                        nodesFound = true;
-                        console.log(`Using ${extractedNodes.length} nodes extracted from DOM`);
-                    }
-                }
-                
-                if (!nodesFound) {
-                    console.error("Could not find any nodes for the diffusion module");
-                    showError("Error: Could not find system variables. Please refresh the page and try again.");
-                    return;
-                }
-                
-                // Try to get links data as well
-                let linksFound = false;
-                
-                // Method 1: Use existing data object
-                if (data && data.links && Array.isArray(data.links) && data.links.length > 0) {
-                    console.log(`Using existing data.links array with ${data.links.length} items`);
-                    linksFound = true;
-                }
-                // Method 2: Extract from DOM
-                else {
-                    // Try to extract links from DOM
-                    const extractedLinks = [];
-                    document.querySelectorAll('.link').forEach(el => {
-                        if (el.__data__) {
-                            extractedLinks.push(el.__data__);
-                        }
-                    });
-                    
-                    if (extractedLinks.length > 0) {
-                        console.log(`Extracted ${extractedLinks.length} links from DOM`);
-                        data.links = extractedLinks;
-                        linksFound = true;
-                    }
-                }
-                
-                // Initialize the token diffusion UI and functionality
-                initializeTokenDiffusion();
-                
-                // Add a click handler for nodes to quickly select them for simulation
-                d3.selectAll('.node').on('dblclick', function(event, d) {
-                    const nodeId = typeof d.id === 'string' ? d.id : (d.id ? d.id.toString() : null);
-                    if (nodeId) {
-                        // Set this node in the selector
-                        const nodeSelector = document.getElementById('node-selector');
-                        if (nodeSelector) {
-                            nodeSelector.value = nodeId;
-                            onNodeSelect();
-                        }
-                    }
-                });
-                
-                console.log("Token diffusion algorithm initialized");
-            } catch (e) {
-                console.error("Error initializing token diffusion:", e);
-                showError("Error initializing token diffusion: " + e.message);
-            }
-        }
-        
-        // Make sure force simulation is running before initializing diffusion
-        setTimeout(() => {
-            // Now that force layout has started, initialize diffusion module
-            setupDiffusionModule();
-        }, 2000); // Increased delay to ensure force layout is running
     </script>
-    <script src="dropdown-fix.js"></script>
 </body>
-</html>
+</html> 

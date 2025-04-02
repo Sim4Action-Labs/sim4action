@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SESSF Systems Map - Google Sheets Integration</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Add Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #graph {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .node {
+            cursor: move;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            transition: opacity 0.3s;
+        }
+        .node.dimmed circle {
+            opacity: 0.3;
+        }
+        .node text {
+            font-size: 12px;
+            fill: #333;
+            text-shadow: 0 1px 3px rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+        }
+        .node.focal circle {
+            r: 12;
+            stroke-width: 3px;
+        }
+        .node.focal text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .node.dimmed text {
+            opacity: 0.3;
+        }
+        .node.highlighted circle {
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .link {
+            stroke-opacity: 0.6;
+            fill: none;
+            transition: stroke-opacity 0.3s;
+            marker-end: none;
+        }
+        .link.highlighted {
+            stroke-opacity: 1;
+        }
+        .link.dimmed {
+            stroke-opacity: 0.1;
+        }
+        .link.same { 
+            stroke: #28a745;
+            marker-end: url(#arrow-same);
+        }
+        .link.opposite { 
+            stroke: #dc3545;
+            marker-end: url(#arrow-opposite);
+        }
+        .link.Variable { 
+            stroke: #6c757d;
+            marker-end: url(#arrow-Variable);
+        }
+        .link.strong { stroke-width: 4; }
+        .link.medium { stroke-width: 2; }
+        .link.weak { stroke-width: 0.5; }
+        .link.uncertain { 
+            stroke-width: 1px;
+            stroke-dasharray: 4, 4;
+        }
+        #tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            pointer-events: none;
+            font-size: 12px;
+            max-width: 300px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #legend {
+            position: fixed;
+            top: 20px;
+            right: 240px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .legend-item {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 150px;
+        }
+        #controls button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px 10px;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #controls button:hover {
+            background-color: #e9ecef;
+        }
+        #filters {
+            position: fixed;
+            top: 160px;
+            left: 20px;
+            bottom: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .filter-section {
+            margin-bottom: 0;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .filter-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px 4px 0 0;
+        }
+        .filter-section-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .filter-section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 10px;
+        }
+        .filter-section-content.expanded {
+            max-height: 300px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .filter-button {
+            display: flex;
+            width: 100%;
+            margin: 4px 0;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+            transition: all 0.2s ease;
+            align-items: center;
+        }
+        .filter-button .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .filter-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        .filter-button.active .color-dot {
+            border: 2px solid white;
+        }
+        .filter-button:hover {
+            background-color: #f0f0f0;
+        }
+        .filter-button.active:hover {
+            background-color: #0056b3;
+        }
+        .filter-button .arrow-indicator {
+            width: 20px;
+            height: 2px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+            position: relative;
+        }
+        .filter-button .arrow-indicator::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        .filter-button.active .arrow-indicator::after {
+            border-left-color: white;
+        }
+        .filter-button .strength-indicator {
+            width: 20px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .filter-button .strength-indicator.strong {
+            border-top: 4px solid #666;
+        }
+        .filter-button .strength-indicator.medium {
+            border-top: 2px solid #666;
+        }
+        .filter-button .strength-indicator.weak {
+            border-top: 0.5px solid #666;
+        }
+        .filter-button .strength-indicator.uncertain {
+            border-top: 1px dashed #666;
+            margin-top: 8px;
+        }
+        .filter-button.active .strength-indicator {
+            border-top-color: white;
+        }
+        #logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            max-width: 220px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
+    <div id="graph"></div>
+    <div id="tooltip"></div>
+    <div id="legend"></div>
+    <div id="controls">
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="resetView()">Reset View</button>
+        <button onclick="resetFilters()">Reset Filters</button>
+    </div>
+    <div id="filters">
+        <!-- Filter sections will be dynamically populated from Google Sheets -->
+    </div>
+    <div id="error-message"></div>
+    <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none;">
+        Loading data from Google Sheets...
+    </div>
+
+    <script>
+        // Google Sheets API configuration
+        const SPREADSHEET_ID = '1px8kv3IVxjd5Jdvt2vaq9p7Sfc3WPn-9ogz6_uuih3E';
+        const API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA';
+
+        // Global variables for data
+        let domains = [];
+        let factors = [];
+        let relationships = [];
+        let simulation;
+        let transform = d3.zoomIdentity;
+        let links = [];  // Add this to store link data globally
+
+        // Initialize filter sets
+        const activeDomains = new Set();
+        const activeTypes = new Set();
+        const activeStrengths = new Set();
+
+        // Initialize the Google Sheets API
+        function initGoogleSheetsAPI() {
+            // Show loading indicator immediately
+            document.getElementById('loading').style.display = 'block';
+
+            gapi.load('client', async () => {
+                try {
+                    await gapi.client.init({
+                        apiKey: API_KEY,
+                        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                    });
+                    
+                    try {
+                        // Test the connection and get spreadsheet metadata
+                        const response = await gapi.client.sheets.spreadsheets.get({
+                            spreadsheetId: SPREADSHEET_ID
+                        });
+                        console.log('Successfully connected to spreadsheet:', response.result.properties.title);
+                        
+                        // If successful, load the data
+                        await loadAllData();
+                        console.log('Data loaded:', { domains, factors, relationships });
+                        
+                        // Initialize visualization
+                        initializeVisualization();
+                        
+                    } catch (error) {
+                        console.error('Detailed API Error:', error);
+                        if (error.result && error.result.error) {
+                            showError(`API Error: ${error.result.error.message}`);
+                        } else if (error.status === 403) {
+                            showError('Access denied. Please check if the Google Sheet is shared properly.');
+                        } else if (error.status === 404) {
+                            showError('Spreadsheet not found. Please check the Spreadsheet ID.');
+                        } else {
+                            showError('Error accessing Google Sheet: ' + (error.message || 'Unknown error'));
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error initializing Google Sheets API:', error);
+                    showError('Failed to initialize Google Sheets API. Check your API key and ensure you are accessing through http://localhost:8000');
+                } finally {
+                    // Hide loading indicator
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        // Error handling function with more detailed messages
+        function showError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.innerHTML = `
+                <strong>Error:</strong><br>
+                ${message}<br><br>
+                Please check:<br>
+                1. API key is correct<br>
+                2. Spreadsheet ID is correct<br>
+                3. Sheet is shared with "Anyone with the link"<br>
+                4. Sheet tabs are named exactly: DOMAINS, FACTORS, RELATIONSHIPS
+            `;
+            errorDiv.style.display = "block";
+            document.getElementById('loading').style.display = 'none';
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 10000);
+        }
+
+        // Load data from all sheets
+        async function loadAllData() {
+            try {
+                // Load domains
+                const domainsResponse = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'DOMAINS!A2:C',
+                });
+                
+                if (!domainsResponse.result.values) {
+                    throw new Error('No data found in DOMAINS sheet');
+                }
+                
+                domains = domainsResponse.result.values.map(row => ({
+                    id: row[0],
+                    name: row[1],
+                    color: row[2]
+                }));
+                console.log('Loaded domains:', domains);
+
+                // Load factors
+                const factorsResponse = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'FACTORS!A2:G',
+                });
+                
+                if (!factorsResponse.result.values) {
+                    throw new Error('No data found in FACTORS sheet');
+                }
+                
+                factors = factorsResponse.result.values.map(row => ({
+                    domain_id: row[0],
+                    id: row[1],
+                    domain_name: row[2],
+                    name: row[3],
+                    short_name: row[4],
+                    intervenable: row[5],
+                    definition: row[6]
+                }));
+                console.log('Loaded factors:', factors);
+
+                // Load relationships
+                const relationshipsResponse = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'RELATIONSHIPS!A2:I',
+                });
+                
+                if (!relationshipsResponse.result.values) {
+                    throw new Error('No data found in RELATIONSHIPS sheet');
+                }
+                
+                relationships = relationshipsResponse.result.values.map(row => ({
+                    id: row[0],
+                    from: row[1],
+                    to: row[2],
+                    from_factor_id: row[3],
+                    to_factor_id: row[4],
+                    polarity: row[5], // positive or negative
+                    strength: row[6], // strong, medium, weak
+                    delay: row[7], // fast, medium, slow
+                    definition: row[8]
+                }));
+                console.log('Loaded relationships:', relationships);
+
+            } catch (error) {
+                console.error('Error loading data from Google Sheets:', error);
+                showError('Failed to load data from Google Sheets: ' + error.message);
+                throw error;
+            }
+        }
+
+        // Initialize visualization with data from Google Sheets
+        function initializeVisualization() {
+            // Transform the data into the format needed for D3
+            const nodes = factors.map(factor => ({
+                id: factor.id,
+                name: factor.name,
+                short_name: factor.short_name,
+                domain: factor.domain_name,
+                color: domains.find(d => d.name === factor.domain_name)?.color || '#999',
+                definition: factor.definition,
+                intervenable: factor.intervenable
+            }));
+
+            const links = relationships.map(rel => ({
+                source: rel.from_factor_id,
+                target: rel.to_factor_id,
+                type: rel.polarity === 'same' ? 'same' : 'opposite',
+                strength: rel.strength,
+                delay: rel.delay,
+                definition: rel.definition
+            }));
+
+            // Set up the SVG
+            const svg = d3.select("#graph")
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%");
+
+            // Update arrow markers for same/opposite relationships
+            svg.append("defs").selectAll("marker")
+                .data(["same", "opposite"])
+                .enter().append("marker")
+                .attr("id", d => `arrow-${d}`)
+                .attr("viewBox", "0 -5 10 10")
+                .attr("refX", 20)
+                .attr("refY", 0)
+                .attr("markerWidth", 6)
+                .attr("markerHeight", 6)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M0,-5L10,0L0,5")
+                .attr("class", d => d);
+
+            // Create the simulation
+            simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
+                .force("collision", d3.forceCollide().radius(30));
+
+            // Create container for zoom
+            const container = svg.append("g");
+
+            // Add zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on("zoom", (event) => {
+                    container.attr("transform", event.transform);
+                    transform = event.transform;
+                });
+
+            svg.call(zoom);
+
+            // Create the links
+            const link = container.append("g")
+                .selectAll("path")
+                .data(links)
+                .enter().append("path")
+                .attr("class", d => `link ${d.type} ${d.strength}`)
+                .attr("marker-end", d => `url(#arrow-${d.type})`);
+
+            // Create the nodes
+            const node = container.append("g")
+                .selectAll(".node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", "node")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            node.append("circle")
+                .attr("r", 8)
+                .style("fill", d => d.color);
+
+            node.append("text")
+                .attr("dx", 12)
+                .attr("dy", ".35em")
+                .text(d => d.name);
+
+            // Update function for simulation
+            simulation.on("tick", () => {
+                link.attr("d", d => {
+                    const dx = d.target.x - d.source.x,
+                          dy = d.target.y - d.source.y,
+                          dr = Math.sqrt(dx * dx + dy * dy);
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+                });
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            // Create legend
+            updateLegend();
+
+            // Create filters
+            createFilterSections();
+
+            // Add tooltips
+            node.on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip)
+                .on("click", handleNodeClick);
+
+            link.on("mouseover", showLinkTooltip)
+                .on("mouseout", hideTooltip);
+
+            // Expand the first filter section
+            const firstFilterHeader = document.querySelector('.filter-section-header');
+            if (firstFilterHeader) {
+                toggleSection(firstFilterHeader.nextElementSibling);
+            }
+        }
+
+        function updateLegend() {
+            const legend = d3.select("#legend");
+            
+            // Clear existing legend
+            legend.html("");
+            
+            // Add domain legend
+            legend.append("h4")
+                .text("Domains")
+                .style("margin", "0 0 10px 0");
+
+            domains.forEach(domain => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("span")
+                    .attr("class", "legend-color")
+                    .style("background-color", domain.color);
+                
+                item.append("span")
+                    .text(domain.name);
+            });
+
+            // Add relationship types legend
+            legend.append("h4")
+                .text("Relationship Types")
+                .style("margin", "15px 0 10px 0");
+
+            const relationshipTypes = [
+                { name: "Same Direction", class: "same", color: "#28a745" },
+                { name: "Opposite Direction", class: "opposite", color: "#dc3545" }
+            ];
+
+            relationshipTypes.forEach(type => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("span")
+                    .attr("class", "legend-color")
+                    .style("background-color", type.color);
+                
+                item.append("span")
+                    .text(type.name);
+            });
+
+            // Add strength legend
+            legend.append("h4")
+                .text("Relationship Strength")
+                .style("margin", "15px 0 10px 0");
+
+            const strengths = [
+                { name: "strong", width: "4px" },
+                { name: "medium", width: "2px" },
+                { name: "weak", width: "0.5px" },
+                { name: "uncertain", width: "1px", style: "stroke-dasharray: 4" }
+            ];
+
+            strengths.forEach(strength => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("div")
+                    .style("display", "inline-block")
+                    .style("width", "20px")
+                    .style("height", strength.width)
+                    .style("background-color", "#666")
+                    .style("margin-right", "5px")
+                    .style("vertical-align", "middle")
+                    .style("border-style", strength.name === "uncertain" ? "dashed" : "solid")
+                    .style("border-width", strength.name === "uncertain" ? "1px" : strength.width)
+                    .style("border-color", "#666")
+                    .style("background", strength.name === "uncertain" ? "none" : "#666");
+                
+                item.append("span")
+                    .text(strength.name);
+            });
+        }
+
+        function createFilterSections() {
+            // Create Relationship Types section
+            createFilterSection("Relationship Types", [
+                { name: "same", label: "Same Direction", color: "#28a745", isArrow: true },
+                { name: "opposite", label: "Opposite Direction", color: "#dc3545", isArrow: true }
+            ], "types");
+
+            // Create Relationship Strength section
+            createFilterSection("Relationship Strength", [
+                { name: "strong", isStrength: true },
+                { name: "medium", isStrength: true },
+                { name: "weak", isStrength: true },
+                { name: "uncertain", isStrength: true }
+            ], "strengths");
+
+            // Create Variable Categories section
+            createFilterSection("Variable Categories", [
+                { name: "Stock", color: "#ff0000" },
+                { name: "Environmental", color: "#008000" },
+                { name: "Economic", color: "#0000ff" },
+                { name: "Social", color: "#ff69b4" },
+                { name: "Technical", color: "#4b0082" },
+                { name: "Market", color: "#800000" },
+                { name: "Indigenous", color: "#daa520" },
+                { name: "Management", color: "#800080" },
+                { name: "Ecosystem", color: "#006400" }
+            ], "domains");
+        }
+
+        function createFilterSection(title, items, type) {
+            const filtersDiv = document.getElementById("filters");
+            
+            const section = document.createElement("div");
+            section.className = "filter-section";
+            
+            const header = document.createElement("div");
+            header.className = "filter-section-header";
+            header.onclick = () => toggleSection(header.nextElementSibling);
+            
+            const h4 = document.createElement("h4");
+            h4.textContent = title;
+            
+            const toggle = document.createElement("span");
+            toggle.className = "filter-section-toggle";
+            toggle.innerHTML = "&plus;";  // Using HTML entity for plus sign
+            
+            header.appendChild(h4);
+            header.appendChild(toggle);
+            
+            const content = document.createElement("div");
+            content.className = "filter-section-content";
+            
+            items.forEach(item => {
+                const button = document.createElement("button");
+                button.className = "filter-button";
+                button.onclick = () => toggleFilter(button, item.name, type);
+                
+                if (item.isArrow) {
+                    const arrow = document.createElement("div");
+                    arrow.className = "arrow-indicator";
+                    arrow.style.backgroundColor = item.color;
+                    arrow.style.color = item.color;
+                    button.appendChild(arrow);
+                    button.appendChild(document.createTextNode(item.label || item.name));
+                } else if (item.isStrength) {
+                    const strength = document.createElement("div");
+                    strength.className = `strength-indicator ${item.name}`;
+                    button.appendChild(strength);
+                    button.appendChild(document.createTextNode(item.name));
+                } else if (item.color) {
+                    const colorDot = document.createElement("span");
+                    colorDot.className = "color-dot";
+                    colorDot.style.backgroundColor = item.color;
+                    button.appendChild(colorDot);
+                    button.appendChild(document.createTextNode(item.name));
+                }
+                
+                content.appendChild(button);
+            });
+            
+            section.appendChild(header);
+            section.appendChild(content);
+            filtersDiv.appendChild(section);
+        }
+
+        function toggleSection(content) {
+            content.classList.toggle("expanded");
+            const toggle = content.previousElementSibling.querySelector(".filter-section-toggle");
+            toggle.innerHTML = content.classList.contains("expanded") ? "&minus;" : "&plus;";  // Using HTML entities
+        }
+
+        function toggleFilter(button, value, type) {
+            button.classList.toggle("active");
+            
+            const set = type === "domains" ? activeDomains :
+                       type === "types" ? activeTypes :
+                       activeStrengths;
+            
+            if (button.classList.contains("active")) {
+                set.add(value);
+            } else {
+                set.delete(value);
+            }
+            
+            updateVisibility();
+        }
+
+        function updateVisibility() {
+            // First, determine which links should be visible based on all active filters
+            const visibleLinks = new Set();
+            d3.selectAll(".link").each(function(d) {
+                const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                const typeMatch = activeTypes.size === 0 || activeTypes.has(d.type);
+                const categoryMatch = activeDomains.size === 0 || 
+                    (activeDomains.has(d.source.domain) || activeDomains.has(d.target.domain));
+                
+                if (strengthMatch && typeMatch && categoryMatch) {
+                    visibleLinks.add(d);
+                }
+            });
+
+            // Update links visibility
+            d3.selectAll(".link")
+                .style("stroke-opacity", d => {
+                    if (activeStrengths.size === 0 && activeTypes.size === 0 && activeDomains.size === 0) return 0.6;
+                    return visibleLinks.has(d) ? 1 : 0.1;
+                })
+                .style("marker-end", d => {
+                    if (activeStrengths.size === 0 && activeTypes.size === 0 && activeDomains.size === 0) {
+                        return `url(#arrow-${d.type})`;
+                    }
+                    return visibleLinks.has(d) ? `url(#arrow-${d.type})` : "none";
+                });
+
+            // Update nodes visibility
+            d3.selectAll(".node").each(function(d) {
+                const node = d3.select(this);
+                const text = node.select("text");
+                
+                const isHighlighted = (() => {
+                    if (activeDomains.size === 0 && activeTypes.size === 0 && activeStrengths.size === 0) {
+                        return false;
+                    }
+
+                    const categoryMatch = activeDomains.size === 0 || activeDomains.has(d.domain);
+                    
+                    const hasVisibleConnection = Array.from(visibleLinks).some(link => 
+                        link.source.id === d.id || link.target.id === d.id
+                    );
+
+                    const relationshipFiltersActive = activeTypes.size > 0 || activeStrengths.size > 0;
+                    
+                    if (relationshipFiltersActive) {
+                        return categoryMatch && hasVisibleConnection;
+                    } else {
+                        return categoryMatch;
+                    }
+                })();
+
+                if (d.id === "V1") {
+                    text.style("font-size", "18px")
+                        .style("font-weight", "bold");
+                } else if (isHighlighted) {
+                    text.style("font-size", "14.4px")
+                        .style("font-weight", "bold");
+                } else {
+                    text.style("font-size", "12px")
+                        .style("font-weight", "normal");
+                }
+
+                node.style("opacity", () => {
+                    if (activeDomains.size === 0 && activeTypes.size === 0 && activeStrengths.size === 0) return 1;
+                    return isHighlighted ? 1 : 0.3;
+                });
+            });
+        }
+
+        function showTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            tooltip.html(`
+                <strong>${d.name}</strong><br>
+                Short Name: ${d.short_name}<br>
+                Domain: ${d.domain}<br>
+                Intervenable: ${d.intervenable}<br>
+                ${d.definition ? `Definition: ${d.definition}` : ""}
+            `)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px")
+            .style("display", "block");
+        }
+
+        function showLinkTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            tooltip.html(`
+                <strong>Relationship</strong><br>
+                Type: ${d.type === 'same' ? 'Same Direction' : 'Opposite Direction'}<br>
+                Strength: ${d.strength}<br>
+                Delay: ${d.delay}<br>
+                ${d.definition ? `Definition: ${d.definition}` : ""}
+            `)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px")
+            .style("display", "block");
+        }
+
+        function hideTooltip() {
+            d3.select("#tooltip").style("display", "none");
+        }
+
+        function handleNodeClick(event, d) {
+            d3.selectAll(".node").classed("focal", false);
+            d3.select(this).classed("focal", true);
+            
+            d3.selectAll(".link")
+                .classed("highlighted", l => l.source === d || l.target === d);
+            
+            d3.selectAll(".node")
+                .classed("highlighted", n => 
+                    links.some(l => 
+                        (l.source === d && l.target === n) ||
+                        (l.target === d && l.source === n)
+                    )
+                );
+        }
+
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+
+        function zoomIn() {
+            d3.select("svg").transition().call(
+                d3.zoom().scaleBy, 1.5
+            );
+        }
+
+        function zoomOut() {
+            d3.select("svg").transition().call(
+                d3.zoom().scaleBy, 0.75
+            );
+        }
+
+        function resetView() {
+            d3.select("svg").transition().call(
+                d3.zoom().transform,
+                d3.zoomIdentity
+            );
+        }
+
+        function resetFilters() {
+            activeDomains.clear();
+            activeTypes.clear();
+            activeStrengths.clear();
+            
+            document.querySelectorAll(".filter-button").forEach(button => {
+                button.classList.remove("active");
+            });
+            
+            d3.selectAll(".node").classed("dimmed", false).classed("focal", false).classed("highlighted", false);
+            d3.selectAll(".link").classed("dimmed", false).classed("highlighted", false);
+            
+            updateVisibility();
+        }
+
+        // Initialize the application
+        window.onload = function() {
+            initGoogleSheetsAPI();
+
+            // Expand the first filter section by default
+            document.addEventListener('DOMContentLoaded', function() {
+                const firstFilterHeader = document.querySelector('.filter-section-header');
+                if (firstFilterHeader) {
+                    toggleSection(firstFilterHeader.nextElementSibling);
+                }
+            });
+        };
+    </script>
+</body>
+</html> 
