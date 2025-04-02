@@ -523,7 +523,6 @@
                 <select id="node-selector">
                     <option value="">-- Select a variable --</option>
                 </select>
-                <button id="refresh-dropdown" style="margin-left: 5px; padding: 2px 8px; font-size: 12px;">Refresh</button>
             </div>
             <div id="direction-selector">
                 <label>Initial Change:</label>
@@ -629,12 +628,6 @@
     </div>
 
     <script>
-        // Global debug flag
-        const DEBUG = true;
-        
-        // Load data from JSON file or initialize data if file not provided
-        let data = {};
-
         // Global variables
         let simulation;
         const width = window.innerWidth;
@@ -1691,10 +1684,7 @@
         
         // Initialize node selector
         function initializeTokenDiffusion() {
-            if (DEBUG) console.log("Initializing token diffusion UI");
-            
             const nodeSelector = document.getElementById('node-selector');
-            if (DEBUG) console.log("Node selector found:", !!nodeSelector);
             
             // Clear existing options first
             while (nodeSelector.firstChild) {
@@ -1739,11 +1729,8 @@
             }
             
             // Debug output
-            if (DEBUG) {
-                console.log(`Initializing selector with ${nodesToUse.length} nodes`);
-                console.log("Sample node:", nodesToUse[0]);
-                console.log("All nodes:", nodesToUse);
-            }
+            console.log(`Initializing selector with ${nodesToUse.length} nodes`);
+            console.log("Sample node:", nodesToUse[0]);
             
             // Sort nodes by category and then by name for better organization
             const sortedNodes = [...nodesToUse].sort((a, b) => {
@@ -2351,8 +2338,6 @@
         
         // Initialize token diffusion after the visualization is loaded
         function setupDiffusionModule() {
-            if (DEBUG) console.log("Setting up diffusion module");
-            
             try {
                 console.log("Setting up diffusion module...");
                 
@@ -2361,8 +2346,7 @@
                 
                 // Method 1: Use existing data object
                 if (data && data.nodes && Array.isArray(data.nodes) && data.nodes.length > 0) {
-                    if (DEBUG) console.log(`Using existing data.nodes array with ${data.nodes.length} items`);
-                    if (DEBUG) console.log("Sample node:", data.nodes[0]);
+                    console.log(`Using existing data.nodes array with ${data.nodes.length} items`);
                     nodesFound = true;
                 }
                 // Method 2: Use simulation nodes
@@ -2445,4 +2429,4 @@
     </script>
     <script src="dropdown-fix.js"></script>
 </body>
-</html>
+</html> 
