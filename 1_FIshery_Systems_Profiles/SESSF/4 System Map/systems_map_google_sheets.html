@@ -30,6 +30,15 @@
             text-shadow: 0 1px 3px rgba(255,255,255,0.7);
             transition: all 0.3s ease;
         }
+        .node.focal circle {
+            r: 12;
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .node.focal text {
+            font-size: 14.4px;
+            font-weight: bold;
+        }
         .node.highlighted circle {
             r: 12;
             stroke: #000;
@@ -521,6 +530,10 @@
 
             svg.call(zoom);
 
+            // Store zoom behavior globally
+            window.zoomBehavior = zoom;
+            window.svgElement = svg;
+
             // Create the links
             const link = container.append("g")
                 .selectAll("path")
@@ -534,19 +547,21 @@
                 .selectAll(".node")
                 .data(nodes)
                 .enter().append("g")
-                .attr("class", "node")
+                .attr("class", d => `node${d.domain === 'FOCAL FACTORS' ? ' focal' : ''}`)
                 .call(d3.drag()
                     .on("start", dragstarted)
                     .on("drag", dragged)
                     .on("end", dragended));
 
             node.append("circle")
-                .attr("r", 8)
+                .attr("r", d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
                 .style("fill", d => d.color);
 
             node.append("text")
                 .attr("dx", 12)
                 .attr("dy", ".35em")
+                .style("font-size", d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style("font-weight", d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal')
                 .text(d => d.name);
 
             // Update function for simulation
@@ -729,7 +744,7 @@
                 </div>
                 <div class="filter-section-content">
                     <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
-                    <button class="filter-button" onclick="showFocalNode()">Show Focal Node</button>
+                    <button class="filter-button" onclick="showFocalNode()">Show Focal Node(s)</button>
                     <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
                     <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
                     <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
@@ -958,36 +973,122 @@
         }
 
         function zoomIn() {
-            d3.select("svg").transition().call(
-                d3.zoom().scaleBy, 1.5
+            window.svgElement.transition().duration(300).call(
+                window.zoomBehavior.scaleBy, 1.5
             );
         }
 
         function zoomOut() {
-            d3.select("svg").transition().call(
-                d3.zoom().scaleBy, 0.75
+            window.svgElement.transition().duration(300).call(
+                window.zoomBehavior.scaleBy, 0.75
             );
         }
 
         function resetView() {
-            d3.select("svg").transition().call(
-                d3.zoom().transform,
-                d3.zoomIdentity
+            // Get the SVG element and its dimensions
+            const svg = window.svgElement;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Get the bounds of all nodes
+            const nodes = d3.selectAll('.node');
+            let bounds = {
+                left: Infinity,
+                right: -Infinity,
+                top: Infinity,
+                bottom: -Infinity
+            };
+            
+            nodes.each(function(d) {
+                const bbox = this.getBBox();
+                const transform = d3.select(this).attr('transform');
+                const translate = transform ? transform.match(/translate\(([\d.-]+),([\d.-]+)\)/) : null;
+                const x = translate ? parseFloat(translate[1]) : 0;
+                const y = translate ? parseFloat(translate[2]) : 0;
+                
+                bounds.left = Math.min(bounds.left, x + bbox.x);
+                bounds.right = Math.max(bounds.right, x + bbox.x + bbox.width);
+                bounds.top = Math.min(bounds.top, y + bbox.y);
+                bounds.bottom = Math.max(bounds.bottom, y + bbox.y + bbox.height);
+            });
+            
+            // Calculate the graph dimensions and scale
+            const graphWidth = bounds.right - bounds.left;
+            const graphHeight = bounds.bottom - bounds.top;
+            const scale = Math.min(
+                0.9 * width / graphWidth,
+                0.9 * height / graphHeight
             );
+            
+            // Calculate the translation to center the graph
+            const tx = (width - graphWidth * scale) / 2 - bounds.left * scale;
+            const ty = (height - graphHeight * scale) / 2 - bounds.top * scale;
+            
+            // Apply the transform with transition
+            svg.transition()
+                .duration(750)
+                .call(
+                    window.zoomBehavior.transform,
+                    d3.zoomIdentity
+                        .translate(tx, ty)
+                        .scale(scale)
+                );
         }
 
         function resetFilters() {
+            // Clear all active filter sets
             activeDomains.clear();
             activeTypes.clear();
             activeStrengths.clear();
+            relationshipsHidden = false;
             
-            document.querySelectorAll(".filter-button").forEach(button => {
-                button.classList.remove("active");
+            // Reset all filter buttons
+            document.querySelectorAll('.filter-button').forEach(button => {
+                button.classList.remove('active');
+                if (button.textContent === 'Show Relationships') {
+                    button.textContent = 'Hide Relationships';
+                }
             });
             
-            d3.selectAll(".node").classed("dimmed", false).classed("focal", false).classed("highlighted", false);
-            d3.selectAll(".link").classed("dimmed", false).classed("highlighted", false);
+            // Reset all nodes to initial state
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .each(function(d) {
+                    const node = d3.select(this);
+                    const isFocal = d.domain === 'FOCAL FACTORS';
+                    
+                    // Set circle size
+                    node.select('circle')
+                        .attr('r', isFocal ? 12 : 10);
+                    
+                    // Set text style
+                    node.select('text')
+                        .style('font-size', isFocal ? '14.4px' : '12px')
+                        .style('font-weight', isFocal ? 'bold' : 'normal');
+                });
             
+            // Reset all links to default state
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 0.6)
+                .style('pointer-events', 'auto')
+                .style('marker-end', d => `url(#arrow-${d.type}-${d.strength})`);
+            
+            // Reset simulation controls if they exist
+            const simulationButtons = ['start-simulation', 'pause-simulation', 'reset-simulation'];
+            simulationButtons.forEach(id => {
+                const button = document.getElementById(id);
+                if (button) button.disabled = true;
+            });
+            
+            // Reset variable select if it exists
+            const variableSelect = document.getElementById('variable-select');
+            if (variableSelect) variableSelect.value = '';
+            
+            // Update visibility to ensure everything is shown properly
             updateVisibility();
         }
 
@@ -1150,11 +1251,11 @@
                     .classed('highlighted', d => d.domain === 'FOCAL FACTORS')
                     .classed('dimmed', d => d.domain !== 'FOCAL FACTORS')
                     .select('circle')
-                    .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 8);
+                    .attr('r', d => d.domain === 'FOCAL FACTORS' ? 15 : 10);
 
                 // Update text
                 d3.selectAll('.node text')
-                    .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '16px' : '12px')
+                    .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '19px' : '14px')
                     .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
             } else {
                 // Turning OFF - show all nodes without relationships
@@ -1181,11 +1282,11 @@
                     .classed('highlighted', d => d.domain === domain)
                     .classed('dimmed', d => d.domain !== domain)
                     .select('circle')
-                    .attr('r', d => d.domain === domain ? 12 : 8);
+                    .attr('r', d => d.domain === domain ? 15 : 10);
 
                 // Update text
                 d3.selectAll('.node text')
-                    .style('font-size', d => d.domain === domain ? '16px' : '12px')
+                    .style('font-size', d => d.domain === domain ? '19px' : '14px')
                     .style('font-weight', d => d.domain === domain ? 'bold' : 'normal');
             } else {
                 // Turning OFF - show all nodes without relationships
@@ -1202,11 +1303,11 @@
                 .classed('highlighted', false)
                 .classed('dimmed', false)
                 .select('circle')
-                .attr('r', 8);
+                .attr('r', 10);
 
             // Reset text styles
             d3.selectAll('.node text')
-                .style('font-size', '12px')
+                .style('font-size', '14px')
                 .style('font-weight', 'normal');
         }
 
@@ -1216,11 +1317,11 @@
                 .classed('highlighted', false)
                 .classed('dimmed', false)
                 .select('circle')
-                .attr('r', 8);
+                .attr('r', 10);
 
             // Reset text styles
             d3.selectAll('.node text')
-                .style('font-size', '12px')
+                .style('font-size', '14px')
                 .style('font-weight', 'normal');
 
             // Show all relationships
