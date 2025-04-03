@@ -22,10 +22,7 @@
         .node circle {
             stroke: #fff;
             stroke-width: 2px;
-            transition: opacity 0.3s;
-        }
-        .node.dimmed circle {
-            opacity: 0.3;
+            transition: all 0.3s ease;
         }
         .node text {
             font-size: 12px;
@@ -33,26 +30,25 @@
             text-shadow: 0 1px 3px rgba(255,255,255,0.7);
             transition: all 0.3s ease;
         }
-        .node.focal circle {
-            r: 12;
-            stroke-width: 3px;
-        }
-        .node.focal text {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .node.dimmed text {
-            opacity: 0.3;
-        }
         .node.highlighted circle {
+            r: 12;
             stroke: #000;
             stroke-width: 3px;
+        }
+        .node.highlighted text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .node.dimmed {
+            opacity: 0.2;
+        }
+        .node.dimmed text {
+            opacity: 0.2;
         }
         .link {
             stroke-opacity: 0.6;
             fill: none;
             transition: stroke-opacity 0.3s;
-            marker-end: none;
         }
         .link.highlighted {
             stroke-opacity: 1;
@@ -62,17 +58,15 @@
         }
         .link.same { 
             stroke: #28a745;
-            marker-end: url(#arrow-same);
         }
         .link.opposite { 
             stroke: #dc3545;
-            marker-end: url(#arrow-opposite);
         }
         .link.Variable { 
             stroke: #6c757d;
             marker-end: url(#arrow-Variable);
         }
-        .link.strong { stroke-width: 4; }
+        .link.strong { stroke-width: 6; }
         .link.medium { stroke-width: 2; }
         .link.weak { stroke-width: 0.5; }
         .link.uncertain { 
@@ -154,9 +148,10 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            overflow-y: auto;
         }
         .filter-section {
-            margin-bottom: 0;
+            margin-bottom: 15px;
             border: 1px solid #eee;
             border-radius: 4px;
         }
@@ -187,6 +182,7 @@
         }
         .filter-button {
             display: flex;
+            align-items: center;
             width: 100%;
             margin: 4px 0;
             padding: 8px 12px;
@@ -197,38 +193,48 @@
             font-size: 12px;
             text-align: left;
             transition: all 0.2s ease;
-            align-items: center;
         }
-        .filter-button .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-            display: inline-block;
+        .filter-button:hover {
+            background-color: #f0f0f0;
         }
         .filter-button.active {
             background-color: #007bff;
             color: white;
             border-color: #0056b3;
         }
-        .filter-button.active .color-dot {
-            border: 2px solid white;
-        }
-        .filter-button:hover {
+        .filter-button:disabled {
             background-color: #f0f0f0;
+            cursor: not-allowed;
+            opacity: 0.7;
         }
-        .filter-button.active:hover {
-            background-color: #0056b3;
+        .section-label {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            font-size: 12px;
         }
-        .filter-button .arrow-indicator {
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 12px;
+        }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .arrow-indicator {
             width: 20px;
             height: 2px;
-            display: inline-block;
             margin-right: 8px;
-            vertical-align: middle;
             position: relative;
         }
-        .filter-button .arrow-indicator::after {
+        .arrow-indicator::after {
             content: '';
             position: absolute;
             right: -2px;
@@ -239,30 +245,24 @@
             border-top: 4px solid transparent;
             border-bottom: 4px solid transparent;
         }
-        .filter-button.active .arrow-indicator::after {
-            border-left-color: white;
-        }
-        .filter-button .strength-indicator {
+        .strength-indicator {
             width: 20px;
-            display: inline-block;
+            height: 2px;
             margin-right: 8px;
-            vertical-align: middle;
+            background-color: #666;
         }
-        .filter-button .strength-indicator.strong {
-            border-top: 4px solid #666;
+        .strength-indicator.strong {
+            height: 4px;
         }
-        .filter-button .strength-indicator.medium {
-            border-top: 2px solid #666;
+        .strength-indicator.medium {
+            height: 2px;
         }
-        .filter-button .strength-indicator.weak {
-            border-top: 0.5px solid #666;
+        .strength-indicator.weak {
+            height: 0.5px;
         }
-        .filter-button .strength-indicator.uncertain {
+        .strength-indicator.uncertain {
             border-top: 1px dashed #666;
-            margin-top: 8px;
-        }
-        .filter-button.active .strength-indicator {
-            border-top-color: white;
+            background: none;
         }
         #logo {
             position: fixed;
@@ -277,7 +277,6 @@
     <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
     <div id="graph"></div>
     <div id="tooltip"></div>
-    <div id="legend"></div>
     <div id="controls">
         <button onclick="zoomIn()">Zoom In</button>
         <button onclick="zoomOut()">Zoom Out</button>
@@ -395,8 +394,7 @@
                 
                 domains = domainsResponse.result.values.map(row => ({
                     id: row[0],
-                    name: row[1],
-                    color: row[2]
+                    name: row[1]
                 }));
                 console.log('Loaded domains:', domains);
 
@@ -459,12 +457,12 @@
                 name: factor.name,
                 short_name: factor.short_name,
                 domain: factor.domain_name,
-                color: domains.find(d => d.name === factor.domain_name)?.color || '#999',
+                color: getDomainColor(factor.domain_name),
                 definition: factor.definition,
                 intervenable: factor.intervenable
             }));
 
-            const links = relationships.map(rel => ({
+            links = relationships.map(rel => ({
                 source: rel.from_factor_id,
                 target: rel.to_factor_id,
                 type: rel.polarity === 'same' ? 'same' : 'opposite',
@@ -481,18 +479,27 @@
 
             // Update arrow markers for same/opposite relationships
             svg.append("defs").selectAll("marker")
-                .data(["same", "opposite"])
+                .data(["same-strong", "same-medium", "same-weak", "same-uncertain",
+                      "opposite-strong", "opposite-medium", "opposite-weak", "opposite-uncertain"])
                 .enter().append("marker")
                 .attr("id", d => `arrow-${d}`)
-                .attr("viewBox", "0 -5 10 10")
-                .attr("refX", 20)
+                .attr("viewBox", "0 -3 6 6")
+                .attr("refX", d => {
+                    const nodeRadius = 8;
+                    // For strong relationships, position closer to account for the thicker line
+                    if (d.includes("strong")) return 12;  // Just node radius + 4
+                    if (d.includes("medium")) return 14;
+                    if (d.includes("weak")) return 15;
+                    if (d.includes("uncertain")) return 14;
+                    return 15;
+                })
                 .attr("refY", 0)
-                .attr("markerWidth", 6)
-                .attr("markerHeight", 6)
+                .attr("markerWidth", 3)  // Smaller markers
+                .attr("markerHeight", 3)  // Smaller markers
                 .attr("orient", "auto")
                 .append("path")
-                .attr("d", "M0,-5L10,0L0,5")
-                .attr("class", d => d);
+                .attr("d", "M0,-3L6,0L0,3")
+                .style("fill", d => d.startsWith("same") ? "#28a745" : "#dc3545");
 
             // Create the simulation
             simulation = d3.forceSimulation(nodes)
@@ -520,7 +527,7 @@
                 .data(links)
                 .enter().append("path")
                 .attr("class", d => `link ${d.type} ${d.strength}`)
-                .attr("marker-end", d => `url(#arrow-${d.type})`);
+                .attr("marker-end", d => `url(#arrow-${d.type}-${d.strength})`);
 
             // Create the nodes
             const node = container.append("g")
@@ -548,14 +555,17 @@
                     const dx = d.target.x - d.source.x,
                           dy = d.target.y - d.source.y,
                           dr = Math.sqrt(dx * dx + dy * dy);
-                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+                    
+                    // Adjust the end point to account for the node radius and line width
+                    const scale = (dr - 8) / dr;  // Subtract node radius from the distance
+                    const endX = d.source.x + dx * scale,
+                          endY = d.source.y + dy * scale;
+                    
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${endX},${endY}`;
                 });
 
                 node.attr("transform", d => `translate(${d.x},${d.y})`);
             });
-
-            // Create legend
-            updateLegend();
 
             // Create filters
             createFilterSections();
@@ -654,6 +664,18 @@
         }
 
         function createFilterSections() {
+            // Create Variable Categories section with hardcoded colors
+            createFilterSection("Variable Categories", [
+                { name: "FOCAL FACTORS", color: "#999999" },
+                { name: "Stock", color: "#ff0000" },
+                { name: "Economics-Markets", color: "#0000ff" },
+                { name: "Management", color: "#800080" },
+                { name: "Social", color: "#ff69b4" },
+                { name: "Environmental-Ecosystem", color: "#008000" },
+                { name: "Indigenous", color: "#daa520" },
+                { name: "Technical", color: "#4b0082" }
+            ], "domains");
+
             // Create Relationship Types section
             createFilterSection("Relationship Types", [
                 { name: "same", label: "Same Direction", color: "#28a745", isArrow: true },
@@ -668,18 +690,58 @@
                 { name: "uncertain", isStrength: true }
             ], "strengths");
 
-            // Create Variable Categories section
-            createFilterSection("Variable Categories", [
-                { name: "Stock", color: "#ff0000" },
-                { name: "Environmental", color: "#008000" },
-                { name: "Economic", color: "#0000ff" },
-                { name: "Social", color: "#ff69b4" },
-                { name: "Technical", color: "#4b0082" },
-                { name: "Market", color: "#800000" },
-                { name: "Indigenous", color: "#daa520" },
-                { name: "Management", color: "#800080" },
-                { name: "Ecosystem", color: "#006400" }
-            ], "domains");
+            // Create Causal Modeling section
+            const filtersDiv = document.getElementById("filters");
+            const causalSection = document.createElement("div");
+            causalSection.className = "filter-section";
+            causalSection.innerHTML = `
+                <div class="filter-section-header">
+                    <h4>Causal Modeling</h4>
+                    <span class="filter-section-toggle">&plus;</span>
+                </div>
+                <div class="filter-section-content">
+                    <div class="section-label">Select Variable:</div>
+                    <select id="variable-select">
+                        <option value="">-- Select a variable --</option>
+                    </select>
+                    
+                    <div class="section-label">Change Direction:</div>
+                    <button id="increase-btn" onclick="simulateChange('increase')" disabled>Increase</button>
+                    <button id="decrease-btn" onclick="simulateChange('decrease')" disabled>Decrease</button>
+                    
+                    <div class="section-label">Simulation Controls:</div>
+                    <button id="start-simulation" onclick="startSimulation()" disabled>Start Simulation</button>
+                    <button id="pause-simulation" onclick="pauseSimulation()" disabled>Pause Simulation</button>
+                    <button id="reset-simulation" onclick="resetSimulation()" disabled>Reset Simulation</button>
+                </div>
+            `;
+            causalSection.querySelector('.filter-section-header').onclick = () => 
+                toggleSection(causalSection.querySelector('.filter-section-content'));
+            filtersDiv.appendChild(causalSection);
+
+            // Create Storyline Navigation section
+            const storylineSection = document.createElement("div");
+            storylineSection.className = "filter-section";
+            storylineSection.innerHTML = `
+                <div class="filter-section-header">
+                    <h4>Storyline Navigation</h4>
+                    <span class="filter-section-toggle">&plus;</span>
+                </div>
+                <div class="filter-section-content">
+                    <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
+                    <button class="filter-button" onclick="showFocalNode()">Show Focal Node</button>
+                    <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Social')">Show Social Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Technical')">Show Technical Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Indigenous')">Show Indigenous Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Management')">Show Management Variables</button>
+                </div>
+            `;
+            storylineSection.querySelector('.filter-section-header').onclick = () => 
+                toggleSection(storylineSection.querySelector('.filter-section-content'));
+            filtersDiv.appendChild(storylineSection);
         }
 
         function createFilterSection(title, items, type) {
@@ -782,9 +844,9 @@
                 })
                 .style("marker-end", d => {
                     if (activeStrengths.size === 0 && activeTypes.size === 0 && activeDomains.size === 0) {
-                        return `url(#arrow-${d.type})`;
+                        return `url(#arrow-${d.type}-${d.strength})`;
                     }
-                    return visibleLinks.has(d) ? `url(#arrow-${d.type})` : "none";
+                    return visibleLinks.has(d) ? `url(#arrow-${d.type}-${d.strength})` : "none";
                 });
 
             // Update nodes visibility
@@ -929,18 +991,246 @@
             updateVisibility();
         }
 
+        // Add domain color mapping function
+        function getDomainColor(domain) {
+            const colorMap = {
+                'FOCAL FACTORS': '#999999',         // Gray for focal factors
+                'Stock': '#ff0000',                 // Red
+                'Economics-Markets': '#0000ff',     // Blue
+                'Management': '#800080',            // Purple
+                'Social': '#ff69b4',               // Pink
+                'Environmental-Ecosystem': '#008000', // Green
+                'Indigenous': '#daa520',            // Goldenrod
+                'Technical': '#4b0082'              // Indigo
+            };
+            return colorMap[domain] || '#999'; // Default gray if domain not found
+        }
+
         // Initialize the application
         window.onload = function() {
             initGoogleSheetsAPI();
 
-            // Expand the first filter section by default
+            // Expand widgets by default
             document.addEventListener('DOMContentLoaded', function() {
-                const firstFilterHeader = document.querySelector('.filter-section-header');
-                if (firstFilterHeader) {
-                    toggleSection(firstFilterHeader.nextElementSibling);
-                }
+                const widgets = document.querySelectorAll('.widget-content');
+                widgets.forEach(widget => widget.classList.add('expanded'));
             });
+
+            // Populate variable select
+            populateVariableSelect();
         };
+
+        // Widget Functions
+        function toggleWidget(widget) {
+            const content = widget.querySelector('.widget-content');
+            const toggle = widget.querySelector('.widget-toggle');
+            content.classList.toggle('expanded');
+            toggle.innerHTML = content.classList.contains('expanded') ? '&minus;' : '&plus;';
+        }
+
+        // Causal Modeling Functions
+        function populateVariableSelect() {
+            const select = document.getElementById('variable-select');
+            select.innerHTML = '<option value="">-- Select a variable --</option>';
+            
+            factors.forEach(factor => {
+                const option = document.createElement('option');
+                option.value = factor.id;
+                option.textContent = factor.name;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', function() {
+                const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
+                buttons.forEach(id => {
+                    document.getElementById(id).disabled = !this.value;
+                });
+            });
+        }
+
+        function simulateChange(direction) {
+            const selectedId = document.getElementById('variable-select').value;
+            if (!selectedId) return;
+
+            // Reset previous highlights
+            d3.selectAll('.node').classed('highlighted', false);
+            d3.selectAll('.link').classed('highlighted', false);
+
+            // Highlight selected node
+            d3.selectAll('.node').classed('highlighted', d => d.id === selectedId);
+
+            // Find and highlight connected nodes and links based on direction
+            const connectedLinks = links.filter(l => 
+                (direction === 'increase' && l.source.id === selectedId) ||
+                (direction === 'decrease' && l.target.id === selectedId)
+            );
+
+            d3.selectAll('.link')
+                .classed('highlighted', l => connectedLinks.includes(l));
+
+            const connectedNodes = connectedLinks.map(l => 
+                direction === 'increase' ? l.target : l.source
+            );
+
+            d3.selectAll('.node')
+                .classed('highlighted', d => connectedNodes.some(n => n.id === d.id));
+        }
+
+        function startSimulation() {
+            // Placeholder for simulation logic
+            document.getElementById('start-simulation').disabled = true;
+            document.getElementById('pause-simulation').disabled = false;
+        }
+
+        function pauseSimulation() {
+            // Placeholder for pause logic
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+        }
+
+        function resetSimulation() {
+            // Reset highlights and simulation state
+            d3.selectAll('.node').classed('highlighted', false);
+            d3.selectAll('.link').classed('highlighted', false);
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+        }
+
+        // Storyline Navigation Functions
+        let relationshipsHidden = false;
+
+        function toggleRelationships() {
+            const button = document.querySelector('button[onclick="toggleRelationships()"]');
+            relationshipsHidden = !relationshipsHidden;
+            
+            // Remove active state from all other buttons when showing relationships
+            if (!relationshipsHidden) {
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn !== button) btn.classList.remove('active');
+                });
+            }
+            
+            d3.selectAll('.link')
+                .style('opacity', relationshipsHidden ? 0 : 0.6)
+                .style('pointer-events', relationshipsHidden ? 'none' : 'auto');
+            
+            button.textContent = relationshipsHidden ? 'Show Relationships' : 'Hide Relationships';
+            button.classList.toggle('active', relationshipsHidden);
+            
+            // Reset node styles when showing relationships
+            if (!relationshipsHidden) {
+                d3.selectAll('.node')
+                    .classed('highlighted', false)
+                    .classed('dimmed', false)
+                    .select('circle')
+                    .attr('r', 8);
+                
+                d3.selectAll('.node text')
+                    .style('font-size', '12px')
+                    .style('font-weight', 'normal');
+            }
+        }
+
+        function showFocalNode() {
+            const button = document.querySelector('button[onclick="showFocalNode()"]');
+            const isActive = button.classList.contains('active');
+            
+            // First reset all highlights and buttons
+            resetHighlights();
+            
+            if (!isActive) {
+                // Turning ON - highlight focal nodes and hide relationships
+                button.classList.add('active');
+                
+                // Hide all relationships
+                d3.selectAll('.link').style('opacity', 0);
+
+                // Update nodes
+                d3.selectAll('.node')
+                    .classed('highlighted', d => d.domain === 'FOCAL FACTORS')
+                    .classed('dimmed', d => d.domain !== 'FOCAL FACTORS')
+                    .select('circle')
+                    .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 8);
+
+                // Update text
+                d3.selectAll('.node text')
+                    .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '16px' : '12px')
+                    .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
+            } else {
+                // Turning OFF - show all nodes without relationships
+                showAllNodesWithoutRelationships();
+            }
+        }
+
+        function showDomainNodes(domain) {
+            const button = document.querySelector(`button[onclick="showDomainNodes('${domain}')"]`);
+            const isActive = button.classList.contains('active');
+            
+            // First reset all highlights and buttons
+            resetHighlights();
+            
+            if (!isActive) {
+                // Turning ON - highlight domain nodes and hide relationships
+                button.classList.add('active');
+                
+                // Hide all relationships
+                d3.selectAll('.link').style('opacity', 0);
+
+                // Update nodes
+                d3.selectAll('.node')
+                    .classed('highlighted', d => d.domain === domain)
+                    .classed('dimmed', d => d.domain !== domain)
+                    .select('circle')
+                    .attr('r', d => d.domain === domain ? 12 : 8);
+
+                // Update text
+                d3.selectAll('.node text')
+                    .style('font-size', d => d.domain === domain ? '16px' : '12px')
+                    .style('font-weight', d => d.domain === domain ? 'bold' : 'normal');
+            } else {
+                // Turning OFF - show all nodes without relationships
+                showAllNodesWithoutRelationships();
+            }
+        }
+
+        function showAllNodesWithoutRelationships() {
+            // Hide all relationships
+            d3.selectAll('.link').style('opacity', 0);
+
+            // Show all nodes with normal styling
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .select('circle')
+                .attr('r', 8);
+
+            // Reset text styles
+            d3.selectAll('.node text')
+                .style('font-size', '12px')
+                .style('font-weight', 'normal');
+        }
+
+        function resetHighlights() {
+            // Reset node styles
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .select('circle')
+                .attr('r', 8);
+
+            // Reset text styles
+            d3.selectAll('.node text')
+                .style('font-size', '12px')
+                .style('font-weight', 'normal');
+
+            // Show all relationships
+            d3.selectAll('.link')
+                .style('opacity', 0.6)
+                .classed('highlighted', false);
+
+            // Remove active state from all buttons in Storyline Navigation
+            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+        }
     </script>
 </body>
 </html> 
