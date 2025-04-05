@@ -277,7 +277,7 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            max-width: 220px;
+            max-width: 242px;
             z-index: 1000;
         }
     </style>
@@ -679,6 +679,8 @@
         }
 
         function createFilterSections() {
+            const filtersDiv = document.getElementById("filters");
+            
             // Create Variable Categories section with hardcoded colors
             createFilterSection("Variable Categories", [
                 { name: "FOCAL FACTORS", color: "#999999" },
@@ -706,9 +708,12 @@
             ], "strengths");
 
             // Create Causal Modeling section
-            const filtersDiv = document.getElementById("filters");
             const causalSection = document.createElement("div");
             causalSection.className = "filter-section";
+            
+            // Sort factors alphabetically by name
+            const sortedFactors = [...factors].sort((a, b) => a.name.localeCompare(b.name));
+            
             causalSection.innerHTML = `
                 <div class="filter-section-header">
                     <h4>Causal Modeling</h4>
@@ -716,23 +721,34 @@
                 </div>
                 <div class="filter-section-content">
                     <div class="section-label">Select Variable:</div>
-                    <select id="variable-select">
+                    <select id="variable-select" class="filter-button">
                         <option value="">-- Select a variable --</option>
+                        ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
                     </select>
                     
                     <div class="section-label">Change Direction:</div>
-                    <button id="increase-btn" onclick="simulateChange('increase')" disabled>Increase</button>
-                    <button id="decrease-btn" onclick="simulateChange('decrease')" disabled>Decrease</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled>Increase</button>
+                        <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled>Decrease</button>
+                    </div>
                     
                     <div class="section-label">Simulation Controls:</div>
-                    <button id="start-simulation" onclick="startSimulation()" disabled>Start Simulation</button>
-                    <button id="pause-simulation" onclick="pauseSimulation()" disabled>Pause Simulation</button>
-                    <button id="reset-simulation" onclick="resetSimulation()" disabled>Reset Simulation</button>
+                    <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled>Start Simulation</button>
+                    <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled>Pause Simulation</button>
+                    <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled>Reset Simulation</button>
                 </div>
             `;
             causalSection.querySelector('.filter-section-header').onclick = () => 
                 toggleSection(causalSection.querySelector('.filter-section-content'));
             filtersDiv.appendChild(causalSection);
+
+            // Add event listener for variable select
+            causalSection.querySelector('#variable-select').addEventListener('change', function() {
+                const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
+                buttons.forEach(id => {
+                    document.getElementById(id).disabled = !this.value;
+                });
+            });
 
             // Create Storyline Navigation section
             const storylineSection = document.createElement("div");
@@ -909,26 +925,112 @@
 
         function showTooltip(event, d) {
             const tooltip = d3.select("#tooltip");
-            tooltip.html(`
-                <strong>${d.name}</strong><br>
-                Short Name: ${d.short_name}<br>
-                Domain: ${d.domain}<br>
-                Intervenable: ${d.intervenable}<br>
-                ${d.definition ? `Definition: ${d.definition}` : ""}
-            `)
-            .style("left", (event.pageX + 10) + "px")
-            .style("top", (event.pageY - 10) + "px")
-            .style("display", "block");
+            tooltip.style("display", "block")
+                .html(`
+                    <div style="font-weight: bold; margin-bottom: 8px;">${d.name}</div>
+                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">ID: ${d.id} | Category: ${d.domain}</div>
+                    ${d.definition ? `<div style="font-size: 0.9em; margin-bottom: 8px; color: #333;">${d.definition}</div>` : ''}
+                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">Relationships:</div>
+                `);
+            
+            // Get outgoing and incoming relationships
+            const outgoingLinks = links.filter(link => link.source.id === d.id);
+            const incomingLinks = links.filter(link => link.target.id === d.id);
+            
+            // Add "Affects" section (outgoing relationships)
+            if (outgoingLinks.length > 0) {
+                tooltip.append("div")
+                    .style("margin-bottom", "5px")
+                    .style("font-weight", "bold")
+                    .text("Affects:");
+                
+                const affectsList = tooltip.append("ul")
+                    .style("margin", "5px 0")
+                    .style("padding-left", "20px")
+                    .style("list-style-type", "disc");
+                
+                outgoingLinks.forEach(link => {
+                    const relationshipColor = link.type === "same" ? "#28a745" : "#dc3545";
+                    
+                    // Check if this relationship matches active filters
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(link.strength);
+                    const typeMatch = activeTypes.size === 0 || activeTypes.has(link.type);
+                    const categoryMatch = activeDomains.size === 0 || 
+                        (activeDomains.has(link.source.domain) || activeDomains.has(link.target.domain));
+                    const isHighlighted = strengthMatch && typeMatch && categoryMatch;
+                    
+                    // Determine the direction text based on relationship type
+                    const directionText = link.type === "same" ? "SameDirection" : "OppositeDirection";
+                    
+                    // Create list item - always use normal font weight
+                    const listItem = affectsList.append("li")
+                        .style("font-weight", "normal")
+                        .style("opacity", isHighlighted ? "1.0" : "0.5")
+                        .style("color", "black");
+                    
+                    listItem.html(`${link.target.name} (<span style="color: ${relationshipColor}">${directionText}</span>, ${link.strength}${link.delay ? `, ${link.delay}` : ''})`);
+                });
+            }
+            
+            // Add "Affected by" section (incoming relationships)
+            if (incomingLinks.length > 0) {
+                tooltip.append("div")
+                    .style("margin-top", "8px")
+                    .style("margin-bottom", "5px")
+                    .style("font-weight", "bold")
+                    .text("Affected by:");
+                
+                const affectedByList = tooltip.append("ul")
+                    .style("margin", "5px 0")
+                    .style("padding-left", "20px")
+                    .style("list-style-type", "disc");
+                
+                incomingLinks.forEach(link => {
+                    const relationshipColor = link.type === "same" ? "#28a745" : "#dc3545";
+                    
+                    // Check if this relationship matches active filters
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(link.strength);
+                    const typeMatch = activeTypes.size === 0 || activeTypes.has(link.type);
+                    const categoryMatch = activeDomains.size === 0 || 
+                        (activeDomains.has(link.source.domain) || activeDomains.has(link.target.domain));
+                    const isHighlighted = strengthMatch && typeMatch && categoryMatch;
+                    
+                    // Determine the direction text based on relationship type
+                    const directionText = link.type === "same" ? "SameDirection" : "OppositeDirection";
+                    
+                    // Create list item - always use normal font weight
+                    const listItem = affectedByList.append("li")
+                        .style("font-weight", "normal")
+                        .style("opacity", isHighlighted ? "1.0" : "0.5")
+                        .style("color", "black");
+                    
+                    listItem.html(`${link.source.name} (<span style="color: ${relationshipColor}">${directionText}</span>, ${link.strength}${link.delay ? `, ${link.delay}` : ''})`);
+                });
+            }
+
+            tooltip
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
         }
 
         function showLinkTooltip(event, d) {
             const tooltip = d3.select("#tooltip");
+            const sourceNode = d.source.name;
+            const targetNode = d.target.name;
+            const direction = d.type === 'same' ? 'SameDirection' : 'OppositeDirection';
+            
             tooltip.html(`
-                <strong>Relationship</strong><br>
-                Type: ${d.type === 'same' ? 'Same Direction' : 'Opposite Direction'}<br>
-                Strength: ${d.strength}<br>
-                Delay: ${d.delay}<br>
-                ${d.definition ? `Definition: ${d.definition}` : ""}
+                <div style="font-weight: bold; margin-bottom: 5px;">Relationship</div>
+                <div>
+                    When ${sourceNode} increases:<br>
+                    ${targetNode} <span style="color: ${d.type === 'same' ? '#28a745' : '#dc3545'}">${direction}</span>
+                </div>
+                <div style="margin-top: 10px; margin-bottom: 5px;">
+                    ${d.strength ? `<span style="text-transform: capitalize;">${d.strength}</span> strength` : ''}
+                </div>
+                <div>
+                    ${d.delay ? `${d.delay} delay` : ''}
+                </div>
             `)
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px")
@@ -1111,14 +1213,15 @@
         window.onload = function() {
             initGoogleSheetsAPI();
 
-            // Expand widgets by default
+            // Expand filter sections by default
             document.addEventListener('DOMContentLoaded', function() {
-                const widgets = document.querySelectorAll('.widget-content');
-                widgets.forEach(widget => widget.classList.add('expanded'));
+                const filterSections = document.querySelectorAll('.filter-section-content');
+                filterSections.forEach(section => {
+                    section.classList.add('expanded');
+                    const toggle = section.previousElementSibling.querySelector('.filter-section-toggle');
+                    if (toggle) toggle.innerHTML = '&minus;';
+                });
             });
-
-            // Populate variable select
-            populateVariableSelect();
         };
 
         // Widget Functions
@@ -1131,34 +1234,41 @@
 
         // Causal Modeling Functions
         function populateVariableSelect() {
-            const select = document.getElementById('variable-select');
-            select.innerHTML = '<option value="">-- Select a variable --</option>';
-            
-            factors.forEach(factor => {
-                const option = document.createElement('option');
-                option.value = factor.id;
-                option.textContent = factor.name;
-                select.appendChild(option);
-            });
-
-            select.addEventListener('change', function() {
-                const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
-                buttons.forEach(id => {
-                    document.getElementById(id).disabled = !this.value;
-                });
-            });
+            // Remove this function as we're now populating the select directly in the HTML
         }
 
         function simulateChange(direction) {
             const selectedId = document.getElementById('variable-select').value;
             if (!selectedId) return;
 
-            // Reset previous highlights
+            // Reset previous highlights and button styles
             d3.selectAll('.node').classed('highlighted', false);
             d3.selectAll('.link').classed('highlighted', false);
+            document.getElementById('increase-btn').style.backgroundColor = '';
+            document.getElementById('increase-btn').style.color = '';
+            document.getElementById('decrease-btn').style.backgroundColor = '';
+            document.getElementById('decrease-btn').style.color = '';
 
-            // Highlight selected node
-            d3.selectAll('.node').classed('highlighted', d => d.id === selectedId);
+            // Set button color based on direction
+            const button = document.getElementById(`${direction}-btn`);
+            if (direction === 'increase') {
+                button.style.backgroundColor = '#28a745';  // Green
+                button.style.color = 'white';
+            } else {
+                button.style.backgroundColor = '#dc3545';  // Red
+                button.style.color = 'white';
+            }
+
+            // Highlight selected node and make it larger
+            d3.selectAll('.node')
+                .classed('highlighted', d => d.id === selectedId)
+                .select('circle')
+                .attr('r', d => d.id === selectedId ? 15 : 10);
+
+            // Update text style for highlighted node
+            d3.selectAll('.node text')
+                .style('font-size', d => d.id === selectedId ? '19px' : '14px')
+                .style('font-weight', d => d.id === selectedId ? 'bold' : 'normal');
 
             // Find and highlight connected nodes and links based on direction
             const connectedLinks = links.filter(l => 
@@ -1167,14 +1277,28 @@
             );
 
             d3.selectAll('.link')
-                .classed('highlighted', l => connectedLinks.includes(l));
+                .classed('highlighted', l => connectedLinks.includes(l))
+                .style('opacity', l => connectedLinks.includes(l) ? 1 : 0.2);
 
             const connectedNodes = connectedLinks.map(l => 
                 direction === 'increase' ? l.target : l.source
             );
 
+            // Update connected nodes style
             d3.selectAll('.node')
-                .classed('highlighted', d => connectedNodes.some(n => n.id === d.id));
+                .each(function(d) {
+                    if (connectedNodes.some(n => n.id === d.id)) {
+                        d3.select(this)
+                            .classed('highlighted', true)
+                            .select('circle')
+                            .attr('r', 12);
+                        
+                        d3.select(this)
+                            .select('text')
+                            .style('font-size', '16px')
+                            .style('font-weight', 'bold');
+                    }
+                });
         }
 
         function startSimulation() {
