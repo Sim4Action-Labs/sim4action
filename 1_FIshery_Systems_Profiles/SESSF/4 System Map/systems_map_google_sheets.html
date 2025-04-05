@@ -1108,24 +1108,85 @@
             const tooltip = d3.select("#tooltip");
             const sourceNode = d.source.name;
             const targetNode = d.target.name;
-            const direction = d.type === 'same' ? 'SameDirection' : 'OppositeDirection';
+            const relationshipType = d.type === 'same' ? 'Same Direction' : 'Opposite Direction';
+            const relationshipColor = d.type === 'same' ? '#28a745' : '#dc3545';
+            
+            // Generate the cause-effect sentences
+            let causeEffectText = '';
+            if (d.type === 'same') {
+                causeEffectText = `
+                    <div style="margin: 8px 0;">
+                        <div>If ${sourceNode} <span style="font-weight: bold;">increases</span>, then ${targetNode} <span style="font-weight: bold;">increases</span></div>
+                        <div style="margin-top: 4px;">OR</div>
+                        <div style="margin-top: 4px;">If ${sourceNode} <span style="font-weight: bold;">decreases</span>, then ${targetNode} <span style="font-weight: bold;">decreases</span></div>
+                    </div>
+                `;
+            } else {
+                causeEffectText = `
+                    <div style="margin: 8px 0;">
+                        <div>If ${sourceNode} <span style="font-weight: bold;">increases</span>, then ${targetNode} <span style="font-weight: bold;">decreases</span></div>
+                        <div style="margin-top: 4px;">OR</div>
+                        <div style="margin-top: 4px;">If ${sourceNode} <span style="font-weight: bold;">decreases</span>, then ${targetNode} <span style="font-weight: bold;">increases</span></div>
+                    </div>
+                `;
+            }
+            
+            // Generate strength badges
+            const strengthOptions = ['weak', 'medium', 'strong'];
+            const strengthHTML = `
+                <div style="margin-top: 12px; display: flex; gap: 6px; justify-content: flex-start; align-items: center;">
+                    <div style="font-weight: 500; margin-right: 4px;">Strength:</div>
+                    ${strengthOptions.map(strength => {
+                        const isActive = d.strength === strength;
+                        return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
+                                      background-color: ${isActive ? '#6c757d' : '#f0f0f0'}; 
+                                      color: ${isActive ? 'white' : '#666'};
+                                      font-weight: ${isActive ? 'bold' : 'normal'};
+                                      border: 1px solid ${isActive ? '#6c757d' : '#ddd'};">
+                                 ${strength.charAt(0).toUpperCase() + strength.slice(1)}
+                               </div>`;
+                    }).join('')}
+                </div>
+            `;
+            
+            // Generate temporality badges
+            const temporalityOptions = ['days', 'months', 'years', 'decade'];
+            let delay = d.delay || ''; // Handle undefined delay
+            
+            const temporalityHTML = `
+                <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: flex-start; align-items: center;">
+                    <div style="font-weight: 500; margin-right: 4px;">Temporality:</div>
+                    ${temporalityOptions.map(temp => {
+                        const isActive = delay.includes(temp);
+                        return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
+                                      background-color: ${isActive ? '#17a2b8' : '#f0f0f0'}; 
+                                      color: ${isActive ? 'white' : '#666'};
+                                      font-weight: ${isActive ? 'bold' : 'normal'};
+                                      border: 1px solid ${isActive ? '#17a2b8' : '#ddd'};">
+                                 ${temp.charAt(0).toUpperCase() + temp.slice(1)}
+                               </div>`;
+                    }).join('')}
+                </div>
+            `;
             
             tooltip.html(`
-                <div style="font-weight: bold; margin-bottom: 5px;">Relationship</div>
-                <div>
-                    When ${sourceNode} increases:<br>
-                    ${targetNode} <span style="color: ${d.type === 'same' ? '#28a745' : '#dc3545'}">${direction}</span>
-                </div>
-                <div style="margin-top: 10px; margin-bottom: 5px;">
-                    ${d.strength ? `<span style="text-transform: capitalize;">${d.strength}</span> strength` : ''}
-                </div>
-                <div>
-                    ${d.delay ? `${d.delay} delay` : ''}
+                <div style="position: relative;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">Relationship</div>
+                    <div style="position: absolute; top: 0; right: 0; padding: 4px 8px; background-color: ${relationshipColor}; border-radius: 4px; color: white; font-weight: bold; font-size: 12px;">
+                        ${relationshipType}
+                    </div>
+                    ${causeEffectText}
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                        ${strengthHTML}
+                        ${temporalityHTML}
+                    </div>
                 </div>
             `)
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px")
-            .style("display", "block");
+            .style("display", "block")
+            .style("width", "auto")
+            .style("max-width", "400px");
         }
 
         function hideTooltip() {
