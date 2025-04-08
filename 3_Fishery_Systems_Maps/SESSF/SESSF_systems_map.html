@@ -1411,43 +1411,44 @@
             // Reset all filters first
             resetFilters();
 
+            // Find all connected links and neighbor nodes
+            const connectedLinks = links.filter(link => 
+                link.source.id === d.id || link.target.id === d.id
+            );
+            
+            const neighborNodes = new Set();
+            connectedLinks.forEach(link => {
+                if (link.source.id === d.id) {
+                    neighborNodes.add(link.target.id);
+                } else {
+                    neighborNodes.add(link.source.id);
+                }
+            });
+
             // Update nodes
             d3.selectAll(".node")
-                .style("opacity", function(n) {
-                    if (n.id === d.id) {
-                        // Selected node
-                        d3.select(this).classed("focal", true);
-                        return 1;
-                    } else {
-                        // Other nodes
-                        d3.select(this).classed("dimmed", true);
-                        return 0.1;
-                    }
-                })
+                .classed("focal", n => n.id === d.id)
+                .classed("highlighted", n => neighborNodes.has(n.id))
+                .classed("dimmed", n => n.id !== d.id && !neighborNodes.has(n.id))
+                .style("opacity", n => (n.id === d.id || neighborNodes.has(n.id)) ? 1 : 0.2)
                 .select("text")
-                .style("font-size", function(n) {
+                .style("font-size", n => {
                     if (n.id === d.id) return "16px";
+                    else if (neighborNodes.has(n.id)) return "14px";
                     else return "12px";
                 })
-                .style("font-weight", function(n) {
+                .style("font-weight", n => {
                     if (n.id === d.id) return "bold";
+                    else if (neighborNodes.has(n.id)) return "bold";
                     else return "normal";
                 });
 
             // Update links
             d3.selectAll(".link")
-                .style("opacity", function(l) {
-                    if (l === d) {
-                        d3.select(this).classed("highlighted", true);
-                        return 1;
-                    } else {
-                        d3.select(this).classed("dimmed", true);
-                        return 0.1;
-                    }
-                })
-                .style("pointer-events", function(l) {
-                    return l === d ? "auto" : "none";
-                });
+                .classed("highlighted", l => connectedLinks.includes(l))
+                .classed("dimmed", l => !connectedLinks.includes(l))
+                .style("opacity", l => connectedLinks.includes(l) ? 1 : 0.1)
+                .style("pointer-events", l => connectedLinks.includes(l) ? "auto" : "none");
         }
 
         function handleLinkClick(event, d) {
