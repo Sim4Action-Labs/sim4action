@@ -360,14 +360,16 @@
             z-index: 1000;
             display: flex;
             flex-direction: column;
-            align-items: flex-end;
+            align-items: center;
             background-color: transparent;
             padding: 0;
             border-radius: 4px;
+            text-align: center;
         }
         #fishery-info img {
             height: 72px;
-            margin-left: 0;
+            margin: 0 auto;
+            display: block;
         }
         #fishery-info p {
             margin: 5px 0 0 0;
@@ -378,6 +380,7 @@
             background-color: rgba(255, 255, 255, 0.7);
             padding: 2px 8px;
             border-radius: 4px;
+            width: 100%;
         }
         .node.focal circle {
             stroke-width: 3px;
@@ -896,11 +899,11 @@
 
             // Create Temporal Scale section
             createFilterSection("Temporal Scale", [
-                { name: "hide_temporal", label: "Hide Temporal Styling", isDelay: true, isHideTemporal: true },
                 { name: "days", label: "Days", isDelay: true },
                 { name: "months", label: "Months", isDelay: true },
                 { name: "years", label: "Years", isDelay: true },
-                { name: "decade", label: "Decade", isDelay: true }
+                { name: "decade", label: "Decade", isDelay: true },
+                { name: "hide_temporal", label: "Hide Temporal Styling", isDelay: true, isHideTemporal: true }
             ], "delays");
 
             // Create Storyline Navigation section
