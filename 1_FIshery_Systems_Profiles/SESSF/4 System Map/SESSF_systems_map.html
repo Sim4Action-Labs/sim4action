@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SESSF Systems Map - Google Sheets Integration</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Add Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #graph {
+            width: 100vw;
+            height: 100vh;
+            background-color: #f8f9fa;
+        }
+        .node {
+            cursor: move;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+            transition: all 0.3s ease;
+        }
+        .node text {
+            font-size: 12px;
+            fill: #333;
+            text-shadow: 0 1px 3px rgba(255,255,255,0.7);
+            transition: all 0.3s ease;
+        }
+        .node.focal circle {
+            r: 12;
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .node.focal text {
+            font-size: 14.4px;
+            font-weight: bold;
+        }
+        .node.highlighted circle {
+            r: 12;
+            stroke: #000;
+            stroke-width: 3px;
+        }
+        .node.highlighted text {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .node.dimmed {
+            opacity: 0.2;
+        }
+        .node.dimmed text {
+            opacity: 0.2;
+        }
+        .link {
+            stroke-opacity: 0.6;
+            fill: none;
+            transition: stroke-opacity 0.3s;
+        }
+        .link.highlighted {
+            stroke-opacity: 1;
+        }
+        .link.dimmed {
+            stroke-opacity: 0.1;
+        }
+        .link.same { 
+            stroke: #28a745;
+            marker-end: url(#arrow-same);
+        }
+        .link.opposite { 
+            stroke: #dc3545;
+            marker-end: url(#arrow-opposite);
+        }
+        .link.Variable { 
+            stroke: #6c757d;
+            marker-end: url(#arrow-Variable);
+        }
+        .link.strong { 
+            stroke-width: 4px; 
+        }
+        .link.medium { 
+            stroke-width: 2px; 
+        }
+        .link.weak { 
+            stroke-width: 1px; 
+        }
+        .link.uncertain { 
+            display: none;
+        }
+        .link.days {
+            stroke-dasharray: none;
+        }
+        .link.months {
+            stroke-dasharray: 4,4;
+        }
+        .link.years {
+            stroke-dasharray: 1,2;
+        }
+        .link.decade {
+            stroke-width: 3px;
+            stroke-dasharray: 8,2;
+        }
+        .link.decade::after {  /* create double line effect */
+            content: '';
+            position: absolute;
+            stroke: inherit;
+            stroke-width: 1px;
+            stroke-dasharray: none;
+        }
+        #tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            pointer-events: none;
+            font-size: 12px;
+            max-width: 300px;
+            display: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #legend {
+            position: fixed;
+            top: 20px;
+            right: 240px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .legend-item {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-right: 5px;
+            border-radius: 50%;
+        }
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 150px;
+        }
+        #controls button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px 10px;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #controls button:hover {
+            background-color: #e9ecef;
+        }
+        #filters {
+            position: fixed;
+            top: 160px;
+            left: 20px;
+            bottom: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+        .filter-section {
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .filter-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px 4px 0 0;
+        }
+        .filter-section-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .filter-section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 10px;
+        }
+        .filter-section-content.expanded {
+            max-height: 300px;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .filter-button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 4px 0;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .filter-button:hover {
+            background-color: #f0f0f0;
+        }
+        .filter-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+        .filter-button:disabled {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .section-label {
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+            font-size: 12px;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            font-size: 12px;
+        }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            display: inline-block;
+        }
+        .arrow-indicator {
+            width: 20px;
+            height: 2px;
+            margin-right: 8px;
+            position: relative;
+        }
+        .arrow-indicator::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+        }
+        .strength-indicator {
+            width: 20px;
+            height: 2px;
+            margin-right: 8px;
+            background-color: #666;
+        }
+        .strength-indicator.strong {
+            height: 4px;
+        }
+        .strength-indicator.medium {
+            height: 2px;
+        }
+        .strength-indicator.weak {
+            height: 0.5px;
+        }
+        .strength-indicator.uncertain {
+            border-top: 1px dashed #666;
+            background: none;
+        }
+        .delay-indicator {
+            width: 30px;  /* Increased width to show pattern better */
+            height: 2px;
+            margin-right: 8px;
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+        }
+        /* Specific styles for each temporal scale indicator */
+        .filter-button[data-delay="show_all"] .delay-indicator,
+        .filter-button[data-delay="days"] .delay-indicator {
+            border-top: 2px solid #666;
+        }
+        
+        .filter-button[data-delay="months"] .delay-indicator {
+            background: repeating-linear-gradient(
+                to right,
+                #666 0,
+                #666 8px,
+                transparent 8px,
+                transparent 12px
+            );
+            height: 2px;
+        }
+        
+        .filter-button[data-delay="years"] .delay-indicator {
+            background: repeating-linear-gradient(
+                to right,
+                #666 0,
+                #666 8px,
+                transparent 8px,
+                transparent 20px
+            );
+            height: 2px;
+        }
+        
+        .filter-button[data-delay="decade"] .delay-indicator {
+            background: repeating-linear-gradient(
+                to right,
+                #666 0,
+                #666 8px,
+                transparent 8px,
+                transparent 32px
+            );
+            height: 2px;
+        }
+        #logo {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            max-width: 242px;
+            z-index: 1000;
+        }
+        #fishery-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            background-color: transparent;
+            padding: 0;
+            border-radius: 4px;
+        }
+        #fishery-info img {
+            height: 72px;
+            margin-left: 0;
+        }
+        #fishery-info p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .node.focal circle {
+            stroke-width: 3px;
+            stroke: #000;
+        }
+        .node.highlighted circle {
+            stroke-width: 2px;
+            stroke: #666;
+        }
+        .node.dimmed {
+            pointer-events: none;
+        }
+        .link.highlighted {
+            stroke-opacity: 1;
+        }
+        .link.dimmed {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
+    <div id="fishery-info">
+        <img src="Blue-Grenadier.png" alt="Blue Grenadier">
+        <p>Blue Grenadier (SESSF Fishery)</p>
+    </div>
+    <div id="graph"></div>
+    <div id="tooltip"></div>
+    <div id="controls">
+        <button onclick="zoomIn()">Zoom In</button>
+        <button onclick="zoomOut()">Zoom Out</button>
+        <button onclick="resetView()">Reset View</button>
+        <button onclick="resetFilters()">Reset Filters</button>
+        <button onclick="window.open('https://docs.google.com/spreadsheets/d/1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU/edit?gid=1932523701#gid=1932523701', '_blank')">View Data Source</button>
+        <button onclick="reloadData()" style="background-color: #4CAF50; color: white;">Reload Data</button>
+    </div>
+    <div id="filters">
+        <!-- Filter sections will be dynamically populated from Google Sheets -->
+    </div>
+    <div id="error-message"></div>
+    <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none;">
+        Loading data from Google Sheets...
+    </div>
+
+    <script>
+        // Google Sheets API configuration
+        const SPREADSHEET_ID = '1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU';
+        const API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA';
+
+        // Global variables for data
+        let domains = [];
+        let factors = [];
+        let relationships = [];
+        let simulation;
+        let transform = d3.zoomIdentity;
+        let links = [];  // Add this to store link data globally
+        let svg; // Make svg global to access it during reload
+        let zoom; // Make zoom behavior global
+
+        // Initialize filter sets
+        const activeDomains = new Set();
+        const activeTypes = new Set();
+        const activeStrengths = new Set();
+        const activeDelays = new Set();  // Add new filter set for temporal scales
+
+        // Function to reload data from Google Sheets
+        async function reloadData() {
+            try {
+                // Show loading indicator
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('loading').innerHTML = 'Reloading data from Google Sheets...';
+                
+                // Clear previous data
+                domains = [];
+                factors = [];
+                relationships = [];
+                
+                // Clear existing filter sections
+                document.getElementById('filters').innerHTML = '';
+                
+                // Reset filter sets
+                activeDomains.clear();
+                activeTypes.clear();
+                activeStrengths.clear();
+                activeDelays.clear();  // Clear temporal scale filters
+                
+                // Load new data
+                await loadAllData();
+                
+                // Clear the existing visualization
+                d3.select("#graph svg").remove();
+                
+                // Reinitialize the entire visualization
+                initializeVisualization();
+                
+                // Hide loading indicator
+                document.getElementById('loading').style.display = 'none';
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.style.position = 'fixed';
+                successMsg.style.bottom = '20px';
+                successMsg.style.left = '20px';
+                successMsg.style.backgroundColor = '#4CAF50';
+                successMsg.style.color = 'white';
+                successMsg.style.padding = '10px';
+                successMsg.style.borderRadius = '4px';
+                successMsg.style.zIndex = '1000';
+                successMsg.innerText = 'Data successfully reloaded!';
+                document.body.appendChild(successMsg);
+                
+                // Remove success message after 3 seconds
+                setTimeout(() => {
+                    successMsg.remove();
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error reloading data:', error);
+                document.getElementById('loading').style.display = 'none';
+                showError('Failed to reload data: ' + error.message);
+            }
+        }
+
+        // Initialize the Google Sheets API
+        function initGoogleSheetsAPI() {
+            // Show loading indicator immediately
+            document.getElementById('loading').style.display = 'block';
+
+            gapi.load('client', async () => {
+                try {
+                    await gapi.client.init({
+                        apiKey: API_KEY,
+                        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+                    });
+                    
+                    try {
+                        // Test the connection and get spreadsheet metadata
+                        const response = await gapi.client.sheets.spreadsheets.get({
+                            spreadsheetId: SPREADSHEET_ID
+                        });
+                        console.log('Successfully connected to spreadsheet:', response.result.properties.title);
+                        
+                        // If successful, load the data
+                        await loadAllData();
+                        console.log('Data loaded:', { domains, factors, relationships });
+                        
+                        // Initialize visualization
+                        initializeVisualization();
+                        
+                    } catch (error) {
+                        console.error('Detailed API Error:', error);
+                        if (error.result && error.result.error) {
+                            showError(`API Error: ${error.result.error.message}`);
+                        } else if (error.status === 403) {
+                            showError('Access denied. Please check if the Google Sheet is shared properly.');
+                        } else if (error.status === 404) {
+                            showError('Spreadsheet not found. Please check the Spreadsheet ID.');
+                        } else {
+                            showError('Error accessing Google Sheet: ' + (error.message || 'Unknown error'));
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error initializing Google Sheets API:', error);
+                    showError('Failed to initialize Google Sheets API. Check your API key and ensure you are accessing through http://localhost:8000');
+                } finally {
+                    // Hide loading indicator
+                    document.getElementById('loading').style.display = 'none';
+                }
+            });
+        }
+
+        // Error handling function with more detailed messages
+        function showError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.innerHTML = `
+                <strong>Error:</strong><br>
+                ${message}<br><br>
+                Please check:<br>
+                1. API key is correct<br>
+                2. Spreadsheet ID is correct<br>
+                3. Sheet is shared with "Anyone with the link"<br>
+                4. Sheet tabs are named exactly: DOMAINS, FACTORS, RELATIONSHIPS
+            `;
+            errorDiv.style.display = "block";
+            document.getElementById('loading').style.display = 'none';
+            
+            // Auto-hide after 10 seconds
+            setTimeout(() => {
+                errorDiv.style.display = "none";
+            }, 10000);
+        }
+
+        // Load data from all sheets
+        async function loadAllData() {
+            try {
+                // Load domains (we'll extract unique domains from factors)
+                const factorsResponse = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'FACTORS!A2:E', // Updated to match template: factor_id, name, domain_name, intervenable, definition
+                });
+                
+                if (!factorsResponse.result.values) {
+                    throw new Error('No data found in FACTORS sheet');
+                }
+                
+                // Extract unique domains from factors
+                const uniqueDomains = new Set();
+                factorsResponse.result.values.forEach(row => {
+                    if (row[2]) uniqueDomains.add(row[2]); // domain_name is in column C
+                });
+                
+                domains = Array.from(uniqueDomains).map(name => ({
+                    id: name,
+                    name: name
+                }));
+                console.log('Loaded domains:', domains);
+
+                // Process factors
+                factors = factorsResponse.result.values.map(row => ({
+                    id: row[0],          // factor_id (e.g., V1)
+                    name: row[1],        // name
+                    domain_name: row[2], // domain_name
+                    intervenable: row[3], // intervenable
+                    definition: row[4]   // definition
+                }));
+                console.log('Loaded factors:', factors);
+
+                // Load relationships
+                const relationshipsResponse = await gapi.client.sheets.spreadsheets.values.get({
+                    spreadsheetId: SPREADSHEET_ID,
+                    range: 'RELATIONSHIPS!A2:I', // relationship_id, from, to, from_factor_id, to_factor_id, polarity, strength, delay, definition
+                });
+                
+                if (!relationshipsResponse.result.values) {
+                    throw new Error('No data found in RELATIONSHIPS sheet');
+                }
+                
+                relationships = relationshipsResponse.result.values.map(row => ({
+                    id: row[0],            // relationship_id
+                    from: row[1],          // from (source factor name)
+                    to: row[2],            // to (target factor name)
+                    from_factor_id: row[3], // from_factor_id (e.g., V1)
+                    to_factor_id: row[4],   // to_factor_id (e.g., V2)
+                    polarity: row[5],       // polarity (same/opposite)
+                    strength: row[6],       // strength (strong/medium/weak)
+                    delay: row[7],          // delay (years/months/days)
+                    definition: row[8]      // definition
+                }));
+                console.log('Loaded relationships:', relationships);
+
+            } catch (error) {
+                console.error('Error loading data from Google Sheets:', error);
+                showError('Failed to load data from Google Sheets: ' + error.message);
+                throw error;
+            }
+        }
+
+        // Initialize visualization with data from Google Sheets
+        function initializeVisualization() {
+            // Transform the data into the format needed for D3
+            const nodes = factors.map(factor => ({
+                id: factor.id,
+                name: factor.name,
+                domain: factor.domain_name,
+                intervenable: factor.intervenable,
+                definition: factor.definition,
+                color: getDomainColor(factor.domain_name)
+            }));
+
+            links = relationships.map(rel => ({
+                source: rel.from_factor_id,
+                target: rel.to_factor_id,
+                type: rel.polarity,
+                strength: rel.strength.toLowerCase(),
+                delay: rel.delay.toLowerCase(),
+                definition: rel.definition
+            }));
+
+            // Set up the SVG
+            svg = d3.select("#graph")
+                .append("svg")
+                .attr("width", "100%")
+                .attr("height", "100%");
+
+            // Add background rect to catch click events
+            svg.append("rect")
+                .attr("width", "100%")
+                .attr("height", "100%")
+                .attr("fill", "transparent")
+                .on("click", function(event) {
+                    // Only reset if clicking directly on the background
+                    if (event.target === this) {
+                        resetFilters();
+                    }
+                });
+
+            // Create defs element for markers
+            const defs = svg.append("defs");
+
+            // Define markers for each combination of type and strength
+            ["same", "opposite"].forEach(type => {
+                ["strong", "medium", "weak"].forEach(strength => {
+                    defs.append("marker")
+                        .attr("id", `arrow-${type}-${strength}`)
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 15)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5")
+                        .style("fill", type === "same" ? "#28a745" : "#dc3545");
+                });
+            });
+
+            // Create the simulation
+            simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2))
+                .force("collision", d3.forceCollide().radius(30));
+
+            // Create container for zoom
+            const container = svg.append("g");
+
+            // Add zoom behavior
+            zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on("zoom", (event) => {
+                    container.attr("transform", event.transform);
+                    transform = event.transform;
+                });
+
+            svg.call(zoom);
+
+            // Store zoom behavior globally
+            window.zoomBehavior = zoom;
+            window.svgElement = svg;
+
+            // Create the links
+            const link = container.append("g")
+                .selectAll("path")
+                .data(links)
+                .enter().append("path")
+                .attr("class", d => `link ${d.type} ${d.strength}`)
+                .attr("marker-end", d => `url(#arrow-${d.type}-${d.strength})`)
+                .on("click", handleLinkClick); // Add click handler for links
+
+            // Create the nodes
+            const node = container.append("g")
+                .selectAll(".node")
+                .data(nodes)
+                .enter().append("g")
+                .attr("class", d => `node${d.domain === 'FOCAL FACTORS' ? ' focal' : ''}`)
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            node.append("circle")
+                .attr("r", d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
+                .style("fill", d => d.color);
+
+            node.append("text")
+                .attr("dx", 12)
+                .attr("dy", ".35em")
+                .style("font-size", d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style("font-weight", d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal')
+                .text(d => d.name);
+
+            // Update function for simulation
+            simulation.on("tick", () => {
+                link.attr("d", d => {
+                    const dx = d.target.x - d.source.x,
+                          dy = d.target.y - d.source.y,
+                          dr = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // Adjust the end point to account for the node radius and line width
+                    const scale = (dr - 8) / dr;  // Subtract node radius from the distance
+                    const endX = d.source.x + dx * scale,
+                          endY = d.source.y + dy * scale;
+                    
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${endX},${endY}`;
+                });
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            // Create filters
+            createFilterSections();
+
+            // Add tooltips
+            node.on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip)
+                .on("click", handleNodeClick);
+
+            link.on("mouseover", showLinkTooltip)
+                .on("mouseout", hideTooltip);
+
+            // Expand the first filter section
+            const firstFilterHeader = document.querySelector('.filter-section-header');
+            if (firstFilterHeader) {
+                toggleSection(firstFilterHeader.nextElementSibling);
+            }
+
+            // Add click handler to SVG for resetting node selection
+            svg.on("click", resetNodeSelection);
+        }
+
+        function updateLegend() {
+            const legend = d3.select("#legend");
+            
+            // Clear existing legend
+            legend.html("");
+            
+            // Add domain legend
+            legend.append("h4")
+                .text("Domains")
+                .style("margin", "0 0 10px 0");
+
+            domains.forEach(domain => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("span")
+                    .attr("class", "legend-color")
+                    .style("background-color", domain.color);
+                
+                item.append("span")
+                    .text(domain.name);
+            });
+
+            // Add relationship types legend
+            legend.append("h4")
+                .text("Relationship Types")
+                .style("margin", "15px 0 10px 0");
+
+            const relationshipTypes = [
+                { name: "Same Direction", class: "same", color: "#28a745" },
+                { name: "Opposite Direction", class: "opposite", color: "#dc3545" }
+            ];
+
+            relationshipTypes.forEach(type => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("span")
+                    .attr("class", "legend-color")
+                    .style("background-color", type.color);
+                
+                item.append("span")
+                    .text(type.name);
+            });
+
+            // Add strength legend
+            legend.append("h4")
+                .text("Relationship Strength")
+                .style("margin", "15px 0 10px 0");
+
+            const strengths = [
+                { name: "strong", width: "4px" },
+                { name: "medium", width: "2px" },
+                { name: "weak", width: "0.5px" },
+                { name: "uncertain", width: "1px", style: "stroke-dasharray: 4" }
+            ];
+
+            strengths.forEach(strength => {
+                const item = legend.append("div")
+                    .attr("class", "legend-item");
+                
+                item.append("div")
+                    .style("display", "inline-block")
+                    .style("width", "20px")
+                    .style("height", strength.width)
+                    .style("background-color", "#666")
+                    .style("margin-right", "5px")
+                    .style("vertical-align", "middle")
+                    .style("border-style", strength.name === "uncertain" ? "dashed" : "solid")
+                    .style("border-width", strength.name === "uncertain" ? "1px" : strength.width)
+                    .style("border-color", "#666")
+                    .style("background", strength.name === "uncertain" ? "none" : "#666");
+                
+                item.append("span")
+                    .text(strength.name);
+            });
+        }
+
+        function createFilterSections() {
+            const filtersDiv = document.getElementById("filters");
+            
+            // Create Variable Categories section with template colors
+            createFilterSection("Variable Categories", [
+                { name: "Stock", color: "#ff0000" },
+                { name: "Technical", color: "#8B4513" },
+                { name: "Environmental-Ecosystem", color: "#228B22" },
+                { name: "Economics-Markets", color: "#0000FF" },
+                { name: "Management", color: "#800080" },
+                { name: "Social", color: "#FF69B4" },
+                { name: "Indigenous", color: "#FFD700" }
+            ], "domains");
+
+            // Create Relationship Types section
+            createFilterSection("Relationship Types", [
+                { name: "same", label: "Same Direction", color: "#28a745", isArrow: true },
+                { name: "opposite", label: "Opposite Direction", color: "#dc3545", isArrow: true }
+            ], "types");
+
+            // Create Relationship Strength section
+            createFilterSection("Relationship Strength", [
+                { name: "strong", isStrength: true },
+                { name: "medium", isStrength: true },
+                { name: "weak", isStrength: true }
+            ], "strengths");
+
+            // Create Temporal Scale section
+            createFilterSection("Temporal Scale", [
+                { name: "hide_temporal", label: "Hide Temporal Styling", isDelay: true, isHideTemporal: true },
+                { name: "days", label: "Days", isDelay: true },
+                { name: "months", label: "Months", isDelay: true },
+                { name: "years", label: "Years", isDelay: true },
+                { name: "decade", label: "Decade", isDelay: true }
+            ], "delays");
+
+            // Create Storyline Navigation section
+            const storylineSection = document.createElement("div");
+            storylineSection.className = "filter-section";
+            storylineSection.innerHTML = `
+                <div class="filter-section-header">
+                    <h4>Storyline Navigation</h4>
+                    <span class="filter-section-toggle">&plus;</span>
+                </div>
+                <div class="filter-section-content">
+                    <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
+                    <button class="filter-button" onclick="showFocalNode()">Show Focal Node(s)</button>
+                    <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Social')">Show Social Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Technical')">Show Technical Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Indigenous')">Show Indigenous Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Management')">Show Management Variables</button>
+                </div>
+            `;
+            storylineSection.querySelector('.filter-section-header').onclick = () => 
+                toggleSection(storylineSection.querySelector('.filter-section-content'));
+            filtersDiv.appendChild(storylineSection);
+
+            // Create Causal Modeling section
+            const causalSection = document.createElement("div");
+            causalSection.className = "filter-section";
+            
+            // Sort factors alphabetically by name
+            const sortedFactors = [...factors].sort((a, b) => a.name.localeCompare(b.name));
+            
+            causalSection.innerHTML = `
+                <div class="filter-section-header">
+                    <h4>Causal Modeling</h4>
+                    <span class="filter-section-toggle">&plus;</span>
+                </div>
+                <div class="filter-section-content">
+                    <div class="section-label">Select Variable:</div>
+                    <select id="variable-select" class="filter-button">
+                        <option value="">-- Select a variable --</option>
+                        ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
+                    </select>
+                    
+                    <div class="section-label">Change Direction:</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled>Increase</button>
+                        <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled>Decrease</button>
+                    </div>
+                    
+                    <div class="section-label">Simulation Controls:</div>
+                    <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled>Start Simulation</button>
+                    <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled>Pause Simulation</button>
+                    <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled>Reset Simulation</button>
+                </div>
+            `;
+            causalSection.querySelector('.filter-section-header').onclick = () => 
+                toggleSection(causalSection.querySelector('.filter-section-content'));
+            filtersDiv.appendChild(causalSection);
+
+            // Add event listener for variable select
+            causalSection.querySelector('#variable-select').addEventListener('change', function() {
+                const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
+                buttons.forEach(id => {
+                    document.getElementById(id).disabled = !this.value;
+                });
+            });
+        }
+
+        function createFilterSection(title, items, type) {
+            const filtersDiv = document.getElementById("filters");
+            
+            const section = document.createElement("div");
+            section.className = "filter-section";
+            
+            const header = document.createElement("div");
+            header.className = "filter-section-header";
+            header.onclick = () => toggleSection(header.nextElementSibling);
+            
+            const h4 = document.createElement("h4");
+            h4.textContent = title;
+            
+            const toggle = document.createElement("span");
+            toggle.className = "filter-section-toggle";
+            toggle.innerHTML = "&plus;";
+            
+            header.appendChild(h4);
+            header.appendChild(toggle);
+            
+            const content = document.createElement("div");
+            content.className = "filter-section-content";
+            
+            items.forEach(item => {
+                const button = document.createElement("button");
+                button.className = "filter-button";
+                if (item.isDelay) {
+                    button.setAttribute('data-delay', item.name);
+                }
+                button.onclick = () => toggleFilter(button, item.name, type);
+                
+                if (item.isArrow) {
+                    const arrow = document.createElement("div");
+                    arrow.className = "arrow-indicator";
+                    arrow.style.backgroundColor = item.color;
+                    arrow.style.color = item.color;
+                    button.appendChild(arrow);
+                    button.appendChild(document.createTextNode(item.label || item.name));
+                } else if (item.isStrength) {
+                    const strength = document.createElement("div");
+                    strength.className = `strength-indicator ${item.name}`;
+                    button.appendChild(strength);
+                    button.appendChild(document.createTextNode(item.name));
+                } else if (item.isDelay) {
+                    const delay = document.createElement("div");
+                    delay.className = "delay-indicator";
+                    button.appendChild(delay);
+                    button.appendChild(document.createTextNode(item.label || item.name));
+                } else if (item.color) {
+                    const colorDot = document.createElement("span");
+                    colorDot.className = "color-dot";
+                    colorDot.style.backgroundColor = item.color;
+                    button.appendChild(colorDot);
+                    button.appendChild(document.createTextNode(item.name));
+                }
+                
+                content.appendChild(button);
+            });
+            
+            section.appendChild(header);
+            section.appendChild(content);
+            filtersDiv.appendChild(section);
+        }
+
+        function toggleSection(content) {
+            content.classList.toggle("expanded");
+            const toggle = content.previousElementSibling.querySelector(".filter-section-toggle");
+            toggle.innerHTML = content.classList.contains("expanded") ? "&minus;" : "&plus;";  // Using HTML entities
+        }
+
+        function toggleFilter(button, value, type) {
+            const set = type === "domains" ? activeDomains :
+                       type === "types" ? activeTypes :
+                       type === "strengths" ? activeStrengths :
+                       type === "delays" ? activeDelays : null;
+            
+            if (type === "delays") {
+                if (value === "hide_temporal") {
+                    // Toggle hide temporal styling state
+                    button.classList.toggle("active");
+                    const hideTemporalStyling = button.classList.contains("active");
+                    
+                    if (hideTemporalStyling) {
+                        // Clear all temporal filters and deactivate other temporal buttons
+                        activeDelays.clear();
+                        document.querySelectorAll('.filter-button').forEach(btn => {
+                            if (btn.textContent.includes("Days") || 
+                                btn.textContent.includes("Months") || 
+                                btn.textContent.includes("Years") || 
+                                btn.textContent.includes("Decade")) {
+                                btn.classList.remove("active");
+                            }
+                        });
+                    }
+                } else {
+                    // When selecting a temporal filter, deactivate hide temporal styling
+                    const hideTemporalButton = document.querySelector('.filter-button[data-delay="hide_temporal"]');
+                    if (hideTemporalButton) {
+                        hideTemporalButton.classList.remove("active");
+                    }
+                    
+                    // Toggle the temporal filter
+                    button.classList.toggle("active");
+                    if (button.classList.contains("active")) {
+                        set.add(value);
+                    } else {
+                        set.delete(value);
+                    }
+                }
+            } else {
+                // Handle non-temporal filters normally
+                button.classList.toggle("active");
+                if (button.classList.contains("active")) {
+                    set.add(value);
+                } else {
+                    set.delete(value);
+                }
+            }
+            
+            updateVisibility();
+        }
+
+        function updateVisibility() {
+            // First, determine which links should be visible based on all active filters
+            const visibleLinks = new Set();
+            const hideTemporalStyling = document.querySelector('.filter-button[data-delay="hide_temporal"]').classList.contains('active');
+            
+            d3.selectAll(".link").each(function(d) {
+                const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                const typeMatch = activeTypes.size === 0 || activeTypes.has(d.type);
+                const categoryMatch = activeDomains.size === 0 || 
+                    (activeDomains.has(d.source.domain) || activeDomains.has(d.target.domain));
+                const delayMatch = hideTemporalStyling || activeDelays.size === 0 || activeDelays.has(d.delay);
+                
+                if (strengthMatch && typeMatch && categoryMatch && delayMatch) {
+                    visibleLinks.add(d);
+                }
+            });
+
+            // Update links visibility and styles
+            d3.selectAll(".link")
+                .style("stroke-opacity", d => {
+                    if (activeStrengths.size === 0 && activeTypes.size === 0 && 
+                        activeDomains.size === 0 && activeDelays.size === 0) return 0.6;
+                    return visibleLinks.has(d) ? 1 : 0.1;
+                })
+                .style("marker-end", d => {
+                    if (activeStrengths.size === 0 && activeTypes.size === 0 && 
+                        activeDomains.size === 0 && activeDelays.size === 0) {
+                        return `url(#arrow-${d.type}-${d.strength})`;
+                    }
+                    return visibleLinks.has(d) ? `url(#arrow-${d.type}-${d.strength})` : "none";
+                })
+                .style("stroke-dasharray", d => {
+                    // If hide temporal styling is active or no temporal filters are active, use solid lines
+                    if (hideTemporalStyling || activeDelays.size === 0) return "none";
+                    
+                    if (visibleLinks.has(d)) {
+                        switch(d.delay) {
+                            case "days": return "none";  // solid line
+                            case "months": return "8,4";  // small gaps
+                            case "years": return "8,12";   // medium gaps
+                            case "decade": return "8,24";  // large gaps
+                            default: return "none";
+                        }
+                    }
+                    return "none";
+                })
+                .style("stroke-width", d => {
+                    if (!visibleLinks.has(d)) return "1px";
+                    if (activeDelays.size > 0 && !hideTemporalStyling && d.delay === "decade") return "3px";
+                    return d.strength === "strong" ? "4px" : 
+                           d.strength === "medium" ? "2px" : "1px";
+                });
+
+            // Update nodes visibility
+            d3.selectAll(".node").each(function(d) {
+                const node = d3.select(this);
+                const text = node.select("text");
+                
+                const isHighlighted = (() => {
+                    if (activeDomains.size === 0 && activeTypes.size === 0 && 
+                        activeStrengths.size === 0 && activeDelays.size === 0) {
+                        return false;
+                    }
+
+                    const categoryMatch = activeDomains.size === 0 || activeDomains.has(d.domain);
+                    
+                    const hasVisibleConnection = Array.from(visibleLinks).some(link => 
+                        link.source.id === d.id || link.target.id === d.id
+                    );
+
+                    const relationshipFiltersActive = activeTypes.size > 0 || 
+                                                   activeStrengths.size > 0 || 
+                                                   activeDelays.size > 0;
+                    
+                    if (relationshipFiltersActive) {
+                        return categoryMatch && hasVisibleConnection;
+                    } else {
+                        return categoryMatch;
+                    }
+                })();
+
+                if (d.id === "V1") {
+                    text.style("font-size", "18px")
+                        .style("font-weight", "bold");
+                } else if (isHighlighted) {
+                    text.style("font-size", "14.4px")
+                        .style("font-weight", "bold");
+                } else {
+                    text.style("font-size", "12px")
+                        .style("font-weight", "normal");
+                }
+
+                node.style("opacity", () => {
+                    if (activeDomains.size === 0 && activeTypes.size === 0 && 
+                        activeStrengths.size === 0 && activeDelays.size === 0) return 1;
+                    return isHighlighted ? 1 : 0.3;
+                });
+            });
+        }
+
+        function showTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            tooltip.style("display", "block")
+                .style("max-width", "500px")  // Increase max-width to allow more space for badges
+                .html(`
+                    <div style="font-weight: bold; margin-bottom: 8px;">${d.name}</div>
+                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">ID: ${d.id} | Category: ${d.domain}</div>
+                    ${d.definition ? `<div style="font-size: 0.9em; margin-bottom: 8px; color: #333;">${d.definition}</div>` : ''}
+                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">Relationships:</div>
+                `);
+            
+            // Get outgoing and incoming relationships
+            const outgoingLinks = links.filter(link => link.source.id === d.id);
+            const incomingLinks = links.filter(link => link.target.id === d.id);
+            
+            // Add "Affects" section (outgoing relationships)
+            if (outgoingLinks.length > 0) {
+                tooltip.append("div")
+                    .style("margin-bottom", "5px")
+                    .style("font-weight", "bold")
+                    .text("Affects:");
+                
+                const affectsList = tooltip.append("ul")
+                    .style("margin", "5px 0")
+                    .style("padding-left", "20px")
+                    .style("list-style-type", "disc");
+                
+                outgoingLinks.forEach(link => {
+                    const relationshipColor = link.type === "same" ? "#28a745" : "#dc3545";
+                    
+                    // Check if this relationship matches active filters
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(link.strength);
+                    const typeMatch = activeTypes.size === 0 || activeTypes.has(link.type);
+                    const categoryMatch = activeDomains.size === 0 || 
+                        (activeDomains.has(link.source.domain) || activeDomains.has(link.target.domain));
+                    const isHighlighted = strengthMatch && typeMatch && categoryMatch;
+                    
+                    // Create list item
+                    const listItem = affectsList.append("li")
+                        .style("font-weight", "normal")
+                        .style("opacity", isHighlighted ? "1.0" : "0.5")
+                        .style("color", "black")
+                        .style("margin-bottom", "12px");
+                    
+                    // Add node name, relationship type, and attribute badges on the same line
+                    listItem.append("div")
+                        .html(`
+                            ${link.target.name} 
+                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; background-color: ${relationshipColor}; color: white; font-weight: bold; font-size: 12px; margin-left: 8px;">
+                                ${link.type === "same" ? "Same Direction" : "Opposite Direction"}
+                            </span>
+                            ${createAttributeBadges(link)}
+                        `);
+                });
+            }
+            
+            // Add "Affected by" section (incoming relationships)
+            if (incomingLinks.length > 0) {
+                tooltip.append("div")
+                    .style("margin-top", "8px")
+                    .style("margin-bottom", "5px")
+                    .style("font-weight", "bold")
+                    .text("Affected by:");
+                
+                const affectedByList = tooltip.append("ul")
+                    .style("margin", "5px 0")
+                    .style("padding-left", "20px")
+                    .style("list-style-type", "disc");
+                
+                incomingLinks.forEach(link => {
+                    const relationshipColor = link.type === "same" ? "#28a745" : "#dc3545";
+                    
+                    // Check if this relationship matches active filters
+                    const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(link.strength);
+                    const typeMatch = activeTypes.size === 0 || activeTypes.has(link.type);
+                    const categoryMatch = activeDomains.size === 0 || 
+                        (activeDomains.has(link.source.domain) || activeDomains.has(link.target.domain));
+                    const isHighlighted = strengthMatch && typeMatch && categoryMatch;
+                    
+                    // Create list item
+                    const listItem = affectedByList.append("li")
+                        .style("font-weight", "normal")
+                        .style("opacity", isHighlighted ? "1.0" : "0.5")
+                        .style("color", "black")
+                        .style("margin-bottom", "12px");
+                    
+                    // Add node name, relationship type, and attribute badges on the same line
+                    listItem.append("div")
+                        .html(`
+                            ${link.source.name} 
+                            <span style="display: inline-block; padding: 3px 8px; border-radius: 4px; background-color: ${relationshipColor}; color: white; font-weight: bold; font-size: 12px; margin-left: 8px;">
+                                ${link.type === "same" ? "Same Direction" : "Opposite Direction"}
+                            </span>
+                            ${createAttributeBadges(link)}
+                        `);
+                });
+            }
+
+            tooltip
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
+        }
+
+        function showLinkTooltip(event, d) {
+            const tooltip = d3.select("#tooltip");
+            const sourceNode = d.source.name;
+            const targetNode = d.target.name;
+            const relationshipType = d.type === 'same' ? 'Same Direction' : 'Opposite Direction';
+            const relationshipColor = d.type === 'same' ? '#28a745' : '#dc3545';
+            
+            // Generate the cause-effect sentences
+            let causeEffectText = '';
+            if (d.type === 'same') {
+                causeEffectText = `
+                    <div style="margin: 8px 0;">
+                        <div>If ${sourceNode} <span style="font-weight: bold;">increases</span>, then ${targetNode} <span style="font-weight: bold;">increases</span></div>
+                        <div style="margin-top: 4px;">OR</div>
+                        <div style="margin-top: 4px;">If ${sourceNode} <span style="font-weight: bold;">decreases</span>, then ${targetNode} <span style="font-weight: bold;">decreases</span></div>
+                    </div>
+                `;
+            } else {
+                causeEffectText = `
+                    <div style="margin: 8px 0;">
+                        <div>If ${sourceNode} <span style="font-weight: bold;">increases</span>, then ${targetNode} <span style="font-weight: bold;">decreases</span></div>
+                        <div style="margin-top: 4px;">OR</div>
+                        <div style="margin-top: 4px;">If ${sourceNode} <span style="font-weight: bold;">decreases</span>, then ${targetNode} <span style="font-weight: bold;">increases</span></div>
+                    </div>
+                `;
+            }
+            
+            // Generate strength badges
+            const strengthOptions = ['weak', 'medium', 'strong'];
+            const strengthHTML = `
+                <div style="margin-top: 12px; display: flex; gap: 6px; justify-content: flex-start; align-items: center;">
+                    <div style="font-weight: 500; margin-right: 4px;">Strength:</div>
+                    ${strengthOptions.map(strength => {
+                        const isActive = d.strength === strength;
+                        return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
+                                      background-color: ${isActive ? '#6c757d' : '#f0f0f0'}; 
+                                      color: ${isActive ? 'white' : '#666'};
+                                      font-weight: ${isActive ? 'bold' : 'normal'};
+                                      border: 1px solid ${isActive ? '#6c757d' : '#ddd'};">
+                                 ${strength.charAt(0).toUpperCase() + strength.slice(1)}
+                               </div>`;
+                    }).join('')}
+                </div>
+            `;
+            
+            // Generate temporality badges
+            const temporalityOptions = ['days', 'months', 'years', 'decade'];
+            let delay = d.delay || ''; // Handle undefined delay
+            
+            const temporalityHTML = `
+                <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: flex-start; align-items: center;">
+                    <div style="font-weight: 500; margin-right: 4px;">Temporality:</div>
+                    ${temporalityOptions.map(temp => {
+                        const isActive = delay.includes(temp);
+                        return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
+                                      background-color: ${isActive ? '#17a2b8' : '#f0f0f0'}; 
+                                      color: ${isActive ? 'white' : '#666'};
+                                      font-weight: ${isActive ? 'bold' : 'normal'};
+                                      border: 1px solid ${isActive ? '#17a2b8' : '#ddd'};">
+                                 ${temp.charAt(0).toUpperCase() + temp.slice(1)}
+                               </div>`;
+                    }).join('')}
+                </div>
+            `;
+
+            // Add definition section if available
+            const definitionHTML = d.definition ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                    <div style="font-weight: 500; margin-bottom: 6px;">Definition:</div>
+                    <div style="font-style: italic; color: #666;">${d.definition}</div>
+                </div>
+            ` : '';
+            
+            tooltip.html(`
+                <div style="position: relative;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">Relationship</div>
+                    <div style="position: absolute; top: 0; right: 0; padding: 4px 8px; background-color: ${relationshipColor}; border-radius: 4px; color: white; font-weight: bold; font-size: 12px;">
+                        ${relationshipType}
+                    </div>
+                    ${causeEffectText}
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                        ${strengthHTML}
+                        ${temporalityHTML}
+                    </div>
+                    ${definitionHTML}
+                </div>
+            `)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px")
+            .style("display", "block")
+            .style("width", "auto")
+            .style("max-width", "400px");
+        }
+
+        function hideTooltip() {
+            d3.select("#tooltip").style("display", "none");
+        }
+
+        function resetNodeSelection() {
+            // Only reset if we clicked the SVG background (not a node or link)
+            if (d3.event && (d3.event.target.tagName === "svg" || d3.event.target.tagName === "g")) {
+                // Call the resetFilters function to reset everything
+                resetFilters();
+            }
+        }
+
+        function handleNodeClick(event, d) {
+            event.stopPropagation(); // Prevent the click from bubbling up to the SVG
+
+            // Reset all filters first
+            resetFilters();
+
+            // Update nodes
+            d3.selectAll(".node")
+                .style("opacity", function(n) {
+                    if (n.id === d.id) {
+                        // Selected node
+                        d3.select(this).classed("focal", true);
+                        return 1;
+                    } else {
+                        // Other nodes
+                        d3.select(this).classed("dimmed", true);
+                        return 0.1;
+                    }
+                })
+                .select("text")
+                .style("font-size", function(n) {
+                    if (n.id === d.id) return "16px";
+                    else return "12px";
+                })
+                .style("font-weight", function(n) {
+                    if (n.id === d.id) return "bold";
+                    else return "normal";
+                });
+
+            // Update links
+            d3.selectAll(".link")
+                .style("opacity", function(l) {
+                    if (l === d) {
+                        d3.select(this).classed("highlighted", true);
+                        return 1;
+                    } else {
+                        d3.select(this).classed("dimmed", true);
+                        return 0.1;
+                    }
+                })
+                .style("pointer-events", function(l) {
+                    return l === d ? "auto" : "none";
+                });
+        }
+
+        function handleLinkClick(event, d) {
+            event.stopPropagation(); // Prevent the click from bubbling up to the SVG
+
+            // Reset all filters first
+            resetFilters();
+
+            // Update nodes
+            d3.selectAll(".node")
+                .style("opacity", function(n) {
+                    if (n.id === d.source.id || n.id === d.target.id) {
+                        // Source and target nodes
+                        d3.select(this).classed("highlighted", true);
+                        return 1;
+                    } else {
+                        // Other nodes
+                        d3.select(this).classed("dimmed", true);
+                        return 0.1;
+                    }
+                })
+                .select("text")
+                .style("font-size", function(n) {
+                    if (n.id === d.source.id || n.id === d.target.id) return "14px";
+                    else return "12px";
+                })
+                .style("font-weight", function(n) {
+                    if (n.id === d.source.id || n.id === d.target.id) return "bold";
+                    else return "normal";
+                });
+
+            // Update links
+            d3.selectAll(".link")
+                .style("opacity", function(l) {
+                    if (l === d) {
+                        d3.select(this).classed("highlighted", true);
+                        return 1;
+                    } else {
+                        d3.select(this).classed("dimmed", true);
+                        return 0.1;
+                    }
+                })
+                .style("pointer-events", function(l) {
+                    return l === d ? "auto" : "none";
+                });
+        }
+
+        function dragstarted(event) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            event.subject.fx = event.subject.x;
+            event.subject.fy = event.subject.y;
+        }
+
+        function dragged(event) {
+            event.subject.fx = event.x;
+            event.subject.fy = event.y;
+        }
+
+        function dragended(event) {
+            if (!event.active) simulation.alphaTarget(0);
+            event.subject.fx = null;
+            event.subject.fy = null;
+        }
+
+        function zoomIn() {
+            window.svgElement.transition().duration(300).call(
+                window.zoomBehavior.scaleBy, 1.5
+            );
+        }
+
+        function zoomOut() {
+            window.svgElement.transition().duration(300).call(
+                window.zoomBehavior.scaleBy, 0.75
+            );
+        }
+
+        function resetView() {
+            // Get the SVG element and its dimensions
+            const svg = window.svgElement;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            // Get the bounds of all nodes
+            const nodes = d3.selectAll('.node');
+            let bounds = {
+                left: Infinity,
+                right: -Infinity,
+                top: Infinity,
+                bottom: -Infinity
+            };
+            
+            nodes.each(function(d) {
+                const bbox = this.getBBox();
+                const transform = d3.select(this).attr('transform');
+                const translate = transform ? transform.match(/translate\(([\d.-]+),([\d.-]+)\)/) : null;
+                const x = translate ? parseFloat(translate[1]) : 0;
+                const y = translate ? parseFloat(translate[2]) : 0;
+                
+                bounds.left = Math.min(bounds.left, x + bbox.x);
+                bounds.right = Math.max(bounds.right, x + bbox.x + bbox.width);
+                bounds.top = Math.min(bounds.top, y + bbox.y);
+                bounds.bottom = Math.max(bounds.bottom, y + bbox.y + bbox.height);
+            });
+            
+            // Calculate the graph dimensions and scale
+            const graphWidth = bounds.right - bounds.left;
+            const graphHeight = bounds.bottom - bounds.top;
+            const scale = Math.min(
+                0.9 * width / graphWidth,
+                0.9 * height / graphHeight
+            );
+            
+            // Calculate the translation to center the graph
+            const tx = (width - graphWidth * scale) / 2 - bounds.left * scale;
+            const ty = (height - graphHeight * scale) / 2 - bounds.top * scale;
+            
+            // Apply the transform with transition
+            svg.transition()
+                .duration(750)
+                .call(
+                    window.zoomBehavior.transform,
+                    d3.zoomIdentity
+                        .translate(tx, ty)
+                        .scale(scale)
+                );
+        }
+
+        function resetFilters() {
+            // Clear all active filter sets
+            activeDomains.clear();
+            activeTypes.clear();
+            activeStrengths.clear();
+            activeDelays.clear();  // Clear temporal scale filters
+            relationshipsHidden = false;
+            
+            // Reset all filter buttons
+            document.querySelectorAll('.filter-button').forEach(button => {
+                button.classList.remove('active');
+                if (button.textContent === 'Show Relationships') {
+                    button.textContent = 'Hide Relationships';
+                }
+            });
+            
+            // Reset all nodes to initial state
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .each(function(d) {
+                    const node = d3.select(this);
+                    const isFocal = d.domain === 'FOCAL FACTORS';
+                    
+                    // Set circle size
+                    node.select('circle')
+                        .attr('r', isFocal ? 12 : 10);
+                    
+                    // Set text style
+                    node.select('text')
+                        .style('font-size', isFocal ? '14.4px' : '12px')
+                        .style('font-weight', isFocal ? 'bold' : 'normal');
+                });
+            
+            // Reset all links to default state
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 0.6)
+                .style('pointer-events', 'auto');
+            
+            // Reset simulation controls if they exist
+            const simulationButtons = ['start-simulation', 'pause-simulation', 'reset-simulation'];
+            simulationButtons.forEach(id => {
+                const button = document.getElementById(id);
+                if (button) button.disabled = true;
+            });
+            
+            // Reset variable select if it exists
+            const variableSelect = document.getElementById('variable-select');
+            if (variableSelect) variableSelect.value = '';
+            
+            // Update visibility to ensure everything is shown properly
+            updateVisibility();
+        }
+
+        // Add domain color mapping function
+        function getDomainColor(domain) {
+            const colorMap = {
+                'Stock': '#ff0000',                    // Red
+                'Technical': '#8B4513',                // Brown
+                'Environmental-Ecosystem': '#228B22',   // Forest Green
+                'Economics-Markets': '#0000FF',        // Blue
+                'Management': '#800080',               // Purple
+                'Social': '#FF69B4',                   // Pink
+                'Indigenous': '#FFD700'                // Gold
+            };
+            return colorMap[domain] || '#999999'; // Default gray if domain not found
+        }
+
+        // Initialize the application
+        window.onload = function() {
+            initGoogleSheetsAPI();
+
+            // Expand filter sections by default
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterSections = document.querySelectorAll('.filter-section-content');
+                filterSections.forEach(section => {
+                    section.classList.add('expanded');
+                    const toggle = section.previousElementSibling.querySelector('.filter-section-toggle');
+                    if (toggle) toggle.innerHTML = '&minus;';
+                });
+            });
+        };
+
+        // Widget Functions
+        function toggleWidget(widget) {
+            const content = widget.querySelector('.widget-content');
+            const toggle = widget.querySelector('.widget-toggle');
+            content.classList.toggle('expanded');
+            toggle.innerHTML = content.classList.contains('expanded') ? '&minus;' : '&plus;';
+        }
+
+        // Causal Modeling Functions
+        function populateVariableSelect() {
+            // Remove this function as we're now populating the select directly in the HTML
+        }
+
+        function simulateChange(direction) {
+            const selectedId = document.getElementById('variable-select').value;
+            if (!selectedId) return;
+
+            // Reset previous highlights and button styles
+            d3.selectAll('.node').classed('highlighted', false);
+            d3.selectAll('.link').classed('highlighted', false);
+            document.getElementById('increase-btn').style.backgroundColor = '';
+            document.getElementById('increase-btn').style.color = '';
+            document.getElementById('decrease-btn').style.backgroundColor = '';
+            document.getElementById('decrease-btn').style.color = '';
+
+            // Set button color based on direction
+            const button = document.getElementById(`${direction}-btn`);
+            if (direction === 'increase') {
+                button.style.backgroundColor = '#28a745';  // Green
+                button.style.color = 'white';
+            } else {
+                button.style.backgroundColor = '#dc3545';  // Red
+                button.style.color = 'white';
+            }
+
+            // Highlight selected node and make it larger
+            d3.selectAll('.node')
+                .classed('highlighted', d => d.id === selectedId)
+                .select('circle')
+                .attr('r', d => d.id === selectedId ? 15 : 10);
+
+            // Update text style for highlighted node
+            d3.selectAll('.node text')
+                .style('font-size', d => d.id === selectedId ? '19px' : '14px')
+                .style('font-weight', d => d.id === selectedId ? 'bold' : 'normal');
+
+            // Find and highlight connected nodes and links based on direction
+            const connectedLinks = links.filter(l => 
+                (direction === 'increase' && l.source.id === selectedId) ||
+                (direction === 'decrease' && l.target.id === selectedId)
+            );
+
+            d3.selectAll('.link')
+                .classed('highlighted', l => connectedLinks.includes(l))
+                .style('opacity', l => connectedLinks.includes(l) ? 1 : 0.2);
+
+            const connectedNodes = connectedLinks.map(l => 
+                direction === 'increase' ? l.target : l.source
+            );
+
+            // Update connected nodes style
+            d3.selectAll('.node')
+                .each(function(d) {
+                    if (connectedNodes.some(n => n.id === d.id)) {
+                        d3.select(this)
+                            .classed('highlighted', true)
+                            .select('circle')
+                            .attr('r', 12);
+                        
+                        d3.select(this)
+                            .select('text')
+                            .style('font-size', '16px')
+                            .style('font-weight', 'bold');
+                    }
+                });
+        }
+
+        function startSimulation() {
+            // Placeholder for simulation logic
+            document.getElementById('start-simulation').disabled = true;
+            document.getElementById('pause-simulation').disabled = false;
+        }
+
+        function pauseSimulation() {
+            // Placeholder for pause logic
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+        }
+
+        function resetSimulation() {
+            // Reset highlights and simulation state
+            d3.selectAll('.node').classed('highlighted', false);
+            d3.selectAll('.link').classed('highlighted', false);
+            document.getElementById('start-simulation').disabled = false;
+            document.getElementById('pause-simulation').disabled = true;
+        }
+
+        // Storyline Navigation Functions
+        let relationshipsHidden = false;
+
+        function toggleRelationships() {
+            const button = document.querySelector('button[onclick="toggleRelationships()"]');
+            relationshipsHidden = !relationshipsHidden;
+            
+            // Remove active state from all other buttons when showing relationships
+            if (!relationshipsHidden) {
+                document.querySelectorAll('.filter-button').forEach(btn => {
+                    if (btn !== button) btn.classList.remove('active');
+                });
+            }
+            
+            d3.selectAll('.link')
+                .style('opacity', relationshipsHidden ? 0 : 0.6)
+                .style('pointer-events', relationshipsHidden ? 'none' : 'auto');
+            
+            button.textContent = relationshipsHidden ? 'Show Relationships' : 'Hide Relationships';
+            button.classList.toggle('active', relationshipsHidden);
+            
+            // Reset node styles when showing relationships
+            if (!relationshipsHidden) {
+                d3.selectAll('.node')
+                    .classed('highlighted', false)
+                    .classed('dimmed', false)
+                    .select('circle')
+                    .attr('r', 8);
+                
+                d3.selectAll('.node text')
+                    .style('font-size', '12px')
+                    .style('font-weight', 'normal');
+            }
+        }
+
+        function showFocalNode() {
+            const button = document.querySelector('button[onclick="showFocalNode()"]');
+            const isActive = button.classList.contains('active');
+            
+            // First reset all highlights and buttons
+            resetHighlights();
+            
+            if (!isActive) {
+                // Turning ON - highlight focal nodes and hide relationships
+                button.classList.add('active');
+                
+                // Hide all relationships
+                d3.selectAll('.link').style('opacity', 0);
+
+                // Update nodes
+                d3.selectAll('.node')
+                    .classed('highlighted', d => d.domain === 'FOCAL FACTORS')
+                    .classed('dimmed', d => d.domain !== 'FOCAL FACTORS')
+                    .select('circle')
+                    .attr('r', d => d.domain === 'FOCAL FACTORS' ? 15 : 10);
+
+                // Update text
+                d3.selectAll('.node text')
+                    .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '19px' : '14px')
+                    .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
+            } else {
+                // Turning OFF - show all nodes without relationships
+                showAllNodesWithoutRelationships();
+            }
+        }
+
+        function showDomainNodes(domain) {
+            const button = document.querySelector(`button[onclick="showDomainNodes('${domain}')"]`);
+            const isActive = button.classList.contains('active');
+            
+            // First reset all highlights and buttons
+            resetHighlights();
+            
+            if (!isActive) {
+                // Turning ON - highlight domain nodes and hide relationships
+                button.classList.add('active');
+                
+                // Hide all relationships
+                d3.selectAll('.link').style('opacity', 0);
+
+                // Update nodes
+                d3.selectAll('.node')
+                    .classed('highlighted', d => d.domain === domain)
+                    .classed('dimmed', d => d.domain !== domain)
+                    .select('circle')
+                    .attr('r', d => d.domain === domain ? 15 : 10);
+
+                // Update text
+                d3.selectAll('.node text')
+                    .style('font-size', d => d.domain === domain ? '19px' : '14px')
+                    .style('font-weight', d => d.domain === domain ? 'bold' : 'normal');
+            } else {
+                // Turning OFF - show all nodes without relationships
+                showAllNodesWithoutRelationships();
+            }
+        }
+
+        function showAllNodesWithoutRelationships() {
+            // Hide all relationships
+            d3.selectAll('.link').style('opacity', 0);
+
+            // Show all nodes with normal styling
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .select('circle')
+                .attr('r', 10);
+
+            // Reset text styles
+            d3.selectAll('.node text')
+                .style('font-size', '14px')
+                .style('font-weight', 'normal');
+        }
+
+        function resetHighlights() {
+            // Reset node styles
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .select('circle')
+                .attr('r', 10);
+
+            // Reset text styles
+            d3.selectAll('.node text')
+                .style('font-size', '14px')
+                .style('font-weight', 'normal');
+
+            // Show all relationships
+            d3.selectAll('.link')
+                .style('opacity', 0.6)
+                .classed('highlighted', false);
+
+            // Remove active state from all buttons in Storyline Navigation
+            document.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // Helper function to create attribute badges
+        function createAttributeBadges(link) {
+            const strengthBadge = `
+                <div style="padding: 3px 6px; border-radius: 4px; font-size: 11px; 
+                          background-color: #6c757d; color: white;
+                          font-weight: bold; display: inline-block;
+                          margin-left: 6px;">
+                    ${link.strength.charAt(0).toUpperCase() + link.strength.slice(1)}
+                </div>
+            `;
+            
+            const temporalityBadge = `
+                <div style="padding: 3px 6px; border-radius: 4px; font-size: 11px; 
+                          background-color: #17a2b8; color: white;
+                          font-weight: bold; display: inline-block;
+                          margin-left: 6px;">
+                    ${link.delay.charAt(0).toUpperCase() + link.delay.slice(1)}
+                </div>
+            `;
+            
+            return `
+                ${strengthBadge}
+                ${temporalityBadge}
+            `;
+        }
+    </script>
+</body>
+</html> 

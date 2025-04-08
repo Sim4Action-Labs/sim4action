@@ -1,0 +1,131 @@
+Source,Target,Type,Strength,Temporality,Explanation
+V1,V2,same,strong,years,Adult fish populations drive reproductive output through density-dependent fecundity, where larger populations create more spawning aggregations and produce more viable eggs and larvae, directly increasing recruitment rates.
+V2,V1,same,strong,years,Recruitment success directly increases adult stock biomass as new cohorts join the spawning population after surviving critical life stages and environmental bottlenecks.
+V3,V1,opposite,strong,months,Mortality rates directly reduce stock biomass by removing individuals from the population through both natural causes and fishing activities.
+V1,V4,same,medium,months,Stock biomass directly influences catch limits through stock assessment models that calculate maximum sustainable yield based on current population size and reproductive capacity.
+V4,V5,opposite,medium,months,Catch limits directly constrain fishing mortality by setting maximum allowable harvest levels that are enforced through quota allocation systems.
+V5,V1,opposite,strong,months,Fishing mortality directly reduces stock biomass by removing individuals from the population, with size-selective mortality potentially altering population age structure and sex ratios.
+V6,V1,same,medium,months,Growth rates directly affect stock biomass by influencing individual survival rates and reproductive output through size-dependent mortality and fecundity.
+V7,V8,same,medium,months,Catch volumes directly influence profit levels through market prices and revenue generation, with higher catches typically increasing total revenue when market prices remain stable.
+V8,V9,same,medium,years,Profit levels directly influence fleet size by affecting the economic viability of vessel operations and the ability to invest in new vessels or maintain existing ones.
+V9,V10,same,medium,years,Fleet size directly affects efficiency through economies of scale and the ability to invest in technological improvements and operational optimization.
+V10,V7,same,medium,months,Vessel efficiency directly increases catch volumes through improved technology, better targeting, and optimized fishing operations.
+V11,V12,same,medium,months,Ocean temperature directly affects species distribution by influencing physiological performance and habitat suitability, causing species to shift their ranges in response to thermal conditions.
+V12,V13,same,medium,months,Species distribution directly influences fishing patterns by determining the spatial location of fishing effort as fishers follow target species to maintain catch rates.
+V13,V7,same,medium,days,Strategic fishing patterns directly increase catch volumes by targeting fish aggregations and productive habitats where fish are more abundant and easier to catch.
+V7,V14,opposite,medium,days,Catch volume directly influences market prices through supply-demand dynamics, where increased supply typically reduces unit value when demand remains constant.
+V14,V15,same,medium,months,Market prices directly influence fishing effort by affecting the economic incentives for fishers to allocate time and resources to fishing activities.
+V15,V7,same,medium,days,Fishing effort directly affects catch volumes through the interaction between fishing power and resource availability, with higher effort typically leading to higher catches when fish are available.
+V5,V16,opposite,weak,years,Fishing mortality directly affects food web structure by removing key predators and altering trophic interactions between species, potentially causing cascading effects through the ecosystem.
+V16,V17,same,weak,months,Food web structure directly influences predation rates by determining the availability and diversity of prey species and the strength of predator-prey interactions.
+V17,V2,opposite,weak,months,Predation rates directly affect recruitment by influencing juvenile survival through size-selective mortality and habitat-mediated interactions with predators.
+V7,V19,same,medium,years,Catch volumes directly influence technology adoption by providing the financial resources needed to invest in new fishing technologies and methods.
+V19,V20,same,medium,years,Technology adoption directly improves catchability through improved gear design and fishing methods that increase the effectiveness of fishing operations.
+V20,V7,same,medium,months,Catchability directly affects catch volumes by determining how effectively fishing gear can capture target species, with higher catchability leading to higher catches for a given level of effort.
+V7,V22,same,medium,months,Catch volumes directly contribute to domestic supply by providing seafood products to local markets through established supply chains.
+V22,V14,opposite,medium,months,Domestic supply directly influences market prices through its effect on total market supply, with higher domestic supply typically leading to lower prices when demand remains constant.
+V14,V21,same,medium,months,Market prices directly influence import volumes by affecting the economic incentives for importing seafood products, with higher domestic prices typically leading to increased imports.
+V1,V23,same,medium,years,Stock biomass directly affects quota value by determining the expected future catch potential and security of fishing rights, with higher biomass leading to higher quota values through increased catch certainty.
+V23,V24,same,medium,years,Quota values directly influence investment levels by determining the expected returns on quota ownership and the value of fishing assets, with higher quota values encouraging greater investment in the fishery.
+V23,V59,same,medium,years,Quota values directly affect community economic dependence by determining the wealth generated from quota ownership and the level of local business development, with higher quota values supporting greater community economic activity.
+V24,V7,same,medium,years,Investment levels directly affect catch volumes by enabling improvements in fishing technology and operational efficiency that increase fishing capacity.
+V25,V26,same,medium,months,Enforcement level directly affects compliance rates by influencing the likelihood of detecting and penalizing violations of fishing regulations.
+V26,V27,opposite,medium,months,Compliance rates directly affect illegal catch by determining the proportion of fishing activity that follows regulations versus operating outside legal frameworks.
+V27,V1,opposite,medium,months,Illegal catch directly reduces stock biomass by removing fish outside of management controls and contributing to overexploitation of fish populations.
+V39,V11,same,medium,months,Sea surface temperature directly influences ocean temperature through heat transport mechanisms and ocean circulation patterns that distribute heat through the water column.
+V40,V1,opposite,strong,months,Bottom temperature directly affects stock biomass by influencing fish survival through physiological stress and habitat suitability in deep water environments.
+V41,V2,same,medium,months,Chlorophyll-a levels directly affect recruitment rates by influencing food availability for larval fish and overall ecosystem productivity.
+V42,V46,variable,medium,months,Southern Oscillation Index directly influences ocean currents through atmospheric-ocean coupling mechanisms that affect wind patterns and ocean circulation.
+V43,V49,same,medium,months,Southern Annular Mode directly affects extreme weather events by influencing wind patterns and atmospheric circulation that determine storm formation and intensity.
+V44,V16,opposite,medium,days,Diatom:Dinoflagellate ratio directly affects food web structure by influencing the quality and quantity of primary production available to higher trophic levels.
+V45,V1,opposite,strong,decade,Ocean acidification directly affects stock biomass by influencing fish development and survival through physiological stress and impacts on calcification processes.
+V46,V12,same,medium,years,Ocean currents directly affect species distribution by transporting fish and larvae through advection and dispersal mechanisms that determine their spatial patterns.
+V47,V41,same,medium,days,Upwelling intensity directly affects chlorophyll-a levels by bringing nutrients to surface waters through vertical mixing that stimulates phytoplankton growth.
+V48,V1,same,medium,decade,Oxygen levels directly affect stock biomass by influencing fish survival through respiratory stress and habitat compression that limits available habitat.
+V49,V15,opposite,medium,days,Extreme weather events directly reduce fishing effort by creating unsafe conditions that prevent vessels from operating and limit fishing activities.
+V50,V8,same,strong,months,Gross value of production directly influences profit levels through its effect on total revenue and the efficiency of value chain operations.
+V51,V9,same,medium,years,Net economic returns directly affect fleet size by influencing the financial viability of vessel operations and the ability to maintain or expand fishing capacity.
+V52,V10,same,medium,years,Total factor productivity directly affects efficiency by influencing how effectively inputs are converted into outputs through technological innovation and operational optimization.
+V53,V8,opposite,medium,months,Operating costs directly reduce profit levels by increasing the expenses associated with fishing operations and reducing the margin between revenue and costs.
+V54,V59,same,strong,months,Employment in the fishery directly affects community economic dependence by providing jobs and income that contribute to local economic activity.
+V57,V63,same,medium,months,Financial performance directly affects fisher wellbeing by influencing access to healthcare and reducing financial stress that impacts physical and mental health.
+V23,V59,same,medium,years,Quota values directly affect community economic dependence by determining the wealth generated from fishing rights and the level of local business development.
+V52,V54,same,medium,years,Total factor productivity directly affects employment by determining the labor requirements for fishing operations, with higher productivity typically reducing the number of workers needed while increasing the skill requirements.
+V53,V63,opposite,medium,months,Operating costs directly affect fisher wellbeing by creating financial stress through reduced profit margins and cash flow constraints that impact personal and family welfare.
+V57,V64,same,medium,months,Financial performance directly affects community perceptions by influencing the economic benefits that fishing provides to local communities and the industry's social license to operate.
+V54,V62,same,medium,years,Job opportunities directly affect demographic patterns through labor market participation and migration that influences population distribution and community composition.
+V51,V61,same,medium,years,Financial returns directly influence workforce diversity through employment opportunities and barriers that affect access to fishing industry participation.
+V74,V26,same,strong,months,Monitoring directly improves compliance through detection and verification capabilities that increase the likelihood of rule violations being detected and penalized.
+V67,V37,same,medium,years,Fishing techniques directly drive regulations through environmental impact assessment and management response that determines appropriate fishing methods and restrictions.
+V71,V4,opposite,medium,years,Fishing power influences catch limits through stock assessment and management precaution that accounts for increased fishing efficiency and capacity.
+V70,V37,opposite,medium,years,Gear selectivity affects regulations through bycatch reduction and management adaptation that determines appropriate gear specifications and restrictions.
+V75,V25,same,medium,years,Management frameworks directly guide enforcement through policy implementation and compliance monitoring that determines the rules and procedures for regulatory oversight.
+V74,V37,same,medium,months,Monitoring directly informs regulations through data collection and analysis that provides evidence for management decisions and policy adjustments.
+V71,V25,same,medium,years,Vessel capacity directly requires oversight through safety and operational management that ensures compliance with technical standards and operational requirements.
+V73,V37,same,strong,years,Area closures directly create specific rules through spatial management and habitat protection that restrict fishing activities in designated areas.
+V72,V37,same,medium,months,Monitoring data directly shapes regulations through evidence-based decision making that uses scientific information to inform management actions.
+V9,V55,same,medium,years,Vessel numbers directly affect total capacity through fleet composition and fishing power that determines the overall fishing capacity of the fleet.
+V59,V58,same,medium,months,Community reliance directly supports fishery jobs through local economic integration that creates stable employment opportunities in fishing communities.
+V60,V88,same,medium,years,Indigenous involvement directly improves governance through traditional knowledge integration that enhances management decisions with local ecological knowledge.
+V61,V63,same,medium,months,Workforce diversity directly affects health outcomes through workplace culture and support systems that influence access to healthcare and workplace safety.
+V62,V94,opposite,medium,years,Age demographics directly impact knowledge transfer through experience and succession planning that determines the flow of expertise between generations.
+V63,V15,same,medium,months,Fisher health directly influences work effectiveness through physical and mental wellbeing that determines capacity to perform fishing operations.
+V64,V37,same,medium,months,Public opinion directly shapes regulations through stakeholder engagement and social license that influences management decisions and policy development.
+V65,V22,same,medium,months,Fishery production enhances food security through local supply and nutrition that provides access to protein and essential nutrients.
+V66,V64,same,medium,years,Cultural significance builds support through heritage value and community identity that strengthens community connections to fishing traditions.
+V67,V70,same,medium,years,Fishing techniques directly affect selectivity through gear design and operational methods that determine which species and sizes are caught.
+V15,V68,opposite,medium,days,Effort directly measures stock abundance through catch per unit effort indicators that provide estimates of fish population density.
+V68,V1,same,medium,months,CPUE directly indicates population size through standardized catch rate measurements that provide estimates of fish abundance and distribution.
+V69,V3,same,medium,days,Discards directly increase fish mortality through post-release survival impacts that reduce population size through unintended fishing mortality.
+V70,V69,opposite,medium,years,Gear selectivity directly reduces discards through improved targeting and handling that minimizes unwanted catch and improves survival rates.
+V71,V15,same,medium,years,Vessel size directly increases fishing intensity through improved capacity and efficiency that enables greater fishing effort and coverage.
+V72,V26,same,medium,months,Monitoring directly improves rule following through verification and accountability that increases compliance with regulations and management measures.
+V73,V1,same,medium,years,Protected areas directly help rebuild stocks through reduced fishing pressure and habitat protection that allows populations to grow and reproduce undisturbed.
+V74,V69,opposite,medium,months,Monitoring directly reduces discards through accountability and improved handling that encourages better fishing practices and waste reduction.
+V75,V4,opposite,medium,years,Management frameworks directly set catch limits through scientific assessment and precaution that determines sustainable harvest levels based on stock status.
+V76,V8,same,medium,days,Prices increase profitability through revenue enhancement and market positioning that improves financial returns and business viability.
+V77,V76,opposite,medium,months,Competition reduces prices through market pressure and supply alternatives that increase consumer choice and price sensitivity.
+V78,V76,variable,medium,months,Consumer demand directly affects prices through preference changes and market dynamics that determine willingness to pay and market equilibrium.
+V79,V76,same,medium,months,Supply chains directly influence pricing through value addition and market access that affects product availability and distribution costs.
+V80,V76,opposite,medium,years,Market power directly affects pricing through bargaining power and competition that influences price-setting ability and market control.
+V81,V56,same,medium,months,International markets directly increase value through market expansion and price discovery that provides access to higher-value markets and diverse buyers.
+V82,V76,same,medium,days,Processing directly increases product value through value addition and market differentiation that enhances product quality and market appeal.
+V83,V76,opposite,medium,months,Substitutes directly affect price elasticity through product competition and consumer choice that influences demand responsiveness to price changes.
+V84,V76,same,medium,years,Certification directly commands premium prices through market differentiation and consumer trust that validates sustainability claims and product quality.
+V85,V8,opposite,medium,days,Price volatility directly reduces profitability through risk and uncertainty that complicates business planning and financial stability.
+V86,V1,same,medium,decade,Indigenous knowledge directly aids stock assessment through traditional ecological knowledge that provides historical context and local understanding of fish populations.
+V87,V67,same,medium,decade,Traditional methods directly influence techniques through cultural practice and innovation that incorporates time-tested approaches and local expertise.
+V88,V75,same,medium,years,Indigenous input directly improves management through traditional knowledge integration that enhances decision-making with local ecological understanding.
+V89,V73,same,medium,years,Cultural significance directly guides closures through heritage value and traditional use that protects culturally important areas and practices.
+V90,V60,same,medium,years,Economic opportunities directly increase involvement through livelihood benefits that provide income and employment stability for community members.
+V91,V15,same,medium,months,Environmental cues directly guide fishing timing through traditional knowledge that helps predict fish behavior and optimal fishing conditions.
+V92,V73,same,medium,years,Indigenous stewardship directly guides protection through traditional management that applies cultural knowledge to conservation practices.
+V93,V7,same,medium,months,Traditional harvest directly affects total catch through cultural allocation that determines harvest patterns and resource distribution.
+V94,V86,same,medium,decade,Knowledge transfer directly preserves wisdom through documentation and teaching that maintains cultural knowledge across generations.
+V95,V86,same,medium,years,Collaborative research directly enhances understanding through knowledge integration that combines scientific methods with traditional ecological knowledge.
+V9,V15,same,strong,years,Vessel numbers directly affect total effort through fleet capacity and efficiency that determines the collective fishing power of the fleet.
+V9,V53,same,medium,years,Vessel numbers directly affect total costs through economies of scale that influence operational expenses and resource utilization.
+V9,V58,same,medium,years,Vessel numbers affect job creation through employment opportunities that generate direct and indirect fishing industry positions.
+V55,V7,same,strong,years,Vessel capacity directly increases catches through improved harvesting capability that enables greater fishing power and operational range, leading to higher catch volumes when fish are available.
+V55,V12,same,medium,years,Vessel capacity directly requires investment through capital requirements that fund vessel acquisition, maintenance and technological upgrades needed to maintain and improve fishing capability.
+V81,V76,same,strong,months,International demand affects domestic prices through market integration that connects local markets to global price signals and trade flows.
+V81,V77,same,medium,months,International trade increases competition through market access that expands the number of suppliers and product alternatives.
+V56,V8,same,strong,months,Export markets increase profitability through market expansion that provides access to higher-value customers and diverse market opportunities.
+V56,V12,same,medium,years,Export opportunities attract investment through market growth that justifies capital expenditure and business expansion.
+V56,V59,same,medium,months,Export earnings support communities through economic benefits that generate income and employment opportunities for local residents.
+V34,V1,same,strong,months,Local abundance indicates population size through direct observation that provides evidence of fish distribution and density patterns.
+V34,V68,same,strong,days,Local abundance affects catch rates through resource availability that determines fishing efficiency and catch per unit effort.
+V34,V35,same,medium,months,Species abundance affects ecosystem processes through functional roles that maintain ecological interactions and ecosystem stability.
+V32,V1,opposite,strong,months,Local depletion reduces total biomass through spatial impacts that decrease fish density and reproductive potential in specific areas.
+V32,V13,same,medium,months,Depleted areas change fishing behavior through effort reallocation that shifts fishing activity to more productive locations.
+V32,V73,same,strong,years,Local depletion drives area protection through management response that implements spatial closures and habitat conservation measures.
+V35,V16,same,strong,years,Ecosystem processes shape feeding relationships through trophic dynamics that determine energy flow and predator-prey interactions.
+V35,V30,same,medium,months,Ecosystem processes affect production through primary productivity that determines the base of the food web and energy availability.
+V35,V33,opposite,medium,years,Ecosystem processes prevent degradation through resilience that maintains habitat structure and ecosystem function.
+V29,V1,same,strong,years,Management response affects population size through harvest control that regulates fishing mortality and stock recovery.
+V29,V37,same,strong,years,Stock condition drives regulations through adaptive management that adjusts management measures based on resource status.
+V29,V4,same,strong,months,Stock condition sets catch limits through harvest strategies that determine sustainable catch levels based on stock status.
+V29,V36,same,medium,months,Stock health affects public support through resource status that influences community perception of fishery sustainability.
+V31,V9,opposite,medium,years,Quota trading directly affects fleet structure through market consolidation that enables larger operators to acquire quotas from smaller ones, leading to fleet rationalization.
+V31,V38,same,strong,years,Quota trading directly improves economic performance through market efficiency that enables quota holders to optimize their operations by buying and selling fishing rights based on their comparative advantages.
+V18,V1,same,strong,years,Recovery affects population size through stock rebuilding that increases reproductive potential and population growth rates. 

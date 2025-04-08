@@ -1,0 +1,96 @@
+ID,Name,Category,Definition
+V1,Stock Biomass,Stock,The total weight or number of fish in a population, measured in tonnes or numbers. Critical for determining sustainable harvest levels and stock status.
+V2,Recruitment Rate,Stock,The rate at which young fish enter the fishable population, influenced by spawning success, larval survival, and environmental conditions.
+V3,Mortality Rate,Stock,The rate at which fish die from natural causes and fishing, including both target and non-target species mortality.
+V4,Catch Limit,Management,The maximum amount of fish that can be caught, set through TACs.
+V5,Fishing Mortality,Technical,The proportion of fish removed by fishing activities, measured as a rate of removal from the population.
+V6,Growth Rate,Stock,The rate at which individual fish increase in size, affected by food availability, temperature, and other environmental conditions.
+V7,Catch Volume,Technical,The total amount of fish caught, including both retained and discarded catch, measured in tonnes.
+V8,Profit Level,Economic,The financial returns from fishing operations after accounting for costs.
+V9,Fleet Size,Technical,The number of active fishing vessels in the fishery, which has decreased by approximately 60% between 2000-2021.
+V10,Efficiency,Technical,The effectiveness of fishing operations in catching target species while minimizing bycatch and environmental impact.
+V11,Ocean Temperature,Environmental,The temperature of ocean waters, with surface temperatures having increased by 1.2°C since 1950 in the region.
+V12,Species Distribution,Stock,The spatial and temporal distribution of fish populations, increasingly influenced by climate change and ocean warming.
+V13,Fishing Patterns,Technical,The spatial and temporal distribution of fishing effort, influenced by regulations, weather, and fish availability.
+V14,Market Price,Market,The price received for fishery products at various market levels.
+V15,Fishing Effort,Technical,The amount of fishing activity, measured in days fished, hours trawled, hook-hours, or net-hours.
+V16,Food Web Structure,Ecosystem,The network of feeding relationships between species.
+V17,Predation Rate,Ecosystem,The rate at which species are consumed by predators.
+V18,Stock Recovery,Stock,The process of rebuilding depleted fish populations to sustainable levels, often measured against biological reference points.
+V19,Technology Adoption,Technical,The uptake of new fishing technologies and methods, including electronic monitoring and gear modifications.
+V20,Catchability,Technical,The ease with which fish can be caught, influenced by gear type, fish behavior, and environmental conditions.
+V21,Import Volume,Market,The amount of competing seafood products imported into Australia.
+V22,Domestic Supply,Market,The amount of seafood available for domestic consumption.
+V23,Quota Value,Economic,The market value of individual transferable quotas, reflecting expected profitability.
+V24,Investment Level,Economic,The amount of capital invested in fishing operations and infrastructure.
+V25,Enforcement Level,Management,The intensity of management rule enforcement.
+V26,Compliance Rate,Management,The degree to which fishers follow management rules.
+V27,Illegal Catch,Technical,Unauthorized fishing activities, including exceeding quotas and fishing in closed areas.
+V28,Climate Change Impact,Environmental,The effects of climate change on marine ecosystems, including warming, acidification, and changing current patterns.
+V29,Stock Status,Stock,The current condition of a fish stock relative to reference points (B20, B40, B48), indicating whether it is sustainably fished, overfished, or rebuilding.
+V30,Primary Productivity,Ecosystem,The rate of production of organic matter by phytoplankton.
+V31,Quota Trading,Economic,The buying and selling of fishing quotas between operators.
+V32,Spatial Stock Depletion,Stock,The localized reduction in fish abundance due to concentrated fishing effort in specific areas.
+V33,Habitat Degradation,Ecosystem,The loss or damage to marine habitats.
+V34,Species Abundance,Stock,The number or biomass of fish present in a given area, influenced by both natural and human factors.
+V35,Ecosystem Function,Ecosystem,The processes and services provided by marine ecosystems.
+V36,Social License,Social,The level of public acceptance and support for fishing operations.
+V37,Management Restrictions,Management,Various rules and regulations limiting fishing activities.
+V38,Economic Performance,Economic,The overall financial health of the fishery, including profitability and efficiency.
+V39,Sea Surface Temperature,Environmental,The temperature of the ocean surface layer, critical for species distribution and ecosystem productivity.
+V40,Bottom Temperature,Environmental,The temperature at the ocean floor, particularly important for demersal species.
+V41,Chlorophyll-a,Environmental,A measure of phytoplankton biomass and primary productivity in the ocean.
+V42,Southern Oscillation Index,Environmental,A measure of El Niño/La Niña development and intensity, affecting ocean conditions.
+V43,Southern Annular Mode,Environmental,An indicator of north-south movement of westerly winds, affecting storm patterns.
+V44,Diatom:Dinoflagellate Ratio,Environmental,The ratio between major phytoplankton groups, indicating food web structure.
+V45,Ocean Acidification,Environmental,The decrease in ocean pH due to CO2 absorption, affecting marine organisms.
+V46,Ocean Currents,Environmental,The direction and strength of major ocean currents, including the East Australian Current.
+V47,Upwelling Intensity,Environmental,The strength of nutrient-rich water upwelling events.
+V48,Oxygen Levels,Environmental,The concentration of dissolved oxygen in seawater, declining with warming.
+V49,Extreme Weather Events,Environmental,The frequency and intensity of storms, floods, and marine heatwaves.
+V50,Gross Value of Production,Economic,The total market value of fishery products at landing, approximately $86 million in 2019-20.
+V51,Net Economic Returns,Economic,Profits after accounting for all costs and opportunity costs of capital and labor.
+V52,Total Factor Productivity,Economic,A measure of efficiency in converting inputs to outputs in the fishery.
+V53,Operating Costs,Economic,The costs associated with fishing operations including fuel, labor, and maintenance.
+V54,Employment,Economic,The number of people employed in the fishery, measured in full-time equivalents.
+V55,Fleet Capacity,Economic,The total fishing power of the fleet, including vessel numbers and characteristics.
+V56,Export Value,Economic,The value of fishery products sold to international markets.
+V57,Financial Performance,Economic,Various measures of economic success including profit margins and return on investment.
+V58,Employment in Fishery,Social,The number of people directly employed in harvesting operations.
+V59,Community Economic Dependence,Social,The degree to which coastal communities rely on the fishery for economic activity.
+V60,Indigenous Participation,Social,The level of indigenous involvement in commercial fishing operations.
+V61,Gender Composition,Social,The gender breakdown of fishery participants.
+V62,Age Structure,Social,The age distribution of fishery participants.
+V63,Fisher Wellbeing,Social,Measures of physical and mental health among fishing industry participants.
+V64,Community Perceptions,Social,Public attitudes toward the fishery and its operations.
+V65,Food Security Contribution,Social,The fishery's contribution to regional and national food supply.
+V66,Cultural Heritage Value,Social,The significance of fishing traditions to community identity.
+V67,Fishing Methods,Technical,The types of gear and techniques used, including trawl, Danish seine, longline, and gillnet operations.
+V68,Catch Per Unit Effort,Technical,The amount of catch obtained per unit of fishing effort, used as an index of stock abundance.
+V69,Discard Rates,Technical,The proportion of catch returned to sea, varying by sector and target species.
+V70,Gear Selectivity,Technical,The ability of fishing gear to target specific species or sizes while minimizing bycatch.
+V71,Vessel Capacity,Technical,The fishing power of individual vessels, measured by engine power and gross tonnage.
+V72,Electronic Monitoring,Technical,The use of cameras and sensors to monitor fishing activities and catch composition.
+V73,Spatial Management,Technical,The use of area-based management tools including closures and marine parks.
+V74,Observer Coverage,Technical,The proportion of fishing trips monitored by independent observers.
+V75,Harvest Strategy,Technical,The framework for setting catch limits and management measures based on stock status.
+V76,Species Price,Market,The average landed value per unit weight for different species.
+V77,Market Competition,Market,The level of competition from imports and alternative products.
+V78,Consumer Preferences,Market,Consumer demand patterns for seafood products.
+V79,Distribution Channels,Market,The pathways through which products move from harvest to consumer.
+V80,Market Concentration,Market,The degree of market power in the supply chain.
+V81,Export Markets,Market,International destinations for fishery products.
+V82,Value Addition,Market,Processing that increases product value.
+V83,Product Substitutability,Market,The degree to which species can be substituted for each other.
+V84,Certification Status,Market,The eco-certification status of fishery products.
+V85,Price Volatility,Market,The degree of price fluctuation over time.
+V86,Traditional Ecological Knowledge,Indigenous,Indigenous understanding of marine ecosystems and species.
+V87,Cultural Fishing Practices,Indigenous,Traditional methods and protocols for fishing activities.
+V88,Indigenous Governance,Indigenous,Indigenous participation in fishery management decisions.
+V89,Cultural Values Mapping,Indigenous,Documentation of culturally significant marine areas.
+V90,Indigenous Economic Participation,Indigenous,Indigenous involvement in commercial fishing operations.
+V91,Traditional Seasonal Indicators,Indigenous,Indigenous knowledge of environmental cues for fishing.
+V92,Sea Country Management,Indigenous,Indigenous approaches to marine resource stewardship.
+V93,Cultural Harvest Levels,Indigenous,The volume of catch for cultural purposes.
+V94,Knowledge Transmission,Indigenous,The transfer of traditional knowledge between generations.
+V95,Indigenous Research Partnerships,Indigenous,Collaborative research incorporating indigenous perspectives. 
