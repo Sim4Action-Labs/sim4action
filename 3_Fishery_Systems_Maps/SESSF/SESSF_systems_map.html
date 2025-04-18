@@ -6,6 +6,9 @@
     <!-- Add Google Sheets API -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
+    <!-- Add this in the <head> section after the d3.js script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology-metrics/2.1.0/graphology-metrics.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -180,7 +183,7 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 1000;
-            width: 220px;
+            width: 320px;
             display: flex;
             flex-direction: column;
             gap: 20px;
@@ -206,15 +209,15 @@
             font-weight: bold;
         }
         .filter-section-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
+            max-height: none;
+            overflow: visible;
+            transition: all 0.3s ease;
             padding: 0 10px;
         }
         .filter-section-content.expanded {
-            max-height: 300px;
+            max-height: none;
             padding: 10px;
-            overflow-y: auto;
+            overflow: visible;
         }
         .filter-button {
             display: flex;
@@ -245,8 +248,8 @@
         }
         .section-label {
             font-weight: bold;
-            margin: 10px 0 5px 0;
-            font-size: 12px;
+            margin: 15px 0 10px 0;
+            font-size: 14px;
         }
         select {
             width: 100%;
@@ -450,8 +453,15 @@
 
         .mode-label {
             font-size: 12px;
-            margin-right: 10px;
-            vertical-align: middle;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background-color: #28a745; /* Green for published mode by default */
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .mode-label.draft {
+            background-color: #dc3545; /* Red for draft mode */
         }
 
         .mode-container {
@@ -462,9 +472,219 @@
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
+
+        #lab-selector-buttons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 10px;
+            padding: 0 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .lab-selector-button {
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            background-color: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lab-selector-button:hover {
+            background-color: #dee2e6;
+        }
+
+        .lab-selector-button.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Adjust positions for the top bar */
+        #logo {
+            top: 60px;
+        }
+
+        #fishery-info {
+            top: 50px;
+        }
+
+        #filters {
+            top: 200px;
+        }
+
+        /* Lab-specific sections */
+        .diagnostics-lab,
+        .intervention-lab,
+        .monitoring-lab {
+            display: none;
+        }
+
+        /* Show sections based on active lab */
+        body[data-active-lab="diagnostics"] .diagnostics-lab {
+            display: block;
+        }
+
+        body[data-active-lab="intervention"] .intervention-lab {
+            display: block;
+        }
+
+        body[data-active-lab="monitoring"] .monitoring-lab {
+            display: block;
+        }
+
+        /* Add these styles in the <style> section */
+        .centrality-section {
+            margin-bottom: 20px;
+        }
+
+        .centrality-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+        }
+
+        .centrality-button {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .centrality-button:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+
+        .centrality-button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        .info-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 14px;
+            cursor: help;
+            border: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+
+        .info-icon:hover {
+            background-color: #e9ecef;
+            color: #495057;
+            border-color: #007bff;
+        }
+
+        .tooltip-content {
+            display: none;
+            position: absolute;
+            left: calc(100% + 15px);
+            top: 50%;
+            transform: translateY(-50%);
+            width: 320px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .info-icon:hover + .tooltip-content {
+            display: block;
+        }
+
+        .node.high-centrality circle {
+            stroke: #ffd700;
+            stroke-width: 3px;
+        }
+
+        .node.high-centrality text {
+            font-weight: bold;
+        }
+
+        .centrality-explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            display: none;
+            height: auto;
+            overflow: visible;
+        }
+
+        .centrality-explanation h4 {
+            color: #495057;
+            margin: 10px 0 8px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .centrality-explanation p {
+            color: #6c757d;
+            margin: 0 0 15px 0;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: normal;
+            overflow: visible;
+        }
+
+        .centrality-explanation p:last-child {
+            margin-bottom: 0;
+        }
+
+        .results-panel {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
+    <div id="lab-selector-buttons">
+        <button class="lab-selector-button active" data-lab="diagnostics" onclick="switchLab('diagnostics')">
+            &#x1F52C; Diagnostics Lab
+        </button>
+        <button class="lab-selector-button" data-lab="intervention" onclick="switchLab('intervention')">
+            &#x26A1; Intervention Lab
+        </button>
+        <button class="lab-selector-button" data-lab="monitoring" onclick="switchLab('monitoring')">
+            &#x1F50D; Monitoring Lab
+        </button>
+    </div>
     <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
     <div id="fishery-info">
         <img src="Blue-Grenadier.png" alt="Blue Grenadier">
@@ -474,7 +694,7 @@
     <div id="tooltip"></div>
     <div id="controls">
         <div class="mode-container">
-            <span class="mode-label">Draft Mode</span>
+            <span class="mode-label">Live Mode</span>
             <label class="switch">
                 <input type="checkbox" id="modeToggle" onchange="toggleMode()">
                 <span class="slider"></span>
@@ -942,170 +1162,203 @@
 
         function createFilterSections() {
             const filtersDiv = document.getElementById("filters");
+            filtersDiv.innerHTML = ''; // Clear existing content
             
-            // Create Variable Categories section with template colors
-            createFilterSection("Variable Categories", [
-                { name: "Stock", color: "#ff0000" },
-                { name: "Technical", color: "#8B4513" },
-                { name: "Environmental-Ecosystem", color: "#228B22" },
-                { name: "Economics-Markets", color: "#0000FF" },
-                { name: "Management", color: "#800080" },
-                { name: "Social", color: "#FF69B4" },
-                { name: "Indigenous", color: "#FFD700" }
-            ], "domains");
-
-            // Create Relationship Types section
-            createFilterSection("Relationship Types", [
-                { name: "same", label: "Same Direction", color: "#28a745", isArrow: true },
-                { name: "opposite", label: "Opposite Direction", color: "#dc3545", isArrow: true }
-            ], "types");
-
-            // Create Relationship Strength section
-            createFilterSection("Relationship Strength", [
-                { name: "strong", isStrength: true },
-                { name: "medium", isStrength: true },
-                { name: "weak", isStrength: true }
-            ], "strengths");
-
-            // Create Temporal Scale section
-            createFilterSection("Temporal Scale", [
-                { name: "days", label: "Days", isDelay: true },
-                { name: "months", label: "Months", isDelay: true },
-                { name: "years", label: "Years", isDelay: true },
-                { name: "decade", label: "Decade", isDelay: true },
-                { name: "hide_temporal", label: "Hide Temporal Styling", isDelay: true, isHideTemporal: true }
-            ], "delays");
-
-            // Create Storyline Navigation section
-            const storylineSection = document.createElement("div");
-            storylineSection.className = "filter-section";
-            storylineSection.innerHTML = `
-                <div class="filter-section-header">
-                    <h4>Storyline Navigation</h4>
-                    <span class="filter-section-toggle">&plus;</span>
-                </div>
-                <div class="filter-section-content">
-                    <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
-                    <button class="filter-button" onclick="showFocalNode()">Show Focal Node(s)</button>
-                    <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Social')">Show Social Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Technical')">Show Technical Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Indigenous')">Show Indigenous Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Management')">Show Management Variables</button>
-                </div>
+            // DIAGNOSTICS LAB SECTIONS
+            const diagnosticsDiv = document.createElement('div');
+            diagnosticsDiv.className = 'diagnostics-lab';
+            
+            // Variable Categories
+            const variableCategoriesSection = createBasicSection("Variable Categories");
+            variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')">
+                    <span class="color-dot" style="background-color: #ff0000;"></span>Stock
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Technical', 'domains')">
+                    <span class="color-dot" style="background-color: #8B4513;"></span>Technical
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Environmental-Ecosystem', 'domains')">
+                    <span class="color-dot" style="background-color: #228B22;"></span>Environmental-Ecosystem
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')">
+                    <span class="color-dot" style="background-color: #0000FF;"></span>Economics-Markets
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')">
+                    <span class="color-dot" style="background-color: #800080;"></span>Management
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')">
+                    <span class="color-dot" style="background-color: #FF69B4;"></span>Social
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'Indigenous', 'domains')">
+                    <span class="color-dot" style="background-color: #FFD700;"></span>Indigenous
+                </button>
             `;
-            storylineSection.querySelector('.filter-section-header').onclick = () => 
-                toggleSection(storylineSection.querySelector('.filter-section-content'));
-            filtersDiv.appendChild(storylineSection);
+            diagnosticsDiv.appendChild(variableCategoriesSection);
 
-            // Create Causal Modeling section
-            const causalSection = document.createElement("div");
-            causalSection.className = "filter-section";
-            
-            // Sort factors alphabetically by name
+            // Relationship Types
+            const relationshipTypesSection = createBasicSection("Relationship Types");
+            relationshipTypesSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" onclick="toggleFilter(this, 'same', 'types')">
+                    <div class="arrow-indicator" style="background-color: #28a745;"></div>Same Direction
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'opposite', 'types')">
+                    <div class="arrow-indicator" style="background-color: #dc3545;"></div>Opposite Direction
+                </button>
+            `;
+            diagnosticsDiv.appendChild(relationshipTypesSection);
+
+            // Relationship Strength
+            const strengthSection = createBasicSection("Relationship Strength");
+            strengthSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" onclick="toggleFilter(this, 'strong', 'strengths')">
+                    <div class="strength-indicator strong"></div>Strong
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'medium', 'strengths')">
+                    <div class="strength-indicator medium"></div>Medium
+                </button>
+                <button class="filter-button" onclick="toggleFilter(this, 'weak', 'strengths')">
+                    <div class="strength-indicator weak"></div>Weak
+                </button>
+            `;
+            diagnosticsDiv.appendChild(strengthSection);
+
+            // Temporal Scale
+            const temporalSection = createBasicSection("Temporal Scale");
+            temporalSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" data-delay="days" onclick="toggleFilter(this, 'days', 'delays')">
+                    <div class="delay-indicator"></div>Days
+                </button>
+                <button class="filter-button" data-delay="months" onclick="toggleFilter(this, 'months', 'delays')">
+                    <div class="delay-indicator"></div>Months
+                </button>
+                <button class="filter-button" data-delay="years" onclick="toggleFilter(this, 'years', 'delays')">
+                    <div class="delay-indicator"></div>Years
+                </button>
+                <button class="filter-button" data-delay="decade" onclick="toggleFilter(this, 'decade', 'delays')">
+                    <div class="delay-indicator"></div>Decade
+                </button>
+                <button class="filter-button" data-delay="hide_temporal" onclick="toggleFilter(this, 'hide_temporal', 'delays')">
+                    <div class="delay-indicator"></div>Hide Temporal Styling
+                </button>
+            `;
+            diagnosticsDiv.appendChild(temporalSection);
+
+            // Feedback Loops
+            const feedbackSection = createBasicSection("Feedback Loops");
+            feedbackSection.querySelector('.filter-section-content').innerHTML = `
+                <div class="section-label">Select a feedback loop:</div>
+                <!-- Feedback loop buttons will be added here -->
+            `;
+            diagnosticsDiv.appendChild(feedbackSection);
+
+            // Storyline Navigation
+            const storylineSection = createBasicSection("Storyline Navigation");
+            storylineSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
+                <button class="filter-button" onclick="showFocalNode()">Show Focal Node(s)</button>
+                <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Social')">Show Social Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Technical')">Show Technical Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Indigenous')">Show Indigenous Variables</button>
+                <button class="filter-button" onclick="showDomainNodes('Management')">Show Management Variables</button>
+            `;
+            diagnosticsDiv.appendChild(storylineSection);
+
+            // Add diagnostics sections to main filters div
+            filtersDiv.appendChild(diagnosticsDiv);
+
+            // INTERVENTION LAB SECTIONS
+            const interventionDiv = document.createElement('div');
+            interventionDiv.className = 'intervention-lab';
+
+            // Causal Modeling
+            const causalSection = createBasicSection("Causal Modeling");
             const sortedFactors = [...factors].sort((a, b) => a.name.localeCompare(b.name));
-            
-            causalSection.innerHTML = `
-                <div class="filter-section-header">
-                    <h4>Causal Modeling</h4>
-                    <span class="filter-section-toggle">&plus;</span>
+            causalSection.querySelector('.filter-section-content').innerHTML = `
+                <div class="section-label">Select Variable:</div>
+                <select id="variable-select" class="filter-button">
+                    <option value="">-- Select a variable --</option>
+                    ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
+                </select>
+                
+                <div class="section-label">Change Direction:</div>
+                <div style="display: flex; gap: 8px;">
+                    <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled>Increase</button>
+                    <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled>Decrease</button>
                 </div>
-                <div class="filter-section-content">
-                    <div class="section-label">Select Variable:</div>
-                    <select id="variable-select" class="filter-button">
-                        <option value="">-- Select a variable --</option>
-                        ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
-                    </select>
-                    
-                    <div class="section-label">Change Direction:</div>
-                    <div style="display: flex; gap: 8px;">
-                        <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled>Increase</button>
-                        <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled>Decrease</button>
-                    </div>
-                    
-                    <div class="section-label">Simulation Controls:</div>
-                    <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled>Start Simulation</button>
-                    <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled>Pause Simulation</button>
-                    <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled>Reset Simulation</button>
-                </div>
+                
+                <div class="section-label">Simulation Controls:</div>
+                <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled>Start Simulation</button>
+                <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled>Pause Simulation</button>
+                <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled>Reset Simulation</button>
             `;
-            causalSection.querySelector('.filter-section-header').onclick = () => 
-                toggleSection(causalSection.querySelector('.filter-section-content'));
-            filtersDiv.appendChild(causalSection);
-
+            
             // Add event listener for variable select
-            causalSection.querySelector('#variable-select').addEventListener('change', function() {
+            const variableSelect = causalSection.querySelector('#variable-select');
+            variableSelect.addEventListener('change', function() {
                 const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
                 buttons.forEach(id => {
                     document.getElementById(id).disabled = !this.value;
                 });
             });
+            
+            interventionDiv.appendChild(causalSection);
+            filtersDiv.appendChild(interventionDiv);
+
+            // Set initial lab
+            document.body.dataset.activeLab = 'diagnostics';
+
+            // MONITORING LAB SECTIONS
+            const monitoringDiv = document.createElement('div');
+            monitoringDiv.className = 'monitoring-lab';
+
+            // Centrality Analysis
+            const centralitySection = createBasicSection("Centrality Analysis");
+            centralitySection.querySelector('.filter-section-content').innerHTML = `
+                <div class="section-label">Select Centrality Metric:</div>
+                <div class="centrality-container">
+                    <button class="centrality-button" onclick="showCentrality('degree')">Degree</button>
+                </div>
+                <div class="centrality-container">
+                    <button class="centrality-button" onclick="showCentrality('betweenness')">Betweenness</button>
+                </div>
+                <div class="centrality-container">
+                    <button class="centrality-button" onclick="showCentrality('closeness')">Closeness</button>
+                </div>
+                <div class="centrality-container">
+                    <button class="centrality-button" onclick="showCentrality('eigenvector')">Eigenvector</button>
+                </div>
+                
+                <div id="centrality-explanation" class="centrality-explanation">
+                    <h4>About this metric</h4>
+                    <p class="metric-description"></p>
+                    <h4>What it means for the fishery</h4>
+                    <p class="fishery-implications"></p>
+                    <h4>Why it's useful</h4>
+                    <p class="metric-usefulness"></p>
+                </div>
+                
+                <div id="centrality-results" class="results-panel"></div>
+            `;
+
+            monitoringDiv.appendChild(centralitySection);
+            filtersDiv.appendChild(monitoringDiv);
         }
 
-        function createFilterSection(title, items, type) {
-            const filtersDiv = document.getElementById("filters");
-            
-            const section = document.createElement("div");
-            section.className = "filter-section";
-            
-            const header = document.createElement("div");
-            header.className = "filter-section-header";
-            header.onclick = () => toggleSection(header.nextElementSibling);
-            
-            const h4 = document.createElement("h4");
-            h4.textContent = title;
-            
-            const toggle = document.createElement("span");
-            toggle.className = "filter-section-toggle";
-            toggle.innerHTML = "&plus;";
-            
-            header.appendChild(h4);
-            header.appendChild(toggle);
-            
-            const content = document.createElement("div");
-            content.className = "filter-section-content";
-            
-            items.forEach(item => {
-                const button = document.createElement("button");
-                button.className = "filter-button";
-                if (item.isDelay) {
-                    button.setAttribute('data-delay', item.name);
-                }
-                button.onclick = () => toggleFilter(button, item.name, type);
-                
-                if (item.isArrow) {
-                    const arrow = document.createElement("div");
-                    arrow.className = "arrow-indicator";
-                    arrow.style.backgroundColor = item.color;
-                    arrow.style.color = item.color;
-                    button.appendChild(arrow);
-                    button.appendChild(document.createTextNode(item.label || item.name));
-                } else if (item.isStrength) {
-                    const strength = document.createElement("div");
-                    strength.className = `strength-indicator ${item.name}`;
-                    button.appendChild(strength);
-                    button.appendChild(document.createTextNode(item.name));
-                } else if (item.isDelay) {
-                    const delay = document.createElement("div");
-                    delay.className = "delay-indicator";
-                    button.appendChild(delay);
-                    button.appendChild(document.createTextNode(item.label || item.name));
-                } else if (item.color) {
-                    const colorDot = document.createElement("span");
-                    colorDot.className = "color-dot";
-                    colorDot.style.backgroundColor = item.color;
-                    button.appendChild(colorDot);
-                    button.appendChild(document.createTextNode(item.name));
-                }
-                
-                content.appendChild(button);
-            });
-            
-            section.appendChild(header);
-            section.appendChild(content);
-            filtersDiv.appendChild(section);
+        // Helper function to create a basic section
+        function createBasicSection(title) {
+            const section = document.createElement('div');
+            section.className = 'filter-section';
+            section.innerHTML = `
+                <div class="filter-section-header" onclick="toggleSection(this.nextElementSibling)">
+                    <h4>${title}</h4>
+                    <span class="filter-section-toggle">&plus;</span>
+                </div>
+                <div class="filter-section-content"></div>
+            `;
+            return section;
         }
 
         function toggleSection(content) {
@@ -1720,6 +1973,7 @@
         // Initialize the application
         window.onload = function() {
             initGoogleSheetsAPI();
+            initializeGraph();
 
             // Expand filter sections by default
             document.addEventListener('DOMContentLoaded', function() {
@@ -1880,12 +2134,14 @@
 
                 // Update nodes
                 d3.selectAll('.node')
+                    .style('opacity', d => d.domain === 'FOCAL FACTORS' ? 1 : 0.2)
                     .classed('highlighted', d => d.domain === 'FOCAL FACTORS')
-                    .classed('dimmed', d => d.domain !== 'FOCAL FACTORS')
-                    .select('circle')
+                    .classed('dimmed', d => d.domain !== 'FOCAL FACTORS');
+
+                // Update circles and text separately
+                d3.selectAll('.node circle')
                     .attr('r', d => d.domain === 'FOCAL FACTORS' ? 15 : 10);
 
-                // Update text
                 d3.selectAll('.node text')
                     .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '19px' : '14px')
                     .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
@@ -1911,12 +2167,14 @@
 
                 // Update nodes
                 d3.selectAll('.node')
+                    .style('opacity', d => d.domain === domain ? 1 : 0.2)
                     .classed('highlighted', d => d.domain === domain)
-                    .classed('dimmed', d => d.domain !== domain)
-                    .select('circle')
+                    .classed('dimmed', d => d.domain !== domain);
+
+                // Update circles and text separately
+                d3.selectAll('.node circle')
                     .attr('r', d => d.domain === domain ? 15 : 10);
 
-                // Update text
                 d3.selectAll('.node text')
                     .style('font-size', d => d.domain === domain ? '19px' : '14px')
                     .style('font-weight', d => d.domain === domain ? 'bold' : 'normal');
@@ -1932,12 +2190,13 @@
 
             // Show all nodes with normal styling
             d3.selectAll('.node')
+                .style('opacity', 1)
                 .classed('highlighted', false)
-                .classed('dimmed', false)
-                .select('circle')
+                .classed('dimmed', false);
+
+            d3.selectAll('.node circle')
                 .attr('r', 10);
 
-            // Reset text styles
             d3.selectAll('.node text')
                 .style('font-size', '14px')
                 .style('font-weight', 'normal');
@@ -1946,12 +2205,13 @@
         function resetHighlights() {
             // Reset node styles
             d3.selectAll('.node')
+                .style('opacity', 1)
                 .classed('highlighted', false)
-                .classed('dimmed', false)
-                .select('circle')
+                .classed('dimmed', false);
+
+            d3.selectAll('.node circle')
                 .attr('r', 10);
 
-            // Reset text styles
             d3.selectAll('.node text')
                 .style('font-size', '14px')
                 .style('font-weight', 'normal');
@@ -2003,10 +2263,17 @@
             const isDraftMode = document.getElementById('modeToggle').checked;
             currentSpreadsheetId = isDraftMode ? SPREADSHEETS.draft : SPREADSHEETS.main;
             
+            // Update mode label text and color
+            const modeLabel = document.querySelector('.mode-label');
+            if (modeLabel) {
+                modeLabel.textContent = isDraftMode ? 'Draft Mode' : 'Live Mode';
+                modeLabel.classList.toggle('draft', isDraftMode);
+            }
+            
             // Show loading message
             const loadingDiv = document.getElementById('loading');
             loadingDiv.style.display = 'block';
-            loadingDiv.innerHTML = `Loading ${isDraftMode ? 'draft' : 'main'} data...`;
+            loadingDiv.innerHTML = `Loading ${isDraftMode ? 'draft' : 'live'} data...`;
 
             try {
                 // Initialize Google Sheets API if not already initialized
@@ -2069,6 +2336,12 @@
                 successMsg.innerText = `Successfully loaded ${isDraftMode ? 'draft' : 'main'} data`;
                 document.body.appendChild(successMsg);
                 setTimeout(() => successMsg.remove(), 3000);
+                
+                // Add this to the toggleMode function after the isDraftMode check
+                const modeLabel = document.querySelector('.mode-label');
+                if (modeLabel) {
+                    modeLabel.classList.toggle('draft', isDraftMode);
+                }
                 
             } catch (error) {
                 console.error('Error switching modes:', error);
@@ -2197,6 +2470,193 @@
             const isDraftMode = document.getElementById('modeToggle').checked;
             window.open(`https://docs.google.com/spreadsheets/d/${currentSpreadsheetId}/edit?gid=1932523701#gid=1932523701`, '_blank');
         }
+
+        // Add this function near the top of your script section
+        function switchLab(labMode) {
+            // Update active button
+            document.querySelectorAll('.lab-selector-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lab === labMode);
+            });
+            
+            // Update body attribute to control section visibility
+            document.body.dataset.activeLab = labMode;
+            
+            // Show success message
+            showNotification(`Switched to ${labMode.charAt(0).toUpperCase() + labMode.slice(1)} Lab`, 'success');
+        }
+
+        // Add these functions to your JavaScript
+        function calculateDegreeCentrality() {
+            const centrality = new Map();
+            graph.forEachNode((node) => {
+                centrality.set(node, graph.degree(node));
+            });
+            return centrality;
+        }
+
+        function calculateBetweennessCentrality() {
+            const centrality = new Map();
+            const scores = graphologyMetrics.betweennessCentrality(graph);
+            Object.entries(scores).forEach(([node, score]) => {
+                centrality.set(node, score);
+            });
+            return centrality;
+        }
+
+        function calculateClosenessCentrality() {
+            const centrality = new Map();
+            const scores = graphologyMetrics.closenessCentrality(graph);
+            Object.entries(scores).forEach(([node, score]) => {
+                centrality.set(node, score);
+            });
+            return centrality;
+        }
+
+        function calculateEigenvectorCentrality() {
+            const centrality = new Map();
+            const scores = graphologyMetrics.eigenvectorCentrality(graph);
+            Object.entries(scores).forEach(([node, score]) => {
+                centrality.set(node, score);
+            });
+            return centrality;
+        }
+
+        // Update the showCentrality function
+        function showCentrality(metric) {
+            // Update button states
+            document.querySelectorAll('.centrality-button').forEach(button => {
+                button.classList.toggle('active', 
+                    button.textContent.toLowerCase().includes(metric));
+            });
+            
+            // Show explanation for the selected metric
+            const explanationDiv = document.getElementById('centrality-explanation');
+            const descriptionEl = explanationDiv.querySelector('.metric-description');
+            const implicationsEl = explanationDiv.querySelector('.fishery-implications');
+            const usefulnessEl = explanationDiv.querySelector('.metric-usefulness');
+            
+            // Define the content for each metric
+            const metricContent = {
+                degree: {
+                    description: "Shows how many direct connections a variable has with other variables in the fishery system.",
+                    implications: "Variables with high degree are the 'busy intersections' of the system. They directly affect or are affected by many other parts of the fishery. For example, if 'Fish Stock' has a high degree, it means many factors directly impact the stock levels, and changes in stock levels directly affect many other aspects of the fishery.",
+                    usefulness: "Use this to find the most connected variables in your fishery. These are often good places to monitor or intervene, as changes here will have immediate effects on many other parts of the system."
+                },
+                betweenness: {
+                    description: "Shows which variables act as bridges or gatekeepers between different parts of the fishery system.",
+                    implications: "Variables with high betweenness are crucial pathway controllers. For example, if 'Fishing Effort' has high betweenness, it means it's an important intermediary that connects different parts of the system, like linking economic factors to environmental impacts.",
+                    usefulness: "Use this to identify variables that control how effects spread through your fishery system. These are strategic points where management actions can have far-reaching consequences."
+                },
+                closeness: {
+                    description: "Shows how quickly a variable can affect the entire fishery system through direct and indirect connections.",
+                    implications: "Variables with high closeness can rapidly influence the whole system. For example, if 'Market Price' has high closeness, changes in price can quickly ripple through the entire fishery, affecting everything from fishing behavior to management decisions.",
+                    usefulness: "Use this to find variables that can create quick system-wide changes. These are good early warning indicators and useful for rapid management responses."
+                },
+                eigenvector: {
+                    description: "Shows which variables are connected to other highly influential variables in the fishery system.",
+                    implications: "Variables with high eigenvector centrality are connected to other important parts of the system. For example, if 'Management Regulations' has high eigenvector centrality, it means it's connected to other important variables that together create significant system-wide effects.",
+                    usefulness: "Use this to identify variables that have strong indirect influence through their connections to other important variables. These are excellent targets for long-term strategic management."
+                }
+            };
+            
+            // Update the explanation content
+            descriptionEl.textContent = metricContent[metric].description;
+            implicationsEl.textContent = metricContent[metric].implications;
+            usefulnessEl.textContent = metricContent[metric].usefulness;
+            
+            // Show the explanation
+            explanationDiv.style.display = 'block';
+            
+            // Calculate centrality
+            let centrality;
+            switch (metric) {
+                case 'degree':
+                    centrality = calculateDegreeCentrality();
+                    break;
+                case 'betweenness':
+                    centrality = calculateBetweennessCentrality();
+                    break;
+                case 'closeness':
+                    centrality = calculateClosenessCentrality();
+                    break;
+                case 'eigenvector':
+                    centrality = calculateEigenvectorCentrality();
+                    break;
+            }
+            
+            // Scale nodes based on centrality
+            const values = Array.from(centrality.values());
+            const minValue = Math.min(...values);
+            const maxValue = Math.max(...values);
+            
+            const sizeScale = d3.scaleLinear()
+                .domain([minValue, maxValue])
+                .range([5, 20]);
+            
+            // Update node sizes
+            d3.selectAll('.node').each(function(d) {
+                const value = centrality.get(d.id);
+                const size = sizeScale(value);
+                
+                d3.select(this)
+                    .select('circle')
+                    .transition()
+                    .duration(500)
+                    .attr('r', size);
+            });
+            
+            // Show top 5 nodes
+            const topNodes = Array.from(centrality.entries())
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5)
+                .map(([id, value]) => ({
+                    name: nodes.find(n => n.id === id).name,
+                    value: (value / maxValue * 100).toFixed(1)
+                }));
+            
+            // Update results display
+            const resultsDiv = document.getElementById('centrality-results');
+            resultsDiv.innerHTML = `
+                <h4 style="margin-top: 15px;">Top 5 Most Central Variables:</h4>
+                ${topNodes.map((node, i) => `
+                    <div style="margin: 5px 0; padding: 5px; display: flex; justify-content: space-between;">
+                        <span>${i + 1}. ${node.name}</span>
+                        <span>${node.value}%</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Add this function to initialize the graph
+        function initializeGraph() {
+            graph = new graphology.Graph({
+                multi: false,
+                type: 'directed'
+            });
+            
+            // Add nodes
+            nodes.forEach(node => {
+                graph.addNode(node.id, {
+                    name: node.name,
+                    domain: node.domain
+                });
+            });
+            
+            // Add edges
+            links.forEach(link => {
+                graph.addEdge(link.source.id, link.target.id, {
+                    type: link.type,
+                    strength: link.strength,
+                    delay: link.delay
+                });
+            });
+        }
+
+        // Update the simulation to handle dynamic node sizes
+        simulation.force("collision", d3.forceCollide().radius(d => {
+            const circle = d3.select(`#node-${d.id}`).select('circle');
+            return circle.attr('r') ? parseFloat(circle.attr('r')) + 2 : 12;
+        }));
     </script>
 </body>
 </html> 
