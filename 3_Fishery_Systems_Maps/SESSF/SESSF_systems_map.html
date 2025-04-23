@@ -1432,74 +1432,22 @@
                 }
             }
 
-            // Pause the simulation temporarily to reduce lag
-            simulation.stop();
-            
-            // Update nodes immediately without transition for snappier response
-            d3.selectAll('.node').each(function(d) {
-                const node = d3.select(this);
-                const circle = node.select('circle');
-                const text = node.select('text');
-                
-                const isHighlighted = (type === 'domains' && activeDomains.has(d.domain)) ||
-                                    (type === 'types' && activeTypes.size === 0) ||
-                                    (type === 'strengths' && activeStrengths.size === 0);
-                
-                // Update node opacity immediately
-                node.style('opacity', isHighlighted ? 1 : 0.2)
-                    .classed('highlighted', isHighlighted)
-                    .classed('dimmed', !isHighlighted);
-
-                // Update node size and text style with minimal transition
-                if (isHighlighted) {
-                    circle.transition()
-                        .duration(150)
-                        .ease(d3.easeLinear)
-                        .attr('r', 15);
-                    text.style('font-size', '19px')
-                        .style('font-weight', 'bold');
-                } else {
-                    circle.transition()
-                        .duration(150)
-                        .ease(d3.easeLinear)
-                        .attr('r', 10);
-                    text.style('font-size', '14px')
-                        .style('font-weight', 'normal');
-                }
-            });
-
-            // Update links with minimal transition
-            d3.selectAll('.link').each(function(d) {
-                const link = d3.select(this);
-                const sourceHighlighted = activeDomains.has(d.source.domain);
-                const targetHighlighted = activeDomains.has(d.target.domain);
-                const typeMatch = activeTypes.size === 0 || activeTypes.has(d.type);
-                const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
-                const delayMatch = activeDelays.size === 0 || activeDelays.has(d.delay);
-                
-                const isHighlighted = (sourceHighlighted || targetHighlighted) &&
-                                    typeMatch && strengthMatch && delayMatch;
-                
-                link.style('opacity', isHighlighted ? 1 : 0.1)
-                    .classed('highlighted', isHighlighted)
-                    .classed('dimmed', !isHighlighted);
-            });
-
-            // Restart simulation with reduced alpha for smoother movement
-            simulation.alpha(0.1).restart();
+            // Update visibility after changing filter state
+            updateVisibility();
         }
 
         function updateVisibility() {
             // First, determine which links should be visible based on all active filters
             const visibleLinks = new Set();
-            const hideTemporalStyling = document.querySelector('.filter-button[data-delay="hide_temporal"]').classList.contains('active');
+            const hideTemporalStyling = document.querySelector('.filter-button[data-delay="hide_temporal"]');
+            const hideTemporalActive = hideTemporalStyling ? hideTemporalStyling.classList.contains('active') : false;
             
             d3.selectAll(".link").each(function(d) {
                 const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
                 const typeMatch = activeTypes.size === 0 || activeTypes.has(d.type);
                 const categoryMatch = activeDomains.size === 0 || 
                     (activeDomains.has(d.source.domain) || activeDomains.has(d.target.domain));
-                const delayMatch = hideTemporalStyling || activeDelays.size === 0 || activeDelays.has(d.delay);
+                const delayMatch = hideTemporalActive || activeDelays.size === 0 || activeDelays.has(d.delay);
                 
                 if (strengthMatch && typeMatch && categoryMatch && delayMatch) {
                     visibleLinks.add(d);
@@ -1522,7 +1470,7 @@
                 })
                 .style("stroke-dasharray", d => {
                     // If hide temporal styling is active or no temporal filters are active, use solid lines
-                    if (hideTemporalStyling || activeDelays.size === 0) return "none";
+                    if (hideTemporalActive || activeDelays.size === 0) return "none";
                     
                     if (visibleLinks.has(d)) {
                         switch(d.delay) {
@@ -1537,7 +1485,7 @@
                 })
                 .style("stroke-width", d => {
                     if (!visibleLinks.has(d)) return "1px";
-                    if (activeDelays.size > 0 && !hideTemporalStyling && d.delay === "decade") return "3px";
+                    if (activeDelays.size > 0 && !hideTemporalActive && d.delay === "decade") return "3px";
                     return d.strength === "strong" ? "4px" : 
                            d.strength === "medium" ? "2px" : "1px";
                 });
