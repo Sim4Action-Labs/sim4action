@@ -209,15 +209,15 @@
             font-weight: bold;
         }
         .filter-section-content {
-            max-height: none;
-            overflow: visible;
-            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
             padding: 0 10px;
         }
         .filter-section-content.expanded {
-            max-height: none;
+            max-height: 300px;
             padding: 10px;
-            overflow: visible;
+            overflow-y: auto;
         }
         .filter-button {
             display: flex;
@@ -642,19 +642,26 @@
             display: none;
             height: auto;
             overflow: visible;
+            white-space: normal;
+            line-height: 1.6;
+            max-height: none;
         }
 
         .centrality-explanation h4 {
             color: #495057;
-            margin: 10px 0 8px 0;
-            font-size: 14px;
+            margin: 15px 0 10px 0;
+            font-size: 15px;
             font-weight: bold;
+        }
+
+        .centrality-explanation h4:first-child {
+            margin-top: 0;
         }
 
         .centrality-explanation p {
             color: #6c757d;
             margin: 0 0 15px 0;
-            font-size: 13px;
+            font-size: 14px;
             line-height: 1.5;
             white-space: normal;
             overflow: visible;
@@ -670,6 +677,20 @@
             background: #fff;
             border: 1px solid #dee2e6;
             border-radius: 4px;
+        }
+
+        /* Update filter section content for monitoring lab */
+        .monitoring-lab .filter-section-content {
+            max-height: none;
+            height: auto;
+            overflow: visible;
+        }
+
+        .monitoring-lab .filter-section-content.expanded {
+            max-height: none;
+            height: auto;
+            overflow: visible;
+            padding: 10px;
         }
     </style>
 </head>
@@ -1316,6 +1337,7 @@
 
             // Centrality Analysis
             const centralitySection = createBasicSection("Centrality Analysis");
+            centralitySection.classList.add('centrality-section-container');
             centralitySection.querySelector('.filter-section-content').innerHTML = `
                 <div class="section-label">Select Centrality Metric:</div>
                 <div class="centrality-container">
@@ -1331,6 +1353,8 @@
                     <button class="centrality-button" onclick="showCentrality('eigenvector')">Eigenvector</button>
                 </div>
                 
+                <div id="centrality-results" class="results-panel"></div>
+                
                 <div id="centrality-explanation" class="centrality-explanation">
                     <h4>About this metric</h4>
                     <p class="metric-description"></p>
@@ -1339,8 +1363,6 @@
                     <h4>Why it's useful</h4>
                     <p class="metric-usefulness"></p>
                 </div>
-                
-                <div id="centrality-results" class="results-panel"></div>
             `;
 
             monitoringDiv.appendChild(centralitySection);
@@ -1371,16 +1393,14 @@
             const set = type === "domains" ? activeDomains :
                        type === "types" ? activeTypes :
                        type === "strengths" ? activeStrengths :
-                       type === "delays" ? activeDelays : null;
+                       activeDelays;
             
             if (type === "delays") {
                 if (value === "hide_temporal") {
-                    // Toggle hide temporal styling state
                     button.classList.toggle("active");
                     const hideTemporalStyling = button.classList.contains("active");
                     
                     if (hideTemporalStyling) {
-                        // Clear all temporal filters and deactivate other temporal buttons
                         activeDelays.clear();
                         document.querySelectorAll('.filter-button').forEach(btn => {
                             if (btn.textContent.includes("Days") || 
@@ -1392,13 +1412,10 @@
                         });
                     }
                 } else {
-                    // When selecting a temporal filter, deactivate hide temporal styling
                     const hideTemporalButton = document.querySelector('.filter-button[data-delay="hide_temporal"]');
                     if (hideTemporalButton) {
                         hideTemporalButton.classList.remove("active");
                     }
-                    
-                    // Toggle the temporal filter
                     button.classList.toggle("active");
                     if (button.classList.contains("active")) {
                         set.add(value);
@@ -1407,7 +1424,6 @@
                     }
                 }
             } else {
-                // Handle non-temporal filters normally
                 button.classList.toggle("active");
                 if (button.classList.contains("active")) {
                     set.add(value);
@@ -1415,8 +1431,62 @@
                     set.delete(value);
                 }
             }
+
+            // Pause the simulation temporarily to reduce lag
+            simulation.stop();
             
-            updateVisibility();
+            // Update nodes immediately without transition for snappier response
+            d3.selectAll('.node').each(function(d) {
+                const node = d3.select(this);
+                const circle = node.select('circle');
+                const text = node.select('text');
+                
+                const isHighlighted = (type === 'domains' && activeDomains.has(d.domain)) ||
+                                    (type === 'types' && activeTypes.size === 0) ||
+                                    (type === 'strengths' && activeStrengths.size === 0);
+                
+                // Update node opacity immediately
+                node.style('opacity', isHighlighted ? 1 : 0.2)
+                    .classed('highlighted', isHighlighted)
+                    .classed('dimmed', !isHighlighted);
+
+                // Update node size and text style with minimal transition
+                if (isHighlighted) {
+                    circle.transition()
+                        .duration(150)
+                        .ease(d3.easeLinear)
+                        .attr('r', 15);
+                    text.style('font-size', '19px')
+                        .style('font-weight', 'bold');
+                } else {
+                    circle.transition()
+                        .duration(150)
+                        .ease(d3.easeLinear)
+                        .attr('r', 10);
+                    text.style('font-size', '14px')
+                        .style('font-weight', 'normal');
+                }
+            });
+
+            // Update links with minimal transition
+            d3.selectAll('.link').each(function(d) {
+                const link = d3.select(this);
+                const sourceHighlighted = activeDomains.has(d.source.domain);
+                const targetHighlighted = activeDomains.has(d.target.domain);
+                const typeMatch = activeTypes.size === 0 || activeTypes.has(d.type);
+                const strengthMatch = activeStrengths.size === 0 || activeStrengths.has(d.strength);
+                const delayMatch = activeDelays.size === 0 || activeDelays.has(d.delay);
+                
+                const isHighlighted = (sourceHighlighted || targetHighlighted) &&
+                                    typeMatch && strengthMatch && delayMatch;
+                
+                link.style('opacity', isHighlighted ? 1 : 0.1)
+                    .classed('highlighted', isHighlighted)
+                    .classed('dimmed', !isHighlighted);
+            });
+
+            // Restart simulation with reduced alpha for smoother movement
+            simulation.alpha(0.1).restart();
         }
 
         function updateVisibility() {
@@ -1975,15 +2045,8 @@
             initGoogleSheetsAPI();
             initializeGraph();
 
-            // Expand filter sections by default
-            document.addEventListener('DOMContentLoaded', function() {
-                const filterSections = document.querySelectorAll('.filter-section-content');
-                filterSections.forEach(section => {
-                    section.classList.add('expanded');
-                    const toggle = section.previousElementSibling.querySelector('.filter-section-toggle');
-                    if (toggle) toggle.innerHTML = '&minus;';
-                });
-            });
+            // Do not automatically expand filter sections by default
+            // sections will remain collapsed until user clicks on them
         };
 
         // Widget Functions
@@ -2523,11 +2586,33 @@
 
         // Update the showCentrality function
         function showCentrality(metric) {
+            // First, reset all previously highlighted nodes
+            d3.selectAll('.node')
+                .classed('high-centrality', false)
+                .style('opacity', 0.7)
+                .select('circle')
+                .style('stroke', null)
+                .style('stroke-width', null)
+                .attr('r', 10);
+            
+            d3.selectAll('.node text')
+                .style('font-size', '14px')
+                .style('font-weight', 'normal');
+
             // Update button states
             document.querySelectorAll('.centrality-button').forEach(button => {
                 button.classList.toggle('active', 
                     button.textContent.toLowerCase().includes(metric));
             });
+            
+            // Make sure the filter section is expanded
+            const centralitySection = document.querySelector('.centrality-section-container');
+            const contentDiv = centralitySection.querySelector('.filter-section-content');
+            if (!contentDiv.classList.contains('expanded')) {
+                contentDiv.classList.add('expanded');
+                const toggle = contentDiv.previousElementSibling.querySelector('.filter-section-toggle');
+                if (toggle) toggle.innerHTML = '&minus;';
+            }
             
             // Show explanation for the selected metric
             const explanationDiv = document.getElementById('centrality-explanation');
@@ -2584,46 +2669,60 @@
                     break;
             }
             
-            // Scale nodes based on centrality
-            const values = Array.from(centrality.values());
-            const minValue = Math.min(...values);
-            const maxValue = Math.max(...values);
-            
-            const sizeScale = d3.scaleLinear()
-                .domain([minValue, maxValue])
-                .range([5, 20]);
-            
-            // Update node sizes
-            d3.selectAll('.node').each(function(d) {
-                const value = centrality.get(d.id);
-                const size = sizeScale(value);
-                
-                d3.select(this)
-                    .select('circle')
-                    .transition()
-                    .duration(500)
-                    .attr('r', size);
-            });
-            
-            // Show top 5 nodes
+            // Get the top 5 nodes
             const topNodes = Array.from(centrality.entries())
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 5)
-                .map(([id, value]) => ({
-                    name: nodes.find(n => n.id === id).name,
-                    value: (value / maxValue * 100).toFixed(1)
-                }));
+                .slice(0, 5);
+            
+            const topNodeIds = new Set(topNodes.map(([id]) => id));
+            
+            // Update node appearance for top nodes
+            d3.selectAll('.node').each(function(d) {
+                if (topNodeIds.has(d.id)) {
+                    // Highlight top nodes
+                    d3.select(this)
+                        .classed('high-centrality', true)
+                        .style('opacity', 1)
+                        .select('circle')
+                        .style('stroke', '#ffd700')
+                        .style('stroke-width', 3)
+                        .attr('r', 15);
+                    
+                    // Make text bold
+                    d3.select(this)
+                        .select('text')
+                        .style('font-size', '16px')
+                        .style('font-weight', 'bold');
+                } else {
+                    // Dim other nodes
+                    d3.select(this).style('opacity', 0.3);
+                }
+            });
+            
+            // Scale values for display
+            const values = topNodes.map(([, value]) => value);
+            const maxValue = Math.max(...values);
+            
+            const formattedTopNodes = topNodes.map(([id, value]) => ({
+                name: nodes.find(n => n.id === id).name,
+                value: (value / maxValue * 100).toFixed(1) + '%'
+            }));
             
             // Update results display
             const resultsDiv = document.getElementById('centrality-results');
             resultsDiv.innerHTML = `
-                <h4 style="margin-top: 15px;">Top 5 Most Central Variables:</h4>
-                ${topNodes.map((node, i) => `
-                    <div style="margin: 5px 0; padding: 5px; display: flex; justify-content: space-between;">
-                        <span>${i + 1}. ${node.name}</span>
-                        <span>${node.value}%</span>
-                    </div>
-                `).join('')}
+                <h4 style="margin-top: 0; font-size: 14px; color: #495057; margin-bottom: 10px;">
+                    Top 5 ${metric.charAt(0).toUpperCase() + metric.slice(1)} Centrality Nodes:
+                </h4>
+                <ol style="margin: 0; padding-left: 20px;">
+                    ${formattedTopNodes.map((node, index) => `
+                        <li style="margin-bottom: 5px; ${index < 3 ? 'background-color: rgba(255, 215, 0, 0.1); padding: 3px;' : ''}">
+                            <span style="font-weight: ${index < 3 ? 'bold' : 'normal'};">
+                                ${node.name} (${node.value})
+                            </span>
+                        </li>
+                    `).join('')}
+                </ol>
             `;
         }
 
