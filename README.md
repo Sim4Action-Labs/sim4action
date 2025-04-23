@@ -1,111 +1,97 @@
-# SESSF System Map Analysis Tools
+# Fishery Systems Map Extraction Tools
 
-A collection of Python scripts for extracting and analyzing data from the SESSF fishery systems map.
+A Python script for extracting fishery systems map data from Google Sheets and formatting it into AI-friendly markdown format for quality control and analysis.
+
+## Overview
+
+This tool provides a streamlined way to:
+
+1. Download fishery systems map data from Google Sheets
+2. Process the data into a structured format
+3. Generate a markdown report optimized for AI agent processing
+4. Save the raw data as CSV files for further analysis
+
+The output is specifically formatted to be easily processed by AI agents for quality control and systems analysis purposes.
 
 ## Installation and Setup
 
 See the [Installation and Setup Guide](INSTALL.md) for detailed instructions on:
 - Installing required packages
 - Setting up Google Sheets API access
-- Configuring the scripts
+- Configuring the script
 - Troubleshooting common issues
 
-## Available Scripts
+## Script Functionality
 
-The repository contains the following scripts:
+The main script `extract_systems_map.py` performs the following functions:
 
-1. `extract_systems_map.py`: Main script that connects to Google Sheets, downloads data, and creates a basic systems map markdown report.
+1. **Data Acquisition**:
+   - Connects to Google Sheets using API credentials 
+   - Downloads factors (variables) and relationships data
+   - Provides fallback to local CSV files if available
+   - Creates sample data for testing if no data sources are available
 
-2. `extract_factors_to_markdown.py`: Extracts factor (node) data and generates a markdown report.
+2. **Data Processing**:
+   - Converts data to structured format
+   - Calculates basic statistics and summaries
+   - Organizes data for AI readability
 
-3. `extract_relationships_to_markdown.py`: Extracts relationship (edge) data and generates a markdown report.
-
-4. `extract_feedback_loops.py`: Identifies feedback loops in the systems map and generates a markdown report.
+3. **Output Generation**:
+   - Creates a markdown file with clear sections and tables
+   - Saves raw data as CSV files for future use
+   - Includes JSON metadata for easy AI parsing
 
 ## Requirements
 
 - Python 3.6 or higher
 - Required packages:
-  - `pandas`
-  - `networkx` (for feedback loop analysis)
+  - `pandas` (for data processing)
   - `google-api-python-client` and `google-auth` (for Google Sheets access)
 
 ## Usage
 
-### Main Extraction Script
+### Basic Usage
 
 ```bash
 python extract_systems_map.py
 ```
 
-This script checks for existing CSV files. If not found, it attempts to download data from Google Sheets using the API credentials.
+This will:
+- Use the default spreadsheet ID specified in the script
+- Look for `credentials.json` in the current directory
+- Save output to `fishery_systems_map.md`
 
-### Extracting Feedback Loops
-
-```bash
-python extract_feedback_loops.py [relationships_csv] [factors_csv] [output_md]
-```
-
-#### Arguments:
-- `relationships_csv`: Path to the CSV file containing relationship data (default: relationships_data.csv)
-- `factors_csv`: Path to the CSV file containing factor data (default: factors_data.csv)
-- `output_md`: Path to the output markdown file (default: sessf_feedback_loops.md)
-
-#### Input File Format:
-
-The relationships CSV file should have the following columns:
-- `from`: Source node name
-- `to`: Target node name
-- `from_factor_id`: ID of the source node
-- `to_factor_id`: ID of the target node
-- `polarity`: Relationship polarity ('same' or 'opposite')
-- `strength`: Relationship strength
-- `delay`: Delay information
-
-The factors CSV file should have the following columns:
-- `factor_id`: Unique identifier for the factor
-- `name`: Name of the factor
-- `domain_name`: Domain/category the factor belongs to
-
-#### Output:
-
-The script identifies and categorizes feedback loops in the system, producing a markdown report that includes:
-- Simple feedback loops (2 nodes)
-- Complex feedback loops (3+ nodes)
-- Loop types (reinforcing or balancing)
-- Summary statistics
-- Implications for management
-
-Feedback loops are classified as:
-- **Reinforcing**: Loops with an even number of 'opposite' relationships (including zero)
-- **Balancing**: Loops with an odd number of 'opposite' relationships
-
-### Extracting Factors and Relationships
-
-Similar usage patterns apply for the other scripts:
+### Custom Spreadsheet
 
 ```bash
-python extract_factors_to_markdown.py [input_csv] [output_md]
-python extract_relationships_to_markdown.py [input_csv] [output_md]
+python extract_systems_map.py your_spreadsheet_id_here
 ```
 
-## Examples
+### Offline Mode
 
-Extract systems map data from Google Sheets (requires credentials.json):
-```bash
-python extract_systems_map.py
-```
+If you have previously downloaded the data as CSV files (`factors_data.csv` and `relationships_data.csv`), the script will automatically use these files instead of connecting to Google Sheets.
 
-Extract feedback loops using default file names:
-```bash
-python extract_feedback_loops.py
-```
+## Output Format
 
-Extract feedback loops with custom file names:
-```bash
-python extract_feedback_loops.py my_relationships.csv my_factors.csv feedback_loops_report.md
-```
+The generated markdown file includes:
+
+1. **Variables (Factors)**: A table listing all system variables with their properties
+2. **Relationships**: A table showing connections between variables
+3. **Domain Statistics**: Distribution of variables across domains
+4. **Relationship Statistics**: Counts of different relationship types
+5. **Summary Statistics**: Overall counts and metrics
+6. **Metadata**: JSON object with key statistics for easy parsing
+
+## AI Processing
+
+The output markdown is specifically structured for AI agent processing:
+
+- Clear, consistent section headings
+- Well-structured tables with defined columns
+- Explicit descriptions of data elements
+- JSON metadata for programmatic access
+- Uniform formatting of data values
 
 ## Contributing
 
-Contributions to improve these scripts are welcome. Please ensure that any pull requests include appropriate documentation and maintain compatibility with the existing code structure. 
+Contributions to improve this tool are welcome. Please ensure that any pull requests maintain compatibility with the existing code structure and the focus on AI-readability. 

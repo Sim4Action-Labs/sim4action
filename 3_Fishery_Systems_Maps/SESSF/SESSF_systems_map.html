@@ -1287,6 +1287,28 @@
             `;
             diagnosticsDiv.appendChild(storylineSection);
 
+            // Node Selector
+            const nodeSelectorSection = createBasicSection("Node Selector");
+            nodeSelectorSection.querySelector('.filter-section-content').innerHTML = `
+                <div class="section-label">Select a node:</div>
+                <select id="node-selector" class="filter-button" style="width: 100%; padding: 8px; margin: 5px 0;" onchange="handleNodeSelection(this.value)">
+                    <option value="">-- Select a node --</option>
+                    ${factors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
+                </select>
+            `;
+            diagnosticsDiv.appendChild(nodeSelectorSection);
+
+            // Relationship Selector
+            const relationshipSelectorSection = createBasicSection("Relationship Selector");
+            relationshipSelectorSection.querySelector('.filter-section-content').innerHTML = `
+                <div class="section-label">Select a relationship:</div>
+                <select id="relationship-selector" class="filter-button" style="width: 100%; padding: 8px; margin: 5px 0;" onchange="handleRelationshipSelection(this.value)">
+                    <option value="">-- Select a relationship --</option>
+                    ${relationships.map(rel => `<option value="${rel.id}">${rel.from} &rarr; ${rel.to}</option>`).join('')}
+                </select>
+            `;
+            diagnosticsDiv.appendChild(relationshipSelectorSection);
+
             // Add diagnostics sections to main filters div
             filtersDiv.appendChild(diagnosticsDiv);
 
@@ -2704,6 +2726,162 @@
             const circle = d3.select(`#node-${d.id}`).select('circle');
             return circle.attr('r') ? parseFloat(circle.attr('r')) + 2 : 12;
         }));
+
+        // Add this function near the other filter-related functions
+        function handleNodeSelection(nodeId) {
+            // First reset all nodes and links to default state
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .select('circle')
+                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10);
+            
+            d3.selectAll('.node text')
+                .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
+
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 0.6)
+                .style('pointer-events', 'auto');
+
+            // If a node is selected, highlight it and its connections
+            if (nodeId) {
+                // Find all links connected to the selected node
+                const connectedLinks = links.filter(link => 
+                    link.source.id === nodeId || link.target.id === nodeId
+                );
+                
+                // Find all nodes connected to the selected node
+                const connectedNodeIds = new Set();
+                connectedLinks.forEach(link => {
+                    if (link.source.id === nodeId) connectedNodeIds.add(link.target.id);
+                    if (link.target.id === nodeId) connectedNodeIds.add(link.source.id);
+                });
+
+                // Update nodes
+                d3.selectAll('.node').each(function(d) {
+                    if (d.id === nodeId) {
+                        // Selected node
+                        d3.select(this)
+                            .classed('highlighted', true)
+                            .style('opacity', 1)
+                            .select('circle')
+                            .attr('r', 18);  // Increased from 15 to 18
+                        
+                        d3.select(this)
+                            .select('text')
+                            .style('font-size', '22px')  // Increased from 19px to 22px
+                            .style('font-weight', 'bold');
+                    } else if (connectedNodeIds.has(d.id)) {
+                        // Connected nodes - keep at original size
+                        d3.select(this)
+                            .classed('highlighted', true)
+                            .style('opacity', 1)
+                            .select('circle')
+                            .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10);  // Original size
+                        
+                        d3.select(this)
+                            .select('text')
+                            .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')  // Original size
+                            .style('font-weight', 'bold');
+                    } else {
+                        // Non-connected nodes
+                        d3.select(this)
+                            .classed('dimmed', true)
+                            .style('opacity', 0.2);
+                    }
+                });
+
+                // Update links
+                d3.selectAll('.link').each(function(d) {
+                    if (connectedLinks.includes(d)) {
+                        // Connected links
+                        d3.select(this)
+                            .classed('highlighted', true)
+                            .style('opacity', 1)
+                            .style('pointer-events', 'auto');
+                    } else {
+                        // Non-connected links
+                        d3.select(this)
+                            .classed('dimmed', true)
+                            .style('opacity', 0.1)
+                            .style('pointer-events', 'none');
+                    }
+                });
+            }
+        }
+
+        // Add this function near the other filter-related functions
+        function handleRelationshipSelection(relationshipId) {
+            // First reset all nodes and links to default state
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .select('circle')
+                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10);
+            
+            d3.selectAll('.node text')
+                .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
+
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 0.6)
+                .style('pointer-events', 'auto');
+
+            // If a relationship is selected, highlight it and its nodes
+            if (relationshipId) {
+                // Find the selected relationship
+                const selectedRelationship = relationships.find(rel => rel.id === relationshipId);
+                
+                if (selectedRelationship) {
+                    // Update nodes
+                    d3.selectAll('.node').each(function(d) {
+                        if (d.id === selectedRelationship.from_factor_id || d.id === selectedRelationship.to_factor_id) {
+                            // Connected nodes
+                            d3.select(this)
+                                .classed('highlighted', true)
+                                .style('opacity', 1)
+                                .select('circle')
+                                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10);
+                            
+                            d3.select(this)
+                                .select('text')
+                                .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                                .style('font-weight', 'bold');
+                        } else {
+                            // Non-connected nodes
+                            d3.select(this)
+                                .classed('dimmed', true)
+                                .style('opacity', 0.2);
+                        }
+                    });
+
+                    // Update links
+                    d3.selectAll('.link').each(function(d) {
+                        if (d.source.id === selectedRelationship.from_factor_id && 
+                            d.target.id === selectedRelationship.to_factor_id) {
+                            // Selected relationship
+                            d3.select(this)
+                                .classed('highlighted', true)
+                                .style('opacity', 1)
+                                .style('pointer-events', 'auto');
+                        } else {
+                            // Non-selected relationships
+                            d3.select(this)
+                                .classed('dimmed', true)
+                                .style('opacity', 0.1)
+                                .style('pointer-events', 'none');
+                        }
+                    });
+                }
+            }
+        }
     </script>
 </body>
 </html> 

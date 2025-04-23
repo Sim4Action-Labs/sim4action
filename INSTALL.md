@@ -1,12 +1,12 @@
 # Installation and Setup Guide
 
-This guide provides detailed instructions for setting up and using the SESSF Systems Map Analysis Tools, including Google Sheets API configuration.
+This guide provides detailed instructions for setting up and using the Fishery Systems Map Extraction Tool, including Google Sheets API configuration.
 
 ## Prerequisites
 
 - Python 3.6 or higher
 - Pip (Python package installer)
-- Access to the Google Sheet containing the SESSF systems map data
+- Access to the Google Sheet containing the fishery systems map data
 - A Google account for creating API credentials
 
 ## Installation Steps
@@ -19,12 +19,12 @@ This guide provides detailed instructions for setting up and using the SESSF Sys
 
 2. **Install required packages**:
    ```bash
-   pip install pandas networkx google-api-python-client google-auth
+   pip install pandas google-api-python-client google-auth
    ```
 
 ## Setting Up Google Sheets API Access
 
-If you want to directly access data from Google Sheets, follow these steps:
+Follow these steps to enable data extraction directly from Google Sheets:
 
 1. **Create a Google Cloud Project**:
    - Go to the [Google Cloud Console](https://console.cloud.google.com/)
@@ -49,10 +49,10 @@ If you want to directly access data from Google Sheets, follow these steps:
    - Click "Add Key" > "Create new key"
    - Choose JSON format and click "Create"
    - The key file will be downloaded to your computer
-   - Rename this file to `credentials.json` and place it in the same directory as the scripts
+   - Rename this file to `credentials.json` and place it in the same directory as the script
 
 5. **Share the Google Sheet**:
-   - Open the Google Sheet containing your SESSF systems map data
+   - Open the Google Sheet containing your fishery systems map data
    - Click the "Share" button in the top-right corner
    - Add the email address of your service account (found in the service account details page)
    - Grant "Viewer" access to the service account
@@ -61,13 +61,13 @@ If you want to directly access data from Google Sheets, follow these steps:
 6. **Update Script Configuration**:
    - Open the `extract_systems_map.py` script in a text editor
    - Update the `SPREADSHEET_ID` variable with your Google Sheet ID (the long string in the URL of your spreadsheet)
-   - Update any sheet names or ranges as needed
+   - Update any sheet names or ranges as needed (e.g., `FACTORS_RANGE` and `RELATIONSHIPS_RANGE`)
 
-## Using the Scripts
+## Using the Script
 
 ### Extracting Data from Google Sheets
 
-1. **Run the main extraction script**:
+1. **Run the extraction script**:
    ```bash
    python extract_systems_map.py
    ```
@@ -76,27 +76,28 @@ If you want to directly access data from Google Sheets, follow these steps:
    - Connect to the Google Sheet using your credentials
    - Download the factors (nodes) and relationships (edges) data
    - Save the data to CSV files (`factors_data.csv` and `relationships_data.csv`)
-   - Generate markdown reports (`sessf_factors.md` and `sessf_relationships.md`)
+   - Generate a markdown report (`fishery_systems_map.md`)
 
-2. **Extract Feedback Loops**:
+2. **Custom Spreadsheet ID**:
+   To use a different spreadsheet, provide the ID as a command line argument:
    ```bash
-   python extract_feedback_loops.py relationships_data.csv factors_data.csv sessf_feedback_loops.md
+   python extract_systems_map.py your_spreadsheet_id_here
    ```
 
-### Using Local CSV Files
+### Using Local CSV Files (Offline Mode)
 
-If you already have the CSV files or prefer not to use Google Sheets API, you can:
+If you already have the CSV files or prefer not to use Google Sheets API:
 
 1. **Place the CSV files in the script directory**:
    - `factors_data.csv`: Should contain factor information
    - `relationships_data.csv`: Should contain relationship information
 
-2. **Run the analysis scripts directly**:
+2. **Run the script**:
    ```bash
-   python extract_factors_to_markdown.py factors_data.csv sessf_factors.md
-   python extract_relationships_to_markdown.py relationships_data.csv sessf_relationships.md
-   python extract_feedback_loops.py relationships_data.csv factors_data.csv sessf_feedback_loops.md
+   python extract_systems_map.py
    ```
+   
+   The script will automatically detect and use the local CSV files instead of connecting to Google Sheets.
 
 ## CSV File Format Requirements
 
@@ -105,7 +106,8 @@ The file should contain the following columns:
 - `factor_id`: Unique identifier for each factor
 - `name`: Name of the factor
 - `domain_name`: Category/domain the factor belongs to
-- Additional columns may be present but are not required
+- `intervenable`: Whether the factor can be directly influenced (yes/no)
+- `definition`: Description of the factor
 
 ### Relationships CSV Format
 The file should contain the following columns:
@@ -115,7 +117,23 @@ The file should contain the following columns:
 - `to_factor_id`: ID of the target node
 - `polarity`: Relationship polarity ('same' or 'opposite')
 - `strength`: Relationship strength
-- `delay`: Delay information (optional)
+- `delay`: Delay information
+- `definition`: Description of the relationship
+
+## Output Files
+
+The script generates the following files:
+
+1. **`factors_data.csv`** and **`relationships_data.csv`**:
+   - Raw data files stored in CSV format
+   - Created when data is downloaded from Google Sheets
+   - Used in subsequent runs to avoid unnecessary API calls
+
+2. **`fishery_systems_map.md`**:
+   - Main output file in markdown format
+   - Contains structured information about the systems map
+   - Optimized for AI processing and quality control
+   - Includes metadata in JSON format for programmatic access
 
 ## Troubleshooting
 
@@ -126,6 +144,7 @@ The file should contain the following columns:
 
 ### Data Range Issues
 - If you get errors about invalid ranges, check that the sheet names and ranges in the script match your Google Sheet structure
+- The default ranges (e.g., `FACTORS!A1:G1000`) may need adjustment based on your data size
 
 ### CSV File Issues
 - Ensure your CSV files have the required column names
@@ -135,11 +154,18 @@ The file should contain the following columns:
 - Verify your internet connection
 - Check your firewall settings if you're behind a corporate network
 
-## Offline Mode
+## Using the Output with AI Agents
 
-All scripts can work with local CSV files without requiring an internet connection. This is useful for:
-- Working offline
-- Sharing analysis results without granting Google Sheet access
-- Creating multiple reports from the same dataset
+The generated markdown file is specifically formatted for AI agent processing:
 
-Simply provide the paths to your CSV files as arguments to the scripts. 
+1. **Structure**: Clear section headings and consistent formatting make it easy for AI to parse
+2. **Tables**: Well-defined tables with consistent columns for structured data access
+3. **Descriptions**: Explicit descriptions of data elements for better understanding
+4. **Metadata**: JSON block containing key statistics for programmatic access
+5. **Consistency**: Uniform formatting of all data values
+
+This format allows AI agents to easily:
+- Identify and extract specific data points
+- Perform quality control checks
+- Analyze system components and connections
+- Generate insights based on the systems map 
