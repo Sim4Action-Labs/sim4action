@@ -288,6 +288,6 @@ Relationships represent connections between variables in the fishery system.
     "opposite": 29,
     "variable": 2
   },
-  "generated_date": "2025-04-23 16:04:27"
+  "generated_date": "2025-04-23 22:38:02"
 }
 ```

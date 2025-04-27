@@ -1,0 +1,1357 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d7" for="edge" attr.name="definition" attr.type="string" />
+  <key id="d6" for="edge" attr.name="delay" attr.type="string" />
+  <key id="d5" for="edge" attr.name="strength" attr.type="string" />
+  <key id="d4" for="edge" attr.name="polarity" attr.type="string" />
+  <key id="d3" for="node" attr.name="intervenable" attr.type="string" />
+  <key id="d2" for="node" attr.name="definition" attr.type="string" />
+  <key id="d1" for="node" attr.name="domain" attr.type="string" />
+  <key id="d0" for="node" attr.name="name" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="V84">
+      <data key="d0">Certification Status</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The eco-certification status of fishery products.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V78">
+      <data key="d0">Consumer Preferences</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">Consumer demand patterns for seafood products.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V79">
+      <data key="d0">Distribution Channels</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The pathways through which products move from harvest to consumer.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V22">
+      <data key="d0">Domestic Supply</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The amount of seafood available for domestic consumption.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V38">
+      <data key="d0">Economic Performance</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The overall financial health of the fishery, including profitability and efficiency.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V54">
+      <data key="d0">Employment</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The number of people employed in the fishery, measured in full-time equivalents.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V81">
+      <data key="d0">Export Markets</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">International destinations for fishery products.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V56">
+      <data key="d0">Export Value</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The value of fishery products sold to international markets.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V57">
+      <data key="d0">Financial Performance</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">Various measures of economic success including profit margins and return on investment.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V55">
+      <data key="d0">Fleet Capacity</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The total fishing power of the fleet, including vessel numbers and characteristics.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V50">
+      <data key="d0">Gross Value of Production</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The total market value of fishery products at landing, approximately $86 million in 2019-20.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V21">
+      <data key="d0">Import Volume</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The amount of competing seafood products imported into Australia.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V24">
+      <data key="d0">Investment Level</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The amount of capital invested in fishing operations and infrastructure.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V77">
+      <data key="d0">Market Competition</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The level of competition from imports and alternative products.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V80">
+      <data key="d0">Market Concentration</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The degree of market power in the supply chain.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V14">
+      <data key="d0">Market Price</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The price received for fishery products at various market levels.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V51">
+      <data key="d0">Net Economic Returns</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">Profits after accounting for all costs and opportunity costs of capital and labor.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V53">
+      <data key="d0">Operating Costs</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The costs associated with fishing operations including fuel, labor, and maintenance.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V85">
+      <data key="d0">Price Volatility</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The degree of price fluctuation over time.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V83">
+      <data key="d0">Product Substitutability</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The degree to which species can be substituted for each other.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V8">
+      <data key="d0">Profit Level</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The financial returns from fishing operations after accounting for costs.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V31">
+      <data key="d0">Quota Trading</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The buying and selling of fishing quotas between operators.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V23">
+      <data key="d0">Quota Value</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The market value of individual transferable quotas, reflecting expected profitability.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V76">
+      <data key="d0">Species Price</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">The average landed value per unit weight for different species.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V52">
+      <data key="d0">Total Factor Productivity</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">A measure of efficiency in converting inputs to outputs in the fishery.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V82">
+      <data key="d0">Value Addition</data>
+      <data key="d1">Economics-Markets</data>
+      <data key="d2">Processing that increases product value.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V40">
+      <data key="d0">Bottom Temperature</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The temperature at the ocean floor, particularly important for demersal species.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V41">
+      <data key="d0">Chlorophyll-a</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">A measure of phytoplankton biomass and primary productivity in the ocean.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V28">
+      <data key="d0">Climate Change Impact</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The effects of climate change on marine ecosystems, including warming, acidification, and changing current patterns.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V44">
+      <data key="d0">Diatom:Dinoflagellate Ratio</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The ratio between major phytoplankton groups, indicating food web structure.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V35">
+      <data key="d0">Ecosystem Function</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The processes and services provided by marine ecosystems.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V49">
+      <data key="d0">Extreme Weather Events</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The frequency and intensity of storms, floods, and marine heatwaves.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V16">
+      <data key="d0">Food Web Structure</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The network of feeding relationships between species.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V33">
+      <data key="d0">Habitat Degradation</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The loss or damage to marine habitats.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V45">
+      <data key="d0">Ocean Acidification</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The decrease in ocean pH due to CO2 absorption, affecting marine organisms.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V46">
+      <data key="d0">Ocean Currents</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The direction and strength of major ocean currents, including the East Australian Current.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V11">
+      <data key="d0">Ocean Temperature</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The temperature of ocean waters, with surface temperatures having increased by 1.2°C since 1950 in the region.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V48">
+      <data key="d0">Oxygen Levels</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The concentration of dissolved oxygen in seawater, declining with warming.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V17">
+      <data key="d0">Predation Rate</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The rate at which species are consumed by predators.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V30">
+      <data key="d0">Primary Productivity</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The rate of production of organic matter by phytoplankton.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V39">
+      <data key="d0">Sea Surface Temperature</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The temperature of the ocean surface layer, critical for species distribution and ecosystem productivity.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V43">
+      <data key="d0">Southern Annular Mode</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">An indicator of north-south movement of westerly winds, affecting storm patterns.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V42">
+      <data key="d0">Southern Oscillation Index</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">A measure of El Niño/La Niña development and intensity, affecting ocean conditions.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V47">
+      <data key="d0">Upwelling Intensity</data>
+      <data key="d1">Environmental-Ecosystem</data>
+      <data key="d2">The strength of nutrient-rich water upwelling events.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V87">
+      <data key="d0">Cultural Fishing Practices</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Traditional methods and protocols for fishing activities.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V93">
+      <data key="d0">Cultural Harvest Levels</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">The volume of catch for cultural purposes.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V89">
+      <data key="d0">Cultural Values Mapping</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Documentation of culturally significant marine areas.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V90">
+      <data key="d0">Indigenous Economic Participation</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Indigenous involvement in commercial fishing operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V88">
+      <data key="d0">Indigenous Governance</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Indigenous participation in fishery management decisions.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V95">
+      <data key="d0">Indigenous Research Partnerships</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Collaborative research incorporating indigenous perspectives.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V94">
+      <data key="d0">Knowledge Transmission</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">The transfer of traditional knowledge between generations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V92">
+      <data key="d0">Sea Country Management</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Indigenous approaches to marine resource stewardship.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V86">
+      <data key="d0">Traditional Ecological Knowledge</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Indigenous understanding of marine ecosystems and species.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V91">
+      <data key="d0">Traditional Seasonal Indicators</data>
+      <data key="d1">Indigenous</data>
+      <data key="d2">Indigenous knowledge of environmental cues for fishing.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V4">
+      <data key="d0">Catch Limit</data>
+      <data key="d1">Management</data>
+      <data key="d2">The maximum amount of fish that can be caught, set through TACs.</data>
+      <data key="d3">yes</data>
+    </node>
+    <node id="V26">
+      <data key="d0">Compliance Rate</data>
+      <data key="d1">Management</data>
+      <data key="d2">The degree to which fishers follow management rules.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V25">
+      <data key="d0">Enforcement Level</data>
+      <data key="d1">Management</data>
+      <data key="d2">The intensity of management rule enforcement.</data>
+      <data key="d3">yes</data>
+    </node>
+    <node id="V37">
+      <data key="d0">Management Restrictions</data>
+      <data key="d1">Management</data>
+      <data key="d2">Various rules and regulations limiting fishing activities.</data>
+      <data key="d3">yes</data>
+    </node>
+    <node id="V62">
+      <data key="d0">Age Structure</data>
+      <data key="d1">Social</data>
+      <data key="d2">The age distribution of fishery participants.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V59">
+      <data key="d0">Community Economic Dependence</data>
+      <data key="d1">Social</data>
+      <data key="d2">The degree to which coastal communities rely on the fishery for economic activity.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V64">
+      <data key="d0">Community Perceptions</data>
+      <data key="d1">Social</data>
+      <data key="d2">Public attitudes toward the fishery and its operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V66">
+      <data key="d0">Cultural Heritage Value</data>
+      <data key="d1">Social</data>
+      <data key="d2">The significance of fishing traditions to community identity.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V58">
+      <data key="d0">Employment in Fishery</data>
+      <data key="d1">Social</data>
+      <data key="d2">The number of people directly employed in harvesting operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V63">
+      <data key="d0">Fisher Wellbeing</data>
+      <data key="d1">Social</data>
+      <data key="d2">Measures of physical and mental health among fishing industry participants.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V65">
+      <data key="d0">Food Security Contribution</data>
+      <data key="d1">Social</data>
+      <data key="d2">The fishery's contribution to regional and national food supply.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V61">
+      <data key="d0">Gender Composition</data>
+      <data key="d1">Social</data>
+      <data key="d2">The gender breakdown of fishery participants.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V60">
+      <data key="d0">Indigenous Participation</data>
+      <data key="d1">Social</data>
+      <data key="d2">The level of indigenous involvement in commercial fishing operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V36">
+      <data key="d0">Social License</data>
+      <data key="d1">Social</data>
+      <data key="d2">The level of public acceptance and support for fishing operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V6">
+      <data key="d0">Growth Rate</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The rate at which individual fish increase in size, affected by food availability, temperature, and other environmental conditions.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V3">
+      <data key="d0">Mortality Rate</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The rate at which fish die from natural causes and fishing, including both target and non-target species mortality.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V2">
+      <data key="d0">Recruitment Rate</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The rate at which young fish enter the fishable population, influenced by spawning success, larval survival, and environmental conditions.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V32">
+      <data key="d0">Spatial Stock Depletion</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The localized reduction in fish abundance due to concentrated fishing effort in specific areas.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V34">
+      <data key="d0">Species Abundance</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The number or biomass of fish present in a given area, influenced by both natural and human factors.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V12">
+      <data key="d0">Species Distribution</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The spatial and temporal distribution of fish populations, increasingly influenced by climate change and ocean warming.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V1">
+      <data key="d0">Stock Biomass</data>
+      <data key="d1">FOCAL FACTORS</data>
+      <data key="d2">The total weight or number of fish in a population, measured in tonnes or numbers. Critical for determining sustainable harvest levels and stock status.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V18">
+      <data key="d0">Stock Recovery</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The process of rebuilding depleted fish populations to sustainable levels, often measured against biological reference points.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V29">
+      <data key="d0">Stock Status</data>
+      <data key="d1">Stock</data>
+      <data key="d2">The current condition of a fish stock relative to reference points (B20, B40, B48), indicating whether it is sustainably fished, overfished, or rebuilding.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V68">
+      <data key="d0">Catch Per Unit Effort</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The amount of catch obtained per unit of fishing effort, used as an index of stock abundance.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V7">
+      <data key="d0">Catch Volume</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The total amount of fish caught, including both retained and discarded catch, measured in tonnes.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V20">
+      <data key="d0">Catchability</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The ease with which fish can be caught, influenced by gear type, fish behavior, and environmental conditions.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V69">
+      <data key="d0">Discard Rates</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The proportion of catch returned to sea, varying by sector and target species.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V10">
+      <data key="d0">Efficiency</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The effectiveness of fishing operations in catching target species while minimizing bycatch and environmental impact.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V72">
+      <data key="d0">Electronic Monitoring</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The use of cameras and sensors to monitor fishing activities and catch composition.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V15">
+      <data key="d0">Fishing Effort</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The amount of fishing activity, measured in days fished, hours trawled, hook-hours, or net-hours.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V67">
+      <data key="d0">Fishing Methods</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The types of gear and techniques used, including trawl, Danish seine, longline, and gillnet operations.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V5">
+      <data key="d0">Fishing Mortality</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The proportion of fish removed by fishing activities, measured as a rate of removal from the population.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V13">
+      <data key="d0">Fishing Patterns</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The spatial and temporal distribution of fishing effort, influenced by regulations, weather, and fish availability.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V9">
+      <data key="d0">Fleet Size</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The number of active fishing vessels in the fishery, which has decreased by approximately 60% between 2000-2021.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V70">
+      <data key="d0">Gear Selectivity</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The ability of fishing gear to target specific species or sizes while minimizing bycatch.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V75">
+      <data key="d0">Harvest Strategy</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The framework for setting catch limits and management measures based on stock status.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V27">
+      <data key="d0">Illegal Catch</data>
+      <data key="d1">Technical</data>
+      <data key="d2">Unauthorized fishing activities, including exceeding quotas and fishing in closed areas.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V74">
+      <data key="d0">Observer Coverage</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The proportion of fishing trips monitored by independent observers.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V73">
+      <data key="d0">Spatial Management</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The use of area-based management tools including closures and marine parks.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V19">
+      <data key="d0">Technology Adoption</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The uptake of new fishing technologies and methods, including electronic monitoring and gear modifications.</data>
+      <data key="d3">no</data>
+    </node>
+    <node id="V71">
+      <data key="d0">Vessel Capacity</data>
+      <data key="d1">Technical</data>
+      <data key="d2">The fishing power of individual vessels, measured by engine power and gross tonnage.</data>
+      <data key="d3">no</data>
+    </node>
+    <edge source="V84" target="V76">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Certification directly commands premium prices through market differentiation and consumer trust that validates sustainability claims and product quality.</data>
+    </edge>
+    <edge source="V78" target="V76">
+      <data key="d4">variable</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Consumer demand directly affects prices through preference changes and market dynamics that determine willingness to pay and market equilibrium.</data>
+    </edge>
+    <edge source="V79" target="V76">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Supply chains directly influence pricing through value addition and market access that affects product availability and distribution costs.</data>
+    </edge>
+    <edge source="V22" target="V14">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Domestic supply directly influences market prices through its effect on total market supply</data>
+    </edge>
+    <edge source="V54" target="V62">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Job opportunities directly affect demographic patterns through labor market participation and migration that influences population distribution and community composition.</data>
+    </edge>
+    <edge source="V54" target="V59">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Employment in the fishery directly affects community economic dependence by providing jobs and income that contribute to local economic activity.</data>
+    </edge>
+    <edge source="V81" target="V56">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">International markets directly increase value through market expansion and price discovery that provides access to higher-value markets and diverse buyers.</data>
+    </edge>
+    <edge source="V81" target="V77">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">International trade increases competition through market access that expands the number of suppliers and product alternatives.</data>
+    </edge>
+    <edge source="V81" target="V76">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">International demand affects domestic prices through market integration that connects local markets to global price signals and trade flows.</data>
+    </edge>
+    <edge source="V56" target="V59">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Export earnings support communities through economic benefits that generate income and employment opportunities for local residents.</data>
+    </edge>
+    <edge source="V56" target="V8">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Export markets increase profitability through market expansion that provides access to higher-value customers and diverse market opportunities.</data>
+    </edge>
+    <edge source="V56" target="V12">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Export opportunities attract investment through market growth that justifies capital expenditure and business expansion.</data>
+    </edge>
+    <edge source="V57" target="V64">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Financial performance directly affects community perceptions by influencing the economic benefits that fishing provides to local communities and the industry's social license to operate.</data>
+    </edge>
+    <edge source="V57" target="V63">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Financial performance directly affects fisher wellbeing by influencing access to healthcare and reducing financial stress that impacts physical and mental health.</data>
+    </edge>
+    <edge source="V55" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel capacity directly increases catches through improved harvesting capability that enables greater fishing power and operational range</data>
+    </edge>
+    <edge source="V55" target="V12">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel capacity directly requires investment through capital requirements that fund vessel acquisition</data>
+    </edge>
+    <edge source="V50" target="V8">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Gross value of production directly influences profit levels through its effect on total revenue and the efficiency of value chain operations.</data>
+    </edge>
+    <edge source="V24" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Investment levels directly affect catch volumes by enabling improvements in fishing technology and operational efficiency that increase fishing capacity.</data>
+    </edge>
+    <edge source="V77" target="V76">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Competition reduces prices through market pressure and supply alternatives that increase consumer choice and price sensitivity.</data>
+    </edge>
+    <edge source="V80" target="V76">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Market power directly affects pricing through bargaining power and competition that influences price-setting ability and market control.</data>
+    </edge>
+    <edge source="V14" target="V15">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Market prices directly influence fishing effort by affecting the economic incentives for fishers to allocate time and resources to fishing activities.</data>
+    </edge>
+    <edge source="V14" target="V21">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Market prices directly influence import volumes by affecting the economic incentives for importing seafood products</data>
+    </edge>
+    <edge source="V51" target="V9">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Net economic returns directly affect fleet size by influencing the financial viability of vessel operations and the ability to maintain or expand fishing capacity.</data>
+    </edge>
+    <edge source="V51" target="V61">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Financial returns directly influence workforce diversity through employment opportunities and barriers that affect access to fishing industry participation.</data>
+    </edge>
+    <edge source="V53" target="V63">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Operating costs directly affect fisher wellbeing by creating financial stress through reduced profit margins and cash flow constraints that impact personal and family welfare.</data>
+    </edge>
+    <edge source="V53" target="V8">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Operating costs directly reduce profit levels by increasing the expenses associated with fishing operations and reducing the margin between revenue and costs.</data>
+    </edge>
+    <edge source="V85" target="V8">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Price volatility directly reduces profitability through risk and uncertainty that complicates business planning and financial stability.</data>
+    </edge>
+    <edge source="V83" target="V76">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Substitutes directly affect price elasticity through product competition and consumer choice that influences demand responsiveness to price changes.</data>
+    </edge>
+    <edge source="V8" target="V9">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Profit levels directly influence fleet size by affecting the economic viability of vessel operations and the ability to invest in new vessels or maintain existing ones.</data>
+    </edge>
+    <edge source="V31" target="V38">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Quota trading directly improves economic performance through market efficiency that enables quota holders to optimize their operations by buying and selling fishing rights based on their comparative advantages.</data>
+    </edge>
+    <edge source="V31" target="V9">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Quota trading directly affects fleet structure through market consolidation that enables larger operators to acquire quotas from smaller ones</data>
+    </edge>
+    <edge source="V23" target="V59">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Quota values directly affect community economic dependence by determining the wealth generated from fishing rights and the level of local business development.</data>
+    </edge>
+    <edge source="V23" target="V24">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Quota values directly influence investment levels by determining the expected returns on quota ownership and the value of fishing assets</data>
+    </edge>
+    <edge source="V76" target="V8">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Prices increase profitability through revenue enhancement and market positioning that improves financial returns and business viability.</data>
+    </edge>
+    <edge source="V52" target="V10">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Total factor productivity directly affects efficiency by influencing how effectively inputs are converted into outputs through technological innovation and operational optimization.</data>
+    </edge>
+    <edge source="V52" target="V54">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Total factor productivity directly affects employment by determining the labor requirements for fishing operations</data>
+    </edge>
+    <edge source="V82" target="V76">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Processing directly increases product value through value addition and market differentiation that enhances product quality and market appeal.</data>
+    </edge>
+    <edge source="V40" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Bottom temperature directly affects stock biomass by influencing fish survival through physiological stress and habitat suitability in deep water environments.</data>
+    </edge>
+    <edge source="V41" target="V2">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Chlorophyll-a levels directly affect recruitment rates by influencing food availability for larval fish and overall ecosystem productivity.</data>
+    </edge>
+    <edge source="V44" target="V16">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Diatom:Dinoflagellate ratio directly affects food web structure by influencing the quality and quantity of primary production available to higher trophic levels.</data>
+    </edge>
+    <edge source="V35" target="V16">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Ecosystem processes shape feeding relationships through trophic dynamics that determine energy flow and predator-prey interactions.</data>
+    </edge>
+    <edge source="V35" target="V33">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Ecosystem processes prevent degradation through resilience that maintains habitat structure and ecosystem function.</data>
+    </edge>
+    <edge source="V35" target="V30">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Ecosystem processes affect production through primary productivity that determines the base of the food web and energy availability.</data>
+    </edge>
+    <edge source="V49" target="V15">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Extreme weather events directly reduce fishing effort by creating unsafe conditions that prevent vessels from operating and limit fishing activities.</data>
+    </edge>
+    <edge source="V16" target="V17">
+      <data key="d4">same</data>
+      <data key="d5">weak</data>
+      <data key="d6">months</data>
+      <data key="d7">Food web structure directly influences predation rates by determining the availability and diversity of prey species and the strength of predator-prey interactions.</data>
+    </edge>
+    <edge source="V45" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">strong</data>
+      <data key="d6">decade</data>
+      <data key="d7">Ocean acidification directly affects stock biomass by influencing fish development and survival through physiological stress and impacts on calcification processes.</data>
+    </edge>
+    <edge source="V46" target="V12">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Ocean currents directly affect species distribution by transporting fish and larvae through advection and dispersal mechanisms that determine their spatial patterns.</data>
+    </edge>
+    <edge source="V11" target="V12">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Ocean temperature directly affects species distribution by influencing physiological performance and habitat suitability</data>
+    </edge>
+    <edge source="V48" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">decade</data>
+      <data key="d7">Oxygen levels directly affect stock biomass by influencing fish survival through respiratory stress and habitat compression that limits available habitat.</data>
+    </edge>
+    <edge source="V17" target="V2">
+      <data key="d4">opposite</data>
+      <data key="d5">weak</data>
+      <data key="d6">months</data>
+      <data key="d7">Predation rates directly affect recruitment by influencing juvenile survival through size-selective mortality and habitat-mediated interactions with predators.</data>
+    </edge>
+    <edge source="V39" target="V11">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Sea surface temperature directly influences ocean temperature through heat transport mechanisms and ocean circulation patterns that distribute heat through the water column.</data>
+    </edge>
+    <edge source="V43" target="V49">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Southern Annular Mode directly affects extreme weather events by influencing wind patterns and atmospheric circulation that determine storm formation and intensity.</data>
+    </edge>
+    <edge source="V42" target="V46">
+      <data key="d4">variable</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Southern Oscillation Index directly influences ocean currents through atmospheric-ocean coupling mechanisms that affect wind patterns and ocean circulation.</data>
+    </edge>
+    <edge source="V47" target="V41">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Upwelling intensity directly affects chlorophyll-a levels by bringing nutrients to surface waters through vertical mixing that stimulates phytoplankton growth.</data>
+    </edge>
+    <edge source="V87" target="V67">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">decade</data>
+      <data key="d7">Traditional methods directly influence techniques through cultural practice and innovation that incorporates time-tested approaches and local expertise.</data>
+    </edge>
+    <edge source="V93" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Traditional harvest directly affects total catch through cultural allocation that determines harvest patterns and resource distribution.</data>
+    </edge>
+    <edge source="V89" target="V73">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Cultural significance directly guides closures through heritage value and traditional use that protects culturally important areas and practices.</data>
+    </edge>
+    <edge source="V90" target="V60">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Economic opportunities directly increase involvement through livelihood benefits that provide income and employment stability for community members.</data>
+    </edge>
+    <edge source="V88" target="V75">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Indigenous input directly improves management through traditional knowledge integration that enhances decision-making with local ecological understanding.</data>
+    </edge>
+    <edge source="V95" target="V86">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Collaborative research directly enhances understanding through knowledge integration that combines scientific methods with traditional ecological knowledge.</data>
+    </edge>
+    <edge source="V94" target="V86">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">decade</data>
+      <data key="d7">Knowledge transfer directly preserves wisdom through documentation and teaching that maintains cultural knowledge across generations.</data>
+    </edge>
+    <edge source="V92" target="V73">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Indigenous stewardship directly guides protection through traditional management that applies cultural knowledge to conservation practices.</data>
+    </edge>
+    <edge source="V86" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">decade</data>
+      <data key="d7">Indigenous knowledge directly aids stock assessment through traditional ecological knowledge that provides historical context and local understanding of fish populations.</data>
+    </edge>
+    <edge source="V91" target="V15">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Environmental cues directly guide fishing timing through traditional knowledge that helps predict fish behavior and optimal fishing conditions.</data>
+    </edge>
+    <edge source="V4" target="V5">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Catch limits directly constrain fishing mortality by setting maximum allowable harvest levels that are enforced through quota allocation systems.</data>
+    </edge>
+    <edge source="V26" target="V27">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Compliance rates directly affect illegal catch by determining the proportion of fishing activity that follows regulations versus operating outside legal frameworks.</data>
+    </edge>
+    <edge source="V25" target="V26">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Enforcement level directly affects compliance rates by influencing the likelihood of detecting and penalizing violations of fishing regulations.</data>
+    </edge>
+    <edge source="V62" target="V94">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Age demographics directly impact knowledge transfer through experience and succession planning that determines the flow of expertise between generations.</data>
+    </edge>
+    <edge source="V59" target="V58">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Community reliance directly supports fishery jobs through local economic integration that creates stable employment opportunities in fishing communities.</data>
+    </edge>
+    <edge source="V64" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Public opinion directly shapes regulations through stakeholder engagement and social license that influences management decisions and policy development.</data>
+    </edge>
+    <edge source="V66" target="V64">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Cultural significance builds support through heritage value and community identity that strengthens community connections to fishing traditions.</data>
+    </edge>
+    <edge source="V63" target="V15">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Fisher health directly influences work effectiveness through physical and mental wellbeing that determines capacity to perform fishing operations.</data>
+    </edge>
+    <edge source="V65" target="V22">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Fishery production enhances food security through local supply and nutrition that provides access to protein and essential nutrients.</data>
+    </edge>
+    <edge source="V61" target="V63">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Workforce diversity directly affects health outcomes through workplace culture and support systems that influence access to healthcare and workplace safety.</data>
+    </edge>
+    <edge source="V60" target="V88">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Indigenous involvement directly improves governance through traditional knowledge integration that enhances management decisions with local ecological knowledge.</data>
+    </edge>
+    <edge source="V6" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Growth rates directly affect stock biomass by influencing individual survival rates and reproductive output through size-dependent mortality and fecundity.</data>
+    </edge>
+    <edge source="V3" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Mortality rates directly reduce stock biomass by removing individuals from the population through both natural causes and fishing activities.</data>
+    </edge>
+    <edge source="V2" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Recruitment success directly increases adult stock biomass as new cohorts join the spawning population after surviving critical life stages and environmental bottlenecks.</data>
+    </edge>
+    <edge source="V32" target="V13">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Depleted areas change fishing behavior through effort reallocation that shifts fishing activity to more productive locations.</data>
+    </edge>
+    <edge source="V32" target="V73">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Local depletion drives area protection through management response that implements spatial closures and habitat conservation measures.</data>
+    </edge>
+    <edge source="V32" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Local depletion reduces total biomass through spatial impacts that decrease fish density and reproductive potential in specific areas.</data>
+    </edge>
+    <edge source="V34" target="V68">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">days</data>
+      <data key="d7">Local abundance affects catch rates through resource availability that determines fishing efficiency and catch per unit effort.</data>
+    </edge>
+    <edge source="V34" target="V35">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Species abundance affects ecosystem processes through functional roles that maintain ecological interactions and ecosystem stability.</data>
+    </edge>
+    <edge source="V34" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Local abundance indicates population size through direct observation that provides evidence of fish distribution and density patterns.</data>
+    </edge>
+    <edge source="V12" target="V13">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Species distribution directly influences fishing patterns by determining the spatial location of fishing effort as fishers follow target species to maintain catch rates.</data>
+    </edge>
+    <edge source="V1" target="V4">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Stock biomass directly influences catch limits through stock assessment models that calculate maximum sustainable yield based on current population size and reproductive capacity.</data>
+    </edge>
+    <edge source="V1" target="V23">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Stock biomass directly affects quota value by determining the expected future catch potential and security of fishing rights</data>
+    </edge>
+    <edge source="V1" target="V2">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Adult fish populations drive reproductive output through density-dependent fecundity</data>
+    </edge>
+    <edge source="V18" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Recovery affects population size through stock rebuilding that increases reproductive potential and population growth rates. </data>
+    </edge>
+    <edge source="V29" target="V4">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Stock condition sets catch limits through harvest strategies that determine sustainable catch levels based on stock status.</data>
+    </edge>
+    <edge source="V29" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Stock condition drives regulations through adaptive management that adjusts management measures based on resource status.</data>
+    </edge>
+    <edge source="V29" target="V36">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Stock health affects public support through resource status that influences community perception of fishery sustainability.</data>
+    </edge>
+    <edge source="V29" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Management response affects population size through harvest control that regulates fishing mortality and stock recovery.</data>
+    </edge>
+    <edge source="V68" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">CPUE directly indicates population size through standardized catch rate measurements that provide estimates of fish abundance and distribution.</data>
+    </edge>
+    <edge source="V7" target="V22">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Catch volumes directly contribute to domestic supply by providing seafood products to local markets through established supply chains.</data>
+    </edge>
+    <edge source="V7" target="V14">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Catch volume directly influences market prices through supply-demand dynamics</data>
+    </edge>
+    <edge source="V7" target="V8">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Catch volumes directly influence profit levels through market prices and revenue generation</data>
+    </edge>
+    <edge source="V7" target="V19">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Catch volumes directly influence technology adoption by providing the financial resources needed to invest in new fishing technologies and methods.</data>
+    </edge>
+    <edge source="V20" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Catchability directly affects catch volumes by determining how effectively fishing gear can capture target species</data>
+    </edge>
+    <edge source="V69" target="V3">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Discards directly increase fish mortality through post-release survival impacts that reduce population size through unintended fishing mortality.</data>
+    </edge>
+    <edge source="V10" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Vessel efficiency directly increases catch volumes through improved technology</data>
+    </edge>
+    <edge source="V72" target="V26">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Monitoring directly improves rule following through verification and accountability that increases compliance with regulations and management measures.</data>
+    </edge>
+    <edge source="V72" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Monitoring data directly shapes regulations through evidence-based decision making that uses scientific information to inform management actions.</data>
+    </edge>
+    <edge source="V15" target="V68">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Effort directly measures stock abundance through catch per unit effort indicators that provide estimates of fish population density.</data>
+    </edge>
+    <edge source="V15" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Fishing effort directly affects catch volumes through the interaction between fishing power and resource availability</data>
+    </edge>
+    <edge source="V67" target="V70">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Fishing techniques directly affect selectivity through gear design and operational methods that determine which species and sizes are caught.</data>
+    </edge>
+    <edge source="V67" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Fishing techniques directly drive regulations through environmental impact assessment and management response that determines appropriate fishing methods and restrictions.</data>
+    </edge>
+    <edge source="V5" target="V16">
+      <data key="d4">opposite</data>
+      <data key="d5">weak</data>
+      <data key="d6">years</data>
+      <data key="d7">Fishing mortality directly affects food web structure by removing key predators and altering trophic interactions between species</data>
+    </edge>
+    <edge source="V5" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Fishing mortality directly reduces stock biomass by removing individuals from the population</data>
+    </edge>
+    <edge source="V13" target="V7">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">days</data>
+      <data key="d7">Strategic fishing patterns directly increase catch volumes by targeting fish aggregations and productive habitats where fish are more abundant and easier to catch.</data>
+    </edge>
+    <edge source="V9" target="V10">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Fleet size directly affects efficiency through economies of scale and the ability to invest in technological improvements and operational optimization.</data>
+    </edge>
+    <edge source="V9" target="V58">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel numbers affect job creation through employment opportunities that generate direct and indirect fishing industry positions.</data>
+    </edge>
+    <edge source="V9" target="V15">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel numbers directly affect total effort through fleet capacity and efficiency that determines the collective fishing power of the fleet.</data>
+    </edge>
+    <edge source="V9" target="V55">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel numbers directly affect total capacity through fleet composition and fishing power that determines the overall fishing capacity of the fleet.</data>
+    </edge>
+    <edge source="V9" target="V53">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel numbers directly affect total costs through economies of scale that influence operational expenses and resource utilization.</data>
+    </edge>
+    <edge source="V70" target="V69">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Gear selectivity directly reduces discards through improved targeting and handling that minimizes unwanted catch and improves survival rates.</data>
+    </edge>
+    <edge source="V70" target="V37">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Gear selectivity affects regulations through bycatch reduction and management adaptation that determines appropriate gear specifications and restrictions.</data>
+    </edge>
+    <edge source="V75" target="V4">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Management frameworks directly set catch limits through scientific assessment and precaution that determines sustainable harvest levels based on stock status.</data>
+    </edge>
+    <edge source="V75" target="V25">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Management frameworks directly guide enforcement through policy implementation and compliance monitoring that determines the rules and procedures for regulatory oversight.</data>
+    </edge>
+    <edge source="V27" target="V1">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Illegal catch directly reduces stock biomass by removing fish outside of management controls and contributing to overexploitation of fish populations.</data>
+    </edge>
+    <edge source="V74" target="V26">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">months</data>
+      <data key="d7">Monitoring directly improves compliance through detection and verification capabilities that increase the likelihood of rule violations being detected and penalized.</data>
+    </edge>
+    <edge source="V74" target="V69">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Monitoring directly reduces discards through accountability and improved handling that encourages better fishing practices and waste reduction.</data>
+    </edge>
+    <edge source="V74" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">months</data>
+      <data key="d7">Monitoring directly informs regulations through data collection and analysis that provides evidence for management decisions and policy adjustments.</data>
+    </edge>
+    <edge source="V73" target="V37">
+      <data key="d4">same</data>
+      <data key="d5">strong</data>
+      <data key="d6">years</data>
+      <data key="d7">Area closures directly create specific rules through spatial management and habitat protection that restrict fishing activities in designated areas.</data>
+    </edge>
+    <edge source="V73" target="V1">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Protected areas directly help rebuild stocks through reduced fishing pressure and habitat protection that allows populations to grow and reproduce undisturbed.</data>
+    </edge>
+    <edge source="V19" target="V20">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Technology adoption directly improves catchability through improved gear design and fishing methods that increase the effectiveness of fishing operations.</data>
+    </edge>
+    <edge source="V71" target="V4">
+      <data key="d4">opposite</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Fishing power influences catch limits through stock assessment and management precaution that accounts for increased fishing efficiency and capacity.</data>
+    </edge>
+    <edge source="V71" target="V25">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel capacity directly requires oversight through safety and operational management that ensures compliance with technical standards and operational requirements.</data>
+    </edge>
+    <edge source="V71" target="V15">
+      <data key="d4">same</data>
+      <data key="d5">medium</data>
+      <data key="d6">years</data>
+      <data key="d7">Vessel size directly increases fishing intensity through improved capacity and efficiency that enables greater fishing effort and coverage.</data>
+    </edge>
+  </graph>
+</graphml>

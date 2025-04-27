@@ -12,6 +12,7 @@ from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 import json
 import sys
+import networkx as nx
 
 def authenticate_google_sheets(credentials_file):
     """Authenticate with Google Sheets API."""
@@ -139,6 +140,43 @@ def create_markdown(factors_df, relationships_df, output_file):
         print(f"Error creating markdown: {e}")
         return False
 
+def build_system_map(factors_df, relationships_df):
+    """
+    Build a NetworkX graph representing the fishery system map.
+    
+    Args:
+        factors_df (pd.DataFrame): DataFrame containing factor information
+        relationships_df (pd.DataFrame): DataFrame containing relationship information
+        
+    Returns:
+        nx.DiGraph: A directed graph representing the fishery system
+    """
+    # Create a directed graph
+    G = nx.DiGraph()
+    
+    # Add nodes (factors) with their attributes
+    for _, row in factors_df.iterrows():
+        G.add_node(
+            row['factor_id'],
+            name=row['name'],
+            domain=row['domain_name'],
+            definition=row['definition'],
+            intervenable=row['intervenable']
+        )
+    
+    # Add edges (relationships) with their attributes
+    for _, row in relationships_df.iterrows():
+        G.add_edge(
+            row['from_factor_id'],
+            row['to_factor_id'],
+            polarity=row['polarity'],
+            strength=row['strength'],
+            delay=row['delay'],
+            definition=row['definition']
+        )
+    
+    return G
+
 def main():
     """Main function."""
     # Configuration
@@ -154,6 +192,7 @@ def main():
     RELATIONSHIPS_RANGE = 'RELATIONSHIPS!A1:I1000'  # Adjust range as needed
     CREDENTIALS_FILE = 'credentials.json'  # Path to your Google API credentials
     OUTPUT_FILE = 'fishery_systems_map.md'
+    GRAPH_FILE = 'fishery_systems_map.graphml'  # File to save the NetworkX graph
     
     # Check if CSV data files exist (for offline/testing use)
     factors_csv = 'factors_data.csv'
@@ -247,6 +286,40 @@ def main():
             print("Failed to create markdown output.")
     else:
         print("No data to process. Please check your input sources.")
+    
+    # Build and save the NetworkX graph
+    if not factors_df.empty and not relationships_df.empty:
+        print("\nBuilding NetworkX graph...")
+        G = build_system_map(factors_df, relationships_df)
+        
+        # Save the graph
+        nx.write_graphml(G, GRAPH_FILE)
+        print(f"Graph saved to {GRAPH_FILE}")
+        
+        # Print some basic graph statistics
+        print("\nGraph Statistics:")
+        print(f"Number of nodes: {G.number_of_nodes()}")
+        print(f"Number of edges: {G.number_of_edges()}")
+        print(f"Number of domains: {len(set(nx.get_node_attributes(G, 'domain').values()))}")
+        
+        # Calculate and print some basic network metrics
+        print("\nNetwork Metrics:")
+        print(f"Average degree: {sum(dict(G.degree()).values()) / G.number_of_nodes():.2f}")
+        print(f"Network density: {nx.density(G):.4f}")
+        
+        # Check for feedback loops
+        try:
+            cycles = list(nx.simple_cycles(G))
+            print(f"\nNumber of feedback loops: {len(cycles)}")
+            if cycles:
+                print("\nExample feedback loop:")
+                for i, cycle in enumerate(cycles[0]):
+                    node = G.nodes[cycle]
+                    print(f"{i+1}. {node['name']} ({node['domain']})")
+        except nx.NetworkXNoCycle:
+            print("\nNo feedback loops found in the graph.")
+    else:
+        print("Cannot build graph: missing factor or relationship data.")
 
 if __name__ == "__main__":
     main() 

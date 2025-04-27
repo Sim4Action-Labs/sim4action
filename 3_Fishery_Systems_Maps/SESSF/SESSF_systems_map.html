@@ -6,6 +6,8 @@
     <!-- Add Google Sheets API -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
+    <!-- Add Pyodide -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
     <!-- Add this in the <head> section after the d3.js script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology-metrics/2.1.0/graphology-metrics.min.js"></script>
@@ -175,7 +177,7 @@
         }
         #filters {
             position: fixed;
-            top: 160px;
+            top: 240px;
             left: 20px;
             bottom: 20px;
             background-color: white;
@@ -183,11 +185,20 @@
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 1000;
-            width: 320px;
             display: flex;
             flex-direction: column;
             gap: 20px;
             overflow-y: auto;
+            transition: width 0.2s;
+        }
+        body[data-active-lab="diagnostics"] #filters {
+            width: 220px;
+        }
+        body[data-active-lab="monitoring"] #filters {
+            width: 340px;
+        }
+        body[data-active-lab="intervention"] #filters {
+            width: 260px;
         }
         .filter-section {
             margin-bottom: 15px;
@@ -351,7 +362,7 @@
         }
         #logo {
             position: fixed;
-            top: 20px;
+            top: 70px;
             left: 20px;
             max-width: 242px;
             z-index: 1000;
@@ -478,52 +489,65 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 40px;
+            height: 50px;
             background-color: #f8f9fa;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
             padding: 0 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             z-index: 1000;
         }
 
-        .lab-selector-button {
-            padding: 6px 16px;
-            font-size: 14px;
-            font-weight: 500;
-            border: none;
-            border-radius: 6px;
-            background-color: #e9ecef;
-            color: #495057;
+        #lab-selector-buttons button {
+            padding: 6px 12px;
+            font-size: 13px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background-color: white;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            height: 32px;
+            white-space: nowrap;
         }
 
-        .lab-selector-button:hover {
-            background-color: #dee2e6;
+        #lab-selector-buttons button:hover {
+            background-color: #e9ecef;
         }
 
         .lab-selector-button.active {
-            background-color: #007bff;
+            background-color: #007bff !important;
             color: white;
+            border-color: #0056b3 !important;
         }
 
-        /* Adjust positions for the top bar */
+        #top-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #top-controls button {
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .mode-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        /* Adjust logo position to account for taller top bar */
         #logo {
-            top: 60px;
+            top: 70px;
         }
 
         #fishery-info {
-            top: 50px;
-        }
-
-        #filters {
-            top: 200px;
+            top: 60px;
         }
 
         /* Lab-specific sections */
@@ -696,6 +720,7 @@
 </head>
 <body>
     <div id="lab-selector-buttons">
+        <div style="display: flex; gap: 10px;">
         <button class="lab-selector-button active" data-lab="diagnostics" onclick="switchLab('diagnostics')">
             &#x1F52C; Diagnostics Lab
         </button>
@@ -706,15 +731,8 @@
             &#x1F50D; Monitoring Lab
         </button>
     </div>
-    <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
-    <div id="fishery-info">
-        <img src="Blue-Grenadier.png" alt="Blue Grenadier">
-        <p>Blue Grenadier (SESSF Fishery)</p>
-    </div>
-    <div id="graph"></div>
-    <div id="tooltip"></div>
-    <div id="controls">
-        <div class="mode-container">
+        <div id="top-controls" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+            <div class="mode-container" style="margin: 0; padding: 0; border: none;">
             <span class="mode-label">Live Mode</span>
             <label class="switch">
                 <input type="checkbox" id="modeToggle" onchange="toggleMode()">
@@ -728,13 +746,27 @@
         <button id="viewDataBtn" onclick="openDataSource()">View Data Source</button>
         <button onclick="reloadData()" style="background-color: #4CAF50; color: white;">Reload Data</button>
     </div>
+    </div>
+    <img id="logo" src="Futures-of-Seafood-Logo-Positive.png" alt="Futures of Seafood Logo">
+    <div id="fishery-info">
+        <img src="Blue-Grenadier.png" alt="Blue Grenadier">
+        <p>Blue Grenadier (SESSF Fishery)</p>
+    </div>
+    <div id="graph"></div>
+    <div id="tooltip"></div>
     <div id="filters">
         <!-- Filter sections will be dynamically populated from Google Sheets -->
     </div>
     <div id="error-message"></div>
-    <div id="loading" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none;">
-        Loading data from Google Sheets...
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.9); padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000;">
+        <div style="text-align: center;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
     </div>
+            <div style="margin-top: 10px;">Loading data from Google Sheets...</div>
+        </div>
+    </div>
+    <div id="error" style="display: none; position: fixed; top: 20px; right: 20px; background: #ff4444; color: white; padding: 15px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 14px;"></div>
 
     <script>
         // Google Sheets API configuration
@@ -1374,6 +1406,9 @@
                 <div class="centrality-container">
                     <button class="centrality-button" onclick="showCentrality('eigenvector')">Eigenvector</button>
                 </div>
+                <div class="centrality-container">
+                    <button class="centrality-button" onclick="showCentrality('katz')">Katz</button>
+                </div>
                 
                 <div id="centrality-results" class="results-panel"></div>
                 
@@ -1384,6 +1419,7 @@
                     <p class="fishery-implications"></p>
                     <h4>Why it's useful</h4>
                     <p class="metric-usefulness"></p>
+                    <div id="centrality-table-container"></div>
                 </div>
             `;
 
@@ -2013,10 +2049,7 @@
         // Initialize the application
         window.onload = function() {
             initGoogleSheetsAPI();
-            initializeGraph();
-
-            // Do not automatically expand filter sections by default
-            // sections will remain collapsed until user clicks on them
+            initializePyodide();
         };
 
         // Widget Functions
@@ -2554,147 +2587,277 @@
             return centrality;
         }
 
-        // Update the showCentrality function
-        function showCentrality(metric) {
-            // First, reset all previously highlighted nodes
+        // Store centrality tables for each metric
+        const centralityTables = {};
+
+        // Function to update the centrality table container
+        function updateCentralityTable(metric) {
+            const container = document.getElementById('centrality-table-container');
+            if (centralityTables[metric]) {
+                container.innerHTML = centralityTables[metric];
+            } else {
+                container.innerHTML = '<div style="color: #888;">No data available for this metric.</div>';
+            }
+        }
+
+        // Track the currently active centrality metric
+        let activeCentralityMetric = null;
+
+        // Modified showCentrality function
+        async function showCentrality(metric) {
+            // Toggle logic: if the same metric is clicked again, reset everything
+            if (activeCentralityMetric === metric) {
+                activeCentralityMetric = null;
+                resetCentralityVisualization();
+                resetFilters();
+                return;
+            }
+            activeCentralityMetric = metric;
+            resetFilters(); // Always reset filters before showing a new centrality metric
+            try {
+                // First, reset all nodes to very dim state
+                d3.selectAll('.node')
+                    .classed('high-centrality', false)
+                    .style('opacity', 0.15) // Reduced opacity for non-central nodes
+                    .select('circle')
+                    .style('stroke', null)
+                    .style('stroke-width', null)
+                    .attr('r', 10);
+                
+                // Dim all links
+                d3.selectAll('.link')
+                    .style('opacity', 0.1); // Dim the links as well
+                
+                d3.selectAll('.node text')
+                    .style('font-size', '14px')
+                    .style('font-weight', 'normal')
+                    .style('opacity', 0.15); // Dim the text labels too
+
+                // Update button states
+                document.querySelectorAll('.centrality-button').forEach(button => {
+                    button.classList.toggle('active', 
+                        button.textContent.toLowerCase().includes(metric));
+                });
+
+                // Make sure the filter section is expanded
+                const centralitySection = document.querySelector('.centrality-section-container');
+                if (centralitySection) {
+                    const contentDiv = centralitySection.querySelector('.filter-section-content');
+                    if (contentDiv && !contentDiv.classList.contains('expanded')) {
+                        contentDiv.classList.add('expanded');
+                        const toggle = contentDiv.previousElementSibling?.querySelector('.filter-section-toggle');
+                        if (toggle) toggle.innerHTML = '&minus;';
+                    }
+                }
+
+                // Show explanation for the selected metric
+                const explanationDiv = document.getElementById('centrality-explanation');
+                if (!explanationDiv) return;
+
+                const descriptionEl = explanationDiv.querySelector('.metric-description');
+                const implicationsEl = explanationDiv.querySelector('.fishery-implications');
+                const usefulnessEl = explanationDiv.querySelector('.metric-usefulness');
+
+                // Define the content for each metric
+                const metricContent = {
+                    degree: {
+                        description: "Shows how many direct connections a variable has with other variables in the fishery system.",
+                        implications: "Variables with high degree are the 'busy intersections' of the system. They directly affect or are affected by many other parts of the fishery. For example, if 'Fish Stock' has a high degree, it means many factors directly impact the stock levels, and changes in stock levels directly affect many other aspects of the fishery.",
+                        usefulness: "Use this to find the most connected variables in your fishery. These are often good places to monitor or intervene, as changes here will have immediate effects on many other parts of the system."
+                    },
+                    betweenness: {
+                        description: "Measures how often a variable acts as a bridge between other variables in the fishery system.",
+                        implications: "Variables with high betweenness are important connectors or 'bottlenecks' in the system. For example, if 'Market Price' has high betweenness, it means it often serves as a key link in the chain of effects between different parts of the fishery.",
+                        usefulness: "Use this to identify variables that act as important intermediaries. These variables can be critical control points in the system, as they bridge different parts of the fishery network."
+                    },
+                    closeness: {
+                        description: "Measures how quickly effects from one variable can reach other variables in the system.",
+                        implications: "Variables with high closeness can rapidly influence many other parts of the system. For example, if 'Fishing Effort' has high closeness, changes in effort levels can quickly ripple through the entire fishery system.",
+                        usefulness: "Use this to identify variables that can have rapid system-wide effects. These are important to monitor for early warning signs of system-wide changes."
+                    },
+                    eigenvector: {
+                        description: "Measures the influence of a variable based on how connected it is to other highly connected variables.",
+                        implications: "Variables with high eigenvector centrality are connected to many other important variables. For example, if 'Management Regulations' has high eigenvector centrality, it means it's connected to many other influential aspects of the fishery.",
+                        usefulness: "Use this to find the most influential variables in terms of their connections to other important variables. These often represent key leverage points in the system."
+                    },
+                    katz: {
+                        description: "Measures the influence of a variable by considering both its direct connections and the influence of the variables it's connected to, with a decay factor that reduces the importance of longer paths.",
+                        implications: "Variables with high Katz centrality are influential through both direct and indirect connections. For example, if 'Fishing Regulations' has high Katz centrality, it means it not only directly affects other variables but also has significant influence through its connections to other important variables in the system.",
+                        usefulness: "Use this to identify variables that have strong overall influence in the fishery system, considering both direct and indirect effects. These variables are particularly important for long-term management strategies and system-wide interventions."
+                    }
+                };
+
+                // Update the explanation content if elements exist
+                if (descriptionEl && implicationsEl && usefulnessEl && metricContent[metric]) {
+                    descriptionEl.textContent = metricContent[metric].description;
+                    implicationsEl.textContent = metricContent[metric].implications;
+                    usefulnessEl.textContent = metricContent[metric].usefulness;
+                    explanationDiv.style.display = 'block';
+                }
+
+                // Fetch and display the centrality table from Pyodide
+                const container = document.getElementById('centrality-table-container');
+                if (!container) return;
+                
+                container.innerHTML = '<div style="color: #888;">Loading...</div>';
+
+                // Call the Python function via Pyodide
+                const pyResult = await window.pyodide.runPythonAsync(`
+                    import json
+                    from networkx_loader import get_top_centrality_nodes
+                    result = get_top_centrality_nodes('${metric}')
+                    result
+                `);
+                
+                const result = JSON.parse(pyResult);
+
+                if (result.error) {
+                    container.innerHTML = `<div style='color: red;'>${result.error}</div>`;
+                    return;
+                }
+
+                if (!result.nodes || result.nodes.length === 0) {
+                    container.innerHTML = '<div style="color: #888;">No data available for this metric.</div>';
+                    return;
+                }
+
+                // Create a map of node IDs to their centrality values
+                const centralityMap = new Map(result.nodes.map(node => [node.node_id, node.centrality]));
+
+                // Update node visualization based on centrality
+                d3.selectAll('.node').each(function(d) {
+                    if (!d) return; // Skip if node data is null
+                    
+                    const nodeId = d.id;
+                    if (!nodeId) return; // Skip if no node ID
+                    
+                    const centralityValue = centralityMap.get(nodeId);
+                    if (typeof centralityValue === 'undefined') return; // Skip if no centrality value
+
+                    const normalizedValue = centralityValue / 100;
+                    const minRadius = 10;
+                    const maxRadius = 25;
+                    const minFontSize = 14;
+                    const maxFontSize = 20;
+
+                    const radius = minRadius + (maxRadius - minRadius) * normalizedValue;
+                    const fontSize = minFontSize + (maxFontSize - minFontSize) * normalizedValue;
+
+                    const nodeSelection = d3.select(this);
+                    
+                    // Apply visual updates with null checks
+                    nodeSelection
+                        .style('opacity', 1) // Full opacity for central nodes
+                        .classed('high-centrality', true);
+
+                    // Highlight connected links for central nodes
+                    d3.selectAll('.link')
+                        .filter(link => link.source.id === nodeId || link.target.id === nodeId)
+                        .style('opacity', 0.6); // Make connected links more visible
+
+                    const circle = nodeSelection.select('circle');
+                    if (circle.node()) {
+                        circle
+                            .attr('r', radius)
+                            .style('stroke', '#ffd700')
+                            .style('stroke-width', 2);
+                    }
+
+                    const text = nodeSelection.select('text');
+                    if (text.node()) {
+                        text
+                            .style('font-size', `${fontSize}px`)
+                            .style('font-weight', 'bold')
+                            .style('opacity', 1); // Full opacity for central node labels
+                    }
+                });
+
+                // Update force simulation to handle new node sizes
+                if (typeof simulation !== 'undefined') {
+                    simulation.force("collision", d3.forceCollide().radius(d => {
+                        if (!d) return 12; // Default radius if no data
+                        const circle = d3.select(`#node-${d.id}`).select('circle');
+                        return circle.node() ? parseFloat(circle.attr('r')) + 2 : 12;
+                    }));
+                    simulation.alpha(0.3).restart();
+                }
+
+                // Generate the table HTML
+                let tableHTML = `
+                <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px;">
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 8px; text-align: left; border-bottom: 2px solid #dee2e6;">Node</th>
+                            <th style="padding: 8px; text-align: left; border-bottom: 2px solid #dee2e6;">Domain</th>
+                            <th style="padding: 8px; text-align: right; border-bottom: 2px solid #dee2e6;">Centrality (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${result.nodes.map(node => `
+                            <tr>
+                                <td style="padding: 8px; text-align: left;"><strong>${node.node_id || 'N/A'}</strong>: ${node.name || 'Unknown'}</td>
+                                <td style="padding: 8px; text-align: left;">${node.domain || 'Unknown'}</td>
+                                <td style="padding: 8px; text-align: right;">${(node.centrality || 0).toFixed(1)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>`;
+                
+                container.innerHTML = tableHTML;
+
+            } catch (error) {
+                console.error('Error in showCentrality:', error);
+                const container = document.getElementById('centrality-table-container');
+                if (container) {
+                    container.innerHTML = `<div style='color: red;'>Error loading centrality data: ${error.message}</div>`;
+                }
+            }
+        }
+
+        // Function to reset centrality visualization and restore all nodes/links to default
+        function resetCentralityVisualization() {
             d3.selectAll('.node')
                 .classed('high-centrality', false)
-                .style('opacity', 0.7)
+                .style('opacity', 1)
                 .select('circle')
+                .attr('r', 10)
                 .style('stroke', null)
-                .style('stroke-width', null)
-                .attr('r', 10);
-            
+                .style('stroke-width', null);
             d3.selectAll('.node text')
                 .style('font-size', '14px')
-                .style('font-weight', 'normal');
-
-            // Update button states
-            document.querySelectorAll('.centrality-button').forEach(button => {
-                button.classList.toggle('active', 
-                    button.textContent.toLowerCase().includes(metric));
-            });
-            
-            // Make sure the filter section is expanded
-            const centralitySection = document.querySelector('.centrality-section-container');
-            const contentDiv = centralitySection.querySelector('.filter-section-content');
-            if (!contentDiv.classList.contains('expanded')) {
-                contentDiv.classList.add('expanded');
-                const toggle = contentDiv.previousElementSibling.querySelector('.filter-section-toggle');
-                if (toggle) toggle.innerHTML = '&minus;';
-            }
-            
-            // Show explanation for the selected metric
+                .style('font-weight', 'normal')
+                .style('opacity', 1);
+            d3.selectAll('.link')
+                .style('opacity', 0.6);
+            // Optionally hide the centrality explanation and table
             const explanationDiv = document.getElementById('centrality-explanation');
-            const descriptionEl = explanationDiv.querySelector('.metric-description');
-            const implicationsEl = explanationDiv.querySelector('.fishery-implications');
-            const usefulnessEl = explanationDiv.querySelector('.metric-usefulness');
-            
-            // Define the content for each metric
-            const metricContent = {
-                degree: {
-                    description: "Shows how many direct connections a variable has with other variables in the fishery system.",
-                    implications: "Variables with high degree are the 'busy intersections' of the system. They directly affect or are affected by many other parts of the fishery. For example, if 'Fish Stock' has a high degree, it means many factors directly impact the stock levels, and changes in stock levels directly affect many other aspects of the fishery.",
-                    usefulness: "Use this to find the most connected variables in your fishery. These are often good places to monitor or intervene, as changes here will have immediate effects on many other parts of the system."
-                },
-                betweenness: {
-                    description: "Shows which variables act as bridges or gatekeepers between different parts of the fishery system.",
-                    implications: "Variables with high betweenness are crucial pathway controllers. For example, if 'Fishing Effort' has high betweenness, it means it's an important intermediary that connects different parts of the system, like linking economic factors to environmental impacts.",
-                    usefulness: "Use this to identify variables that control how effects spread through your fishery system. These are strategic points where management actions can have far-reaching consequences."
-                },
-                closeness: {
-                    description: "Shows how quickly a variable can affect the entire fishery system through direct and indirect connections.",
-                    implications: "Variables with high closeness can rapidly influence the whole system. For example, if 'Market Price' has high closeness, changes in price can quickly ripple through the entire fishery, affecting everything from fishing behavior to management decisions.",
-                    usefulness: "Use this to find variables that can create quick system-wide changes. These are good early warning indicators and useful for rapid management responses."
-                },
-                eigenvector: {
-                    description: "Shows which variables are connected to other highly influential variables in the fishery system.",
-                    implications: "Variables with high eigenvector centrality are connected to other important parts of the system. For example, if 'Management Regulations' has high eigenvector centrality, it means it's connected to other important variables that together create significant system-wide effects.",
-                    usefulness: "Use this to identify variables that have strong indirect influence through their connections to other important variables. These are excellent targets for long-term strategic management."
-                }
-            };
-            
-            // Update the explanation content
-            descriptionEl.textContent = metricContent[metric].description;
-            implicationsEl.textContent = metricContent[metric].implications;
-            usefulnessEl.textContent = metricContent[metric].usefulness;
-            
-            // Show the explanation
-            explanationDiv.style.display = 'block';
-            
-            // Calculate centrality
-            let centrality;
-            switch (metric) {
-                case 'degree':
-                    centrality = calculateDegreeCentrality();
-                    break;
-                case 'betweenness':
-                    centrality = calculateBetweennessCentrality();
-                    break;
-                case 'closeness':
-                    centrality = calculateClosenessCentrality();
-                    break;
-                case 'eigenvector':
-                    centrality = calculateEigenvectorCentrality();
-                    break;
-            }
-            
-            // Get the top 5 nodes
-            const topNodes = Array.from(centrality.entries())
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 5);
-            
-            const topNodeIds = new Set(topNodes.map(([id]) => id));
-            
-            // Update node appearance for top nodes
-            d3.selectAll('.node').each(function(d) {
-                if (topNodeIds.has(d.id)) {
-                    // Highlight top nodes
-                    d3.select(this)
-                        .classed('high-centrality', true)
-                        .style('opacity', 1)
-                        .select('circle')
-                        .style('stroke', '#ffd700')
-                        .style('stroke-width', 3)
-                        .attr('r', 15);
-                    
-                    // Make text bold
-                    d3.select(this)
-                        .select('text')
-                        .style('font-size', '16px')
-                        .style('font-weight', 'bold');
-                } else {
-                    // Dim other nodes
-                    d3.select(this).style('opacity', 0.3);
-                }
-            });
-            
-            // Scale values for display
-            const values = topNodes.map(([, value]) => value);
-            const maxValue = Math.max(...values);
-            
-            const formattedTopNodes = topNodes.map(([id, value]) => ({
-                name: nodes.find(n => n.id === id).name,
-                value: (value / maxValue * 100).toFixed(1) + '%'
-            }));
-            
-            // Update results display
-            const resultsDiv = document.getElementById('centrality-results');
-            resultsDiv.innerHTML = `
-                <h4 style="margin-top: 0; font-size: 14px; color: #495057; margin-bottom: 10px;">
-                    Top 5 ${metric.charAt(0).toUpperCase() + metric.slice(1)} Centrality Nodes:
-                </h4>
-                <ol style="margin: 0; padding-left: 20px;">
-                    ${formattedTopNodes.map((node, index) => `
-                        <li style="margin-bottom: 5px; ${index < 3 ? 'background-color: rgba(255, 215, 0, 0.1); padding: 3px;' : ''}">
-                            <span style="font-weight: ${index < 3 ? 'bold' : 'normal'};">
-                                ${node.name} (${node.value})
-                            </span>
-                        </li>
-                    `).join('')}
-                </ol>
-            `;
+            if (explanationDiv) explanationDiv.style.display = 'none';
+            const container = document.getElementById('centrality-table-container');
+            if (container) container.innerHTML = '';
+            // Remove active state from all centrality buttons
+            document.querySelectorAll('.centrality-button').forEach(btn => btn.classList.remove('active'));
         }
+
+        // Add click handler to SVG/canvas background to reset everything
+        function addCanvasResetHandler() {
+            const svg = d3.select('#graph svg');
+            if (!svg.empty()) {
+                svg.on('click', function(event) {
+                    // Only reset if clicking directly on the background (not a node or link)
+                    if (event.target === this) {
+                        activeCentralityMetric = null;
+                        resetCentralityVisualization();
+                        resetFilters();
+                    }
+                });
+            }
+        }
+
+        // Call this after initializing the visualization
+        addCanvasResetHandler();
+
+        // Update centrality button event listeners to use the new toggle logic
+        // (Assuming buttons call showCentrality('metric') as before)
 
         // Add this function to initialize the graph
         function initializeGraph() {
@@ -2882,6 +3045,144 @@
                 }
             }
         }
+
+        // Initialize Pyodide and load NetworkX
+        async function initializePyodide() {
+            try {
+                // Load Pyodide
+                let pyodide = await loadPyodide();
+                window.pyodide = pyodide;
+                console.log("Pyodide loaded successfully");
+
+                // Install required packages
+                await pyodide.loadPackage(['networkx', 'pandas', 'scipy']);
+                console.log("Required packages installed");
+
+                // Load our custom Python module
+                const response = await fetch('networkx_loader.py');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch networkx_loader.py: ${response.statusText}`);
+                }
+                const pythonCode = await response.text();
+                
+                // Create the file in Pyodide's file system
+                pyodide.FS.writeFile('networkx_loader.py', pythonCode);
+                
+                // Add the current directory to Python's path
+                await pyodide.runPythonAsync(`
+                    import sys
+                    sys.path.append('.')
+                `);
+
+                // Now run the module code
+                await pyodide.runPythonAsync(pythonCode);
+                console.log("Python module loaded");
+
+                // Initialize NetworkX graph
+                await pyodide.runPythonAsync('from networkx_loader import initialize_networkx; initialize_networkx()');
+                console.log("NetworkX graph initialized");
+
+                // Enable centrality buttons after Pyodide is ready
+                document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = false);
+                
+                // Show success message
+                const statusDiv = document.getElementById('networkx-status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<div style="color: green; padding: 10px;">NetworkX initialization successful!</div>';
+                }
+
+            } catch (error) {
+                console.error("Error initializing Pyodide:", error);
+                const statusDiv = document.getElementById('networkx-status');
+                if (statusDiv) {
+                    statusDiv.innerHTML = `
+                        <div style="color: red; padding: 10px;">
+                            <h3>Error Initializing Pyodide</h3>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                }
+                // Disable centrality buttons on error
+                document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = true);
+            }
+        }
+
+        // Disable centrality buttons by default until Pyodide is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = true);
+        });
+
+        // Add event listener for Katz centrality button
+        document.getElementById('katz-centrality-btn').addEventListener('click', function() {
+            // Show Katz explanation
+            document.getElementById('katz-explanation').style.display = 'block';
+            // Hide other explanations
+            document.getElementById('degree-explanation').style.display = 'none';
+            document.getElementById('betweenness-explanation').style.display = 'none';
+            document.getElementById('closeness-explanation').style.display = 'none';
+            document.getElementById('eigenvector-explanation').style.display = 'none';
+            
+            // Show Katz results
+            document.getElementById('katz-results').style.display = 'block';
+            // Hide other results
+            document.getElementById('degree-results').style.display = 'none';
+            document.getElementById('betweenness-results').style.display = 'none';
+            document.getElementById('closeness-results').style.display = 'none';
+            document.getElementById('eigenvector-results').style.display = 'none';
+            
+            // Calculate and display Katz centrality
+            pyodide.runPython(`
+                import json
+                from networkx_loader import get_top_centrality_nodes
+                result = get_top_centrality_nodes('katz')
+                result
+            `).then(result => {
+                const data = JSON.parse(result);
+                if (data.error) {
+                    document.getElementById('katz-list').innerHTML = `<p>Error: ${data.error}</p>`;
+                    return;
+                }
+                
+                const list = document.getElementById('katz-list');
+                list.innerHTML = '';
+                
+                data.nodes.forEach(node => {
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.innerHTML = `
+                        <span class="node-name">${node.name}</span>
+                        <span class="node-domain">${node.domain}</span>
+                        <span class="node-score">${node.centrality.toFixed(2)}%</span>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+        });
+
+        // After Pyodide and the visualization are initialized, enable and attach event listeners to centrality buttons
+        function enableCentralityButtons() {
+            document.querySelectorAll('.centrality-button').forEach(btn => {
+                btn.disabled = false;
+                const metric = btn.getAttribute('data-metric');
+                if (metric) {
+                    btn.onclick = () => showCentrality(metric);
+                }
+            });
+        }
+
+        // Call this at the end of initializePyodide and after visualization setup
+        // ...
+        // document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = false);
+        enableCentralityButtons();
+        // ...
+
+        // In the HTML, update each centrality button to include a data-metric attribute and remove any disabled attribute:
+        // <button class="centrality-button" data-metric="degree">Degree</button>
+        // <button class="centrality-button" data-metric="betweenness">Betweenness</button>
+        // <button class="centrality-button" data-metric="closeness">Closeness</button>
+        // <button class="centrality-button" data-metric="eigenvector">Eigenvector</button>
+        // <button class="centrality-button" data-metric="katz">Katz</button>
+
     </script>
 </body>
 </html> 
