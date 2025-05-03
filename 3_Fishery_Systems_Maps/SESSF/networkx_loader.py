@@ -58,16 +58,13 @@ def create_networkx_graph():
                     definition=row[8] if len(row) > 8 else ""
                 )
         
-        # Basic graph statistics for verification
-        stats = {
+        return G, {
             'num_nodes': G.number_of_nodes(),
             'num_edges': G.number_of_edges(),
             'is_directed': G.is_directed(),
             'domains': list(set(nx.get_node_attributes(G, 'domain').values())),
             'relationship_types': list(set(nx.get_edge_attributes(G, 'polarity').values()))
         }
-        
-        return G, stats
     
     except Exception as e:
         console.error(f"Error creating NetworkX graph: {str(e)}")
@@ -76,28 +73,20 @@ def create_networkx_graph():
 def calculate_betweenness_centrality(G):
     """Calculate betweenness centrality for all nodes."""
     try:
-        # Calculate betweenness centrality
         centrality = nx.betweenness_centrality(G)
-        
-        # Sort nodes by centrality value in descending order
         sorted_nodes = sorted(centrality.items(), key=lambda x: x[1], reverse=True)
-        
-        # Get top 10 nodes
-        top_nodes = sorted_nodes[:10]  # Ensure we get 10 nodes
-        
-        # Format results with node names and centrality scores
+        top_nodes = sorted_nodes[:10]
+        max_centrality = max(centrality.values())
         results = []
-        max_centrality = max(centrality.values())  # Use max of all values for normalization
         for node_id, score in top_nodes:
             node_data = G.nodes[node_id]
-            normalized_score = (score / max_centrality) * 100  # Convert to percentage
+            normalized_score = (score / max_centrality) * 100 if max_centrality else 0
             results.append({
                 'node_id': node_id,
                 'name': node_data['name'],
                 'domain': node_data['domain'],
                 'centrality': normalized_score
             })
-        
         return results
     except Exception as e:
         console.error(f"Error calculating betweenness centrality: {str(e)}")
@@ -163,7 +152,6 @@ def calculate_eigenvector_centrality(G):
             })
         return results
     except Exception as e:
-        # Return a special result indicating failure
         return f"Eigenvector centrality error: {str(e)}"
 
 def calculate_katz_centrality(G):
@@ -186,47 +174,10 @@ def calculate_katz_centrality(G):
     except Exception as e:
         return f"Katz centrality error: {str(e)}"
 
-def calculate_centrality_metrics(G):
-    """Calculate various centrality metrics for the graph."""
-    try:
-        # Calculate betweenness centrality
-        betweenness = nx.betweenness_centrality(G)
-        avg_betweenness = sum(betweenness.values()) / len(betweenness)
-        
-        # Calculate closeness centrality
-        closeness = nx.closeness_centrality(G)
-        avg_closeness = sum(closeness.values()) / len(closeness)
-        
-        # Calculate eigenvector centrality
-        try:
-            eigenvector = nx.eigenvector_centrality(G)
-            avg_eigenvector = sum(eigenvector.values()) / len(eigenvector)
-        except:
-            avg_eigenvector = 0.0
-        
-        # Calculate degree centrality
-        degree = nx.degree_centrality(G)
-        avg_degree = sum(degree.values()) / len(degree)
-        
-        return {
-            'avg_betweenness': avg_betweenness,
-            'avg_closeness': avg_closeness,
-            'avg_eigenvector': avg_eigenvector,
-            'avg_degree': avg_degree
-        }
-    except Exception as e:
-        print(f"Error calculating centrality metrics: {str(e)}")
-        return {
-            'avg_betweenness': 0.0,
-            'avg_closeness': 0.0,
-            'avg_eigenvector': 0.0,
-            'avg_degree': 0.0
-        }
-
 def initialize_networkx():
-    """Initialize the NetworkX graph and display status."""
+    """Initialize the NetworkX graph."""
     try:
-        G, stats = create_networkx_graph()
+        G, _ = create_networkx_graph()
         return G
     except Exception as e:
         console.error(f"Error initializing NetworkX: {str(e)}")

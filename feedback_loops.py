@@ -30,12 +30,22 @@ class FeedbackLoopAnalyzer:
 
         for cycle in cycles:
             polarity = self._calculate_cycle_polarity(cycle)
+            closed_cycle_names = [self._node_names[node] for node in cycle]
+            closed_cycle_names.append(closed_cycle_names[0])
+            relationship_str = " -> ".join(closed_cycle_names)
+            # Robust replacement for any problematic encodings
+            relationship_str = (relationship_str
+                .replace("â†’", "->")
+                .replace("→", "->")
+                .replace("-&gt;", "->")
+            )
             loop_data = {
                 "nodes": cycle,
                 "length": len(cycle),
                 "polarity": polarity,
                 "node_names": [self._node_names[node] for node in cycle],
-                "node_domains": [self._node_domains[node] for node in cycle]
+                "node_domains": [self._node_domains[node] for node in cycle],
+                "relationship_str": relationship_str
             }
             
             if polarity == "positive":
