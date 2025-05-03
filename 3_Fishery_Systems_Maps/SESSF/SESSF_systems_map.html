@@ -783,6 +783,67 @@
             font-size: 13px;
             color: #495057;
         }
+
+        .feedback-loop-mode {
+            margin-bottom: 15px;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: #495057;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
     </style>
 </head>
 <body>
@@ -820,6 +881,7 @@
         <p>Blue Grenadier (SESSF Fishery)</p>
     </div>
     <div id="graph"></div>
+    <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#f8f9fa;"></div>
     <div id="tooltip"></div>
     <div id="filters">
         <!-- Filter sections will be dynamically populated from Google Sheets -->
@@ -1381,6 +1443,16 @@
                     <div class="section-label">Filter by Polarity:</div>
                     <button class="filter-button" onclick="filterFeedbackLoops('positive')">Positive Loops</button>
                     <button class="filter-button" onclick="filterFeedbackLoops('negative')">Negative Loops</button>
+                </div>
+                <div class="feedback-loop-mode">
+                    <div class="section-label">Display Mode:</div>
+                    <div class="toggle-container">
+                        <span class="toggle-label">Loop Only</span>
+                        <label class="switch">
+                            <input type="checkbox" id="loopOnlySwitch">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
                 </div>
                 <div id="feedback-loop-results" class="results-panel"></div>
             `;
@@ -3482,82 +3554,272 @@ def get_top_centrality_nodes(metric):
         }
 
         function highlightFeedbackLoop(loopId) {
-            // Reset previous highlights
-            resetFeedbackLoopHighlights();
-            
-            // Get the loop data
             const loopNodes = loopId.split('-');
-            
-            // Highlight nodes in the loop
+            const loopOnly = document.getElementById('loopOnlySwitch')?.checked;
+            if (loopOnly) {
+                // Hide main graph, show loop graph
+                document.getElementById('graph').style.display = 'none';
+                document.getElementById('loop-graph').style.display = '';
+                // Prepare loopNodesData and loopLinksData
+                const allNodes = factors.map(factor => ({
+                    id: factor.id,
+                    name: factor.name,
+                    domain: factor.domain_name,
+                    color: getDomainColor(factor.domain_name)
+                }));
+                const allLinks = relationships.map(rel => ({
+                    source: rel.from_factor_id,
+                    target: rel.to_factor_id,
+                    type: rel.polarity,
+                    strength: rel.strength.toLowerCase(),
+                    delay: rel.delay.toLowerCase(),
+                    definition: rel.definition
+                }));
+                // Only nodes in loop
+                const loopNodesData = allNodes.filter(n => loopNodes.includes(n.id) || loopNodes.includes(n.name));
+                // Only links that connect consecutive nodes in the loop (including closing edge)
+                let loopLinksData = [];
+                for (let i = 0; i < loopNodes.length - 1; i++) {
+                    const src = loopNodes[i], tgt = loopNodes[i + 1];
+                    const link = allLinks.find(l => (l.source === src || l.source === allNodes.find(n => n.name === src)?.id) && (l.target === tgt || l.target === allNodes.find(n => n.name === tgt)?.id));
+                    if (link) loopLinksData.push(link);
+                }
+                // Closing edge
+                const src = loopNodes[loopNodes.length - 1];
+                const tgt = loopNodes[0];
+                const closingLink = allLinks.find(l => (l.source === src || l.source === allNodes.find(n => n.name === src)?.id) && (l.target === tgt || l.target === allNodes.find(n => n.name === tgt)?.id));
+                if (closingLink) loopLinksData.push(closingLink);
+                renderLoopGraph(loopNodesData, loopLinksData);
+                return;
+            } else {
+                // Restore main graph, hide loop graph
+                document.getElementById('graph').style.display = '';
+                document.getElementById('loop-graph').style.display = 'none';
+                d3.select('#loop-graph').selectAll('*').remove();
+            }
+            // ... original highlight/dim logic for main map ...
             d3.selectAll('.node').each(function(d) {
+                const isInLoop = loopNodes.includes(d.id) || loopNodes.includes(d.name);
                 const node = d3.select(this);
-                if (loopNodes.includes(d.id)) {
-                    node.classed('highlighted', true)
-                        .style('opacity', 1)
-                        .select('circle')
-                        .attr('r', 15)
-                        .style('stroke', '#ffd700')
-                        .style('stroke-width', 3);
-                    
+                node.style('display', '');
+                node.classed('highlighted', isInLoop).classed('dimmed', !isInLoop);
+                if (isInLoop) {
+                    node.style('opacity', 1)
+                        .select('circle').attr('r', 18);
                     node.select('text')
                         .style('font-size', '18px')
                         .style('font-weight', 'bold');
                 } else {
-                    node.classed('dimmed', true)
-                        .style('opacity', 0.2);
+                    node.style('opacity', 0.1)
+                        .select('circle').attr('r', 10);
+                    node.select('text')
+                        .style('font-size', '12px')
+                        .style('font-weight', 'normal');
                 }
             });
-            
-            // Highlight links in the loop
             d3.selectAll('.link').each(function(d) {
-                const link = d3.select(this);
-                const sourceIndex = loopNodes.indexOf(d.source.id);
-                const targetIndex = loopNodes.indexOf(d.target.id);
-                
-                if (sourceIndex !== -1 && targetIndex !== -1) {
-                    const nextIndex = (sourceIndex + 1) % loopNodes.length;
-                    if (targetIndex === nextIndex) {
-                        link.classed('highlighted', true)
-                            .style('opacity', 1)
-                            .style('stroke-width', 4);
+                let isInLoop = false;
+                for (let i = 0; i < loopNodes.length - 1; i++) {
+                    const src = loopNodes[i], tgt = loopNodes[i + 1];
+                    if (
+                        (d.source.id === src || d.source.name === src) &&
+                        (d.target.id === tgt || d.target.name === tgt)
+                    ) {
+                        isInLoop = true;
+                        break;
                     }
-                } else {
-                    link.classed('dimmed', true)
-                        .style('opacity', 0.1);
                 }
-            });
-            
-            // Highlight the selected loop in the list
-            document.querySelectorAll('.feedback-loop-item').forEach(item => {
-                item.classList.toggle('selected', item.dataset.loopId === loopId);
+                const src = loopNodes[loopNodes.length - 1];
+                const tgt = loopNodes[0];
+                if (
+                    (d.source.id === src || d.source.name === src) &&
+                    (d.target.id === tgt || d.target.name === tgt)
+                ) {
+                    isInLoop = true;
+                }
+                const link = d3.select(this);
+                link.style('display', '');
+                link.classed('highlighted', isInLoop).classed('dimmed', !isInLoop);
+                if (isInLoop) {
+                    link.style('opacity', 1).style('stroke-width', 4);
+                } else {
+                    link.style('opacity', 0.1).style('stroke-width', 1);
+                }
             });
         }
 
+        // Modular function to render a feedback loop as a separate D3 graph
+        function renderLoopGraph(loopNodes, loopLinks) {
+            d3.select("#loop-graph").selectAll("*").remove();
+            // Log data for debugging
+            console.log('Loop Nodes:', loopNodes);
+            console.log('Loop Links:', loopLinks);
+            // Show message if no data
+            if (!loopNodes || loopNodes.length === 0 || !loopLinks || loopLinks.length === 0) {
+                d3.select("#loop-graph").append("div")
+                  .style("color", "#dc3545")
+                  .style("font-size", "20px")
+                  .style("margin", "40px auto")
+                  .style("text-align", "center")
+                  .text("No feedback loop data to display.");
+                return;
+            }
+            // Normalize link data: ensure source/target are node IDs (strings)
+            const nodeIds = new Set(loopNodes.map(n => n.id));
+            const normLinks = loopLinks.map(l => ({
+                ...l,
+                source: typeof l.source === 'object' ? l.source.id : l.source,
+                target: typeof l.target === 'object' ? l.target.id : l.target
+            })).filter(l => nodeIds.has(l.source) && nodeIds.has(l.target));
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const svg = d3.select("#loop-graph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            // Add a visible background for debugging
+            svg.append("rect")
+                .attr("width", width)
+                .attr("height", height)
+                .attr("fill", "#f8f9fa");
+            // Define markers (identical to main map, no r10/r12 distinction)
+            const defs = svg.append("defs");
+            ["same", "opposite"].forEach(type => {
+                ["strong", "medium", "weak"].forEach(strength => {
+                    defs.append("marker")
+                        .attr("id", `arrow-${type}-${strength}`)
+                        .attr("viewBox", "0 -5 10 10")
+                        .attr("refX", 15)
+                        .attr("refY", 0)
+                        .attr("markerWidth", 6)
+                        .attr("markerHeight", 6)
+                        .attr("orient", "auto")
+                        .append("path")
+                        .attr("d", "M0,-5L10,0L0,5")
+                        .style("fill", type === "same" ? "#28a745" : "#dc3545");
+                });
+            });
+            // Draw links with main map marker styling
+            const link = svg.append("g")
+                .selectAll("path")
+                .data(normLinks)
+                .enter().append("path")
+                .attr("class", d => `link ${d.type} ${d.strength}`)
+                .attr("marker-end", d => `url(#arrow-${d.type}-${d.strength})`)
+                .style("stroke", d => d.type === "same" ? "#28a745" : "#dc3545")
+                .style("stroke-width", d => d.strength === "strong" ? 4 : d.strength === "medium" ? 2 : 1)
+                .style("fill", "none");
+            // Draw nodes with same styling as main map
+            const node = svg.append("g")
+                .selectAll("g")
+                .data(loopNodes)
+                .enter().append("g")
+                .attr("class", d => `node${d.domain === 'FOCAL FACTORS' ? ' focal' : ''}`)
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+            node.append("circle")
+                .attr("r", d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
+                .style("fill", d => d.color)
+                .style("stroke", "#fff")
+                .style("stroke-width", 2);
+            node.append("text")
+                .attr("dx", 12)
+                .attr("dy", ".35em")
+                .style("font-size", d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style("font-weight", d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal')
+                .text(d => d.name);
+            node.on("mouseover", showTooltip)
+                .on("mouseout", hideTooltip);
+            link.on("mouseover", showLinkTooltip)
+                .on("mouseout", hideTooltip);
+            const simulation = d3.forceSimulation(loopNodes)
+                .force("link", d3.forceLink(normLinks).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-300))
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collision", d3.forceCollide().radius(30));
+            simulation.on("tick", () => {
+                link.attr("d", d => {
+                    // d.source and d.target are node objects after simulation
+                    if (!d.source || !d.target) return null;
+                    const dx = d.target.x - d.source.x,
+                          dy = d.target.y - d.source.y,
+                          dr = Math.sqrt(dx * dx + dy * dy);
+                    const scale = (dr - 8) / dr;
+                    const endX = d.source.x + dx * scale,
+                          endY = d.source.y + dy * scale;
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${endX},${endY}`;
+                });
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
         function resetFeedbackLoopHighlights() {
-            // Reset nodes
             d3.selectAll('.node')
+                .style('display', '')
                 .classed('highlighted', false)
                 .classed('dimmed', false)
                 .style('opacity', 1)
                 .select('circle')
-                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
-                .style('stroke', null)
-                .style('stroke-width', null);
-            
+                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10);
             d3.selectAll('.node text')
                 .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
                 .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
-            
-            // Reset links
             d3.selectAll('.link')
+                .style('display', '')
                 .classed('highlighted', false)
                 .classed('dimmed', false)
                 .style('opacity', 0.6)
                 .style('stroke-width', d => d.strength === 'strong' ? 4 : d.strength === 'medium' ? 2 : 1);
-            
-            // Reset list selection
+        }
+
+        // Attach click handlers after rendering feedback loops
+        function displayFeedbackLoops(loops) {
+            const resultsDiv = document.getElementById('feedback-loop-results');
+            if (!loops || Object.keys(loops).length === 0) {
+                resultsDiv.innerHTML = '<div style="color: #888;">No feedback loops found for this length.</div>';
+                return;
+            }
+            let html = '<div class="feedback-loop-list">';
+            // Display positive loops
+            if (loops.positive && loops.positive.length > 0) {
+                html += '<div class="feedback-loop-group positive">';
+                html += '<h4>Positive Feedback Loops</h4>';
+                html += loops.positive.map(loop => createLoopHTML(loop, 'positive')).join('');
+                html += '</div>';
+            }
+            // Display negative loops
+            if (loops.negative && loops.negative.length > 0) {
+                html += '<div class="feedback-loop-group negative">';
+                html += '<h4>Negative Feedback Loops</h4>';
+                html += loops.negative.map(loop => createLoopHTML(loop, 'negative')).join('');
+                html += '</div>';
+            }
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+            // Add click handlers to loop items
             document.querySelectorAll('.feedback-loop-item').forEach(item => {
-                item.classList.remove('selected');
+                item.addEventListener('click', function() {
+                    // Remove selection from all, add to this
+                    document.querySelectorAll('.feedback-loop-item').forEach(i => i.classList.remove('selected'));
+                    this.classList.add('selected');
+                    highlightFeedbackLoop(this.dataset.loopId);
+                });
             });
         }
 
