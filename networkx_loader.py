@@ -1,9 +1,15 @@
 import networkx as nx
 import json
 import numpy as np
+import centrality_metrics
+import feedback_loops
 
 # Global graph variable
 G = None
+
+# Make modules available in global scope
+globals()['centrality_metrics'] = centrality_metrics
+globals()['feedback_loops'] = feedback_loops
 
 def initialize_networkx():
     global G

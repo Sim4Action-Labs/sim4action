@@ -716,6 +716,72 @@
             overflow: visible;
             padding: 10px;
         }
+
+        .feedback-loop-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .feedback-loop-polarity {
+            margin-bottom: 15px;
+        }
+
+        .feedback-loop-list {
+            margin-top: 15px;
+        }
+
+        .feedback-loop-group {
+            margin-bottom: 20px;
+        }
+
+        .feedback-loop-group h4 {
+            color: #495057;
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .feedback-loop-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feedback-loop-item:hover {
+            background: #f8f9fa;
+            border-color: #007bff;
+        }
+
+        .feedback-loop-item.selected {
+            background: #e7f1ff;
+            border-color: #007bff;
+        }
+
+        .loop-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .loop-header.positive {
+            color: #28a745;
+        }
+
+        .loop-header.negative {
+            color: #dc3545;
+        }
+
+        .loop-nodes {
+            font-size: 13px;
+            color: #495057;
+        }
     </style>
 </head>
 <body>
@@ -752,7 +818,21 @@
         <img src="Blue-Grenadier.png" alt="Blue Grenadier">
         <p>Blue Grenadier (SESSF Fishery)</p>
     </div>
-    <div id="graph"></div>
+    <div id="graph">
+        <svg width="100%" height="100%">
+            <defs>
+                <marker id="arrow-same" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#28a745"/>
+                </marker>
+                <marker id="arrow-opposite" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc3545"/>
+                </marker>
+                <marker id="arrow-Variable" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#6c757d"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
     <div id="tooltip"></div>
     <div id="filters">
         <!-- Filter sections will be dynamically populated from Google Sheets -->
@@ -1302,8 +1382,20 @@
             // Feedback Loops
             const feedbackSection = createBasicSection("Feedback Loops");
             feedbackSection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select a feedback loop:</div>
-                <!-- Feedback loop buttons will be added here -->
+                <div class="section-label">Select Feedback Loop Length:</div>
+                <div class="feedback-loop-controls">
+                    <button class="filter-button" onclick="showFeedbackLoops(2)">2-Node Loops</button>
+                    <button class="filter-button" onclick="showFeedbackLoops(3)">3-Node Loops</button>
+                    <button class="filter-button" onclick="showFeedbackLoops(4)">4-Node Loops</button>
+                    <button class="filter-button" onclick="showFeedbackLoops(5)">5-Node Loops</button>
+                    <button class="filter-button" onclick="showFeedbackLoops(6)">6-Node Loops</button>
+                </div>
+                <div class="feedback-loop-polarity">
+                    <div class="section-label">Filter by Polarity:</div>
+                    <button class="filter-button" onclick="filterFeedbackLoops('positive')">Positive Loops</button>
+                    <button class="filter-button" onclick="filterFeedbackLoops('negative')">Negative Loops</button>
+                </div>
+                <div id="feedback-loop-results" class="results-panel"></div>
             `;
             diagnosticsDiv.appendChild(feedbackSection);
 
@@ -3059,56 +3151,39 @@
                 window.pyodide = pyodide;
                 console.log("Pyodide loaded successfully");
 
-                // Install required packages
+                // Load required packages
                 await pyodide.loadPackage(['networkx', 'pandas', 'scipy']);
-                console.log("Required packages installed");
+                console.log("Required packages loaded successfully");
 
-                // Load our custom Python module
-                const response = await fetch('networkx_loader.py');
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch networkx_loader.py: ${response.statusText}`);
-                }
-                const pythonCode = await response.text();
-                
-                // Create the file in Pyodide's file system
-                pyodide.FS.writeFile('networkx_loader.py', pythonCode);
-                
-                // Add the current directory to Python's path
+                // Create networkx_loader.py in Pyodide's file system
+                const networkxLoaderCode = await fetch('networkx_loader.py').then(response => response.text());
+                pyodide.FS.writeFile('networkx_loader.py', networkxLoaderCode);
+                console.log("networkx_loader.py loaded successfully");
+
+                // Create feedback_loops.py in Pyodide's file system
+                const feedbackLoopsCode = await fetch('feedback_loops.py').then(response => response.text());
+                pyodide.FS.writeFile('feedback_loops.py', feedbackLoopsCode);
+                console.log("feedback_loops.py loaded successfully");
+
+                // Import and initialize the networkx loader
                 await pyodide.runPythonAsync(`
-                    import sys
-                    sys.path.append('.')
+                    from networkx_loader import initialize_networkx
+                    initialize_networkx()
                 `);
-
-                // Now run the module code
-                await pyodide.runPythonAsync(pythonCode);
-                console.log("Python module loaded");
-
-                // Initialize NetworkX graph
-                await pyodide.runPythonAsync('from networkx_loader import initialize_networkx; initialize_networkx()');
-                console.log("NetworkX graph initialized");
+                console.log("NetworkX initialized successfully");
 
                 // Enable centrality buttons after Pyodide is ready
-                document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = false);
-                
-                // Show success message
-                const statusDiv = document.getElementById('networkx-status');
-                if (statusDiv) {
-                    statusDiv.innerHTML = '<div style="color: green; padding: 10px;">NetworkX initialization successful!</div>';
-                }
-
+                document.querySelectorAll('.centrality-button').forEach(button => {
+                    button.disabled = false;
+                });
             } catch (error) {
                 console.error("Error initializing Pyodide:", error);
-                const statusDiv = document.getElementById('networkx-status');
-                if (statusDiv) {
-                    statusDiv.innerHTML = `
-                        <div style="color: red; padding: 10px;">
-                            <h3>Error Initializing Pyodide</h3>
-                            <p>${error.message}</p>
-                        </div>
-                    `;
-                }
-                // Disable centrality buttons on error
-                document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = true);
+                document.getElementById('graph').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h3>Error Initializing Pyodide</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
             }
         }
 
@@ -3187,6 +3262,256 @@
         // <button class="centrality-button" data-metric="closeness">Closeness</button>
         // <button class="centrality-button" data-metric="eigenvector">Eigenvector</button>
         // <button class="centrality-button" data-metric="katz">Katz</button>
+
+        // Add these new functions after the existing JavaScript functions
+        async function showFeedbackLoops(length) {
+            try {
+                // Reset previous highlights
+                resetFeedbackLoopHighlights();
+                
+                // Call Python function via Pyodide
+                const result = await window.pyodide.runPythonAsync(`
+                    import json
+                    from feedback_loops import get_feedback_loops_by_length
+                    result = get_feedback_loops_by_length(${length})
+                    result
+                `);
+                
+                const data = JSON.parse(result);
+                
+                if (data.error) {
+                    document.getElementById('feedback-loop-results').innerHTML = 
+                        `<div style="color: red;">Error: ${data.error}</div>`;
+                    return;
+                }
+                
+                // Update button states
+                document.querySelectorAll('.feedback-loop-controls button').forEach(btn => {
+                    btn.classList.toggle('active', btn.textContent.includes(length));
+                });
+                
+                // Display feedback loops
+                displayFeedbackLoops(data.feedback_loops[length]);
+                
+            } catch (error) {
+                console.error('Error showing feedback loops:', error);
+                document.getElementById('feedback-loop-results').innerHTML = 
+                    `<div style="color: red;">Error loading feedback loops: ${error.message}</div>`;
+            }
+        }
+
+        function displayFeedbackLoops(loops) {
+            const resultsDiv = document.getElementById('feedback-loop-results');
+            if (!loops || Object.keys(loops).length === 0) {
+                resultsDiv.innerHTML = '<div style="color: #888;">No feedback loops found for this length.</div>';
+                return;
+            }
+            
+            let html = '<div class="feedback-loop-list">';
+            
+            // Display positive loops
+            if (loops.positive && loops.positive.length > 0) {
+                html += '<div class="feedback-loop-group positive">';
+                html += '<h4>Positive Feedback Loops</h4>';
+                html += loops.positive.map(loop => createLoopHTML(loop, 'positive')).join('');
+                html += '</div>';
+            }
+            
+            // Display negative loops
+            if (loops.negative && loops.negative.length > 0) {
+                html += '<div class="feedback-loop-group negative">';
+                html += '<h4>Negative Feedback Loops</h4>';
+                html += loops.negative.map(loop => createLoopHTML(loop, 'negative')).join('');
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+            
+            // Add click handlers to loop items
+            document.querySelectorAll('.feedback-loop-item').forEach(item => {
+                item.addEventListener('click', () => highlightFeedbackLoop(item.dataset.loopId));
+            });
+        }
+
+        function createLoopHTML(loop, polarity) {
+            const nodeNames = loop.nodes.join(' → ');
+            return `
+                <div class="feedback-loop-item" data-loop-id="${loop.nodes.join('-')}">
+                    <div class="loop-header ${polarity}">
+                        <span class="loop-polarity">${polarity.toUpperCase()}</span>
+                        <span class="loop-length">${loop.length} Nodes</span>
+                    </div>
+                    <div class="loop-nodes">${nodeNames}</div>
+                </div>
+            `;
+        }
+
+        function highlightFeedbackLoop(loopId) {
+            // Reset previous highlights
+            resetFeedbackLoopHighlights();
+            
+            // Get the loop data
+            const loopNodes = loopId.split('-');
+            
+            // Highlight nodes in the loop
+            d3.selectAll('.node').each(function(d) {
+                const node = d3.select(this);
+                if (loopNodes.includes(d.id)) {
+                    node.classed('highlighted', true)
+                        .style('opacity', 1)
+                        .select('circle')
+                        .attr('r', 15)
+                        .style('stroke', '#ffd700')
+                        .style('stroke-width', 3);
+                    
+                    node.select('text')
+                        .style('font-size', '18px')
+                        .style('font-weight', 'bold');
+                } else {
+                    node.classed('dimmed', true)
+                        .style('opacity', 0.2);
+                }
+            });
+            
+            // Highlight links in the loop
+            d3.selectAll('.link').each(function(d) {
+                const link = d3.select(this);
+                const sourceIndex = loopNodes.indexOf(d.source.id);
+                const targetIndex = loopNodes.indexOf(d.target.id);
+                
+                if (sourceIndex !== -1 && targetIndex !== -1) {
+                    const nextIndex = (sourceIndex + 1) % loopNodes.length;
+                    if (targetIndex === nextIndex) {
+                        link.classed('highlighted', true)
+                            .style('opacity', 1)
+                            .style('stroke-width', 4);
+                    }
+                } else {
+                    link.classed('dimmed', true)
+                        .style('opacity', 0.1);
+                }
+            });
+            
+            // Highlight the selected loop in the list
+            document.querySelectorAll('.feedback-loop-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.loopId === loopId);
+            });
+        }
+
+        function resetFeedbackLoopHighlights() {
+            // Reset nodes
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .select('circle')
+                .attr('r', d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
+                .style('stroke', null)
+                .style('stroke-width', null);
+            
+            d3.selectAll('.node text')
+                .style('font-size', d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
+                .style('font-weight', d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal');
+            
+            // Reset links
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 0.6)
+                .style('stroke-width', d => d.strength === 'strong' ? 4 : d.strength === 'medium' ? 2 : 1);
+            
+            // Reset list selection
+            document.querySelectorAll('.feedback-loop-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        function filterFeedbackLoops(polarity) {
+            const resultsDiv = document.getElementById('feedback-loop-results');
+            const loops = resultsDiv.querySelectorAll('.feedback-loop-group');
+            
+            loops.forEach(group => {
+                group.style.display = group.classList.contains(polarity) ? 'block' : 'none';
+            });
+            
+            // Update button states
+            document.querySelectorAll('.feedback-loop-polarity button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.toLowerCase().includes(polarity));
+            });
+        }
+
+        // Function to load feedback loops
+        async function loadFeedbackLoops() {
+            try {
+                const response = await pyodide.runPythonAsync(`
+                    from feedback_loops import get_feedback_loops_by_length
+                    get_feedback_loops_by_length(3)
+                `);
+                
+                const data = JSON.parse(response);
+                
+                if (data.error) {
+                    console.error('Error loading feedback loops:', data.error);
+                    return;
+                }
+                
+                const feedbackLoopsContainer = document.getElementById('feedback-loops-container');
+                feedbackLoopsContainer.innerHTML = '';
+                
+                // Process and display feedback loops
+                for (const [length, loops] of Object.entries(data.feedback_loops)) {
+                    const lengthSection = document.createElement('div');
+                    lengthSection.className = 'feedback-loops-section';
+                    
+                    const lengthHeader = document.createElement('h3');
+                    lengthHeader.textContent = `Feedback Loops of Length ${length}`;
+                    lengthSection.appendChild(lengthHeader);
+                    
+                    // Display positive feedback loops
+                    if (loops.positive.length > 0) {
+                        const positiveSection = document.createElement('div');
+                        positiveSection.className = 'feedback-loops-subsection';
+                        
+                        const positiveHeader = document.createElement('h4');
+                        positiveHeader.textContent = 'Positive Feedback Loops';
+                        positiveSection.appendChild(positiveHeader);
+                        
+                        const positiveList = document.createElement('ul');
+                        loops.positive.forEach(loop => {
+                            const loopItem = document.createElement('li');
+                            loopItem.textContent = loop.node_names.join(' → ');
+                            positiveList.appendChild(loopItem);
+                        });
+                        positiveSection.appendChild(positiveList);
+                        lengthSection.appendChild(positiveSection);
+                    }
+                    
+                    // Display negative feedback loops
+                    if (loops.negative.length > 0) {
+                        const negativeSection = document.createElement('div');
+                        negativeSection.className = 'feedback-loops-subsection';
+                        
+                        const negativeHeader = document.createElement('h4');
+                        negativeHeader.textContent = 'Negative Feedback Loops';
+                        negativeSection.appendChild(negativeHeader);
+                        
+                        const negativeList = document.createElement('ul');
+                        loops.negative.forEach(loop => {
+                            const loopItem = document.createElement('li');
+                            loopItem.textContent = loop.node_names.join(' → ');
+                            negativeList.appendChild(loopItem);
+                        });
+                        negativeSection.appendChild(negativeList);
+                        lengthSection.appendChild(negativeSection);
+                    }
+                    
+                    feedbackLoopsContainer.appendChild(lengthSection);
+                }
+            } catch (error) {
+                console.error('Error loading feedback loops:', error);
+            }
+        }
 
     </script>
 </body>
