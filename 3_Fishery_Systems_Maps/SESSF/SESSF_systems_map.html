@@ -1222,8 +1222,11 @@
             diagnosticsDiv.className = 'diagnostics-lab';
             
             // Variable Categories
-            const variableCategoriesSection = createBasicSection("Variable Categories");
+            const variableCategoriesSection = createBasicSection("Domains");
             variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
+                <button class="filter-button" onclick="showFocalNode()">
+                    <span class="color-dot" style="background-color: #20B2AA;"></span>Focal Variables
+                </button>
                 <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')">
                     <span class="color-dot" style="background-color: #ff0000;"></span>Stock
                 </button>
@@ -2035,6 +2038,8 @@
         // Add domain color mapping function
         function getDomainColor(domain) {
             const colorMap = {
+                'Focal Factors': '#20B2AA',              // Teal for focal variables
+                'FOCAL FACTORS': '#20B2AA',              // Teal for focal variables (uppercase)
                 'Stock': '#ff0000',                    // Red
                 'Technical': '#8B4513',                // Brown
                 'Environmental-Ecosystem': '#228B22',   // Forest Green
@@ -2616,66 +2621,66 @@
             resetFilters(); // Always reset filters before showing a new centrality metric
             try {
                 // First, reset all nodes to very dim state
-                d3.selectAll('.node')
-                    .classed('high-centrality', false)
+            d3.selectAll('.node')
+                .classed('high-centrality', false)
                     .style('opacity', 0.15) // Reduced opacity for non-central nodes
-                    .select('circle')
-                    .style('stroke', null)
-                    .style('stroke-width', null)
-                    .attr('r', 10);
-                
+                .select('circle')
+                .style('stroke', null)
+                .style('stroke-width', null)
+                .attr('r', 10);
+            
                 // Dim all links
                 d3.selectAll('.link')
                     .style('opacity', 0.1); // Dim the links as well
                 
-                d3.selectAll('.node text')
-                    .style('font-size', '14px')
+            d3.selectAll('.node text')
+                .style('font-size', '14px')
                     .style('font-weight', 'normal')
                     .style('opacity', 0.15); // Dim the text labels too
 
-                // Update button states
-                document.querySelectorAll('.centrality-button').forEach(button => {
-                    button.classList.toggle('active', 
-                        button.textContent.toLowerCase().includes(metric));
-                });
-
-                // Make sure the filter section is expanded
-                const centralitySection = document.querySelector('.centrality-section-container');
+            // Update button states
+            document.querySelectorAll('.centrality-button').forEach(button => {
+                button.classList.toggle('active', 
+                    button.textContent.toLowerCase().includes(metric));
+            });
+            
+            // Make sure the filter section is expanded
+            const centralitySection = document.querySelector('.centrality-section-container');
                 if (centralitySection) {
-                    const contentDiv = centralitySection.querySelector('.filter-section-content');
+            const contentDiv = centralitySection.querySelector('.filter-section-content');
                     if (contentDiv && !contentDiv.classList.contains('expanded')) {
-                        contentDiv.classList.add('expanded');
+                contentDiv.classList.add('expanded');
                         const toggle = contentDiv.previousElementSibling?.querySelector('.filter-section-toggle');
-                        if (toggle) toggle.innerHTML = '&minus;';
+                if (toggle) toggle.innerHTML = '&minus;';
                     }
-                }
-
-                // Show explanation for the selected metric
-                const explanationDiv = document.getElementById('centrality-explanation');
+            }
+            
+            // Show explanation for the selected metric
+            const explanationDiv = document.getElementById('centrality-explanation');
                 if (!explanationDiv) return;
 
-                const descriptionEl = explanationDiv.querySelector('.metric-description');
-                const implicationsEl = explanationDiv.querySelector('.fishery-implications');
-                const usefulnessEl = explanationDiv.querySelector('.metric-usefulness');
-
-                // Define the content for each metric
-                const metricContent = {
-                    degree: {
-                        description: "Shows how many direct connections a variable has with other variables in the fishery system.",
-                        implications: "Variables with high degree are the 'busy intersections' of the system. They directly affect or are affected by many other parts of the fishery. For example, if 'Fish Stock' has a high degree, it means many factors directly impact the stock levels, and changes in stock levels directly affect many other aspects of the fishery.",
-                        usefulness: "Use this to find the most connected variables in your fishery. These are often good places to monitor or intervene, as changes here will have immediate effects on many other parts of the system."
-                    },
-                    betweenness: {
+            const descriptionEl = explanationDiv.querySelector('.metric-description');
+            const implicationsEl = explanationDiv.querySelector('.fishery-implications');
+            const usefulnessEl = explanationDiv.querySelector('.metric-usefulness');
+            
+            // Define the content for each metric
+            const metricContent = {
+                degree: {
+                    description: "Shows how many direct connections a variable has with other variables in the fishery system.",
+                    implications: "Variables with high degree are the 'busy intersections' of the system. They directly affect or are affected by many other parts of the fishery. For example, if 'Fish Stock' has a high degree, it means many factors directly impact the stock levels, and changes in stock levels directly affect many other aspects of the fishery.",
+                    usefulness: "Use this to find the most connected variables in your fishery. These are often good places to monitor or intervene, as changes here will have immediate effects on many other parts of the system."
+                },
+                betweenness: {
                         description: "Measures how often a variable acts as a bridge between other variables in the fishery system.",
                         implications: "Variables with high betweenness are important connectors or 'bottlenecks' in the system. For example, if 'Market Price' has high betweenness, it means it often serves as a key link in the chain of effects between different parts of the fishery.",
                         usefulness: "Use this to identify variables that act as important intermediaries. These variables can be critical control points in the system, as they bridge different parts of the fishery network."
-                    },
-                    closeness: {
+                },
+                closeness: {
                         description: "Measures how quickly effects from one variable can reach other variables in the system.",
                         implications: "Variables with high closeness can rapidly influence many other parts of the system. For example, if 'Fishing Effort' has high closeness, changes in effort levels can quickly ripple through the entire fishery system.",
                         usefulness: "Use this to identify variables that can have rapid system-wide effects. These are important to monitor for early warning signs of system-wide changes."
-                    },
-                    eigenvector: {
+                },
+                eigenvector: {
                         description: "Measures the influence of a variable based on how connected it is to other highly connected variables.",
                         implications: "Variables with high eigenvector centrality are connected to many other important variables. For example, if 'Management Regulations' has high eigenvector centrality, it means it's connected to many other influential aspects of the fishery.",
                         usefulness: "Use this to find the most influential variables in terms of their connections to other important variables. These often represent key leverage points in the system."
@@ -2684,15 +2689,15 @@
                         description: "Measures the influence of a variable by considering both its direct connections and the influence of the variables it's connected to, with a decay factor that reduces the importance of longer paths.",
                         implications: "Variables with high Katz centrality are influential through both direct and indirect connections. For example, if 'Fishing Regulations' has high Katz centrality, it means it not only directly affects other variables but also has significant influence through its connections to other important variables in the system.",
                         usefulness: "Use this to identify variables that have strong overall influence in the fishery system, considering both direct and indirect effects. These variables are particularly important for long-term management strategies and system-wide interventions."
-                    }
-                };
-
+                }
+            };
+            
                 // Update the explanation content if elements exist
                 if (descriptionEl && implicationsEl && usefulnessEl && metricContent[metric]) {
-                    descriptionEl.textContent = metricContent[metric].description;
-                    implicationsEl.textContent = metricContent[metric].implications;
-                    usefulnessEl.textContent = metricContent[metric].usefulness;
-                    explanationDiv.style.display = 'block';
+            descriptionEl.textContent = metricContent[metric].description;
+            implicationsEl.textContent = metricContent[metric].implications;
+            usefulnessEl.textContent = metricContent[metric].usefulness;
+            explanationDiv.style.display = 'block';
                 }
 
                 // Fetch and display the centrality table from Pyodide
@@ -2714,8 +2719,8 @@
                 if (result.error) {
                     container.innerHTML = `<div style='color: red;'>${result.error}</div>`;
                     return;
-                }
-
+            }
+            
                 if (!result.nodes || result.nodes.length === 0) {
                     container.innerHTML = '<div style="color: #888;">No data available for this metric.</div>';
                     return;
@@ -2723,9 +2728,9 @@
 
                 // Create a map of node IDs to their centrality values
                 const centralityMap = new Map(result.nodes.map(node => [node.node_id, node.centrality]));
-
+            
                 // Update node visualization based on centrality
-                d3.selectAll('.node').each(function(d) {
+            d3.selectAll('.node').each(function(d) {
                     if (!d) return; // Skip if node data is null
                     
                     const nodeId = d.id;
@@ -2759,7 +2764,7 @@
                     if (circle.node()) {
                         circle
                             .attr('r', radius)
-                            .style('stroke', '#ffd700')
+                        .style('stroke', '#ffd700')
                             .style('stroke-width', 2);
                     }
 
@@ -2769,9 +2774,9 @@
                             .style('font-size', `${fontSize}px`)
                             .style('font-weight', 'bold')
                             .style('opacity', 1); // Full opacity for central node labels
-                    }
-                });
-
+                }
+            });
+            
                 // Update force simulation to handle new node sizes
                 if (typeof simulation !== 'undefined') {
                     simulation.force("collision", d3.forceCollide().radius(d => {
@@ -2799,7 +2804,7 @@
                                 <td style="padding: 8px; text-align: left;">${node.domain || 'Unknown'}</td>
                                 <td style="padding: 8px; text-align: right;">${(node.centrality || 0).toFixed(1)}</td>
                             </tr>
-                        `).join('')}
+                    `).join('')}
                     </tbody>
                 </table>`;
                 
@@ -2810,7 +2815,7 @@
                 const container = document.getElementById('centrality-table-container');
                 if (container) {
                     container.innerHTML = `<div style='color: red;'>Error loading centrality data: ${error.message}</div>`;
-                }
+        }
             }
         }
 
