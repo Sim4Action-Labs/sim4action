@@ -1254,12 +1254,6 @@
             link.on("mouseover", showLinkTooltip)
                 .on("mouseout", hideTooltip);
 
-            // Expand the first filter section
-            const firstFilterHeader = document.querySelector('.filter-section-header');
-            if (firstFilterHeader) {
-                toggleSection(firstFilterHeader.nextElementSibling);
-            }
-
             // Add click handler to SVG for resetting node selection
             svg.on("click", resetNodeSelection);
         }
