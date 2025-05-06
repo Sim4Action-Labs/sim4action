@@ -229,21 +229,21 @@
             padding: 0 10px;
         }
         .filter-section-content.expanded {
-            max-height: 300px;
-            padding: 10px;
+            max-height: 400px; /* Increased max height to fit more content */
+            padding: 8px;
             overflow-y: auto;
         }
         .filter-button {
             display: flex;
             align-items: center;
             width: 100%;
-            margin: 4px 0;
-            padding: 8px 12px;
+            margin: 2px 0; /* Reduced margin from 4px to 2px */
+            padding: 6px 8px; /* Reduced padding from 8px 12px to 6px 8px */
             border: 1px solid #ddd;
             border-radius: 4px;
             background-color: white;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px; /* Reduced font size from 12px to 11px */
             text-align: left;
             transition: all 0.2s ease;
         }
@@ -262,8 +262,8 @@
         }
         .section-label {
             font-weight: bold;
-            margin: 15px 0 10px 0;
-            font-size: 14px;
+            margin: 10px 0 6px 0; /* Reduced margin from 15px 0 10px 0 to 10px 0 6px 0 */
+            font-size: 13px; /* Reduced from 14px to 13px */
         }
         select {
             width: 100%;
@@ -1042,6 +1042,54 @@
             background-color: #e2e3e5;
             color: #383d41;
         }
+
+        .simple-list {
+            list-style: disc;
+            padding-left: 20px;
+            margin: 5px 0;
+        }
+
+        /* Feedback loop styles */
+        .feedbackloop-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .feedbackloop-indicator.reinforcing {
+            background-color: #28a745;
+        }
+        
+        .feedbackloop-indicator.balancing {
+            background-color: #dc3545;
+        }
+        
+        #feedback-loop-list {
+            border-top: 1px solid #eee;
+            margin-top: 5px;
+        }
+        
+        .feedback-loop-item {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        
+        .feedback-loop-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .feedback-loop-item.selected {
+            background-color: #e9f7ef;
+            font-weight: bold;
+        }
+        
+        /* Toolbar styles */
     </style>
 </head>
 <body>
@@ -1653,32 +1701,32 @@
             // Variable Categories
             const variableCategoriesSection = createBasicSection("Domains");
             variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
                     <i class="fa fa-info-circle"></i> Filter to show connections between specific domains in the fishery system
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button class="filter-button" onclick="showFocalNode()" title="Highlight the central variables in this system">
-                        <span class="color-dot" style="background-color: #20B2AA;"></span>Focal Variables
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
+                    <button class="filter-button" onclick="showFocalNode()" title="Highlight the central variables in this system" style="padding: 5px;">
+                        <span class="color-dot" style="background-color: #20B2AA;"></span>Focal
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')" title="Variables related to fish stock and biomass">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')" title="Variables related to fish stock and biomass" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #ff0000;"></span>Stock
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Technical', 'domains')" title="Technology and fishing methodology variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Technical', 'domains')" title="Technology and fishing methodology variables" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #8B4513;"></span>Technical
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Environmental-Ecosystem', 'domains')" title="Environmental and ecosystem factors">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Environmental-Ecosystem', 'domains')" title="Environmental and ecosystem factors" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #228B22;"></span>Environment
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')" title="Economic and market-related variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')" title="Economic and market-related variables" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #0000FF;"></span>Economics
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')" title="Management and regulatory variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')" title="Management and regulatory variables" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #800080;"></span>Management
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')" title="Social and community variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')" title="Social and community variables" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #FF69B4;"></span>Social
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Indigenous', 'domains')" title="Indigenous knowledge and practices">
+                    <button class="filter-button" onclick="toggleFilter(this, 'Indigenous', 'domains')" title="Indigenous knowledge and practices" style="padding: 5px;">
                         <span class="color-dot" style="background-color: #FFD700;"></span>Indigenous
                     </button>
                 </div>
@@ -1688,15 +1736,15 @@
             // Relationship Types
             const relationshipTypesSection = createBasicSection("Relationship Types");
             relationshipTypesSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
                     <i class="fa fa-info-circle"></i> Filter by how variables affect each other
                 </div>
-                <div style="display: flex; gap: 5px;">
-                    <button class="filter-button" onclick="toggleFilter(this, 'same', 'types')" title="When one variable increases, the other also increases">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
+                    <button class="filter-button" onclick="toggleFilter(this, 'same', 'types')" title="When one variable increases, the other also increases" style="padding: 5px;">
                         <div class="arrow-indicator" style="background-color: #28a745;"></div>Same Direction
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'opposite', 'types')" title="When one variable increases, the other decreases">
-                        <div class="arrow-indicator" style="background-color: #dc3545;"></div>Opposite Direction
+                    <button class="filter-button" onclick="toggleFilter(this, 'opposite', 'types')" title="When one variable increases, the other decreases" style="padding: 5px;">
+                        <div class="arrow-indicator" style="background-color: #dc3545;"></div>Opposite
                     </button>
                 </div>
             `;
@@ -1705,17 +1753,17 @@
             // Relationship Strength
             const strengthSection = createBasicSection("Relationship Strength");
             strengthSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
                     <i class="fa fa-info-circle"></i> Filter connections by strength of influence
                 </div>
-                <div style="display: flex; gap: 5px;">
-                    <button class="filter-button" onclick="toggleFilter(this, 'strong', 'strengths')" title="Major influence between variables">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;">
+                    <button class="filter-button" onclick="toggleFilter(this, 'strong', 'strengths')" title="Major influence between variables" style="padding: 5px;">
                         <div class="strength-indicator strong"></div>Strong
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'medium', 'strengths')" title="Moderate influence between variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'medium', 'strengths')" title="Moderate influence between variables" style="padding: 5px;">
                         <div class="strength-indicator medium"></div>Medium
                     </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'weak', 'strengths')" title="Minor influence between variables">
+                    <button class="filter-button" onclick="toggleFilter(this, 'weak', 'strengths')" title="Minor influence between variables" style="padding: 5px;">
                         <div class="strength-indicator weak"></div>Weak
                     </button>
                 </div>
@@ -1725,24 +1773,24 @@
             // Temporal Scale
             const temporalSection = createBasicSection("Temporal Scale");
             temporalSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
                     <i class="fa fa-info-circle"></i> Filter by how quickly effects occur between variables
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                    <button class="filter-button" data-delay="days" onclick="toggleFilter(this, 'days', 'delays')" title="Effects occur within days">
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
+                    <button class="filter-button" data-delay="days" onclick="toggleFilter(this, 'days', 'delays')" title="Effects occur within days" style="padding: 5px;">
                         <div class="delay-indicator"></div>Days
                     </button>
-                    <button class="filter-button" data-delay="months" onclick="toggleFilter(this, 'months', 'delays')" title="Effects take months to occur">
+                    <button class="filter-button" data-delay="months" onclick="toggleFilter(this, 'months', 'delays')" title="Effects take months to occur" style="padding: 5px;">
                         <div class="delay-indicator"></div>Months
                     </button>
-                    <button class="filter-button" data-delay="years" onclick="toggleFilter(this, 'years', 'delays')" title="Effects take years to occur">
+                    <button class="filter-button" data-delay="years" onclick="toggleFilter(this, 'years', 'delays')" title="Effects take years to occur" style="padding: 5px;">
                         <div class="delay-indicator"></div>Years
                     </button>
-                    <button class="filter-button" data-delay="decade" onclick="toggleFilter(this, 'decade', 'delays')" title="Effects take a decade or more">
+                    <button class="filter-button" data-delay="decade" onclick="toggleFilter(this, 'decade', 'delays')" title="Effects take a decade or more" style="padding: 5px;">
                         <div class="delay-indicator"></div>Decade+
                     </button>
                 </div>
-                <button class="filter-button" data-delay="hide_temporal" onclick="toggleFilter(this, 'hide_temporal', 'delays')" style="margin-top: 5px; font-size: 12px;" title="Removes temporal styling from connections">
+                <button class="filter-button" data-delay="hide_temporal" onclick="toggleFilter(this, 'hide_temporal', 'delays')" style="margin-top: 3px; font-size: 10px; padding: 4px;" title="Removes temporal styling from connections">
                     <div class="delay-indicator"></div>Hide Temporal Styling
                 </button>
             `;
@@ -1751,40 +1799,32 @@
             // Feedback Loops
             const feedbackSection = createBasicSection("Feedback Loops");
             feedbackSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
-                    <i class="fa fa-info-circle"></i> Identify circular relationships where variables affect each other in loops
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Explore circular influence patterns in the system
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Loop Length:</div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
-                        <button class="filter-button" onclick="showFeedbackLoops(2)" title="Show loops with 2 variables">2-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(3)" title="Show loops with 3 variables">3-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(4)" title="Show loops with 4 variables">4-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(5)" title="Show loops with 5 variables">5-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(6)" title="Show loops with 6 variables">6-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(7)" title="Show loops with 7 variables">7-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(8)" title="Show loops with 8 variables">8-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(9)" title="Show loops with 9 variables">9-Node</button>
-                        <button class="filter-button" onclick="showFeedbackLoops(10)" title="Show loops with 10 variables">10-Node</button>
-                    </div>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 5px;">
-                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Filter by Loop Type:</div>
-                        <div style="display: flex; gap: 5px;">
-                            <button class="filter-button" onclick="filterFeedbackLoops('positive')" title="Self-reinforcing loops that amplify change">Positive Loops</button>
-                            <button class="filter-button" onclick="filterFeedbackLoops('negative')" title="Self-balancing loops that counter change">Negative Loops</button>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Show Loop Only:</div>
-                        <label class="switch" style="margin: 0;">
-                            <input type="checkbox" id="loopOnlySwitch" title="Toggle between showing only the loop or the entire network">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
+                    <button class="filter-button" onclick="startFeedbackLoopSearch()" title="Find all feedback loops in the system" style="padding: 5px;">
+                        <i class="fa fa-refresh" style="margin-right: 3px;"></i>Find All Loops
+                    </button>
+                    <button class="filter-button reset-button" onclick="resetFeedbackLoops()" title="Clear all feedback loop highlights" style="padding: 5px;">
+                        <i class="fa fa-times" style="margin-right: 3px;"></i>Clear Loops
+                    </button>
                 </div>
-                <div id="feedback-loop-results" class="results-panel"></div>
+                <div style="font-size: 11px; margin-top: 5px; color: #666;">
+                    Filter by loop type:
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin-top: 2px;">
+                    <button class="filter-button filter-reinforcing" onclick="filterFeedbackLoops('reinforcing')" title="Show only reinforcing feedback loops" style="padding: 5px;">
+                        <div class="feedbackloop-indicator reinforcing"></div>Reinforcing
+                    </button>
+                    <button class="filter-button filter-balancing" onclick="filterFeedbackLoops('balancing')" title="Show only balancing feedback loops" style="padding: 5px;">
+                        <div class="feedbackloop-indicator balancing"></div>Balancing
+                    </button>
+                </div>
+                <div id="feedback-results" style="margin-top: 5px; font-size: 11px;">
+                    <div id="feedback-loop-stats"></div>
+                    <div id="feedback-loop-list" style="max-height: 120px; overflow-y: auto; margin-top: 5px;"></div>
+                </div>
             `;
             diagnosticsDiv.appendChild(feedbackSection);
 
@@ -5593,6 +5633,363 @@ def get_top_centrality_nodes(metric):
         
         // Call this at the end to ensure Chart.js is loaded
         loadChartJs();
+
+        // Add these new feedback loop functions
+        async function startFeedbackLoopSearch() {
+            try {
+                // Show loading indicator
+                const statsDiv = document.getElementById('feedback-loop-stats');
+                if (statsDiv) {
+                    statsDiv.innerHTML = '<div style="text-align: center;"><i class="fa fa-spinner fa-spin"></i> Searching for feedback loops...</div>';
+                }
+
+                // Reset previous state
+                resetFeedbackLoops();
+                
+                // Loop lengths to search for - we'll look for loops of length 2 to 6
+                const loopLengths = [2, 3, 4, 5, 6];
+                
+                // Combined results for all loops
+                const allLoops = {
+                    reinforcing: [],
+                    balancing: []
+                };
+                
+                // Search for all loop lengths
+                for (const length of loopLengths) {
+                    // Call Python function via Pyodide
+                    const result = await window.pyodide.runPythonAsync(`
+                        import json
+                        from feedback_loops import get_feedback_loops_by_length
+                        result = get_feedback_loops_by_length(${length})
+                        result
+                    `);
+                    
+                    const data = JSON.parse(result);
+                    
+                    if (!data.error && data.feedback_loops && data.feedback_loops[length]) {
+                        // Add positive (reinforcing) loops
+                        if (data.feedback_loops[length].positive) {
+                            allLoops.reinforcing.push(...data.feedback_loops[length].positive);
+                        }
+                        
+                        // Add negative (balancing) loops
+                        if (data.feedback_loops[length].negative) {
+                            allLoops.balancing.push(...data.feedback_loops[length].negative);
+                        }
+                    }
+                }
+                
+                // Store for filtering
+                window.feedbackLoops = allLoops;
+                
+                // Display statistics
+                const totalLoops = allLoops.reinforcing.length + allLoops.balancing.length;
+                if (statsDiv) {
+                    statsDiv.innerHTML = `
+                        <strong>Found ${totalLoops} feedback loops:</strong>
+                        <div style="display: flex; justify-content: space-between; margin-top: 3px;">
+                            <span><div class="feedbackloop-indicator reinforcing" style="display: inline-block; margin-right: 3px;"></div> ${allLoops.reinforcing.length} reinforcing</span>
+                            <span><div class="feedbackloop-indicator balancing" style="display: inline-block; margin-right: 3px;"></div> ${allLoops.balancing.length} balancing</span>
+                        </div>
+                    `;
+                }
+                
+                // Display all loops
+                displayFeedbackLoopsList(allLoops);
+                
+                // Highlight all nodes involved in feedback loops
+                highlightFeedbackLoopNodes(allLoops);
+                
+            } catch (error) {
+                console.error('Error searching for feedback loops:', error);
+                const statsDiv = document.getElementById('feedback-loop-stats');
+                if (statsDiv) {
+                    statsDiv.innerHTML = `<div style="color: red;">Error: ${error.message}</div>`;
+                }
+            }
+        }
+        
+        function resetFeedbackLoops() {
+            // Clear any highlighted loops
+            d3.selectAll('.node').classed('highlighted', false).classed('dimmed', false)
+                .style('opacity', 1)
+                .select('circle').attr('r', d => d.radius || 10);
+                
+            d3.selectAll('.node text')
+                .style('font-size', '12px')
+                .style('font-weight', 'normal');
+                
+            d3.selectAll('.link').classed('highlighted', false).classed('dimmed', false)
+                .style('opacity', 1)
+                .style('stroke-width', d => d.strength === 'strong' ? 3 : d.strength === 'medium' ? 2 : 1);
+                
+            // Clear results
+            const statsDiv = document.getElementById('feedback-loop-stats');
+            if (statsDiv) statsDiv.innerHTML = '';
+            
+            const listDiv = document.getElementById('feedback-loop-list');
+            if (listDiv) listDiv.innerHTML = '';
+            
+            // Reset filter buttons
+            document.querySelectorAll('.filter-reinforcing, .filter-balancing').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Clear stored loops
+            window.feedbackLoops = null;
+            window.currentLoopFilter = null;
+        }
+        
+        function filterFeedbackLoops(type) {
+            if (!window.feedbackLoops) return;
+            
+            // Toggle filter state
+            if (window.currentLoopFilter === type) {
+                window.currentLoopFilter = null;
+                document.querySelectorAll('.filter-reinforcing, .filter-balancing').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                // Show all loops again
+                displayFeedbackLoopsList(window.feedbackLoops);
+                highlightFeedbackLoopNodes(window.feedbackLoops);
+            } else {
+                window.currentLoopFilter = type;
+                // Update button states
+                document.querySelectorAll('.filter-reinforcing, .filter-balancing').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                if (type === 'reinforcing') {
+                    document.querySelector('.filter-reinforcing').classList.add('active');
+                } else if (type === 'balancing') {
+                    document.querySelector('.filter-balancing').classList.add('active');
+                }
+                
+                // Filter loops by type
+                const filteredLoops = {
+                    reinforcing: type === 'reinforcing' ? window.feedbackLoops.reinforcing : [],
+                    balancing: type === 'balancing' ? window.feedbackLoops.balancing : []
+                };
+                
+                // Display filtered loops
+                displayFeedbackLoopsList(filteredLoops);
+                highlightFeedbackLoopNodes(filteredLoops);
+            }
+        }
+        
+        function displayFeedbackLoopsList(loops) {
+            const listDiv = document.getElementById('feedback-loop-list');
+            if (!listDiv) return;
+            
+            const totalLoops = loops.reinforcing.length + loops.balancing.length;
+            if (totalLoops === 0) {
+                listDiv.innerHTML = '<div style="color: #888; padding: 5px;">No loops match current filter.</div>';
+                return;
+            }
+            
+            let html = '';
+            
+            // Display reinforcing loops
+            if (loops.reinforcing && loops.reinforcing.length > 0) {
+                loops.reinforcing.forEach((loop, index) => {
+                    const loopId = `reinforcing-${index}`;
+                    html += `
+                        <div class="feedback-loop-item" data-loop-id="${loopId}" onclick="highlightSpecificLoop('${loopId}', true)">
+                            <div class="feedbackloop-indicator reinforcing"></div>
+                            <div>${formatLoopPath(loop)}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            // Display balancing loops
+            if (loops.balancing && loops.balancing.length > 0) {
+                loops.balancing.forEach((loop, index) => {
+                    const loopId = `balancing-${index}`;
+                    html += `
+                        <div class="feedback-loop-item" data-loop-id="${loopId}" onclick="highlightSpecificLoop('${loopId}', false)">
+                            <div class="feedbackloop-indicator balancing"></div>
+                            <div>${formatLoopPath(loop)}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+            listDiv.innerHTML = html;
+        }
+        
+        function formatLoopPath(loop) {
+            // Get node names from the loop
+            const nodes = loop.node_names || loop.nodes || [];
+            if (nodes.length === 0) return 'Empty loop';
+            
+            // Create path with arrows
+            return nodes.map(name => {
+                // Truncate long names
+                return name.length > 15 ? name.substring(0, 12) + '...' : name;
+            }).join(' → ') + ` → ${nodes[0]}`;
+        }
+        
+        function highlightFeedbackLoopNodes(loops) {
+            // Reset previous highlights
+            resetFeedbackLoopHighlights();
+            
+            // Create a set of all nodes involved in any loop
+            const allLoopNodes = new Set();
+            
+            // Add all nodes from reinforcing loops
+            if (loops.reinforcing) {
+                loops.reinforcing.forEach(loop => {
+                    if (loop.nodes) {
+                        loop.nodes.forEach(node => allLoopNodes.add(node));
+                    } else if (loop.node_names) {
+                        loop.node_names.forEach(node => allLoopNodes.add(node));
+                    }
+                });
+            }
+            
+            // Add all nodes from balancing loops
+            if (loops.balancing) {
+                loops.balancing.forEach(loop => {
+                    if (loop.nodes) {
+                        loop.nodes.forEach(node => allLoopNodes.add(node));
+                    } else if (loop.node_names) {
+                        loop.node_names.forEach(node => allLoopNodes.add(node));
+                    }
+                });
+            }
+            
+            // If no nodes found, exit
+            if (allLoopNodes.size === 0) {
+                return;
+            }
+            
+            // Convert Set to Array for easier processing
+            const loopNodesArray = Array.from(allLoopNodes);
+            
+            // Highlight all nodes involved in any loop
+            d3.selectAll('.node').each(function(d) {
+                const isInLoop = loopNodesArray.includes(d.id) || loopNodesArray.includes(d.name);
+                d3.select(this)
+                    .classed('highlighted', isInLoop)
+                    .classed('dimmed', !isInLoop)
+                    .style('opacity', isInLoop ? 1 : 0.2);
+            });
+            
+            // Highlight all links that connect loop nodes
+            d3.selectAll('.link').each(function(d) {
+                const sourceInLoop = loopNodesArray.includes(d.source.id) || loopNodesArray.includes(d.source.name);
+                const targetInLoop = loopNodesArray.includes(d.target.id) || loopNodesArray.includes(d.target.name);
+                // Highlight link if both source and target are in loops
+                const isInLoop = sourceInLoop && targetInLoop;
+                
+                d3.select(this)
+                    .classed('highlighted', isInLoop)
+                    .classed('dimmed', !isInLoop)
+                    .style('opacity', isInLoop ? 1 : 0.1);
+            });
+        }
+        
+        function highlightSpecificLoop(loopId, isReinforcing) {
+            if (!window.feedbackLoops) return;
+            
+            // Parse loop ID to get type and index
+            const parts = loopId.split('-');
+            const index = parseInt(parts[1]);
+            
+            // Get the loop data
+            const loopData = isReinforcing ? 
+                window.feedbackLoops.reinforcing[index] : 
+                window.feedbackLoops.balancing[index];
+                
+            if (!loopData) return;
+            
+            // Highlight only nodes in this specific loop
+            const loopNodes = loopData.node_names || loopData.nodes || [];
+            
+            // Reset previous highlights
+            resetFeedbackLoopHighlights();
+            
+            // Highlight nodes in this loop
+            d3.selectAll('.node').each(function(d) {
+                const isInLoop = loopNodes.includes(d.id) || loopNodes.includes(d.name);
+                const node = d3.select(this);
+                node.classed('highlighted', isInLoop).classed('dimmed', !isInLoop);
+                
+                if (isInLoop) {
+                    node.style('opacity', 1)
+                        .select('circle').attr('r', 15);
+                    node.select('text')
+                        .style('font-size', '14px')
+                        .style('font-weight', 'bold');
+                } else {
+                    node.style('opacity', 0.1)
+                        .select('circle').attr('r', d.radius || 10);
+                    node.select('text')
+                        .style('font-size', '12px')
+                        .style('font-weight', 'normal');
+                }
+            });
+            
+            // Get pairs of connected nodes in the loop
+            const loopPairs = [];
+            for (let i = 0; i < loopNodes.length; i++) {
+                loopPairs.push([
+                    loopNodes[i], 
+                    loopNodes[(i + 1) % loopNodes.length]
+                ]);
+            }
+            
+            // Highlight links that are part of this loop
+            d3.selectAll('.link').each(function(d) {
+                // Check if this link is part of the loop
+                const isLoopLink = loopPairs.some(pair => {
+                    return ((d.source.id === pair[0] || d.source.name === pair[0]) &&
+                            (d.target.id === pair[1] || d.target.name === pair[1])) ||
+                           ((d.source.id === pair[1] || d.source.name === pair[1]) &&
+                            (d.target.id === pair[0] || d.target.name === pair[0]));
+                });
+                
+                const link = d3.select(this);
+                link.classed('highlighted', isLoopLink).classed('dimmed', !isLoopLink);
+                if (isLoopLink) {
+                    link.style('opacity', 1).style('stroke-width', 3);
+                } else {
+                    link.style('opacity', 0.1).style('stroke-width', 1);
+                }
+            });
+            
+            // Highlight the selected loop item
+            document.querySelectorAll('.feedback-loop-item').forEach(item => {
+                item.classList.toggle('selected', item.dataset.loopId === loopId);
+            });
+        }
+        
+        function resetFeedbackLoopHighlights() {
+            // Reset node styles to normal
+            d3.selectAll('.node')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .select('circle')
+                .attr('r', d => d.radius || 10);
+            
+            d3.selectAll('.node text')
+                .style('font-size', '12px')
+                .style('font-weight', 'normal');
+            
+            // Reset link styles to normal
+            d3.selectAll('.link')
+                .classed('highlighted', false)
+                .classed('dimmed', false)
+                .style('opacity', 1)
+                .style('stroke-width', d => d.strength === 'strong' ? 3 : d.strength === 'medium' ? 2 : 1);
+                
+            // Remove selected state from loop items
+            document.querySelectorAll('.feedback-loop-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
     </script>
     <!-- Load Chart.js properly at the end of the body for better performance -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
