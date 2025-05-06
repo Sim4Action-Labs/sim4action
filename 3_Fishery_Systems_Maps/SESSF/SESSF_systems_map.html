@@ -4986,13 +4986,107 @@ def get_top_centrality_nodes(metric):
                         content: " ↓";
                         color: #495057;
                     }
+                    .metric-explanation {
+                        margin-bottom: 20px;
+                        border: 1px solid #dee2e6;
+                        border-radius: 8px;
+                        overflow: hidden;
+                    }
+                    .metric-explanation summary {
+                        padding: 12px 15px;
+                        background-color: #f8f9fa;
+                        cursor: pointer;
+                        font-weight: bold;
+                        user-select: none;
+                    }
+                    .metric-explanation summary:hover {
+                        background-color: #e9ecef;
+                    }
+                    .metric-explanation-content {
+                        padding: 15px;
+                        background-color: #fff;
+                    }
+                    .metric-card {
+                        border: 1px solid #dee2e6;
+                        border-radius: 8px;
+                        padding: 15px;
+                        margin-bottom: 15px;
+                    }
+                    .metric-card h4 {
+                        margin-top: 0;
+                        margin-bottom: 10px;
+                        color: #0d6efd;
+                    }
+                    .metric-card p {
+                        margin-bottom: 10px;
+                    }
+                    .metric-example {
+                        background-color: #f8f9fa;
+                        padding: 10px;
+                        border-radius: 5px;
+                        font-style: italic;
+                        margin-top: 10px;
+                    }
                 </style>
+            `;
+            
+            // Metric explanations
+            const metricExplanations = `
+                <details class="metric-explanation">
+                    <summary>📊 Understanding Centrality Metrics in Fishery Systems (Click to expand)</summary>
+                    <div class="metric-explanation-content">
+                        <p>Centrality metrics help identify the most influential variables in a fishery system. Here's what each metric means in this context:</p>
+                        
+                        <div class="metric-card">
+                            <h4>Degree Centrality</h4>
+                            <p><strong>What it is:</strong> Measures how many direct connections a variable has to other variables in the network.</p>
+                            <p><strong>In fishery context:</strong> Variables with high degree centrality are directly connected to many other variables, suggesting they have immediate impacts on or are impacted by numerous aspects of the fishery system.</p>
+                            <p><strong>Interpretation:</strong> High values indicate variables that may be key control points or those that are sensitive to changes in many parts of the system.</p>
+                            <div class="metric-example">Example: If "Catch Volume" has high degree centrality, it means it directly affects or is affected by many other variables like stock biomass, profit, fishing effort, etc., making it a central variable in the system's operation.</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h4>Betweenness Centrality</h4>
+                            <p><strong>What it is:</strong> Measures how often a variable acts as a bridge or intermediary between other variables.</p>
+                            <p><strong>In fishery context:</strong> Variables with high betweenness centrality often serve as connectors between different subsystems or aspects of the fishery.</p>
+                            <p><strong>Interpretation:</strong> High values suggest variables that may control or mediate the flow of effects through the system. These are often "bottleneck" variables where interventions might have widespread impacts.</p>
+                            <div class="metric-example">Example: If "Market Price" has high betweenness centrality, it may serve as a critical link between ecological variables (like stock biomass) and economic ones (like profit levels), meaning price dynamics can significantly influence how ecological changes affect economic outcomes.</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h4>Closeness Centrality</h4>
+                            <p><strong>What it is:</strong> Measures how quickly a variable can interact with all other variables in the network (based on shortest paths).</p>
+                            <p><strong>In fishery context:</strong> Variables with high closeness centrality can rapidly influence or be influenced by changes throughout the entire fishery system.</p>
+                            <p><strong>Interpretation:</strong> High values indicate variables that may experience or create system-wide effects more quickly than others.</p>
+                            <div class="metric-example">Example: If "Stock Biomass" has high closeness centrality, changes in this variable can rapidly affect many other parts of the system, suggesting that stock fluctuations could have fast-spreading consequences throughout the fishery.</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h4>Eigenvector Centrality</h4>
+                            <p><strong>What it is:</strong> Measures a variable's influence based on its connections to other influential variables.</p>
+                            <p><strong>In fishery context:</strong> Variables with high eigenvector centrality are connected to other important variables in the system, creating reinforcing networks of influence.</p>
+                            <p><strong>Interpretation:</strong> High values suggest variables that have strategic importance due to their connections with other key variables. These often represent leverage points where small changes can cascade through important pathways.</p>
+                            <div class="metric-example">Example: If "Fishing Effort" has high eigenvector centrality, it means it's connected to other highly influential variables, suggesting that management of fishing effort could have compounding effects through its connections to other important system variables.</div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h4>Katz Centrality</h4>
+                            <p><strong>What it is:</strong> Similar to eigenvector centrality but gives all variables a small base value, ensuring that even isolated variables have some importance.</p>
+                            <p><strong>In fishery context:</strong> Katz centrality provides a more balanced view of variable importance, especially in systems with disconnected components.</p>
+                            <p><strong>Interpretation:</strong> High values indicate influential variables, but this metric is more forgiving of variables that might be isolated from the main system yet still important.</p>
+                            <div class="metric-example">Example: If "Recruitment Rate" has high Katz centrality but lower scores in other metrics, it suggests that while this variable might not be highly connected to all parts of the system, it still plays a crucial role in the overall fishery dynamics.</div>
+                        </div>
+                        
+                        <p><strong>Using Multiple Metrics Together:</strong> Looking at all centrality metrics together provides a more complete understanding of a variable's role. Variables scoring high across multiple metrics are likely key leverage points in the fishery system where management interventions might be most effective.</p>
+                    </div>
+                </details>
             `;
             
             // Start building the HTML
             let html = sortIndicatorCSS + `
                 <div style="${containerStyle}">
-                    <h3 style="margin-top: 0; margin-bottom: 20px;">Comprehensive Centrality Metrics</h3>
+                    ${metricExplanations}
+                    <h3 style="margin-top: 20px; margin-bottom: 20px;">Comprehensive Centrality Metrics</h3>
                     <p style="margin-bottom: 20px;">This table shows all centrality metrics for all ${nodes.length} nodes in the network. <span style="font-weight: bold; color: #0d6efd;">Click any column header to sort the table.</span> Values are normalized (0-100).</p>
                     <p style="margin-bottom: 20px; color: #6c757d; font-style: italic;">Note: Only nodes with at least one centrality metric value are displayed here. Some nodes in the network may not appear because they are isolated, have very few connections, or fall below significance thresholds for centrality calculations.</p>
                     <div style="background-color: #e9ecef; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; align-items: center;">
@@ -5006,9 +5100,9 @@ def get_top_centrality_nodes(metric):
                                 <th style="${headerStyle}">Metrics Available</th>
             `;
             
-            // Add header for each metric
+            // Add header for each metric with tooltips
             metrics.forEach(metric => {
-                html += `<th style="${sortableHeaderStyle}" data-sortable="true" data-type="number">${metricLabels[metric]}</th>`;
+                html += `<th style="${sortableHeaderStyle}" data-sortable="true" data-type="number" title="Click for explanation of ${metricLabels[metric]} Centrality">${metricLabels[metric]}</th>`;
             });
             
             html += `
