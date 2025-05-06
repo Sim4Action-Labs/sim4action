@@ -4947,6 +4947,11 @@ def get_top_centrality_nodes(metric):
                 cursor: pointer;
             `;
             
+            const sortableHeaderStyle = `
+                ${headerStyle}
+                user-select: none;
+            `;
+            
             const cellStyle = `
                 padding: 8px 15px;
                 border-bottom: 1px solid #e9ecef;
@@ -4965,26 +4970,49 @@ def get_top_centrality_nodes(metric):
                 overflow-x: auto;
             `;
             
+            // CSS for the sort indicators
+            const sortIndicatorCSS = `
+                <style>
+                    th[data-sortable=true]::after {
+                        content: " ⇅";
+                        font-size: 0.8em;
+                        color: #adb5bd;
+                    }
+                    th.sort-asc::after {
+                        content: " ↑";
+                        color: #495057;
+                    }
+                    th.sort-desc::after {
+                        content: " ↓";
+                        color: #495057;
+                    }
+                </style>
+            `;
+            
             // Start building the HTML
-            let html = `
+            let html = sortIndicatorCSS + `
                 <div style="${containerStyle}">
                     <h3 style="margin-top: 0; margin-bottom: 20px;">Comprehensive Centrality Metrics</h3>
-                    <p style="margin-bottom: 20px;">This table shows all centrality metrics for all ${nodes.length} nodes in the network. Click any column header to sort by that metric. Values are normalized (0-100).</p>
+                    <p style="margin-bottom: 20px;">This table shows all centrality metrics for all ${nodes.length} nodes in the network. <span style="font-weight: bold; color: #0d6efd;">Click any column header to sort the table.</span> Values are normalized (0-100).</p>
                     <p style="margin-bottom: 20px; color: #6c757d; font-style: italic;">Note: Only nodes with at least one centrality metric value are displayed here. Some nodes in the network may not appear because they are isolated, have very few connections, or fall below significance thresholds for centrality calculations.</p>
+                    <div style="background-color: #e9ecef; padding: 10px; border-radius: 4px; margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="margin-right: 10px; font-weight: bold;">⚡ Tip:</span>
+                        <span>Sort the table by clicking any column header. Click again to reverse the sort order.</span>
+                    </div>
                     <table id="comprehensive-metrics-table" style="${tableStyles}">
                         <thead>
                             <tr>
-                                <th style="${headerStyle}" data-sortable="true" data-type="text">Node Name</th>
+                                <th style="${sortableHeaderStyle}" data-sortable="true" data-type="text">Node Name</th>
                                 <th style="${headerStyle}">Metrics Available</th>
             `;
             
             // Add header for each metric
             metrics.forEach(metric => {
-                html += `<th style="${headerStyle}" data-sortable="true" data-type="number">${metricLabels[metric]}</th>`;
+                html += `<th style="${sortableHeaderStyle}" data-sortable="true" data-type="number">${metricLabels[metric]}</th>`;
             });
             
             html += `
-                                <th style="${headerStyle}" data-sortable="true" data-type="number">Average Score</th>
+                                <th style="${sortableHeaderStyle}" data-sortable="true" data-type="number">Average Score</th>
                             </tr>
                         </thead>
                         <tbody>
