@@ -1843,27 +1843,43 @@
             const centralitySection = createBasicSection("Centrality Analysis");
             centralitySection.classList.add('centrality-section-container');
             centralitySection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select Centrality Metric:</div>
-                <div class="centrality-container">
-                    <button class="centrality-button" onclick="showCentrality('degree')">Degree</button>
-                </div>
-                <div class="centrality-container">
-                    <button class="centrality-button" onclick="showCentrality('betweenness')">Betweenness</button>
-                </div>
-                <div class="centrality-container">
-                    <button class="centrality-button" onclick="showCentrality('closeness')">Closeness</button>
-                </div>
-                <div class="centrality-container">
-                    <button class="centrality-button" onclick="showCentrality('eigenvector')">Eigenvector</button>
-                </div>
-                <div class="centrality-container">
-                    <button class="centrality-button" onclick="showCentrality('katz')">Katz</button>
+                <div class="info-box" style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 13px;">
+                    <p style="margin: 0 0 5px 0;"><strong>Centrality analysis</strong> helps identify the most influential variables in your fishery system.</p>
+                    <p style="margin: 0;">Choose a specific metric below or run a comprehensive analysis for deeper insights.</p>
                 </div>
                 
-                <div class="centrality-container" style="margin-top: 20px; border-top: 1px solid #dee2e6; padding-top: 15px;">
-                    <button class="centrality-button comprehensive-button" onclick="showComprehensiveCentrality()" style="background-color: #007bff; color: white; font-weight: bold; width: 100%">
+                <div class="section-label" style="font-weight: bold; margin-bottom: 5px; display: flex; align-items: center;">
+                    Select Centrality Metric:
+                    <span title="Different metrics measure different types of influence in the network" 
+                          style="cursor: help; margin-left: 4px; color: #6c757d; font-size: 14px;">ⓘ</span>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 8px;">
+                    <button class="centrality-button" onclick="showCentrality('degree')" 
+                            title="Measures how many direct connections each variable has">Degree</button>
+                    <button class="centrality-button" onclick="showCentrality('betweenness')"
+                            title="Measures how often a variable acts as a bridge between others">Betweenness</button>
+                    <button class="centrality-button" onclick="showCentrality('closeness')"
+                            title="Measures how quickly a variable can influence the entire system">Closeness</button>
+                    <button class="centrality-button" onclick="showCentrality('eigenvector')"
+                            title="Measures a variable's influence based on its connections to other influential variables">Eigenvector</button>
+                </div>
+                <button class="centrality-button" onclick="showCentrality('katz')"
+                        title="Similar to eigenvector but provides a more balanced view of importance"
+                        style="margin-bottom: 10px;">Katz</button>
+                
+                <div class="centrality-container" style="margin-top: 10px; border-top: 1px solid #dee2e6; padding-top: 10px;">
+                    <button class="centrality-button comprehensive-button" onclick="showComprehensiveCentrality()" 
+                            style="background-color: #007bff; color: white; font-weight: bold; width: 100%; display: flex; justify-content: center; align-items: center; gap: 5px;"
+                            title="Analyzes all metrics together to identify key leverage points">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M4 11a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-9 9a1 1 0 0 0 1 1h12a1 1 0 1 0 0-2H2a1 1 0 0 0-1 1zM2 4a1 1 0 0 0 1 1h12a1 1 0 1 0 0-2H3a1 1 0 0 0-1 1zm2-3a1 1 0 0 0-2 0v5a1 1 0 0 0 2 0V1zm6 0a1 1 0 1 0-2 0v5a1 1 0 1 0 2 0V1z"/>
+                        </svg>
                         Comprehensive Centrality Analysis
                     </button>
+                    <div style="font-size: 11px; color: #6c757d; text-align: center; margin-top: 4px;">
+                        Compares all metrics for complete system understanding
+                    </div>
                 </div>
                 
                 <div id="centrality-results" class="results-panel"></div>
