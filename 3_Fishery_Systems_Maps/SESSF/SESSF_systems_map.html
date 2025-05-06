@@ -1840,27 +1840,97 @@
             // INTERVENTION LAB SECTIONS
             const interventionDiv = document.createElement('div');
             interventionDiv.className = 'intervention-lab';
+            
+            // Add an introductory overview for the Intervention Lab
+            const interventionIntro = document.createElement('div');
+            interventionIntro.className = 'lab-intro';
+            interventionIntro.innerHTML = `
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #ffc107;">
+                    <p style="margin: 0 0 5px 0;"><strong>Intervention Lab</strong> helps you simulate changes to variables and predict system responses.</p>
+                    <p style="margin: 0; font-size: 12px;">Use these tools to test intervention strategies and see how they might affect your fishery system.</p>
+                </div>
+            `;
+            interventionDiv.appendChild(interventionIntro);
 
             // Causal Modeling
             const causalSection = createBasicSection("Causal Modeling");
             const sortedFactors = [...factors].sort((a, b) => a.name.localeCompare(b.name));
             causalSection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select Variable:</div>
-                <select id="variable-select" class="filter-button">
-                    <option value="">-- Select a variable --</option>
-                    ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
-                </select>
-                
-                <div class="section-label">Change Direction:</div>
-                <div style="display: flex; gap: 8px;">
-                    <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled>Increase</button>
-                    <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled>Decrease</button>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Simulate how changing one variable affects the entire system over time
                 </div>
                 
-                <div class="section-label">Simulation Controls:</div>
-                <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled>Start Simulation</button>
-                <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled>Pause Simulation</button>
-                <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled>Reset Simulation</button>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div>
+                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">1. Select Variable to Change:</div>
+                        <select id="variable-select" class="filter-button" style="width: 100%; padding: 6px;" title="Choose the variable you want to change">
+                            <option value="">-- Select a variable --</option>
+                            ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">2. Choose Direction of Change:</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                            <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled
+                                    title="Simulate an increase in the selected variable">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
+                                    </svg>
+                                    Increase
+                                </span>
+                            </button>
+                            <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled 
+                                    title="Simulate a decrease in the selected variable">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
+                                    </svg>
+                                    Decrease
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">3. Simulation Controls:</div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+                            <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled 
+                                    title="Start the simulation and see how changes propagate through the system">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
+                                    </svg>
+                                    Start
+                                </span>
+                            </button>
+                            <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled
+                                    title="Pause the simulation">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
+                                    </svg>
+                                    Pause
+                                </span>
+                            </button>
+                            <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled
+                                    title="Reset the simulation to its initial state">
+                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                                    </svg>
+                                    Reset
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 10px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
+                    <p style="margin: 0;"><strong>How it works:</strong> The simulation uses the relationship strength, direction, and temporal delays to calculate how changes propagate through the system.</p>
+                </div>
             `;
             
             // Add event listener for variable select
@@ -1881,6 +1951,17 @@
             // MONITORING LAB SECTIONS
             const monitoringDiv = document.createElement('div');
             monitoringDiv.className = 'monitoring-lab';
+
+            // Add an introductory overview for the Monitoring Lab
+            const monitoringIntro = document.createElement('div');
+            monitoringIntro.className = 'lab-intro';
+            monitoringIntro.innerHTML = `
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #17a2b8;">
+                    <p style="margin: 0 0 5px 0;"><strong>Monitoring Lab</strong> helps you identify key influential variables in your fishery system.</p>
+                    <p style="margin: 0; font-size: 12px;">Use these tools to analyze network structure and find potential leverage points for management.</p>
+                </div>
+            `;
+            monitoringDiv.appendChild(monitoringIntro);
 
             // Centrality Analysis
             const centralitySection = createBasicSection("Centrality Analysis");
