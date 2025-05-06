@@ -1639,79 +1639,110 @@
             const diagnosticsDiv = document.createElement('div');
             diagnosticsDiv.className = 'diagnostics-lab';
             
+            // Add an introductory overview for the Diagnostics Lab
+            const diagnosticsIntro = document.createElement('div');
+            diagnosticsIntro.className = 'lab-intro';
+            diagnosticsIntro.innerHTML = `
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #007bff;">
+                    <p style="margin: 0 0 5px 0;"><strong>Diagnostics Lab</strong> helps you explore and understand your fishery system.</p>
+                    <p style="margin: 0; font-size: 12px;">Use the filters below to highlight different aspects of the system network.</p>
+                </div>
+            `;
+            diagnosticsDiv.appendChild(diagnosticsIntro);
+            
             // Variable Categories
             const variableCategoriesSection = createBasicSection("Domains");
             variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
-                <button class="filter-button" onclick="showFocalNode()">
-                    <span class="color-dot" style="background-color: #20B2AA;"></span>Focal Variables
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')">
-                    <span class="color-dot" style="background-color: #ff0000;"></span>Stock
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Technical', 'domains')">
-                    <span class="color-dot" style="background-color: #8B4513;"></span>Technical
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Environmental-Ecosystem', 'domains')">
-                    <span class="color-dot" style="background-color: #228B22;"></span>Environmental-Ecosystem
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')">
-                    <span class="color-dot" style="background-color: #0000FF;"></span>Economics-Markets
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')">
-                    <span class="color-dot" style="background-color: #800080;"></span>Management
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')">
-                    <span class="color-dot" style="background-color: #FF69B4;"></span>Social
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'Indigenous', 'domains')">
-                    <span class="color-dot" style="background-color: #FFD700;"></span>Indigenous
-                </button>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Filter to show connections between specific domains in the fishery system
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <button class="filter-button" onclick="showFocalNode()" title="Highlight the central variables in this system">
+                        <span class="color-dot" style="background-color: #20B2AA;"></span>Focal Variables
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Stock', 'domains')" title="Variables related to fish stock and biomass">
+                        <span class="color-dot" style="background-color: #ff0000;"></span>Stock
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Technical', 'domains')" title="Technology and fishing methodology variables">
+                        <span class="color-dot" style="background-color: #8B4513;"></span>Technical
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Environmental-Ecosystem', 'domains')" title="Environmental and ecosystem factors">
+                        <span class="color-dot" style="background-color: #228B22;"></span>Environment
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')" title="Economic and market-related variables">
+                        <span class="color-dot" style="background-color: #0000FF;"></span>Economics
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')" title="Management and regulatory variables">
+                        <span class="color-dot" style="background-color: #800080;"></span>Management
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')" title="Social and community variables">
+                        <span class="color-dot" style="background-color: #FF69B4;"></span>Social
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'Indigenous', 'domains')" title="Indigenous knowledge and practices">
+                        <span class="color-dot" style="background-color: #FFD700;"></span>Indigenous
+                    </button>
+                </div>
             `;
             diagnosticsDiv.appendChild(variableCategoriesSection);
 
             // Relationship Types
             const relationshipTypesSection = createBasicSection("Relationship Types");
             relationshipTypesSection.querySelector('.filter-section-content').innerHTML = `
-                <button class="filter-button" onclick="toggleFilter(this, 'same', 'types')">
-                    <div class="arrow-indicator" style="background-color: #28a745;"></div>Same Direction
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'opposite', 'types')">
-                    <div class="arrow-indicator" style="background-color: #dc3545;"></div>Opposite Direction
-                </button>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Filter by how variables affect each other
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="filter-button" onclick="toggleFilter(this, 'same', 'types')" title="When one variable increases, the other also increases">
+                        <div class="arrow-indicator" style="background-color: #28a745;"></div>Same Direction
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'opposite', 'types')" title="When one variable increases, the other decreases">
+                        <div class="arrow-indicator" style="background-color: #dc3545;"></div>Opposite Direction
+                    </button>
+                </div>
             `;
             diagnosticsDiv.appendChild(relationshipTypesSection);
 
             // Relationship Strength
             const strengthSection = createBasicSection("Relationship Strength");
             strengthSection.querySelector('.filter-section-content').innerHTML = `
-                <button class="filter-button" onclick="toggleFilter(this, 'strong', 'strengths')">
-                    <div class="strength-indicator strong"></div>Strong
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'medium', 'strengths')">
-                    <div class="strength-indicator medium"></div>Medium
-                </button>
-                <button class="filter-button" onclick="toggleFilter(this, 'weak', 'strengths')">
-                    <div class="strength-indicator weak"></div>Weak
-                </button>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Filter connections by strength of influence
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="filter-button" onclick="toggleFilter(this, 'strong', 'strengths')" title="Major influence between variables">
+                        <div class="strength-indicator strong"></div>Strong
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'medium', 'strengths')" title="Moderate influence between variables">
+                        <div class="strength-indicator medium"></div>Medium
+                    </button>
+                    <button class="filter-button" onclick="toggleFilter(this, 'weak', 'strengths')" title="Minor influence between variables">
+                        <div class="strength-indicator weak"></div>Weak
+                    </button>
+                </div>
             `;
             diagnosticsDiv.appendChild(strengthSection);
 
             // Temporal Scale
             const temporalSection = createBasicSection("Temporal Scale");
             temporalSection.querySelector('.filter-section-content').innerHTML = `
-                <button class="filter-button" data-delay="days" onclick="toggleFilter(this, 'days', 'delays')">
-                    <div class="delay-indicator"></div>Days
-                </button>
-                <button class="filter-button" data-delay="months" onclick="toggleFilter(this, 'months', 'delays')">
-                    <div class="delay-indicator"></div>Months
-                </button>
-                <button class="filter-button" data-delay="years" onclick="toggleFilter(this, 'years', 'delays')">
-                    <div class="delay-indicator"></div>Years
-                </button>
-                <button class="filter-button" data-delay="decade" onclick="toggleFilter(this, 'decade', 'delays')">
-                    <div class="delay-indicator"></div>Decade
-                </button>
-                <button class="filter-button" data-delay="hide_temporal" onclick="toggleFilter(this, 'hide_temporal', 'delays')">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Filter by how quickly effects occur between variables
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <button class="filter-button" data-delay="days" onclick="toggleFilter(this, 'days', 'delays')" title="Effects occur within days">
+                        <div class="delay-indicator"></div>Days
+                    </button>
+                    <button class="filter-button" data-delay="months" onclick="toggleFilter(this, 'months', 'delays')" title="Effects take months to occur">
+                        <div class="delay-indicator"></div>Months
+                    </button>
+                    <button class="filter-button" data-delay="years" onclick="toggleFilter(this, 'years', 'delays')" title="Effects take years to occur">
+                        <div class="delay-indicator"></div>Years
+                    </button>
+                    <button class="filter-button" data-delay="decade" onclick="toggleFilter(this, 'decade', 'delays')" title="Effects take a decade or more">
+                        <div class="delay-indicator"></div>Decade+
+                    </button>
+                </div>
+                <button class="filter-button" data-delay="hide_temporal" onclick="toggleFilter(this, 'hide_temporal', 'delays')" style="margin-top: 5px; font-size: 12px;" title="Removes temporal styling from connections">
                     <div class="delay-indicator"></div>Hide Temporal Styling
                 </button>
             `;
@@ -1720,32 +1751,35 @@
             // Feedback Loops
             const feedbackSection = createBasicSection("Feedback Loops");
             feedbackSection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select Feedback Loop Length:</div>
-                <div style="margin-bottom: 12px; font-size: 12px; color: #666; font-style: italic;">
-                    You can select multiple loop lengths by clicking more than one button.
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Identify circular relationships where variables affect each other in loops
                 </div>
-                <div class="feedback-loop-controls">
-                    <button class="filter-button" onclick="showFeedbackLoops(2)">2-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(3)">3-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(4)">4-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(5)">5-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(6)">6-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(7)">7-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(8)">8-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(9)">9-Node Loops</button>
-                    <button class="filter-button" onclick="showFeedbackLoops(10)">10-Node Loops</button>
-                </div>
-                <div class="feedback-loop-polarity">
-                    <div class="section-label">Filter by Polarity:</div>
-                    <button class="filter-button" onclick="filterFeedbackLoops('positive')">Positive Loops</button>
-                    <button class="filter-button" onclick="filterFeedbackLoops('negative')">Negative Loops</button>
-                </div>
-                <div class="feedback-loop-mode">
-                    <div class="section-label">Display Mode:</div>
-                    <div class="toggle-container">
-                        <span class="toggle-label">Loop Only</span>
-                        <label class="switch">
-                            <input type="checkbox" id="loopOnlySwitch">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Loop Length:</div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+                        <button class="filter-button" onclick="showFeedbackLoops(2)" title="Show loops with 2 variables">2-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(3)" title="Show loops with 3 variables">3-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(4)" title="Show loops with 4 variables">4-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(5)" title="Show loops with 5 variables">5-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(6)" title="Show loops with 6 variables">6-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(7)" title="Show loops with 7 variables">7-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(8)" title="Show loops with 8 variables">8-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(9)" title="Show loops with 9 variables">9-Node</button>
+                        <button class="filter-button" onclick="showFeedbackLoops(10)" title="Show loops with 10 variables">10-Node</button>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Filter by Loop Type:</div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="filter-button" onclick="filterFeedbackLoops('positive')" title="Self-reinforcing loops that amplify change">Positive Loops</button>
+                            <button class="filter-button" onclick="filterFeedbackLoops('negative')" title="Self-balancing loops that counter change">Negative Loops</button>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 0;">Show Loop Only:</div>
+                        <label class="switch" style="margin: 0;">
+                            <input type="checkbox" id="loopOnlySwitch" title="Toggle between showing only the loop or the entire network">
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -1757,24 +1791,31 @@
             // Storyline Navigation
             const storylineSection = createBasicSection("Storyline Navigation");
             storylineSection.querySelector('.filter-section-content').innerHTML = `
-                <button class="filter-button" onclick="toggleRelationships()">Hide Relationships</button>
-                <button class="filter-button" onclick="showFocalNode()">Show Focal Node(s)</button>
-                <button class="filter-button" onclick="showDomainNodes('Stock')">Show Stock Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')">Show Environmental Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Economics-Markets')">Show Economic Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Social')">Show Social Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Technical')">Show Technical Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Indigenous')">Show Indigenous Variables</button>
-                <button class="filter-button" onclick="showDomainNodes('Management')">Show Management Variables</button>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Quick access to common views of the system
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <button class="filter-button" onclick="toggleRelationships()" title="Show/hide all relationships between variables">Hide Relationships</button>
+                    <button class="filter-button" onclick="showFocalNode()" title="Focus on the most central variables">Show Focal Node(s)</button>
+                    <button class="filter-button" onclick="showDomainNodes('Stock')" title="Focus on stock-related variables">Stock Variables</button>
+                    <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')" title="Focus on environmental variables">Environment</button>
+                    <button class="filter-button" onclick="showDomainNodes('Economics-Markets')" title="Focus on economic variables">Economics</button>
+                    <button class="filter-button" onclick="showDomainNodes('Social')" title="Focus on social variables">Social</button>
+                    <button class="filter-button" onclick="showDomainNodes('Technical')" title="Focus on technical variables">Technical</button>
+                    <button class="filter-button" onclick="showDomainNodes('Indigenous')" title="Focus on indigenous variables">Indigenous</button>
+                    <button class="filter-button" onclick="showDomainNodes('Management')" title="Focus on management variables">Management</button>
+                </div>
             `;
             diagnosticsDiv.appendChild(storylineSection);
 
             // Node Selector
             const nodeSelectorSection = createBasicSection("Node Selector");
             nodeSelectorSection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select a node:</div>
-                <select id="node-selector" class="filter-button" style="width: 100%; padding: 8px; margin: 5px 0;" onchange="handleNodeSelection(this.value)">
-                    <option value="">-- Select a node --</option>
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Select a specific variable to focus on
+                </div>
+                <select id="node-selector" class="filter-button" style="width: 100%; padding: 6px; margin-bottom: 0;" onchange="handleNodeSelection(this.value)" title="Select a variable to highlight and see its connections">
+                    <option value="">-- Select a variable --</option>
                     ${factors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
                 </select>
             `;
@@ -1783,8 +1824,10 @@
             // Relationship Selector
             const relationshipSelectorSection = createBasicSection("Relationship Selector");
             relationshipSelectorSection.querySelector('.filter-section-content').innerHTML = `
-                <div class="section-label">Select a relationship:</div>
-                <select id="relationship-selector" class="filter-button" style="width: 100%; padding: 8px; margin: 5px 0;" onchange="handleRelationshipSelection(this.value)">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Select a specific connection between variables
+                </div>
+                <select id="relationship-selector" class="filter-button" style="width: 100%; padding: 6px; margin-bottom: 0;" onchange="handleRelationshipSelection(this.value)" title="Select a relationship to highlight">
                     <option value="">-- Select a relationship --</option>
                     ${relationships.map(rel => `<option value="${rel.id}">${rel.from} &rarr; ${rel.to}</option>`).join('')}
                 </select>
