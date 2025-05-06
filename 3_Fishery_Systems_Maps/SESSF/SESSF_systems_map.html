@@ -12,6 +12,8 @@
     <!-- Add this in the <head> section after the d3.js script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology-metrics/2.1.0/graphology-metrics.min.js"></script>
+    <!-- Add Chart.js for radar charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -844,6 +846,202 @@
         input:checked + .slider:before {
             transform: translateX(20px);
         }
+
+        /* Comprehensive Centrality Analysis Popup Styles */
+        #centrality-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 1000px;
+            max-height: 80vh;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.25);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        #centrality-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        #centrality-popup-header h2 {
+            margin: 0;
+            color: #343a40;
+            font-size: 24px;
+        }
+
+        #centrality-popup-close {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        #centrality-popup-close:hover {
+            color: #343a40;
+        }
+
+        #centrality-popup-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .centrality-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .centrality-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 18px;
+            color: #343a40;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 8px;
+        }
+
+        .radar-chart-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .radar-chart-item {
+            max-width: 300px;
+            background-color: white;
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .radar-chart-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .centrality-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .centrality-table th, 
+        .centrality-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .centrality-table th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: bold;
+        }
+
+        .centrality-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .centrality-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .highlight-cell {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1999;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: #495057;
+        }
+        
+        /* Styles for no data messages */
+        .no-data {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+            font-style: italic;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px dashed #ced4da;
+            margin: 10px 0;
+        }
+        
+        /* Styles for metric badges */
+        .metric-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            background-color: #e9ecef;
+            color: #495057;
+            white-space: nowrap;
+        }
+        
+        /* Different colors for different metrics */
+        .metric-badge[data-metric="degree"] {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .metric-badge[data-metric="betweenness"] {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .metric-badge[data-metric="closeness"] {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .metric-badge[data-metric="eigenvector"] {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .metric-badge[data-metric="katz"] {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
     </style>
 </head>
 <body>
@@ -887,6 +1085,37 @@
         <!-- Filter sections will be dynamically populated from Google Sheets -->
     </div>
     <div id="error-message"></div>
+    
+    <!-- Overlay for popup background -->
+    <div id="overlay"></div>
+    
+    <!-- Comprehensive Centrality Analysis Popup -->
+    <div id="centrality-popup">
+        <div id="centrality-popup-header">
+            <h2>Comprehensive Centrality Analysis</h2>
+            <button id="centrality-popup-close" onclick="hideComprehensiveCentrality()">&times;</button>
+        </div>
+        <div id="centrality-popup-content">
+            <div class="centrality-section">
+                <h3>Key Influential Variables</h3>
+                <p>Variables that consistently rank high across multiple centrality metrics are likely to be the most influential in the fishery system.</p>
+                <div id="key-variables-table"></div>
+            </div>
+            
+            <div class="centrality-section">
+                <h3>Centrality Comparison</h3>
+                <p>Compare how variables rank across different centrality metrics to identify their roles in the system.</p>
+                <div id="centrality-comparison-table"></div>
+            </div>
+            
+            <div class="centrality-section">
+                <h3>Variable Radar Charts</h3>
+                <p>These radar charts show how key variables score across different centrality metrics, revealing their structural roles in the network.</p>
+                <div class="radar-chart-container" id="radar-charts"></div>
+            </div>
+        </div>
+    </div>
+    
     <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; width: 400px; max-width: 90vw;">
         <div style="text-align: center;">
             <h3 style="margin-top: 0; margin-bottom: 20px; color: #007bff; font-size: 20px;">Loading Fishery Systems Map</h3>
@@ -1629,6 +1858,12 @@
                 </div>
                 <div class="centrality-container">
                     <button class="centrality-button" onclick="showCentrality('katz')">Katz</button>
+                </div>
+                
+                <div class="centrality-container" style="margin-top: 20px; border-top: 1px solid #dee2e6; padding-top: 15px;">
+                    <button class="centrality-button comprehensive-button" onclick="showComprehensiveCentrality()" style="background-color: #007bff; color: white; font-weight: bold; width: 100%">
+                        Comprehensive Centrality Analysis
+                    </button>
                 </div>
                 
                 <div id="centrality-results" class="results-panel"></div>
@@ -2833,6 +3068,15 @@
         // Track the currently active centrality metric
         let activeCentralityMetric = null;
 
+        // Store centrality results for each metric
+        const centralityResults = {
+            degree: null,
+            betweenness: null,
+            closeness: null,
+            eigenvector: null,
+            katz: null
+        };
+
         // Modified showCentrality function
         async function showCentrality(metric) {
             // Toggle logic: if the same metric is clicked again, reset everything
@@ -2951,6 +3195,19 @@
                     return;
                 }
 
+                // Store the results for use in comprehensive analysis
+                centralityResults[metric] = result.nodes.map(node => {
+                    // Calculate normalized value for use in radar charts
+                    const normalizedValue = node.centrality / 100;
+                    return {
+                        id: node.node_id,
+                        label: node.name || node.label, // Handle both name and label fields
+                        value: node.centrality,
+                        normalized: normalizedValue,
+                        rank: node.rank
+                    };
+                });
+
                 // Create a map of node IDs to their centrality values
                 const centralityMap = new Map(result.nodes.map(node => [node.node_id, node.centrality]));
             
@@ -3066,6 +3323,123 @@
             if (container) container.innerHTML = '';
             // Remove active state from all centrality buttons
             document.querySelectorAll('.centrality-button').forEach(btn => btn.classList.remove('active'));
+        }
+
+        // Function to show comprehensive centrality analysis in popup
+        async function showComprehensiveCentrality() {
+            // Show loading state
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('centrality-popup').style.display = 'block';
+            document.getElementById('centrality-popup-content').innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h3>Loading Comprehensive Analysis...</h3>
+                    <p>Calculating centrality metrics across the network</p>
+                    <div style="width: 100%; height: 20px; background-color: #f3f3f3; border-radius: 10px; margin: 20px 0;">
+                        <div id="analysis-progress" style="width: 10%; height: 100%; background-color: #007bff; border-radius: 10px; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                // Collect all centrality metrics if not already cached
+                const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+                
+                for (let i = 0; i < metrics.length; i++) {
+                    const metric = metrics[i];
+                    
+                    // Update progress bar
+                    const progress = 10 + (i * 18); // From 10% to 82%
+                    document.getElementById('analysis-progress').style.width = `${progress}%`;
+                    
+                    // Skip if we already have this metric's data
+                    if (centralityResults[metric]) continue;
+                    
+                    // Fetch the data for this metric
+                    const pyResult = await window.pyodide.runPythonAsync(`
+                        import json
+                        from networkx_loader import get_top_centrality_nodes
+                        result = get_top_centrality_nodes('${metric}')
+                        result
+                    `);
+                    
+                    const result = JSON.parse(pyResult);
+                    if (!result.error && result.nodes) {
+                        // Transform the data like showCentrality does
+                        centralityResults[metric] = result.nodes.map(node => {
+                            // Calculate normalized value for use in radar charts
+                            const normalizedValue = node.centrality / 100;
+                            return {
+                                id: node.node_id,
+                                label: node.name || node.label, // Handle both name and label fields
+                                value: node.centrality,
+                                normalized: normalizedValue,
+                                rank: node.rank
+                            };
+                        });
+                    }
+                }
+                
+                // Now create the comprehensive analysis content
+                document.getElementById('analysis-progress').style.width = '100%';
+                
+                // Check if we have data for all metrics
+                const hasAllData = Object.values(centralityResults).every(result => result !== null);
+                
+                if (!hasAllData) {
+                    throw new Error("Could not collect data for all centrality metrics");
+                }
+                
+                // Generate tables and charts
+                generateComprehensiveAnalysis();
+                
+            } catch (error) {
+                console.error('Error in comprehensive centrality analysis:', error);
+                document.getElementById('centrality-popup-content').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <h3>Error Loading Analysis</h3>
+                        <p>${error.message || 'An unknown error occurred'}</p>
+                        <button onclick="hideComprehensiveCentrality()" 
+                                style="margin-top: 20px; padding: 8px 16px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                            Close
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Function to hide the comprehensive centrality popup
+        function hideComprehensiveCentrality() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('centrality-popup').style.display = 'none';
+        }
+        
+        // Function to generate the comprehensive analysis content
+        function generateComprehensiveAnalysis() {
+            // Create the content structure
+            document.getElementById('centrality-popup-content').innerHTML = `
+                <div class="centrality-section">
+                    <h3>Key Influential Variables</h3>
+                    <p>Variables that consistently rank high across multiple centrality metrics are likely to be the most influential in the fishery system.</p>
+                    <div id="key-variables-table"></div>
+                </div>
+                
+                <div class="centrality-section">
+                    <h3>Centrality Comparison</h3>
+                    <p>Compare how variables rank across different centrality metrics to identify their roles in the system.</p>
+                    <div id="centrality-comparison-table"></div>
+                </div>
+                
+                <div class="centrality-section">
+                    <h3>Variable Radar Charts</h3>
+                    <p>These radar charts show how key variables score across different centrality metrics, revealing their structural roles in the network.</p>
+                    <div class="radar-chart-container" id="radar-charts"></div>
+                </div>
+            `;
+            
+            // Generate the content
+            generateKeyVariablesTable();
+            generateCentralityComparisonTable();
+            generateRadarCharts();
         }
 
         // Add click handler to SVG/canvas background to reset everything
@@ -4096,6 +4470,356 @@ def get_top_centrality_nodes(metric):
                 console.error('Error loading feedback loops:', error);
             }
         }
+
+        // Function to generate the key variables table
+        function generateKeyVariablesTable() {
+            // Combine all metrics and find variables that appear frequently
+            const allVariables = {};
+            const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+            
+            // Check if we have any data
+            const hasAnyData = metrics.some(metric => 
+                centralityResults[metric] && centralityResults[metric].length > 0
+            );
+            
+            if (!hasAnyData) {
+                document.getElementById('key-variables-table').innerHTML = 
+                    `<p class="no-data">No centrality data available to generate key variables table.</p>`;
+                return;
+            }
+            
+            // For each node, count how many times it appears in the top 10 across metrics
+            metrics.forEach(metric => {
+                if (!centralityResults[metric]) return;
+                
+                // Debug log to see format of data
+                console.log(`Centrality data for ${metric}:`, centralityResults[metric]);
+                
+                // Get top 10 nodes for this metric
+                const topNodes = centralityResults[metric].slice(0, 10);
+                
+                topNodes.forEach((node, idx) => {
+                    // Skip if node has no id
+                    if (!node.id && !node.node_id) {
+                        console.warn('Node missing ID:', node);
+                        return;
+                    }
+                    
+                    const nodeId = node.id || node.node_id;
+                    const nodeLabel = node.label || node.name || `Node ${nodeId}`;
+                    const nodeRank = node.rank || (idx + 1);
+                    
+                    if (!allVariables[nodeId]) {
+                        allVariables[nodeId] = {
+                            id: nodeId,
+                            label: nodeLabel,
+                            metrics: [],
+                            averageRank: 0,
+                            count: 0
+                        };
+                    }
+                    
+                    allVariables[nodeId].metrics.push({
+                        metric: metric,
+                        value: node.value || node.centrality || 0,
+                        rank: nodeRank
+                    });
+                    
+                    allVariables[nodeId].count++;
+                    allVariables[nodeId].averageRank += nodeRank;
+                });
+            });
+            
+            // Calculate average rank and filter variables that appear in at least 3 metrics
+            const keyVariables = Object.values(allVariables)
+                .filter(v => v.count >= 3)
+                .map(v => {
+                    v.averageRank = v.averageRank / v.count;
+                    return v;
+                })
+                .sort((a, b) => a.averageRank - b.averageRank);
+            
+            // Generate the table HTML
+            let tableHTML = `
+                <table class="centrality-table">
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Appears In</th>
+                            <th>Avg. Rank</th>
+                            <th>Metrics</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            keyVariables.forEach(variable => {
+                const metricBadges = variable.metrics.map(m => {
+                    const metricName = m.metric.charAt(0).toUpperCase() + m.metric.slice(1);
+                    return `<span class="metric-badge" data-metric="${m.metric}">${metricName} (#${m.rank})</span>`;
+                }).join(' ');
+                
+                tableHTML += `
+                    <tr>
+                        <td>${variable.label}</td>
+                        <td>${variable.count} metrics</td>
+                        <td>#${Math.round(variable.averageRank)}</td>
+                        <td>${metricBadges}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            // If no key variables found
+            if (keyVariables.length === 0) {
+                tableHTML = `<p class="no-data">No variables appear consistently across multiple centrality metrics.</p>`;
+            }
+            
+            document.getElementById('key-variables-table').innerHTML = tableHTML;
+        }
+        
+        // Function to generate centrality comparison table
+        function generateCentralityComparisonTable() {
+            const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+            const metricLabels = {
+                'degree': 'Degree (Connections)',
+                'betweenness': 'Betweenness (Bridge)',
+                'closeness': 'Closeness (Reach)',
+                'eigenvector': 'Eigenvector (Influence)',
+                'katz': 'Katz (Long-range)'
+            };
+            
+            // Check if we have any data
+            const hasAnyData = metrics.some(metric => 
+                centralityResults[metric] && centralityResults[metric].length > 0
+            );
+            
+            if (!hasAnyData) {
+                document.getElementById('centrality-comparison-table').innerHTML = 
+                    `<p class="no-data">No centrality data available to generate comparison table.</p>`;
+                return;
+            }
+            
+            // Generate the table header
+            let tableHTML = `
+                <table class="centrality-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;">#</th>
+            `;
+            
+            metrics.forEach(metric => {
+                tableHTML += `<th>${metricLabels[metric]}</th>`;
+            });
+            
+            tableHTML += `
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            // Generate rows for ranks 1-10
+            for (let rank = 1; rank <= 10; rank++) {
+                tableHTML += `<tr><td>${rank}</td>`;
+                
+                metrics.forEach(metric => {
+                    if (!centralityResults[metric] || centralityResults[metric].length < rank) {
+                        tableHTML += `<td>-</td>`;
+                        return;
+                    }
+                    
+                    const node = centralityResults[metric][rank - 1];
+                    const nodeLabel = node.label || node.name || '-';
+                    tableHTML += `<td>${nodeLabel}</td>`;
+                });
+                
+                tableHTML += `</tr>`;
+            }
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('centrality-comparison-table').innerHTML = tableHTML;
+        }
+        
+        // Function to generate radar charts for top variables
+        function generateRadarCharts() {
+            const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+            const metricLabels = {
+                'degree': 'Degree',
+                'betweenness': 'Betweenness',
+                'closeness': 'Closeness',
+                'eigenvector': 'Eigenvector',
+                'katz': 'Katz'
+            };
+            
+            // Create a map of node IDs to their centrality values
+            const nodeValues = {};
+            
+            // Check if we have any data
+            const hasAnyData = metrics.some(metric => centralityResults[metric] && centralityResults[metric].length > 0);
+            
+            if (!hasAnyData) {
+                document.getElementById('radar-charts').innerHTML = `<p class="no-data">No centrality data available to generate radar charts.</p>`;
+                return;
+            }
+            
+            metrics.forEach(metric => {
+                if (!centralityResults[metric]) return;
+                
+                centralityResults[metric].forEach(node => {
+                    // Debug log to see the actual node structure
+                    console.log(`Node data for ${metric}:`, node);
+                    
+                    // Skip if missing critical data
+                    if (!node.id) return;
+                    
+                    if (!nodeValues[node.id]) {
+                        nodeValues[node.id] = {
+                            id: node.id,
+                            label: node.label || node.name || `Node ${node.id}`,
+                            metrics: {}
+                        };
+                    }
+                    // Normalize values from 0-1, with a fallback for missing normalized value
+                    nodeValues[node.id].metrics[metric] = node.normalized || (node.value ? node.value / 100 : 0);
+                });
+            });
+            
+            // Find nodes that have values for all metrics
+            const completeNodes = Object.values(nodeValues)
+                .filter(node => metrics.every(metric => metric in node.metrics));
+            
+            // Sort by sum of centrality values
+            completeNodes.sort((a, b) => {
+                const sumA = Object.values(a.metrics).reduce((sum, val) => sum + val, 0);
+                const sumB = Object.values(b.metrics).reduce((sum, val) => sum + val, 0);
+                return sumB - sumA;
+            });
+            
+            // Log what we found
+            console.log('Complete nodes for radar charts:', completeNodes);
+            
+            // Take top 6 nodes for visualization
+            const topNodes = completeNodes.slice(0, 6);
+            
+            // Create a container for charts
+            let chartsHTML = '<div class="radar-charts-grid">';
+            
+            // Generate a radar chart for each top node
+            topNodes.forEach((node, index) => {
+                chartsHTML += `
+                    <div class="radar-chart-item">
+                        <h4>${node.label}</h4>
+                        <canvas id="radar-chart-${index}" width="200" height="200"></canvas>
+                    </div>
+                `;
+            });
+            
+            chartsHTML += '</div>';
+            
+            if (topNodes.length === 0) {
+                chartsHTML = `<p class="no-data">Insufficient data to generate radar charts for variables.</p>`;
+            }
+            
+            document.getElementById('radar-charts').innerHTML = chartsHTML;
+            
+            // Create the radar charts once the HTML is rendered
+            topNodes.forEach((node, index) => {
+                const ctx = document.getElementById(`radar-chart-${index}`);
+                if (!ctx) return;
+                
+                try {
+                    new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: metrics.map(m => metricLabels[m]),
+                            datasets: [{
+                                label: node.label,
+                                data: metrics.map(m => node.metrics[m] * 100), // Scale to 0-100 for better visualization
+                                fill: true,
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                borderColor: 'rgb(54, 162, 235)',
+                                pointBackgroundColor: 'rgb(54, 162, 235)',
+                                pointBorderColor: '#fff',
+                                pointHoverBackgroundColor: '#fff',
+                                pointHoverBorderColor: 'rgb(54, 162, 235)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                r: {
+                                    angleLines: {
+                                        display: true
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 100,
+                                    ticks: {
+                                        stepSize: 20
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.label}: ${Math.round(context.raw)}%`;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error creating radar chart:', error);
+                    document.getElementById(`radar-chart-${index}`).parentNode.innerHTML = 
+                        `<div style="text-align: center; color: #dc3545;">Chart generation failed</div>`;
+                }
+            });
+        }
+        
+        // Add event listener to comprehensive centrality button
+        document.getElementById('comprehensive-centrality-btn').addEventListener('click', showComprehensiveCentrality);
+        
+        // Add event listener to centrality popup close button
+        document.getElementById('centrality-popup-close').addEventListener('click', hideComprehensiveCentrality);
+        
+        // Close popup when clicking on overlay
+        document.getElementById('overlay').addEventListener('click', hideComprehensiveCentrality);
+        
+        // Prevent popup closing when clicking inside popup
+        document.getElementById('centrality-popup').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+
+        // Add click handler to SVG/canvas background to reset everything
+        function addCanvasResetHandler() {
+            const svg = d3.select('#graph svg');
+            if (!svg.empty()) {
+                svg.on('click', function(event) {
+                    // Only reset if clicking directly on the background (not a node or link)
+                    if (event.target === this) {
+                        activeCentralityMetric = null;
+                        resetCentralityVisualization();
+                        resetFilters();
+                    }
+                });
+            }
+        }
+
+        // Call this after initializing the visualization
+        addCanvasResetHandler();
 
     </script>
 </body>
