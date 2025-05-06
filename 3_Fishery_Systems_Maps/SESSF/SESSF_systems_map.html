@@ -12,8 +12,8 @@
     <!-- Add this in the <head> section after the d3.js script -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology-metrics/2.1.0/graphology-metrics.min.js"></script>
-    <!-- Add Chart.js for radar charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Replace existing Chart.js script with updated version -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js" integrity="sha384-9/LhQeF+1S+LmMo41I/LhRcxXgJQKCnJFcL0GpxIJJg7B5BSgA8f6jeHXFJ9eiDX" crossorigin="anonymous"></script> -->
     <style>
         body {
             margin: 0;
@@ -4648,6 +4648,11 @@ def get_top_centrality_nodes(metric):
             document.getElementById('centrality-comparison-table').innerHTML = tableHTML;
         }
         
+        // Function to check if Chart.js is properly initialized
+        function isChartJsReady() {
+            return typeof Chart !== 'undefined' && typeof Chart.controllers !== 'undefined' && typeof Chart.controllers.radar !== 'undefined';
+        }
+        
         // Function to generate radar charts for top variables
         function generateRadarCharts() {
             const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
@@ -4659,6 +4664,425 @@ def get_top_centrality_nodes(metric):
                 'katz': 'Katz'
             };
             
+            // First, check if Chart.js is available
+            if (!isChartJsReady()) {
+                console.error('Chart.js is not fully loaded or radar controller is missing!');
+                
+                // Get the nodes and render as tables instead
+                const nodes = prepareRadarData(metrics, metricLabels);
+                if (nodes && nodes.length > 0) {
+                    renderRadarDataAsTables(nodes, metrics, metricLabels);
+                    
+                    // Add a button to try loading Chart.js
+                    const container = document.getElementById('radar-charts');
+                    if (container) {
+                        const button = document.createElement('button');
+                        button.className = 'filter-button';
+                        button.style.margin = '20px auto';
+                        button.style.display = 'block';
+                        button.textContent = 'Try to Load Chart.js';
+                        button.onclick = reloadChartJs;
+                        container.appendChild(button);
+                    }
+                } else {
+                    document.getElementById('radar-charts').innerHTML = `
+                        <p class="no-data">Error: Chart.js library not properly loaded and no data available for fallback display.</p>
+                        <button onclick="reloadChartJs()" class="filter-button" style="margin-top: 10px;">
+                            Try to Reload Chart.js
+                        </button>`;
+                }
+                return;
+            }
+            
+            // Get all possible nodes
+            const allNodes = prepareRadarData(metrics, metricLabels, 1); // Get all nodes with at least 1 metric
+            if (!allNodes || allNodes.length === 0) {
+                document.getElementById('radar-charts').innerHTML = `<p class="no-data">No centrality data available to generate radar charts.</p>`;
+                return;
+            }
+            
+            // Default minimum metrics required - this will be adjustable
+            const minMetricsRequired = getCurrentMinMetrics();
+            
+            // Filter nodes based on current metric count threshold
+            const displayNodes = allNodes.filter(node => node.metricCount >= minMetricsRequired);
+            
+            // Create controls for adjusting display
+            let controlsHTML = `
+                <div class="radar-controls" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <h4 style="margin: 0 0 10px 0;">Display Controls</h4>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <label for="metric-count-slider">Minimum metrics per node: <span id="metric-count-display">${minMetricsRequired}</span></label>
+                            <input type="range" id="metric-count-slider" min="1" max="5" value="${minMetricsRequired}" style="flex: 1; max-width: 200px;">
+                        </div>
+                    </div>
+                    <div style="margin-left: 20px; text-align: right;">
+                        <span style="font-size: 13px; color: #6c757d;">Displaying ${displayNodes.length} of ${allNodes.length} total nodes</span>
+                    </div>
+                </div>
+            `;
+            
+            // Create a container for charts with a 3-column grid layout
+            let chartsHTML = `
+                <div id="radar-controls-container">${controlsHTML}</div>
+                <div class="radar-charts-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px;">
+            `;
+            
+            if (displayNodes.length === 0) {
+                chartsHTML += `
+                    <p class="no-data" style="grid-column: 1 / span 3; text-align: center;">
+                        No nodes have data for at least ${minMetricsRequired} centrality metrics. 
+                        Try lowering the minimum metrics requirement.
+                    </p>
+                `;
+            } else {
+                // Generate a radar chart for each node
+                displayNodes.forEach((node, index) => {
+                    chartsHTML += `
+                        <div class="radar-chart-item" style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 15px; display: flex; flex-direction: column; align-items: center;">
+                            <h4 style="text-align: center; margin-bottom: 10px; font-size: 16px; height: 40px; display: flex; align-items: center;">${node.label}</h4>
+                            <div class="metric-count-badge" style="font-size: 11px; padding: 2px 6px; background: #e9ecef; border-radius: 10px; margin-bottom: 5px;">
+                                ${node.metricCount}/${metrics.length} metrics
+                            </div>
+                            <div style="width: 220px; height: 220px; position: relative;">
+                                <canvas id="radar-chart-${index}" width="220" height="220"></canvas>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            chartsHTML += '</div>';
+            
+            // Generate comprehensive table with all nodes and their metrics
+            chartsHTML += generateComprehensiveMetricsTable(allNodes, metrics, metricLabels);
+            
+            document.getElementById('radar-charts').innerHTML = chartsHTML;
+            
+            // Add event listener to slider for adjusting metric count
+            const slider = document.getElementById('metric-count-slider');
+            if (slider) {
+                slider.addEventListener('input', function() {
+                    const display = document.getElementById('metric-count-display');
+                    if (display) {
+                        display.textContent = this.value;
+                    }
+                });
+                
+                slider.addEventListener('change', function() {
+                    setCurrentMinMetrics(parseInt(this.value));
+                    generateRadarCharts();
+                });
+            }
+            
+            // Add sorting capability to the comprehensive table
+            const table = document.getElementById('comprehensive-metrics-table');
+            if (table) {
+                const headers = table.querySelectorAll('th');
+                headers.forEach(header => {
+                    if (header.dataset.sortable) {
+                        header.addEventListener('click', function() {
+                            sortTable('comprehensive-metrics-table', this.cellIndex, this.dataset.type);
+                            
+                            // Update sort indicators
+                            headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                            
+                            if (this.dataset.sortDirection === 'asc') {
+                                this.dataset.sortDirection = 'desc';
+                                this.classList.add('sort-desc');
+                            } else {
+                                this.dataset.sortDirection = 'asc';
+                                this.classList.add('sort-asc');
+                            }
+                        });
+                        
+                        // Default sort direction
+                        header.dataset.sortDirection = 'desc';
+                    }
+                });
+            }
+            
+            // Only create charts if we have nodes to display
+            if (displayNodes.length > 0) {
+                // Create the radar charts once the HTML is rendered
+                setTimeout(() => {
+                    // Create charts in batches to avoid performance issues with many nodes
+                    const batchSize = 10;
+                    const createBatch = (startIndex) => {
+                        const endIndex = Math.min(startIndex + batchSize, displayNodes.length);
+                        
+                        for (let i = startIndex; i < endIndex; i++) {
+                            const node = displayNodes[i];
+                            const canvasId = `radar-chart-${i}`;
+                            const ctx = document.getElementById(canvasId);
+                            
+                            if (!ctx) {
+                                console.error(`Canvas element with ID "${canvasId}" not found`);
+                                continue;
+                            }
+                            
+                            try {
+                                // Destroy any existing chart instance for this canvas
+                                const existingChart = Chart.getChart(ctx);
+                                if (existingChart) {
+                                    existingChart.destroy();
+                                }
+                                
+                                // Create a new chart with a simplified configuration
+                                new Chart(ctx, {
+                                    type: 'radar',
+                                    data: {
+                                        labels: metrics.map(m => metricLabels[m]),
+                                        datasets: [{
+                                            label: node.label,
+                                            data: metrics.map(m => Math.max(0, Math.min(100, node.metrics[m] * 100))), // Scale to 0-100 with safety bounds
+                                            fill: true,
+                                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                            borderColor: 'rgb(54, 162, 235)',
+                                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                                            pointBorderColor: '#fff',
+                                            pointHoverBackgroundColor: '#fff',
+                                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: {
+                                                display: false
+                                            },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        return `${context.label}: ${Math.round(context.raw)}%`;
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        scales: {
+                                            r: {
+                                                min: 0,
+                                                max: 100,
+                                                ticks: {
+                                                    stepSize: 20,
+                                                    showLabelBackdrop: false,
+                                                    display: false // Hide tick labels for cleaner look in small charts
+                                                },
+                                                pointLabels: {
+                                                    font: {
+                                                        size: 8 // Smaller font for axis labels in the grid
+                                                    }
+                                                },
+                                                angleLines: {
+                                                    color: 'rgba(0, 0, 0, 0.1)' // Lighter angle lines
+                                                },
+                                                grid: {
+                                                    color: 'rgba(0, 0, 0, 0.05)' // Lighter grid lines
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            } catch (error) {
+                                console.error(`Error creating radar chart for ${node.label}:`, error);
+                                const container = document.getElementById(canvasId).parentNode;
+                                if (container) {
+                                    container.innerHTML = `
+                                        <div style="text-align: center; color: #dc3545; padding: 20px;">
+                                            <p>Chart generation failed</p>
+                                        </div>
+                                    `;
+                                }
+                            }
+                        }
+                        
+                        // Process next batch if needed
+                        if (endIndex < displayNodes.length) {
+                            setTimeout(() => createBatch(endIndex), 50);
+                        }
+                    };
+                    
+                    // Start processing the first batch
+                    createBatch(0);
+                }, 100); // Small delay to ensure DOM is ready
+            }
+        }
+        
+        // Helper function to get current minimum metrics setting
+        function getCurrentMinMetrics() {
+            // Default to 3 metrics if not previously set
+            return parseInt(localStorage.getItem('minCentralityMetrics') || '3');
+        }
+        
+        // Helper function to save minimum metrics setting
+        function setCurrentMinMetrics(value) {
+            localStorage.setItem('minCentralityMetrics', value.toString());
+        }
+        
+        // Generate a comprehensive table with all nodes and their centrality metrics
+        function generateComprehensiveMetricsTable(nodes, metrics, metricLabels) {
+            if (!nodes || nodes.length === 0) {
+                return '';
+            }
+            
+            const tableStyles = `
+                margin-top: 40px;
+                border-collapse: collapse;
+                width: 100%;
+                font-size: 14px;
+                border: 1px solid #e9ecef;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            `;
+            
+            const headerStyle = `
+                background-color: #f8f9fa;
+                color: #495057;
+                text-align: left;
+                padding: 12px 15px;
+                border-bottom: 2px solid #dee2e6;
+                position: sticky;
+                top: 0;
+                cursor: pointer;
+            `;
+            
+            const cellStyle = `
+                padding: 8px 15px;
+                border-bottom: 1px solid #e9ecef;
+            `;
+            
+            const alternateRowStyle = `
+                background-color: #f8f9fa;
+            `;
+            
+            const containerStyle = `
+                margin-top: 40px;
+                padding: 20px;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                overflow-x: auto;
+            `;
+            
+            // Start building the HTML
+            let html = `
+                <div style="${containerStyle}">
+                    <h3 style="margin-top: 0; margin-bottom: 20px;">Comprehensive Centrality Metrics</h3>
+                    <p style="margin-bottom: 20px;">This table shows all centrality metrics for all ${nodes.length} nodes in the network. Click any column header to sort by that metric. Values are normalized (0-100).</p>
+                    <p style="margin-bottom: 20px; color: #6c757d; font-style: italic;">Note: Only nodes with at least one centrality metric value are displayed here. Some nodes in the network may not appear because they are isolated, have very few connections, or fall below significance thresholds for centrality calculations.</p>
+                    <table id="comprehensive-metrics-table" style="${tableStyles}">
+                        <thead>
+                            <tr>
+                                <th style="${headerStyle}" data-sortable="true" data-type="text">Node Name</th>
+                                <th style="${headerStyle}">Metrics Available</th>
+            `;
+            
+            // Add header for each metric
+            metrics.forEach(metric => {
+                html += `<th style="${headerStyle}" data-sortable="true" data-type="number">${metricLabels[metric]}</th>`;
+            });
+            
+            html += `
+                                <th style="${headerStyle}" data-sortable="true" data-type="number">Average Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            // Sort nodes by average metric value for initial display
+            nodes.sort((a, b) => {
+                const avgA = Object.values(a.metrics).reduce((sum, val) => sum + val, 0) / Object.values(a.metrics).length;
+                const avgB = Object.values(b.metrics).reduce((sum, val) => sum + val, 0) / Object.values(b.metrics).length;
+                return avgB - avgA;
+            });
+            
+            // Add a row for each node
+            nodes.forEach((node, index) => {
+                const avgScore = Object.values(node.metrics).reduce((sum, val) => sum + val, 0) / Object.values(node.metrics).length;
+                
+                html += `
+                    <tr ${index % 2 !== 0 ? `style="${alternateRowStyle}"` : ''}>
+                        <td style="${cellStyle}">${node.label}</td>
+                        <td style="${cellStyle}">
+                            <div class="metric-count-badge" style="font-size: 11px; padding: 2px 6px; background: #e9ecef; border-radius: 10px; display: inline-block; text-align: center;">
+                                ${node.metricCount}/${metrics.length}
+                            </div>
+                        </td>
+                `;
+                
+                // Add cell for each metric
+                metrics.forEach(metric => {
+                    const value = node.metrics[metric];
+                    const formattedValue = (value * 100).toFixed(2);
+                    
+                    // Determine cell background based on value (higher values are more vibrant)
+                    const cellBackground = value > 0 
+                        ? `background-color: rgba(54, 162, 235, ${Math.min(1, value + 0.1)}); color: ${value > 0.5 ? 'white' : 'black'};` 
+                        : '';
+                    
+                    html += `<td style="${cellStyle} ${cellBackground}">${formattedValue}</td>`;
+                });
+                
+                // Add average score
+                html += `<td style="${cellStyle} font-weight: bold;">${(avgScore * 100).toFixed(2)}</td>`;
+                html += '</tr>';
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            return html;
+        }
+        
+        // Function to sort tables
+        function sortTable(tableId, columnIndex, dataType) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            
+            const header = table.querySelector(`th:nth-child(${columnIndex + 1})`);
+            const sortDirection = header.dataset.sortDirection === 'asc' ? -1 : 1;
+            
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = Array.from(tbody.getElementsByTagName('tr'));
+            
+            rows.sort((a, b) => {
+                const cellA = a.getElementsByTagName('td')[columnIndex];
+                const cellB = b.getElementsByTagName('td')[columnIndex];
+                
+                let valA = cellA.textContent.trim();
+                let valB = cellB.textContent.trim();
+                
+                if (dataType === 'number') {
+                    // Extract number values (handling percentage signs if present)
+                    valA = parseFloat(valA.replace('%', ''));
+                    valB = parseFloat(valB.replace('%', ''));
+                    
+                    // Handle NaN values
+                    if (isNaN(valA)) valA = 0;
+                    if (isNaN(valB)) valB = 0;
+                    
+                    return sortDirection * (valB - valA);
+                } else {
+                    // Default to string comparison
+                    return sortDirection * valA.localeCompare(valB);
+                }
+            });
+            
+            // Reorder the rows in the table
+            rows.forEach(row => tbody.appendChild(row));
+            
+            // Apply alternating row styles
+            rows.forEach((row, index) => {
+                row.style.backgroundColor = index % 2 !== 0 ? '#f8f9fa' : '';
+            });
+        }
+        
+        // Helper function to prepare data for radar charts
+        function prepareRadarData(metrics, metricLabels, minMetrics = 1) {
             // Create a map of node IDs to their centrality values
             const nodeValues = {};
             
@@ -4666,129 +5090,186 @@ def get_top_centrality_nodes(metric):
             const hasAnyData = metrics.some(metric => centralityResults[metric] && centralityResults[metric].length > 0);
             
             if (!hasAnyData) {
-                document.getElementById('radar-charts').innerHTML = `<p class="no-data">No centrality data available to generate radar charts.</p>`;
-                return;
+                return [];
             }
             
+            // First collect all unique node IDs across all metrics
+            const allNodeIds = new Set();
+            metrics.forEach(metric => {
+                if (!centralityResults[metric]) return;
+                centralityResults[metric].forEach(node => {
+                    const nodeId = node.id || node.node_id;
+                    if (nodeId) {
+                        allNodeIds.add(nodeId);
+                    }
+                });
+            });
+            
+            console.log(`Found ${allNodeIds.size} unique nodes across all metrics`);
+            
+            // Then populate the metrics data for each node
             metrics.forEach(metric => {
                 if (!centralityResults[metric]) return;
                 
                 centralityResults[metric].forEach(node => {
-                    // Debug log to see the actual node structure
-                    console.log(`Node data for ${metric}:`, node);
-                    
                     // Skip if missing critical data
-                    if (!node.id) return;
+                    if (!node.id && !node.node_id) {
+                        console.warn('Node missing ID:', node);
+                        return;
+                    }
                     
-                    if (!nodeValues[node.id]) {
-                        nodeValues[node.id] = {
-                            id: node.id,
-                            label: node.label || node.name || `Node ${node.id}`,
-                            metrics: {}
+                    const nodeId = node.id || node.node_id;
+                    
+                    if (!nodeValues[nodeId]) {
+                        nodeValues[nodeId] = {
+                            id: nodeId,
+                            label: node.label || node.name || `Node ${nodeId}`,
+                            metrics: {},
+                            metricCount: 0
                         };
                     }
-                    // Normalize values from 0-1, with a fallback for missing normalized value
-                    nodeValues[node.id].metrics[metric] = node.normalized || (node.value ? node.value / 100 : 0);
+                    
+                    // Normalize values from 0-1, with more robust fallbacks
+                    let normalizedValue = 0;
+                    if (typeof node.normalized === 'number') {
+                        normalizedValue = node.normalized;
+                    } else if (typeof node.value === 'number') {
+                        normalizedValue = node.value / 100;
+                    } else if (typeof node.centrality === 'number') {
+                        normalizedValue = node.centrality / 100;
+                    }
+                    
+                    nodeValues[nodeId].metrics[metric] = normalizedValue;
+                    nodeValues[nodeId].metricCount++; // Count how many metrics this node has
                 });
             });
             
-            // Find nodes that have values for all metrics
-            const completeNodes = Object.values(nodeValues)
-                .filter(node => metrics.every(metric => metric in node.metrics));
+            // Add default values of 0 for missing metrics
+            Object.values(nodeValues).forEach(node => {
+                metrics.forEach(metric => {
+                    if (typeof node.metrics[metric] !== 'number') {
+                        node.metrics[metric] = 0;
+                    }
+                });
+            });
+            
+            // Include nodes that have at least minMetrics metrics with values
+            const significantNodes = Object.values(nodeValues)
+                .filter(node => node.metricCount >= minMetrics);
             
             // Sort by sum of centrality values
-            completeNodes.sort((a, b) => {
+            significantNodes.sort((a, b) => {
                 const sumA = Object.values(a.metrics).reduce((sum, val) => sum + val, 0);
                 const sumB = Object.values(b.metrics).reduce((sum, val) => sum + val, 0);
                 return sumB - sumA;
             });
             
             // Log what we found
-            console.log('Complete nodes for radar charts:', completeNodes);
+            console.log(`After filtering for nodes with at least ${minMetrics} metrics: ${significantNodes.length} nodes`);
             
-            // Take top 6 nodes for visualization
-            const topNodes = completeNodes.slice(0, 6);
+            // Return all significant nodes
+            return significantNodes;
+        }
+        
+        // Fallback function to render radar data as a table when Chart.js fails
+        function renderRadarDataAsTables(nodes, metrics, metricLabels) {
+            const container = document.getElementById('radar-charts');
+            if (!container) return;
             
-            // Create a container for charts
-            let chartsHTML = '<div class="radar-charts-grid">';
+            let html = '<div class="fallback-radar-container" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">';
+            html += '<p class="no-data" style="grid-column: 1 / span 3; margin-bottom: 20px;">Radar charts could not be rendered. Showing data in table format instead.</p>';
             
-            // Generate a radar chart for each top node
-            topNodes.forEach((node, index) => {
-                chartsHTML += `
-                    <div class="radar-chart-item">
-                        <h4>${node.label}</h4>
-                        <canvas id="radar-chart-${index}" width="200" height="200"></canvas>
+            nodes.forEach(node => {
+                html += `
+                    <div class="fallback-radar-item" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <h4 style="text-align: center; margin-bottom: 15px;">${node.label}</h4>
+                        <table class="centrality-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                    <th>Visualization</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                metrics.forEach(metric => {
+                    const value = Math.round(node.metrics[metric] * 100);
+                    const barWidth = value + '%';
+                    
+                    html += `
+                        <tr>
+                            <td>${metricLabels[metric]}</td>
+                            <td>${value}%</td>
+                            <td>
+                                <div style="background: #f0f0f0; width: 100%; height: 20px; border-radius: 4px; overflow: hidden;">
+                                    <div style="background: rgb(54, 162, 235); width: ${barWidth}; height: 100%;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                            </tbody>
+                        </table>
                     </div>
                 `;
             });
             
-            chartsHTML += '</div>';
+            html += '</div>';
             
-            if (topNodes.length === 0) {
-                chartsHTML = `<p class="no-data">Insufficient data to generate radar charts for variables.</p>`;
-            }
+            // Add comprehensive table with all nodes
+            html += generateComprehensiveMetricsTable(nodes, metrics, metricLabels);
             
-            document.getElementById('radar-charts').innerHTML = chartsHTML;
-            
-            // Create the radar charts once the HTML is rendered
-            topNodes.forEach((node, index) => {
-                const ctx = document.getElementById(`radar-chart-${index}`);
-                if (!ctx) return;
-                
-                try {
-                    new Chart(ctx, {
-                        type: 'radar',
-                        data: {
-                            labels: metrics.map(m => metricLabels[m]),
-                            datasets: [{
-                                label: node.label,
-                                data: metrics.map(m => node.metrics[m] * 100), // Scale to 0-100 for better visualization
-                                fill: true,
-                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                borderColor: 'rgb(54, 162, 235)',
-                                pointBackgroundColor: 'rgb(54, 162, 235)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgb(54, 162, 235)'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            scales: {
-                                r: {
-                                    angleLines: {
-                                        display: true
-                                    },
-                                    suggestedMin: 0,
-                                    suggestedMax: 100,
-                                    ticks: {
-                                        stepSize: 20
-                                    }
-                                }
-                            },
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `${context.label}: ${Math.round(context.raw)}%`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                } catch (error) {
-                    console.error('Error creating radar chart:', error);
-                    document.getElementById(`radar-chart-${index}`).parentNode.innerHTML = 
-                        `<div style="text-align: center; color: #dc3545;">Chart generation failed</div>`;
-                }
-            });
+            container.innerHTML = html;
         }
         
+        // Function to reload Chart.js if it fails to load
+        function reloadChartJs() {
+            // Show loading message
+            document.getElementById('radar-charts').innerHTML = `
+                <p class="no-data">Loading Chart.js library, please wait...</p>`;
+                
+            // Remove existing Chart.js if present
+            const existingScript = document.querySelector('script[src*="chart.js"]');
+            if (existingScript) {
+                existingScript.remove();
+            }
+            
+            // Create and load a new script element
+            const script = document.createElement('script');
+            script.src = "https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js";
+            script.onload = function() {
+                console.log('Chart.js reloaded successfully');
+                // Wait a moment for initialization and retry
+                setTimeout(() => {
+                    if (isChartJsReady()) {
+                        console.log('Chart.js is now ready, regenerating radar charts');
+                        generateRadarCharts();
+                    } else {
+                        console.error('Chart.js still not properly initialized after reload');
+                        document.getElementById('radar-charts').innerHTML = `
+                            <p class="no-data">Error: Failed to initialize Chart.js after reload. 
+                            Please try refreshing the entire page.</p>`;
+                    }
+                }, 500);
+            };
+            script.onerror = function() {
+                console.error('Failed to reload Chart.js');
+                document.getElementById('radar-charts').innerHTML = `
+                    <p class="no-data">Error: Failed to load Chart.js from CDN. 
+                    Please check your internet connection and try again.</p>`;
+            };
+            document.head.appendChild(script);
+        }
+
+        function showAcknowledgements() {
+            document.getElementById('acknowledgements-modal').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
         // Add event listener to comprehensive centrality button
         document.getElementById('comprehensive-centrality-btn').addEventListener('click', showComprehensiveCentrality);
         
@@ -4821,6 +5302,37 @@ def get_top_centrality_nodes(metric):
         // Call this after initializing the visualization
         addCanvasResetHandler();
 
+        // Function to check if Chart.js is properly initialized
+        function isChartJsReady() {
+            return typeof Chart !== 'undefined' && typeof Chart.controllers !== 'undefined' && typeof Chart.controllers.radar !== 'undefined';
+        }
+
+        // Load Chart.js dynamically
+        function loadChartJs() {
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js already loaded');
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = "https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js";
+            script.onload = function() {
+                console.log('Chart.js loaded successfully');
+                // If we're in the centrality popup, regenerate the radar charts
+                if (document.getElementById('centrality-popup').style.display === 'block') {
+                    generateRadarCharts();
+                }
+            };
+            script.onerror = function() {
+                console.error('Failed to load Chart.js');
+            };
+            document.body.appendChild(script);
+        }
+        
+        // Call this at the end to ensure Chart.js is loaded
+        loadChartJs();
     </script>
+    <!-- Load Chart.js properly at the end of the body for better performance -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 </body>
 </html> 
