@@ -1599,6 +1599,126 @@
 
             // Add click handler to SVG for resetting node selection
             svg.on("click", resetNodeSelection);
+            
+            // Update system statistics
+            updateSystemStatistics(nodes, links);
+        }
+        
+        // Calculate and update system statistics
+        function updateSystemStatistics(nodes, links) {
+            // Basic counts
+            const totalNodes = nodes.length;
+            const totalRelationships = links.length;
+            
+            // Direction counts
+            const sameDirection = links.filter(link => link.type === 'same').length;
+            const oppositeDirection = links.filter(link => link.type === 'opposite').length;
+            
+            // Strength counts
+            const strongRelationships = links.filter(link => link.strength === 'strong').length;
+            const mediumRelationships = links.filter(link => link.strength === 'medium').length;
+            const weakRelationships = links.filter(link => link.strength === 'weak').length;
+            
+            // Temporal scale counts
+            const daysRelationships = links.filter(link => link.delay === 'days').length;
+            const monthsRelationships = links.filter(link => link.delay === 'months').length;
+            const yearsRelationships = links.filter(link => link.delay === 'years').length;
+            const decadeRelationships = links.filter(link => link.delay === 'decade').length;
+            
+            // Network density calculation (actual connections / possible connections)
+            const possibleConnections = totalNodes * (totalNodes - 1);
+            const networkDensity = possibleConnections > 0 ? (totalRelationships / possibleConnections).toFixed(3) : 0;
+            
+            // Average connections per node
+            const avgConnections = totalNodes > 0 ? (totalRelationships / totalNodes).toFixed(2) : 0;
+            
+            // Most connected node calculation
+            let nodeConnections = {};
+            links.forEach(link => {
+                if (!nodeConnections[link.source.id]) nodeConnections[link.source.id] = 0;
+                if (!nodeConnections[link.target.id]) nodeConnections[link.target.id] = 0;
+                nodeConnections[link.source.id]++;
+                nodeConnections[link.target.id]++;
+            });
+            
+            let mostConnectedNodeId = '';
+            let maxConnections = 0;
+            for (const [nodeId, connections] of Object.entries(nodeConnections)) {
+                if (connections > maxConnections) {
+                    maxConnections = connections;
+                    mostConnectedNodeId = nodeId;
+                }
+            }
+            
+            // Get the name of the most connected node
+            const mostConnectedNode = nodes.find(node => node.id === mostConnectedNodeId);
+            const mostConnectedNodeName = mostConnectedNode ? `${mostConnectedNode.name} (${maxConnections})` : '-';
+            
+            // Update the HTML elements with the calculated statistics
+            document.getElementById('stat-total-nodes').textContent = totalNodes;
+            document.getElementById('stat-total-relationships').textContent = totalRelationships;
+            document.getElementById('stat-same-direction').textContent = sameDirection;
+            document.getElementById('stat-opposite-direction').textContent = oppositeDirection;
+            document.getElementById('stat-strong-relationships').textContent = strongRelationships;
+            document.getElementById('stat-medium-relationships').textContent = mediumRelationships;
+            document.getElementById('stat-weak-relationships').textContent = weakRelationships;
+            document.getElementById('stat-network-density').textContent = networkDensity;
+            document.getElementById('stat-avg-connections').textContent = avgConnections;
+            document.getElementById('stat-most-connected-node').textContent = mostConnectedNodeName;
+            document.getElementById('stat-days-relationships').textContent = daysRelationships;
+            document.getElementById('stat-months-relationships').textContent = monthsRelationships;
+            document.getElementById('stat-years-relationships').textContent = yearsRelationships;
+            document.getElementById('stat-decade-relationships').textContent = decadeRelationships;
+            
+            // Count nodes by domain and append to the statistics section
+            const domainCounts = {};
+            nodes.forEach(node => {
+                const domain = node.domain || 'Uncategorized';
+                if (!domainCounts[domain]) {
+                    domainCounts[domain] = 0;
+                }
+                domainCounts[domain]++;
+            });
+            
+            // Create HTML for domain counts
+            const domainStatsContainer = document.createElement('div');
+            domainStatsContainer.innerHTML = `
+                <div style="margin-top: 15px; border-top: 1px solid #dee2e6; padding-top: 10px;">
+                    <div style="font-weight: bold; margin-bottom: 8px;">Domain Distribution:</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        ${Object.entries(domainCounts)
+                            .sort((a, b) => b[1] - a[1]) // Sort by count descending
+                            .map(([domain, count]) => {
+                                // Get the color for this domain
+                                const color = getDomainColor(domain);
+                                return `
+                                    <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; display: flex; align-items: center;">
+                                        <div style="position: relative; width: 18px; height: 18px; min-width: 18px; margin-right: 8px; display: flex; align-items: center; justify-content: center;">
+                                            <div style="position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background-color: ${color};"></div>
+                                        </div>
+                                        <strong>${domain}:</strong>
+                                    </div>
+                                    <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;">${count}</div>
+                                `;
+                            }).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // Append domain stats to the statistics container
+            const statsContainer = document.querySelector('.filter-section-content div[style*="grid-template-columns"]').parentNode;
+            
+            // Remove any previous domain stats before adding new ones
+            const existingDomainStats = statsContainer.querySelector('div[style*="margin-top: 15px; border-top"]');
+            if (existingDomainStats) {
+                existingDomainStats.remove();
+            }
+            
+            statsContainer.appendChild(domainStatsContainer);
+            
+            // For feedback loops counts, we'll update these when feedback loops are calculated
+            document.getElementById('stat-reinforcing-loops').textContent = '0';
+            document.getElementById('stat-balancing-loops').textContent = '0';
         }
 
         function updateLegend() {
@@ -1697,6 +1817,66 @@
                 </div>
             `;
             diagnosticsDiv.appendChild(diagnosticsIntro);
+            
+            // System Statistics Section
+            const systemStatsSection = createBasicSection("System Statistics");
+            systemStatsSection.querySelector('.filter-section-content').innerHTML = `
+                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Comprehensive statistics about this fishery system map
+                </div>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-size: 12px; max-height: 300px; overflow-y: auto;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Total Nodes:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-total-nodes">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Total Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-total-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Same Direction:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-same-direction">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Opposite Direction:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-opposite-direction">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Strong Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-strong-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Medium Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-medium-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Weak Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-weak-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Network Density:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-network-density">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Avg. Connections Per Node:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-avg-connections">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Reinforcing Loops:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-reinforcing-loops">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Balancing Loops:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-balancing-loops">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Most Connected Node:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-most-connected-node">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Days Scale Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-days-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Months Scale Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-months-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Years Scale Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-years-relationships">-</div>
+                        
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Decade+ Scale Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-decade-relationships">-</div>
+                    </div>
+                </div>
+            `;
+            diagnosticsDiv.appendChild(systemStatsSection);
             
             // Variable Categories
             const variableCategoriesSection = createBasicSection("Domains");
@@ -5695,6 +5875,10 @@ def get_top_centrality_nodes(metric):
                     `;
                 }
                 
+                // Update feedback loop statistics in the system statistics section
+                document.getElementById('stat-reinforcing-loops').textContent = allLoops.reinforcing.length;
+                document.getElementById('stat-balancing-loops').textContent = allLoops.balancing.length;
+                
                 // Display all loops
                 displayFeedbackLoopsList(allLoops);
                 
@@ -5739,6 +5923,10 @@ def get_top_centrality_nodes(metric):
             // Clear stored loops
             window.feedbackLoops = null;
             window.currentLoopFilter = null;
+            
+            // Reset feedback loop statistics in the system statistics section
+            document.getElementById('stat-reinforcing-loops').textContent = '0';
+            document.getElementById('stat-balancing-loops').textContent = '0';
         }
         
         function filterFeedbackLoops(type) {
