@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Token Diffusion Algorithm Demo</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #graph {
+            width: 800px;
+            height: 600px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .node circle {
+            stroke: #fff;
+            stroke-width: 2px;
+        }
+        .node text {
+            font-size: 12px;
+            fill: #333;
+        }
+        .link {
+            stroke-opacity: 0.6;
+            fill: none;
+        }
+        .link.same { 
+            stroke: #28a745;
+            marker-end: url(#arrow-same);
+        }
+        .link.opposite { 
+            stroke: #dc3545;
+            marker-end: url(#arrow-opposite);
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 12px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .token-count {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            line-height: 20px;
+            position: absolute;
+        }
+        #simulation-info {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Token Diffusion Algorithm Demo</h1>
+    
+    <div class="controls">
+        <button id="run-btn">Run Simulation</button>
+        <button id="step-btn">Step</button>
+        <button id="reset-btn">Reset</button>
+        <span>Step: <span id="step-counter">0</span></span>
+    </div>
+    
+    <div id="graph"></div>
+    
+    <div id="simulation-info">
+        <h3>Simulation Information</h3>
+        <div id="node-flows"></div>
+    </div>
+    
+    <script type="module">
+        import { 
+            Polarity, 
+            Strength, 
+            Delay, 
+            TokenState, 
+            NodeType, 
+            TokenAgent, 
+            CausalTokenModel, 
+            Graph, 
+            runSimulation, 
+            createCausalDiagram 
+        } from './diffusion.js';
+        
+        // Create a sample graph
+        const factorsData = [
+            { id: '0', label: 'Node A', domain: 'Economic', nodeType: NodeType.PASS_THROUGH },
+            { id: '1', label: 'Node B', domain: 'Social', nodeType: NodeType.PASS_THROUGH },
+            { id: '2', label: 'Node C', domain: 'Environmental', nodeType: NodeType.PASS_THROUGH },
+            { id: '3', label: 'Node D', domain: 'Governance', nodeType: NodeType.PASS_THROUGH },
+            { id: '4', label: 'Node E', domain: 'Economic', nodeType: NodeType.PASS_THROUGH }
+        ];
+        
+        console.log("Factors data:", factorsData);
+        
+        const relationshipsData = [
+            { source: '0', target: '1', polarity: 'same', strength: 'high', delay: 'fast' },
+            { source: '1', target: '2', polarity: 'opposite', strength: 'medium', delay: 'medium' },
+            { source: '2', target: '3', polarity: 'same', strength: 'medium', delay: 'slow' },
+            { source: '3', target: '4', polarity: 'same', strength: 'high', delay: 'fast' },
+            { source: '4', target: '0', polarity: 'opposite', strength: 'weak', delay: 'medium' },
+            { source: '0', target: '2', polarity: 'same', strength: 'weak', delay: 'fast' }
+        ];
+        
+        console.log("Relationship data:", relationshipsData);
+        
+        const G = createCausalDiagram(factorsData, relationshipsData);
+        console.log("Created graph:", G);
+        G.printGraph(); // Print detailed graph structure for debugging
+        
+        let model = new CausalTokenModel(G, 10, {'0': 10});
+        let simulationRunning = false;
+        let simulationInterval;
+        
+        // Debug initial token state
+        console.log("Initial tokens:", model.agents);
+        console.log("Initial node flows:", model.getNodeFlows());
+        
+        // Set up D3 visualization
+        const width = 800;
+        const height = 600;
+        
+        // Add a clear debug display
+        const debugContainer = document.createElement('div');
+        debugContainer.id = 'debug-container';
+        debugContainer.style.margin = '20px 0';
+        debugContainer.style.padding = '10px';
+        debugContainer.style.backgroundColor = '#f0f0f0';
+        debugContainer.style.borderRadius = '4px';
+        debugContainer.style.maxHeight = '200px';
+        debugContainer.style.overflow = 'auto';
+        document.body.insertBefore(debugContainer, document.getElementById('simulation-info'));
+        
+        // Override console.log for debugging
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const debugLine = document.createElement('div');
+            debugLine.style.fontFamily = 'monospace';
+            debugLine.style.fontSize = '12px';
+            debugLine.style.margin = '2px 0';
+            
+            let message = '';
+            for (const arg of args) {
+                if (typeof arg === 'object') {
+                    message += JSON.stringify(arg) + ' ';
+                } else {
+                    message += arg + ' ';
+                }
+            }
+            
+            debugLine.textContent = message;
+            debugContainer.appendChild(debugLine);
+            debugContainer.scrollTop = debugContainer.scrollHeight;
+        };
+        
+        const svg = d3.select("#graph")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+            
+        // Define arrow markers
+        svg.append("defs").selectAll("marker")
+            .data(["arrow-same", "arrow-opposite"])
+            .enter().append("marker")
+            .attr("id", d => d)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 15)
+            .attr("refY", 0)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5")
+            .attr("fill", d => d === "arrow-same" ? "#28a745" : "#dc3545");
+            
+        const simulation = d3.forceSimulation()
+            .force("link", d3.forceLink().id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2));
+            
+        // Convert graph to D3 format
+        const nodes = Object.entries(G.nodes).map(([id, data]) => ({
+            id,
+            ...data
+        }));
+        
+        const links = Object.entries(G.edges).map(([key, data]) => {
+            const [source, target] = key.split(',');
+            return {
+                source,
+                target,
+                ...data
+            };
+        });
+        
+        // Create the visualization elements
+        const link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("path")
+            .data(links)
+            .enter().append("path")
+            .attr("class", d => `link ${d.polarity === Polarity.SAME || d.polarity === 1 ? 'same' : 'opposite'}`)
+            .attr("stroke-width", d => {
+                // Check if strength is a number or an object with a value property
+                const strength = typeof d.strength === 'number' ? d.strength : 
+                                 (d.strength && d.strength.value ? d.strength.value : Strength.MEDIUM);
+                
+                if (strength === Strength.HIGH) return 3;
+                if (strength === Strength.MEDIUM) return 2;
+                return 1;
+            })
+            .attr("stroke-dasharray", d => {
+                // Check if delay is a number or an object with a value property
+                const delay = typeof d.delay === 'number' ? d.delay : 
+                              (d.delay && d.delay.value ? d.delay.value : Delay.MEDIUM.value);
+                
+                if (delay === Delay.SLOW.value) return "5,5";
+                if (delay === Delay.MEDIUM.value) return "3,3";
+                return "none";
+            });
+            
+        const node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll(".node")
+            .data(nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+                
+        node.append("circle")
+            .attr("r", 10)
+            .attr("fill", d => {
+                switch(d.domain) {
+                    case 'Economic': return "#4e79a7";
+                    case 'Social': return "#f28e2c";
+                    case 'Environmental': return "#59a14f";
+                    case 'Governance': return "#e15759";
+                    default: return "#76b7b2";
+                }
+            });
+            
+        node.append("text")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(d => d.label);
+            
+        // Token visualization
+        const tokenGroup = svg.append("g")
+            .attr("class", "tokens");
+            
+        // Update the simulation
+        simulation
+            .nodes(nodes)
+            .on("tick", ticked);
+            
+        simulation.force("link")
+            .links(links);
+            
+        function ticked() {
+            link.attr("d", d => {
+                const dx = d.target.x - d.source.x;
+                const dy = d.target.y - d.source.y;
+                const dr = Math.sqrt(dx * dx + dy * dy);
+                return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            });
+            
+            node
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+                
+            updateTokenVisualization();
+        }
+        
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        
+        // Function to update token visualization
+        function updateTokenVisualization() {
+            // Remove existing token counts and in-transit tokens
+            tokenGroup.selectAll(".token-count").remove();
+            tokenGroup.selectAll(".token-transit").remove();
+            
+            // Get current node flows
+            const nodeFlows = model.getNodeFlows();
+            console.log("Visualization update - token counts:", nodeFlows);
+            
+            // 1. First, add token counts to nodes with a clear visual indicator
+            for (const [nodeId, count] of Object.entries(nodeFlows)) {
+                if (count > 0) {
+                    const nodeData = nodes.find(n => n.id === nodeId);
+                    if (nodeData) {
+                        // Make the token indicator size proportional to count for better visibility
+                        const radius = Math.min(15 + count * 2, 40); // Scale with token count, max 40
+                        
+                        // Use different colors based on node to track movement
+                        let fillColor;
+                        switch(nodeData.domain) {
+                            case 'Economic': fillColor = "#4e79a7"; break;
+                            case 'Social': fillColor = "#f28e2c"; break;
+                            case 'Environmental': fillColor = "#59a14f"; break;
+                            case 'Governance': fillColor = "#e15759"; break;
+                            default: fillColor = "#007bff";
+                        }
+                        
+                        // Draw token indicator
+                        tokenGroup.append("circle")
+                            .attr("class", "token-count")
+                            .attr("cx", nodeData.x)
+                            .attr("cy", nodeData.y)
+                            .attr("r", radius)
+                            .attr("fill", fillColor)
+                            .attr("opacity", 0.8)
+                            .attr("stroke", "white")
+                            .attr("stroke-width", 2);
+                            
+                        // Draw token count text
+                        tokenGroup.append("text")
+                            .attr("class", "token-count")
+                            .attr("x", nodeData.x)
+                            .attr("y", nodeData.y)
+                            .attr("text-anchor", "middle")
+                            .attr("dominant-baseline", "central")
+                            .attr("fill", "white")
+                            .attr("font-weight", "bold")
+                            .attr("font-size", Math.min(16, 12 + count))  // Scale font size with count
+                            .text(count);
+                    }
+                }
+            }
+            
+            // 2. Now add visualization for tokens in transit
+            // Collect all agents that are in transit and group by edge
+            const transitTokens = model.agents.filter(agent => agent.state === TokenState.IN_TRANSIT);
+            console.log(`Visualizing ${transitTokens.length} tokens in transit`);
+            
+            // Group tokens by edge for counting and visual consolidation
+            const tokensByEdge = {};
+            transitTokens.forEach(agent => {
+                const edgeKey = `${agent.currentNode},${agent.targetNode}`;
+                if (!tokensByEdge[edgeKey]) {
+                    tokensByEdge[edgeKey] = [];
+                }
+                tokensByEdge[edgeKey].push(agent);
+            });
+            
+            // Process each edge with tokens in transit
+            Object.entries(tokensByEdge).forEach(([edgeKey, agents]) => {
+                const [sourceId, targetId] = edgeKey.split(',');
+                const sourceNode = nodes.find(n => n.id === sourceId);
+                const targetNode = nodes.find(n => n.id === targetId);
+                
+                if (!sourceNode || !targetNode) {
+                    console.log(`Missing node data for transit: ${sourceId} -> ${targetId}`);
+                    return;
+                }
+                
+                const edgeData = model.G.edges[edgeKey];
+                if (!edgeData) {
+                    console.log(`Missing edge data for transit: ${edgeKey}`);
+                    return;
+                }
+                
+                const totalDelay = edgeData.delay || 1; // Default to 1 if not specified
+                const tokenCount = agents.length;
+                
+                // Determine color based on source node's domain
+                let fillColor;
+                switch(sourceNode.domain) {
+                    case 'Economic': fillColor = "#4e79a7"; break;
+                    case 'Social': fillColor = "#f28e2c"; break;
+                    case 'Environmental': fillColor = "#59a14f"; break;
+                    case 'Governance': fillColor = "#e15759"; break;
+                    default: fillColor = "#007bff";
+                }
+                
+                // Highlight the entire edge path
+                const dx = targetNode.x - sourceNode.x;
+                const dy = targetNode.y - sourceNode.y;
+                const dr = Math.sqrt(dx * dx + dy * dy);
+                
+                // Draw background highlight for the entire edge
+                tokenGroup.append("path")
+                    .attr("class", "token-transit")
+                    .attr("d", `M${sourceNode.x},${sourceNode.y}A${dr},${dr} 0 0,1 ${targetNode.x},${targetNode.y}`)
+                    .attr("stroke", fillColor)
+                    .attr("stroke-width", 10)
+                    .attr("stroke-opacity", 0.2)
+                    .attr("fill", "none");
+                
+                // Draw a token at each step of the pathway
+                // Spread tokens evenly for better visualization when there are multiple
+                agents.forEach((agent, index) => {
+                    // Calculate progress for this token
+                    let progress = 1 - (agent.transitStepsRemaining / totalDelay);
+                    progress = Math.max(0, Math.min(1, progress)); // Clamp between 0 and 1
+                    
+                    // Add slight offset for multiple tokens on the same edge to avoid overlap
+                    if (agents.length > 1) {
+                        // Only apply the spread if progress is similar between tokens
+                        const sameProgress = agents.filter(a => {
+                            const p = 1 - (a.transitStepsRemaining / totalDelay);
+                            return Math.abs(p - progress) < 0.2;
+                        }).length > 1;
+                        
+                        if (sameProgress) {
+                            // Create a perpendicular offset
+                            const perpX = -dy / dr * 10 * (index % 2 === 0 ? 1 : -1) * (Math.floor(index/2) + 1) / 2;
+                            const perpY = dx / dr * 10 * (index % 2 === 0 ? 1 : -1) * (Math.floor(index/2) + 1) / 2;
+                            
+                            // Linear interpolation with perpendicular offset
+                            const baseX = sourceNode.x + (targetNode.x - sourceNode.x) * progress;
+                            const baseY = sourceNode.y + (targetNode.y - sourceNode.y) * progress;
+                            const x = baseX + perpX;
+                            const y = baseY + perpY;
+                            
+                            // Draw token with offset
+                            drawToken(x, y, agent, fillColor, tokenCount);
+                        } else {
+                            // Standard linear interpolation for different progress values
+                            const x = sourceNode.x + (targetNode.x - sourceNode.x) * progress;
+                            const y = sourceNode.y + (targetNode.y - sourceNode.y) * progress;
+                            drawToken(x, y, agent, fillColor, tokenCount);
+                        }
+                    } else {
+                        // Standard linear interpolation for single token
+                        const x = sourceNode.x + (targetNode.x - sourceNode.x) * progress;
+                        const y = sourceNode.y + (targetNode.y - sourceNode.y) * progress;
+                        drawToken(x, y, agent, fillColor, tokenCount);
+                    }
+                });
+                
+                // Add a count label in the middle of the edge
+                const midX = sourceNode.x + (targetNode.x - sourceNode.x) * 0.5;
+                const midY = sourceNode.y + (targetNode.y - sourceNode.y) * 0.5;
+                
+                // Add a background for better readability
+                tokenGroup.append("circle")
+                    .attr("class", "token-transit")
+                    .attr("cx", midX)
+                    .attr("cy", midY)
+                    .attr("r", 14)
+                    .attr("fill", "white")
+                    .attr("opacity", 0.7)
+                    .attr("stroke", fillColor)
+                    .attr("stroke-width", 2);
+                
+                // Add the count text
+                tokenGroup.append("text")
+                    .attr("class", "token-transit")
+                    .attr("x", midX)
+                    .attr("y", midY)
+                    .attr("text-anchor", "middle")
+                    .attr("dominant-baseline", "central")
+                    .attr("font-weight", "bold")
+                    .attr("fill", fillColor)
+                    .text(tokenCount);
+            });
+            
+            // Helper function to draw a token at a specific position
+            function drawToken(x, y, agent, fillColor, tokenCount) {
+                // Calculate progress for animation effect
+                const totalDelay = model.G.edges[`${agent.currentNode},${agent.targetNode}`]?.delay || 1;
+                let progress = 1 - (agent.transitStepsRemaining / totalDelay);
+                progress = Math.max(0, Math.min(1, progress));
+                
+                // Draw transit token
+                tokenGroup.append("circle")
+                    .attr("class", "token-transit")
+                    .attr("cx", x)
+                    .attr("cy", y)
+                    .attr("r", 8) // Smaller than node tokens
+                    .attr("fill", fillColor)
+                    .attr("opacity", 0.9)
+                    .attr("stroke", "white")
+                    .attr("stroke-width", 1.5);
+                
+                // Add a motion trail/tail to show direction
+                const trailLength = 0.2; // Length of trail as fraction of total distance
+                const trailProgress = Math.max(0, progress - trailLength);
+                const sourceNode = nodes.find(n => n.id === agent.currentNode);
+                const targetNode = nodes.find(n => n.id === agent.targetNode);
+                
+                const trailX = sourceNode.x + (targetNode.x - sourceNode.x) * trailProgress;
+                const trailY = sourceNode.y + (targetNode.y - sourceNode.y) * trailProgress;
+                
+                // Draw trail line
+                tokenGroup.append("line")
+                    .attr("class", "token-transit")
+                    .attr("x1", trailX)
+                    .attr("y1", trailY)
+                    .attr("x2", x)
+                    .attr("y2", y)
+                    .attr("stroke", fillColor)
+                    .attr("stroke-width", 3)
+                    .attr("stroke-opacity", 0.6);
+            }
+            
+            // Update node flows display with more details
+            updateNodeFlowsDisplay();
+        }
+        
+        // Function to update node flows display
+        function updateNodeFlowsDisplay() {
+            // Get the node counts
+            const nodeFlows = model.getNodeFlows();
+            
+            // Count tokens in transit
+            const tokensInTransit = model.agents.filter(a => a.state === TokenState.IN_TRANSIT);
+            const inTransitCount = tokensInTransit.length;
+            
+            // Group in-transit tokens by source-target pairs
+            const transitEdges = {};
+            tokensInTransit.forEach(agent => {
+                const edgeKey = `${agent.currentNode}->${agent.targetNode}`;
+                transitEdges[edgeKey] = (transitEdges[edgeKey] || 0) + 1;
+            });
+            
+            // Calculate total tokens
+            const totalTokens = Object.values(nodeFlows).reduce((sum, count) => sum + count, 0) + inTransitCount;
+            
+            // Create a more detailed HTML display
+            let nodeFlowsHtml = '<h4>Simulation Token Distribution</h4>';
+            
+            // Set up a two-column layout for both tables
+            nodeFlowsHtml += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">';
+            
+            // First column - Node distribution
+            nodeFlowsHtml += '<div>';
+            nodeFlowsHtml += `<div style="background-color: #4e79a7; color: white; padding: 8px; border-radius: 4px 4px 0 0; font-weight: bold; margin-bottom: 8px;">
+                Node Distribution (${totalTokens - inTransitCount} tokens)
+            </div>`;
+            
+            // Node view table
+            nodeFlowsHtml += '<div style="display: grid; grid-template-columns: auto auto auto; gap: 10px;">';
+            
+            // Headers
+            nodeFlowsHtml += `
+                <div style="font-weight: bold">Node</div>
+                <div style="font-weight: bold">Count</div>
+                <div style="font-weight: bold">Percentage</div>
+            `;
+            
+            // Build rows
+            Object.entries(nodeFlows)
+                .sort((a, b) => b[1] - a[1]) // Sort by count, highest first
+                .forEach(([nodeId, count]) => {
+                    const nodeData = nodes.find(n => n.id === nodeId);
+                    if (!nodeData) return;
+                    
+                    const percentage = totalTokens > 0 ? (count / totalTokens * 100).toFixed(1) : 0;
+                    
+                    // Style based on count
+                    let style, bgColor = '';
+                    if (count > 0) {
+                        let color;
+                        switch(nodeData.domain) {
+                            case 'Economic': color = "#4e79a7"; break;
+                            case 'Social': color = "#f28e2c"; break;
+                            case 'Environmental': color = "#59a14f"; break;
+                            case 'Governance': color = "#e15759"; break;
+                            default: color = "#007bff";
+                        }
+                        style = `font-weight: bold; color: ${color};`;
+                        bgColor = `background-color: ${color}22;`; // Add transparency
+                    } else {
+                        style = 'color: #6c757d;';
+                    }
+                    
+                    nodeFlowsHtml += `
+                        <div style="${bgColor}padding: 3px;">${nodeData.label}</div>
+                        <div style="${style}${bgColor}padding: 3px;">${count}</div>
+                        <div style="${style}${bgColor}padding: 3px;">${percentage}%</div>
+                    `;
+                });
+                
+            nodeFlowsHtml += '</div>'; // End grid
+            nodeFlowsHtml += '</div>'; // End first column for node distribution
+            
+            // Second column - In-transit distribution
+            nodeFlowsHtml += `<div>
+                <div style="background-color: #f28e2c; color: white; padding: 8px; border-radius: 4px 4px 0 0; font-weight: bold; margin-bottom: 8px;">
+                    In Transit (${inTransitCount} tokens)
+                </div>
+            `;
+            
+            if (inTransitCount > 0) {
+                // Group tokens by progress for better visualization
+                const tokensByProgress = {};
+                tokensInTransit.forEach(agent => {
+                    const edgeKey = `${agent.currentNode},${agent.targetNode}`;
+                    const edgeData = model.G.edges[edgeKey];
+                    if (!edgeData) return;
+                    
+                    const totalDelay = edgeData.delay || 1;
+                    const progress = 1 - (agent.transitStepsRemaining / totalDelay);
+                    const progressBucket = Math.floor(progress * 10) / 10; // Round to nearest 0.1
+                    
+                    if (!tokensByProgress[edgeKey]) {
+                        tokensByProgress[edgeKey] = {};
+                    }
+                    if (!tokensByProgress[edgeKey][progressBucket]) {
+                        tokensByProgress[edgeKey][progressBucket] = [];
+                    }
+                    tokensByProgress[edgeKey][progressBucket].push(agent);
+                });
+                
+                // Table layout with more details
+                nodeFlowsHtml += '<table style="width: 100%; border-collapse: collapse;">';
+                
+                // Headers
+                nodeFlowsHtml += `
+                    <thead>
+                        <tr style="background-color: #f8f9fa;">
+                            <th style="padding: 8px; text-align: left; border: 1px solid #dee2e6;">Source → Target</th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">Tokens</th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">Edge Delay</th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                `;
+                
+                // Sort edges for consistent display
+                const sortedEdges = Object.keys(tokensByProgress).sort();
+                
+                sortedEdges.forEach(edgeKey => {
+                    const [sourceId, targetId] = edgeKey.split(',');
+                    const sourceNode = nodes.find(n => n.id === sourceId);
+                    const targetNode = nodes.find(n => n.id === targetId);
+                    
+                    if (!sourceNode || !targetNode) return;
+                    
+                    const sourceLabel = sourceNode.label;
+                    const targetLabel = targetNode.label;
+                    const edgeData = model.G.edges[edgeKey];
+                    const totalDelay = edgeData?.delay || 1;
+                    
+                    // Get domain color for styling
+                    let domainColor;
+                    switch(sourceNode.domain) {
+                        case 'Economic': domainColor = "#4e79a7"; break;
+                        case 'Social': domainColor = "#f28e2c"; break;
+                        case 'Environmental': domainColor = "#59a14f"; break;
+                        case 'Governance': domainColor = "#e15759"; break;
+                        default: domainColor = "#767676";
+                    }
+                    
+                    // Total tokens on this edge
+                    const edgeTokenCount = Object.values(tokensByProgress[edgeKey])
+                        .reduce((sum, tokens) => sum + tokens.length, 0);
+                    
+                    // Create row with styling based on source node domain
+                    nodeFlowsHtml += `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; font-weight: bold; color: ${domainColor};">
+                                ${sourceLabel} → ${targetLabel}
+                            </td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center; font-weight: bold;">
+                                ${edgeTokenCount}
+                            </td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6; text-align: center;">
+                                ${totalDelay} steps
+                            </td>
+                            <td style="padding: 8px; border: 1px solid #dee2e6;">
+                    `;
+                    
+                    // Create a detailed progress visualization with tokens at each step
+                    // Show a 10-step progress bar with tokens at each position
+                    nodeFlowsHtml += '<div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">';
+                    
+                    // Create 10 steps (0% to 100%)
+                    for (let i = 0; i <= 10; i++) {
+                        const stepProgress = i/10;
+                        const tokenCount = tokensByProgress[edgeKey][stepProgress]?.length || 0;
+                        
+                        // Determine marker style based on if tokens are present
+                        let markerStyle = 'width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;';
+                        
+                        if (tokenCount > 0) {
+                            // Tokens present at this step
+                            markerStyle += `background-color: ${domainColor}; color: white;`;
+                            nodeFlowsHtml += `<div style="${markerStyle}">${tokenCount}</div>`;
+                        } else {
+                            // No tokens at this step
+                            markerStyle += 'background-color: #e9ecef; color: #6c757d;';
+                            nodeFlowsHtml += `<div style="${markerStyle}"></div>`;
+                        }
+                    }
+                    
+                    nodeFlowsHtml += '</div>';
+                    
+                    // Add percentage labels
+                    nodeFlowsHtml += `
+                        <div style="display: flex; justify-content: space-between; font-size: 10px; color: #6c757d; margin-top: 2px;">
+                            <span>0%</span>
+                            <span>50%</span>
+                            <span>100%</span>
+                        </div>
+                    `;
+                    
+                    nodeFlowsHtml += '</td></tr>';
+                });
+                
+                nodeFlowsHtml += '</tbody></table>';
+            } else {
+                nodeFlowsHtml += '<div style="padding: 20px; text-align: center; background-color: #f8f9fa; border-radius: 4px;">';
+                nodeFlowsHtml += '<p style="margin: 0; color: #6c757d;"><i>No tokens currently in transit</i></p>';
+                nodeFlowsHtml += '</div>';
+            }
+            
+            nodeFlowsHtml += '</div>'; // End second column
+            nodeFlowsHtml += '</div>'; // End grid layout
+            
+            // Add simulation status
+            nodeFlowsHtml += `
+                <div style="margin-top: 15px; background-color: #f8f9fa; padding: 10px; border-radius: 4px;">
+                    <strong>Step:</strong> ${model.stepCount} | 
+                    <strong>Total Tokens:</strong> ${totalTokens} | 
+                    <strong>At Nodes:</strong> ${totalTokens - inTransitCount} | 
+                    <strong>In Transit:</strong> ${inTransitCount}
+                </div>
+            `;
+            
+            document.getElementById('node-flows').innerHTML = nodeFlowsHtml;
+            document.getElementById('step-counter').textContent = model.stepCount;
+            
+            // No need for tab switching functionality since both tables are shown simultaneously
+        }
+        
+        // Button event handlers
+        document.getElementById('run-btn').addEventListener('click', () => {
+            if (simulationRunning) {
+                clearInterval(simulationInterval);
+                document.getElementById('run-btn').textContent = 'Run Simulation';
+                simulationRunning = false;
+            } else {
+                simulationInterval = setInterval(() => {
+                    // Perform step and update visualization
+                    model.step();
+                    updateTokenVisualization();
+                    
+                    // Keep the force simulation active to animate node positions
+                    simulation.alpha(0.3).restart();
+                    
+                    // Check if all tokens have moved away from the initial node
+                    const currentDistribution = model.getNodeFlows();
+                    
+                    // Log distribution for debugging
+                    console.log(`Auto step ${model.stepCount}:`, currentDistribution);
+                }, 1000);
+                document.getElementById('run-btn').textContent = 'Pause Simulation';
+                simulationRunning = true;
+            }
+        });
+        
+        document.getElementById('step-btn').addEventListener('click', () => {
+            console.log('Step button clicked');
+            
+            // Log current state before stepping
+            console.log('Current token distribution before step:', model.getNodeFlows());
+            
+            // Perform the step
+            const newDistribution = model.step();
+            
+            // Log token movement
+            console.log('Token distribution after step:', newDistribution);
+            
+            // Update visualization
+            updateTokenVisualization();
+            simulation.alpha(0.3).restart(); // Keep the force simulation active
+        });
+        
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            console.log('Reset button clicked');
+            if (simulationRunning) {
+                clearInterval(simulationInterval);
+                document.getElementById('run-btn').textContent = 'Run Simulation';
+                simulationRunning = false;
+            }
+            
+            model = new CausalTokenModel(G, 10, {'0': 10});
+            updateTokenVisualization();
+            simulation.alpha(0.3).restart(); // Restart the force simulation
+        });
+        
+        // Initial visualization
+        updateTokenVisualization();
+    </script>
+</body>
+</html>
