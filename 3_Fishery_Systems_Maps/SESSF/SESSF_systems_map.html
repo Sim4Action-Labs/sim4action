@@ -2114,49 +2114,13 @@
                     </div>
                     
                     <div>
-                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">3. Simulation Controls:</div>
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
-                            <button id="start-simulation" class="filter-button" onclick="startSimulation()" disabled 
-                                    title="Start the simulation and see how changes propagate through the system">
-                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"/>
-                                    </svg>
-                                    Start
-                                </span>
-                            </button>
-                            <button id="pause-simulation" class="filter-button" onclick="pauseSimulation()" disabled
-                                    title="Pause the simulation">
-                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M5.5 3.5A1.5 1.5 0 0 1 7 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5zm5 0A1.5 1.5 0 0 1 12 5v6a1.5 1.5 0 0 1-3 0V5a1.5 1.5 0 0 1 1.5-1.5z"/>
-                                    </svg>
-                                    Pause
-                                </span>
-                            </button>
-                            <button id="reset-simulation" class="filter-button" onclick="resetSimulation()" disabled
-                                    title="Reset the simulation to its initial state">
-                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-                                        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-                                    </svg>
-                                    Reset
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 10px; padding: 8px; background-color: #f8f9fa; border-radius: 4px; font-size: 12px; color: #666;">
-                    <p style="margin: 0;"><strong>How it works:</strong> The simulation uses the relationship strength, direction, and temporal delays to calculate how changes propagate through the system.</p>
-                </div>
+                        <!-- Legacy simulation controls section removed -->
             `;
             
             // Add event listener for variable select
             const variableSelect = causalSection.querySelector('#variable-select');
             variableSelect.addEventListener('change', function() {
-                const buttons = ['increase-btn', 'decrease-btn', 'start-simulation', 'pause-simulation', 'reset-simulation'];
+                const buttons = ['increase-btn', 'decrease-btn'];
                 buttons.forEach(id => {
                     document.getElementById(id).disabled = !this.value;
                 });
@@ -2833,12 +2797,7 @@
                 .style('opacity', 0.6)
                 .style('pointer-events', 'auto');
             
-            // Reset simulation controls if they exist
-            const simulationButtons = ['start-simulation', 'pause-simulation', 'reset-simulation'];
-            simulationButtons.forEach(id => {
-                const button = document.getElementById(id);
-                if (button) button.disabled = true;
-            });
+            // Legacy simulation controls reset code removed
             
             // Reset variable select if it exists
             const variableSelect = document.getElementById('variable-select');
@@ -2947,25 +2906,7 @@
                 });
         }
 
-        function startSimulation() {
-            // Placeholder for simulation logic
-            document.getElementById('start-simulation').disabled = true;
-            document.getElementById('pause-simulation').disabled = false;
-        }
-
-        function pauseSimulation() {
-            // Placeholder for pause logic
-            document.getElementById('start-simulation').disabled = false;
-            document.getElementById('pause-simulation').disabled = true;
-        }
-
-        function resetSimulation() {
-            // Reset highlights and simulation state
-            d3.selectAll('.node').classed('highlighted', false);
-            d3.selectAll('.link').classed('highlighted', false);
-            document.getElementById('start-simulation').disabled = false;
-            document.getElementById('pause-simulation').disabled = true;
-        }
+        // Legacy simulation functions removed
 
         // Storyline Navigation Functions
         let relationshipsHidden = false;

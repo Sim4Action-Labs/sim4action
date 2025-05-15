@@ -250,8 +250,8 @@ class CausalTokenModel {
     }
 
     /**
-     * Get the current distribution of tokens across nodes.
-     * @returns {Object} Map of node IDs to token counts
+     * Get the current distribution of tokens across nodes, accounting for token charge.
+     * @returns {Object} Map of node IDs to signed token counts
      */
     getNodeFlows() {
         const nodeFlows = {};
@@ -261,10 +261,11 @@ class CausalTokenModel {
             nodeFlows[node] = 0;
         }
         
-        // Count tokens at each node
+        // Count tokens at each node, accounting for charge
         for (const agent of this.agents) {
             if (agent.state !== TokenState.IN_TRANSIT) {
-                nodeFlows[agent.currentNode] = (nodeFlows[agent.currentNode] || 0) + 1;
+                // Add or subtract based on token charge
+                nodeFlows[agent.currentNode] = (nodeFlows[agent.currentNode] || 0) + agent.charge;
             }
         }
         
@@ -272,8 +273,8 @@ class CausalTokenModel {
     }
 
     /**
-     * Get the current distribution of tokens across edges.
-     * @returns {Object} Map of edge IDs to token counts
+     * Get the current distribution of tokens across edges, accounting for token charge.
+     * @returns {Object} Map of edge IDs to signed token counts
      */
     getEdgeFlows() {
         const edgeFlows = {};
@@ -283,11 +284,12 @@ class CausalTokenModel {
             edgeFlows[edge] = 0;
         }
         
-        // Count tokens on each edge
+        // Count tokens on each edge, accounting for charge
         for (const agent of this.agents) {
             if (agent.state === TokenState.IN_TRANSIT) {
                 const edgeKey = `${agent.currentNode},${agent.targetNode}`;
-                edgeFlows[edgeKey] = (edgeFlows[edgeKey] || 0) + 1;
+                // Add or subtract based on token charge
+                edgeFlows[edgeKey] = (edgeFlows[edgeKey] || 0) + agent.charge;
             }
         }
         
