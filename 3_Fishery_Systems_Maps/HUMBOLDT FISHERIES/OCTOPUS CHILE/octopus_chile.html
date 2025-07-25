@@ -1125,6 +1125,12 @@
     <!-- Removed fishery-info div as requested -->
 
     <div id="graph"></div>
+    
+    <!-- Floating Octopus Image -->
+    <div id="octopus-float" style="position: fixed; top: 80px; right: 20px; z-index: 100; pointer-events: none; opacity: 0.8; transition: opacity 0.3s ease;">
+        <img src="pulpo-del-norte.png" alt="Pulpo del Norte" style="width: 450px; height: auto; filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.3));">
+    </div>
+    
     <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#f8f9fa;"></div>
     <div id="tooltip"></div>
     <div id="filters">
@@ -1189,13 +1195,58 @@
             0% { transform: scale(0.95); opacity: 0.7; }
             100% { transform: scale(1.05); opacity: 1; }
         }
+        
+        /* Octopus floating image styles */
+        #octopus-float {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        
+        #octopus-float:hover {
+            transform: scale(1.05);
+            opacity: 1 !important;
+        }
+        
+        /* Fade octopus when interacting with graph */
+        #graph:hover ~ #octopus-float {
+            opacity: 0.4;
+        }
+        
+        /* Responsive sizing for smaller screens */
+        @media (max-width: 768px) {
+            #octopus-float img {
+                width: 270px;
+            }
+            #octopus-float {
+                top: 60px;
+                right: 10px;
+            }
+        }
+        
+        /* Medium screens */
+        @media (max-width: 1024px) {
+            #octopus-float img {
+                width: 360px;
+            }
+            #octopus-float {
+                top: 70px;
+            }
+        }
     </style>
     <div id="error" style="display: none; position: fixed; top: 20px; right: 20px; background: #ff4444; color: white; padding: 15px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 14px;"></div>
 
     <script>
+        // ============================================
+        // CENTRALIZED CONFIGURATION
+        // ============================================
         // Google Sheets API configuration
-        const SPREADSHEET_ID = '1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU';
         const API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA';
+        
+        // Spreadsheet configuration - SINGLE SOURCE OF TRUTH
+        const SPREADSHEETS = {
+            main: '1Koxmt-s4Btgvx-hPOD5er9K2WExTYpSeAOuanUKDcho',
+            draft: '1KllC1f0x19Ci855x8zVxYG1z09H5hc675C9rVtOboH4'
+        };
+        let currentSpreadsheetId = SPREADSHEETS.main;
 
         // Global variables for data
         let domains = [
@@ -1309,7 +1360,7 @@
                         // Test the connection and get spreadsheet metadata
                         updateLoadingProgress(30, "Authenticating and accessing spreadsheet...");
                         const response = await gapi.client.sheets.spreadsheets.get({
-                            spreadsheetId: SPREADSHEET_ID
+                            spreadsheetId: currentSpreadsheetId
                         });
                         console.log('Successfully connected to spreadsheet:', response.result.properties.title);
                         
@@ -1397,7 +1448,7 @@
                 // Load domains (we'll extract unique domains from factors)
                 updateLoadingProgress(45, "Loading domain information...");
                 const factorsResponse = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: SPREADSHEET_ID,
+                    spreadsheetId: currentSpreadsheetId,
                     range: 'FACTORS!A2:E', // Updated to match template: factor_id, name, domain_name, intervenable, definition
                 });
                 
@@ -1424,7 +1475,7 @@
                 // Load relationships
                 updateLoadingProgress(65, "Loading relationships data...");
                 const relationshipsResponse = await gapi.client.sheets.spreadsheets.values.get({
-                    spreadsheetId: SPREADSHEET_ID,
+                    spreadsheetId: currentSpreadsheetId,
                     range: 'RELATIONSHIPS!A2:I', // relationship_id, from, to, from_factor_id, to_factor_id, polarity, strength, delay, definition
                 });
                 
@@ -2002,6 +2053,24 @@
 
             // Storyline Navigation
             const storylineSection = createBasicSection("Storyline Navigation");
+            
+            // Extract unique domains from factors data, excluding 'FOCAL FACTORS'
+            const uniqueDomains = [...new Set(factors
+                .map(factor => factor.domain_name || factor.domain)
+                .filter(domain => domain && domain !== 'FOCAL FACTORS')
+            )].sort();
+            
+            // Generate domain buttons dynamically
+            const domainButtons = uniqueDomains.map(domain => {
+                // Create a clean display name for the button
+                const displayName = domain.replace(/-/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+                const capitalizedName = displayName.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+                
+                return `<button class="filter-button" onclick="showDomainNodes('${domain}')" title="Focus on ${capitalizedName.toLowerCase()} variables">${capitalizedName}</button>`;
+            }).join('');
+            
             storylineSection.querySelector('.filter-section-content').innerHTML = `
                 <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
                     <i class="fa fa-info-circle"></i> Quick access to common views of the system
@@ -2009,13 +2078,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
                     <button class="filter-button" onclick="toggleRelationships()" title="Show/hide all relationships between variables">Hide Relationships</button>
                     <button class="filter-button" onclick="showFocalNode()" title="Focus on the most central variables">Show Focal Node(s)</button>
-                    <button class="filter-button" onclick="showDomainNodes('Stock')" title="Focus on stock-related variables">Stock Variables</button>
-                    <button class="filter-button" onclick="showDomainNodes('Environmental-Ecosystem')" title="Focus on environmental variables">Environment</button>
-                    <button class="filter-button" onclick="showDomainNodes('Economics-Markets')" title="Focus on economic variables">Economics</button>
-                    <button class="filter-button" onclick="showDomainNodes('Social')" title="Focus on social variables">Social</button>
-                    <button class="filter-button" onclick="showDomainNodes('Technical')" title="Focus on technical variables">Technical</button>
-                    <button class="filter-button" onclick="showDomainNodes('Indigenous')" title="Focus on indigenous variables">Indigenous</button>
-                    <button class="filter-button" onclick="showDomainNodes('Management')" title="Focus on management variables">Management</button>
+                    ${domainButtons}
                 </div>
             `;
             diagnosticsDiv.appendChild(storylineSection);
@@ -2028,7 +2091,7 @@
                 </div>
                 <select id="node-selector" class="filter-button" style="width: 100%; padding: 6px; margin-bottom: 0;" onchange="handleNodeSelection(this.value)" title="Select a variable to highlight and see its connections">
                     <option value="">-- Select a variable --</option>
-                    ${factors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
+                    ${factors.sort((a, b) => a.name.localeCompare(b.name)).map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
                 </select>
             `;
             diagnosticsDiv.appendChild(nodeSelectorSection);
@@ -3065,12 +3128,7 @@
             `;
         }
 
-        // Spreadsheet configuration
-        const SPREADSHEETS = {
-            main: '1ix0v4MP_PxbhDYQmph7cLwN-KElTZGwLm9dS1hgDzMM',
-            draft: '1KllC1f0x19Ci855x8zVxYG1z09H5hc675C9rVtOboH4'
-        };
-        let currentSpreadsheetId = SPREADSHEETS.main;
+        // Spreadsheet configuration (moved to top of file)
 
         // Function to toggle between spreadsheets
         async function toggleMode() {
@@ -3960,9 +4018,15 @@ import json
 from pyodide.http import open_url
 from js import console
 
-# Google Sheets configuration
-SPREADSHEET_ID = '1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU'
-API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA'
+# Google Sheets configuration - will be set dynamically
+SPREADSHEET_ID = None
+API_KEY = None
+
+def set_config(spreadsheet_id, api_key):
+    """Set the configuration from JavaScript."""
+    global SPREADSHEET_ID, API_KEY
+    SPREADSHEET_ID = spreadsheet_id
+    API_KEY = api_key
 
 def fetch_sheet_data(sheet_name):
     """Fetch data from a specific sheet in the Google Spreadsheet."""
@@ -4105,7 +4169,8 @@ def get_top_centrality_nodes(metric):
                     import sys
                     if 'networkx_loader' in sys.modules:
                         del sys.modules['networkx_loader']
-                    from networkx_loader import initialize_networkx
+                    from networkx_loader import set_config, initialize_networkx
+                    set_config('${currentSpreadsheetId}', '${API_KEY}')
                     initialize_networkx()
                 `);
                 console.log("NetworkX initialized successfully");
