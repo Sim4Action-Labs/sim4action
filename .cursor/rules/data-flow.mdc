@@ -1,0 +1,60 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Fishery Systems Map Data Flow
+
+## Data Acquisition and Processing Flow
+
+```
+Google Sheets Data → extract_systems_map.py → CSV Files → Analysis Scripts → System Map Outputs
+```
+
+1. **Source Data Collection** 
+   - Fishery systems data is stored in Google Sheets
+   - [extract_systems_map.py](mdc:extract_systems_map.py) connects to the Google Sheets API
+   - Fallback to local CSV files if available
+
+2. **Data Processing**
+   - Data is structured into factors (variables) and relationships
+   - [factors_data.csv](mdc:factors_data.csv) contains system variables
+   - [relationships_data.csv](mdc:relationships_data.csv) contains connections between variables
+   - [networkx_loader.py](mdc:networkx_loader.py) converts data to graph format for analysis
+
+3. **Network Analysis**
+   - [feedback_loops.py](mdc:feedback_loops.py) identifies feedback cycles in the system
+   - NetworkX used for graph analysis and metrics
+   - Systems maps analyzed for key patterns and structures
+
+4. **Output Generation**
+   - Markdown report generated in [fishery_systems_map.md](mdc:fishery_systems_map.md)
+   - GraphML file created for visualization tools
+   - Structured formats optimized for AI processing and quality control
+
+## Data Schema
+
+### Factors (Variables) Schema
+- `factor_id`: Unique identifier for each factor
+- `name`: Name of the factor
+- `domain_name`: Category/domain the factor belongs to 
+- `intervenable`: Whether the factor can be directly influenced
+- `definition`: Description of the factor
+
+### Relationships Schema
+- `from`: Source node name
+- `to`: Target node name
+- `from_factor_id`: ID of the source node
+- `to_factor_id`: ID of the target node
+- `polarity`: Relationship polarity ('same' or 'opposite')
+- `strength`: Relationship strength
+- `delay`: Delay information
+- `definition`: Description of the relationship
+
+## Alignment with Seafood Futures Framework
+This data flow process supports:
+- Comprehensive impact mapping and modeling
+- Integration of diverse data sources
+- Identification of emerging challenges
+- Analysis of feedback loops and system dynamics
+- Environmental sustainability assessment
