@@ -1659,8 +1659,8 @@
             position: fixed;
             top: 80px;
             right: 20px;
-            width: 650px;
-            height: 750px;
+            width: 800px;
+            height: 900px;
             background: white;
             border: 2px solid #007bff;
             border-radius: 8px;
@@ -1754,7 +1754,7 @@
         }
         
         .individual-charts-container {
-            max-height: 500px;
+            max-height: 700px;
             overflow-y: auto;
             padding: 10px;
             border: 1px solid #ddd;
@@ -5380,6 +5380,9 @@
             // Hide node selector
             document.getElementById('node-selector-container').style.display = 'none';
             
+            // Ensure SVG element exists for chart rendering
+            ensureChartSVG();
+            
             if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
                 clearChart();
                 return;
@@ -5423,6 +5426,9 @@
             
             // Hide node selector
             document.getElementById('node-selector-container').style.display = 'none';
+            
+            // Ensure SVG element exists for chart rendering
+            ensureChartSVG();
             
             if (!diffusionModel) {
                 clearChart();
@@ -5536,7 +5542,6 @@
         }
         
         function showAllNodesIndividual() {
-            console.log('🔍 showAllNodesIndividual called');
             currentResultsView = 'allindividual';
             
             // Update button states
@@ -5546,144 +5551,151 @@
             // Hide node selector
             document.getElementById('node-selector-container').style.display = 'none';
             
-            console.log('🔍 diffusionModel:', diffusionModel);
-            console.log('🔍 diffusionModel.nodeFlowsOverTime:', diffusionModel?.nodeFlowsOverTime);
-            
             if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
-                console.log('❌ No diffusion model or nodeFlowsOverTime');
                 clearChart();
                 return;
             }
             
             const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
-            console.log('🔍 nodeFlowsOverTime length:', nodeFlowsOverTime.length);
-            
             if (nodeFlowsOverTime.length === 0) {
-                console.log('❌ nodeFlowsOverTime is empty');
                 clearChart();
                 return;
             }
             
-            console.log('✅ Calling renderAllIndividualCharts');
-            renderAllIndividualCharts(nodeFlowsOverTime);
+            // Prepare data for individual charts - same logic as All Nodes view
+            const nodeIds = Object.keys(nodeFlowsOverTime[0] || {});
+            const activeNodesData = nodeIds.map(nodeId => {
+                let cumulativeCount = 0;
+                const values = nodeFlowsOverTime.map((flows, timeStep) => {
+                    // Add current flow to cumulative total - same as All Nodes calculation
+                    const flowValue = flows[nodeId] || 0;
+                    cumulativeCount += flowValue;
+                    return {
+                        timeStep: timeStep,
+                        value: cumulativeCount
+                    };
+                });
+                
+                const hasActivity = values.some(d => Math.abs(d.value) > 0);
+                return {
+                    nodeId: nodeId,
+                    values: values,
+                    hasActivity: hasActivity
+                };
+            }).filter(nodeData => nodeData.hasActivity);
+            
+            renderAllIndividualCharts(activeNodesData);
         }
         
-        function renderAllIndividualCharts(nodeFlowsOverTime) {
-            console.log('🔍 renderAllIndividualCharts called with:', nodeFlowsOverTime);
+        function ensureChartSVG() {
+            // Get the main chart container
+            const chartContainer = document.getElementById('results-chart-container');
+            let svg = document.getElementById('results-chart');
             
-            const chartContainer = document.getElementById('results-chart');
-            console.log('🔍 chartContainer:', chartContainer);
+            if (!svg) {
+                // Clear container and reset styles
+                chartContainer.innerHTML = '';
+                chartContainer.style.overflowY = 'visible';
+                chartContainer.style.maxHeight = 'none';
+                
+                // Create new SVG element
+                svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.id = 'results-chart';
+                svg.className = 'chart-svg';
+                chartContainer.appendChild(svg);
+            }
+        }
+        
+        function renderAllIndividualCharts(activeNodesData) {
+            // Get the main chart container
+            const chartContainer = document.getElementById('results-chart-container');
+            
+            // Clear existing content
             chartContainer.innerHTML = '';
             
-            // Create scrollable container
-            const scrollContainer = document.createElement('div');
-            scrollContainer.className = 'individual-charts-container';
-            chartContainer.appendChild(scrollContainer);
-            console.log('🔍 Created scroll container');
-            
-            // Get all nodes from the graph (same as single node dropdown)
-            console.log('🔍 diffusionGraph:', diffusionGraph);
-            if (!diffusionGraph || !diffusionGraph.nodes) {
-                console.log('❌ No diffusionGraph or nodes');
-                scrollContainer.innerHTML = '<div style="padding: 20px; text-align: center;">No nodes available</div>';
+            if (!activeNodesData || activeNodesData.length === 0) {
+                chartContainer.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;">No active nodes to display</div>';
                 return;
             }
             
-            const allNodeIds = Object.keys(diffusionGraph.nodes);
-            console.log('🔍 allNodeIds:', allNodeIds);
-            const nodeList = allNodeIds.map(nodeId => ({
-                id: nodeId,
-                name: diffusionGraph.nodes[nodeId].label || nodeId
-            })).sort((a, b) => a.name.localeCompare(b.name));
-            console.log('🔍 nodeList:', nodeList);
+            // Set up scrollable container
+            chartContainer.style.overflowY = 'auto';
+            chartContainer.style.maxHeight = '500px';
             
-            // Create individual charts for each node
-            console.log('🔍 Creating charts for', nodeList.length, 'nodes');
-            nodeList.forEach((node, index) => {
-                console.log(`🔍 Processing node ${index + 1}/${nodeList.length}:`, node.name);
-                const nodeData = calculateCumulativeTokenCount(nodeFlowsOverTime, node.id);
-                console.log('🔍 Node data for', node.name, ':', nodeData);
-                createIndividualChart(scrollContainer, node.id, node.name, nodeData);
+            // Create div container for individual charts
+            const chartsContainer = d3.select(chartContainer)
+                .append('div')
+                .attr('id', 'individual-charts-container')
+                .style('padding', '10px');
+            
+            // Sort nodes alphabetically by name for consistent display
+            const sortedNodes = activeNodesData.sort((a, b) => {
+                const nameA = (diffusionGraph.nodes[a.nodeId]?.label || a.nodeId).toLowerCase();
+                const nameB = (diffusionGraph.nodes[b.nodeId]?.label || b.nodeId).toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
+            // Create individual chart for each node
+            sortedNodes.forEach((nodeData, index) => {
+                createIndividualNodeChart(chartsContainer, nodeData, index);
             });
         }
         
-        function calculateCumulativeTokenCount(nodeFlowsOverTime, nodeId) {
-            // Calculate cumulative data for the specified node (same logic as renderSingleNodeChart)
-            let cumulativeCount = 0;
-            const timeSeriesData = nodeFlowsOverTime.map((flows, timeStep) => {
-                cumulativeCount += (flows[nodeId] || 0);
-                return {
-                    timeStep: timeStep,
-                    value: cumulativeCount
-                };
-            });
-            return timeSeriesData;
-        }
-        
-        function createIndividualChart(container, nodeId, nodeName, data) {
-            // Create chart item container
-            const chartItem = document.createElement('div');
-            chartItem.className = 'individual-chart-item';
+        function createIndividualNodeChart(container, nodeData, index) {
+            const nodeId = nodeData.nodeId;
+            const values = nodeData.values;
+            
+            // Get node display name
+            const nodeDisplayName = diffusionGraph.nodes[nodeId]?.label || nodeId;
+            
+            // Create chart container
+            const chartDiv = container.append('div')
+                .style('margin-bottom', '30px')
+                .style('border', '1px solid #ddd')
+                .style('border-radius', '5px')
+                .style('padding', '15px')
+                .style('background-color', '#fafafa');
             
             // Add title
-            const title = document.createElement('div');
-            title.className = 'individual-chart-title';
-            title.textContent = nodeName;
-            chartItem.appendChild(title);
+            chartDiv.append('h4')
+                .style('margin', '0 0 10px 0')
+                .style('font-size', '14px')
+                .style('color', '#333')
+                .text(nodeDisplayName.length > 60 ? nodeDisplayName.substring(0, 60) + '...' : nodeDisplayName);
             
-            // Create SVG
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.setAttribute('class', 'individual-chart-svg');
-            chartItem.appendChild(svg);
+            // Create SVG for this chart
+            const margin = { top: 10, right: 20, bottom: 40, left: 60 };
+            const width = 500 - margin.left - margin.right;
+            const height = 150 - margin.top - margin.bottom;
             
-            container.appendChild(chartItem);
-            
-            // Render chart using D3
-            renderIndividualNodeChart(d3.select(svg), data, nodeName);
-        }
-        
-        function renderIndividualNodeChart(svg, data, nodeName) {
-            svg.selectAll('*').remove();
-            
-            if (!data || data.length === 0) {
-                svg.append('text')
-                    .attr('x', '50%')
-                    .attr('y', '50%')
-                    .attr('text-anchor', 'middle')
-                    .attr('dominant-baseline', 'middle')
-                    .style('fill', '#666')
-                    .style('font-size', '12px')
-                    .text('No data available');
-                return;
-            }
-            
-            const margin = { top: 15, right: 15, bottom: 30, left: 50 };
-            const width = 550 - margin.left - margin.right;
-            const height = 180 - margin.top - margin.bottom;
+            const svg = chartDiv.append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
             
             const g = svg.append('g')
                 .attr('transform', `translate(${margin.left},${margin.top})`);
             
-            // Scales
-            const maxTimeStep = d3.max(data, d => d.timeStep) || 0;
-            const extent = d3.extent(data, d => d.value);
+            // Scales - center y-axis at zero
+            const maxTimeStep = d3.max(values, d => d.timeStep) || 0;
+            const extent = d3.extent(values, d => d.value);
             const maxValue = Math.max(Math.abs(extent[0] || 0), Math.abs(extent[1] || 0)) || 1;
             
             const xScale = d3.scaleLinear()
                 .domain([0, maxTimeStep])
                 .range([0, width]);
             
+            // Always center y-axis at zero with symmetric range
             const yScale = d3.scaleLinear()
-                .domain([-maxValue * 1.1, maxValue * 1.1])
+                .domain([-maxValue, maxValue])
                 .range([height, 0]);
             
             // Axes
             g.append('g')
                 .attr('transform', `translate(0,${height})`)
-                .call(d3.axisBottom(xScale).ticks(5));
+                .call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.format('d')));
             
             g.append('g')
-                .call(d3.axisLeft(yScale).ticks(5));
+                .call(d3.axisLeft(yScale).ticks(4));
             
             // Zero line
             g.append('line')
@@ -5692,7 +5704,34 @@
                 .attr('y1', yScale(0))
                 .attr('y2', yScale(0))
                 .style('stroke', '#ddd')
-                .style('stroke-dasharray', '2,2');
+                .style('stroke-dasharray', '3,3');
+            
+            // Define area generator for fill
+            const area = d3.area()
+                .x(d => xScale(d.timeStep))
+                .y0(yScale(0))  // Fill from zero line
+                .y1(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+            
+            // Split data into positive and negative segments for different colors
+            const positiveValues = values.filter(d => d.value >= 0);
+            const negativeValues = values.filter(d => d.value <= 0);
+            
+            // Draw positive area (green)
+            if (positiveValues.length > 0) {
+                g.append('path')
+                    .datum(positiveValues)
+                    .attr('fill', 'rgba(40, 167, 69, 0.3)')  // Light green fill
+                    .attr('d', area);
+            }
+            
+            // Draw negative area (red)
+            if (negativeValues.length > 0) {
+                g.append('path')
+                    .datum(negativeValues)
+                    .attr('fill', 'rgba(220, 53, 69, 0.3)')  // Light red fill
+                    .attr('d', area);
+            }
             
             // Line generator
             const line = d3.line()
@@ -5700,37 +5739,50 @@
                 .y(d => yScale(d.value))
                 .curve(d3.curveMonotoneX);
             
-            // Draw line
-            g.append('path')
-                .datum(data)
-                .attr('fill', 'none')
-                .attr('stroke', '#007bff')
-                .attr('stroke-width', 2)
-                .attr('d', line);
+            // Draw positive line segments (green)
+            if (positiveValues.length > 0) {
+                g.append('path')
+                    .datum(positiveValues)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#28a745')  // Green
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+            }
             
-            // Add dots
-            g.selectAll('.dot')
-                .data(data)
+            // Draw negative line segments (red)
+            if (negativeValues.length > 0) {
+                g.append('path')
+                    .datum(negativeValues)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#dc3545')  // Red
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+            }
+            
+            // Add dots at data points with appropriate colors
+            g.selectAll('.data-point')
+                .data(values)
                 .enter().append('circle')
-                .attr('class', 'dot')
+                .attr('class', 'data-point')
                 .attr('cx', d => xScale(d.timeStep))
                 .attr('cy', d => yScale(d.value))
-                .attr('r', 3)
-                .style('fill', '#007bff');
+                .attr('r', 1.5)
+                .style('fill', d => d.value >= 0 ? '#28a745' : '#dc3545')  // Green for positive, red for negative
+                .style('stroke', 'white')
+                .style('stroke-width', 1);
             
-            // Y-axis label
+            // Labels
             g.append('text')
                 .attr('transform', 'rotate(-90)')
-                .attr('y', 0 - margin.left)
+                .attr('y', 0 - margin.left + 15)
                 .attr('x', 0 - (height / 2))
                 .attr('dy', '1em')
                 .style('text-anchor', 'middle')
                 .style('font-size', '10px')
                 .text('Tokens');
             
-            // X-axis label
             g.append('text')
-                .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 5})`)
+                .attr('transform', `translate(${width / 2}, ${height + 35})`)
                 .style('text-anchor', 'middle')
                 .style('font-size', '10px')
                 .text('Time Step');
@@ -5953,6 +6005,9 @@
             
             // Show node selector
             document.getElementById('node-selector-container').style.display = 'flex';
+            
+            // Ensure SVG element exists for chart rendering
+            ensureChartSVG();
             
             // Populate node selector if not already done
             populateNodeSelector();
