@@ -1197,6 +1197,36 @@
             cursor: not-allowed;
         }
         
+        .viz-toggle-button {
+            padding: 4px 6px;
+            font-size: 9px;
+            border: 1px solid #ddd;
+            background: #f8f9fa;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 3px;
+        }
+        
+        .viz-toggle-button:hover:not(:disabled) {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+        
+        .viz-toggle-button.active {
+            background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+            color: white;
+            border-color: #1e7e34;
+            font-weight: bold;
+        }
+        
+        .viz-toggle-button:disabled {
+            background: #f8f9fa;
+            color: #adb5bd;
+            border-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        
         /* Real-time Dashboard Styles */
         .diffusion-dashboard {
             background: #f8f9fa;
@@ -1521,6 +1551,56 @@
             text-align: center;
         }
         
+        .node-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .charge-selector {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .charge-button {
+            width: 30px;
+            height: 30px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .charge-button.positive {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .charge-button.negative {
+            background: #dc3545;
+            color: white;
+            border-color: #dc3545;
+        }
+        
+        .charge-button.selected {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .charge-label {
+            font-size: 12px;
+            color: #666;
+            margin-right: 5px;
+        }
+        
         .diffusion-controls {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -1573,6 +1653,192 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+        
+        /* Floating Results Window */
+        .results-window {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 650px;
+            height: 750px;
+            background: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .results-window.visible {
+            display: flex;
+        }
+        
+        .results-header {
+            background: #007bff;
+            color: white;
+            padding: 12px 16px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+        }
+        
+        .results-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+        
+        .results-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .results-content {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        
+        .results-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .results-button {
+            padding: 6px 12px;
+            border: 1px solid #007bff;
+            background: white;
+            color: #007bff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .results-button:hover {
+            background: #007bff;
+            color: white;
+        }
+        
+        .results-button.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .individual-charts-container {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        
+        .individual-chart-item {
+            margin-bottom: 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .individual-chart-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .individual-chart-svg {
+            width: 100%;
+            height: 200px;
+            border: 1px solid #f0f0f0;
+        }
+        
+        .results-summary {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .summary-label {
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .summary-value {
+            color: #007bff;
+        }
+        
+        .node-selector-container {
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .node-selector-container label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #495057;
+            white-space: nowrap;
+        }
+        
+        .node-selector {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+            max-width: 200px;
+        }
+        
+        .node-selector:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
     </style>
 </head>
 <body>
@@ -1616,6 +1882,58 @@
     
     <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#f8f9fa;"></div>
     <div id="tooltip"></div>
+    
+    <!-- Floating Results Window -->
+    <div id="results-window" class="results-window">
+        <div class="results-header">
+            <span>📊 Token Diffusion Results</span>
+            <button class="results-close" onclick="toggleResultsWindow()">&times;</button>
+        </div>
+        <div class="results-content">
+            <div class="results-controls">
+                <button class="results-button active" onclick="showTimeSeriesChart()">All Nodes</button>
+                <button class="results-button" onclick="showAllNodesIndividual()">All Individual</button>
+                <button class="results-button" onclick="showSingleNodeChart()">Single Node</button>
+                <button class="results-button" onclick="showCurrentSnapshot()">Current State</button>
+                <button class="results-button" onclick="exportResults()">Export Data</button>
+                <button class="results-button" onclick="clearResults()">Clear</button>
+            </div>
+            
+            <div id="node-selector-container" class="node-selector-container" style="display: none;">
+                <label for="node-selector">Select Node:</label>
+                <select id="node-selector" class="node-selector" onchange="onNodeSelectionChange()">
+                    <option value="">Choose a node...</option>
+                </select>
+            </div>
+            
+            <div id="results-chart-container" class="chart-container">
+                <svg id="results-chart" class="chart-svg"></svg>
+            </div>
+            
+            <div id="results-summary" class="results-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Current Step:</span>
+                    <span class="summary-value" id="summary-step">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Time Points:</span>
+                    <span class="summary-value" id="summary-timepoints">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Active Nodes:</span>
+                    <span class="summary-value" id="summary-active-nodes">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Peak Token Count:</span>
+                    <span class="summary-value" id="summary-peak-tokens">0</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Most Active Node:</span>
+                    <span class="summary-value" id="summary-most-active">None</span>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="filters">
         <!-- Filter sections will be dynamically populated from Google Sheets -->
     </div>
@@ -1746,14 +2064,31 @@
         let transform = d3.zoomIdentity;
         
         // ============================================
-        // TOKEN DIFFUSION STATE VARIABLES
+        // COMPUTATIONAL TOKEN DIFFUSION SYSTEM
         // ============================================
-        let diffusionGraph = null;
-        let diffusionModel = null;
+        // This is the actual mathematical diffusion algorithm that calculates token flows.
+        // Results are stored in nodeFlowsOverTime and edgeFlowsOverTime arrays.
+        // View computational results in the floating Results Window.
+        let diffusionGraph = null; // Graph structure for computational algorithm
+        let diffusionModel = null; // CausalTokenModel instance (computational engine)
         let diffusionSimulationRunning = false;
         let diffusionSimulationInterval = null;
         let tokenGroup = null; // SVG group for token visualization
         let diffusionInitialized = false;
+        
+        // Visual Token System (for illustration only)
+        const VISUAL_TOKEN_COUNT = 15; // Fixed number of visual tokens
+        // ===== VISUAL TOKEN SYSTEM (ILLUSTRATIVE ONLY) =====
+        // This system provides visual animation of tokens moving along edges for demonstration purposes.
+        // These visual tokens are completely separate from the computational diffusion algorithm.
+        // The visual tokens show approximate flow patterns but are NOT the actual simulation results.
+        let visualTokens = []; // Array of visual tokens for animation
+        let visualTokenCharges = new Map(); // nodeId -> charge for visual representation
+        
+        // Visualization toggle states
+        let showChargeVisualization = false;
+        let showStrengthVisualization = false;
+        let visualTokenIdCounter = 0;
         let links = [];  // Add this to store link data globally
         let svg; // Make svg global to access it during reload
         let zoom; // Make zoom behavior global
@@ -2652,67 +2987,13 @@
             `;
             interventionDiv.appendChild(interventionIntro);
 
-            // Causal Modeling
-            const causalSection = createBasicSection("Causal Modeling");
-            const sortedFactors = [...factors].sort((a, b) => a.name.localeCompare(b.name));
-            causalSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
-                    <i class="fa fa-info-circle"></i> Simulate how changing one variable affects the entire system over time
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <div>
-                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">1. Select Variable to Change:</div>
-                        <select id="variable-select" class="filter-button" style="width: 100%; padding: 6px;" title="Choose the variable you want to change">
-                            <option value="">-- Select a variable --</option>
-                            ${sortedFactors.map(factor => `<option value="${factor.id}">${factor.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <div class="section-label" style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">2. Choose Direction of Change:</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                            <button id="increase-btn" class="filter-button" onclick="simulateChange('increase')" disabled
-                                    title="Simulate an increase in the selected variable">
-                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5A.5.5 0 0 1 8 4z"/>
-                                    </svg>
-                                    Increase
-                                </span>
-                            </button>
-                            <button id="decrease-btn" class="filter-button" onclick="simulateChange('decrease')" disabled 
-                                    title="Simulate a decrease in the selected variable">
-                                <span style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
-                                        <path d="M8 12a.5.5 0 0 0 .5-.5V5.707l2.146 2.147a.5.5 0 0 0 .708-.708l-3-3a.5.5 0 0 0-.708 0l-3 3a.5.5 0 1 0 .708.708L7.5 5.707V11.5a.5.5 0 0 0 .5.5z"/>
-                                    </svg>
-                                    Decrease
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <!-- Legacy simulation controls section removed -->
-            `;
-            
-            // Add event listener for variable select
-            const variableSelect = causalSection.querySelector('#variable-select');
-            variableSelect.addEventListener('change', function() {
-                const buttons = ['increase-btn', 'decrease-btn'];
-                buttons.forEach(id => {
-                    document.getElementById(id).disabled = !this.value;
-                });
-            });
-            
-            interventionDiv.appendChild(causalSection);
+
             
             // TOKEN DIFFUSION SECTION
             const diffusionSection = createBasicSection("Token Diffusion Modeling");
             diffusionSection.querySelector('.filter-section-content').innerHTML = `
                 <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
-                    <i class="fa fa-info-circle"></i> Advanced causal modeling using token diffusion simulation
+                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion Modeling:</strong> Computational algorithm that simulates token flow through the causal network. The visual tokens are for illustration only - the actual calculations and results are shown in the Results Window.
                 </div>
                 
                 <div id="diffusion-container" class="diffusion-controls">
@@ -2758,6 +3039,27 @@
                             <button id="speed-medium" class="speed-button active" onclick="setSimulationSpeed('medium')" disabled>🚶 Medium</button>
                             <button id="speed-fast" class="speed-button" onclick="setSimulationSpeed('fast')" disabled>🏃 Fast</button>
                         </div>
+                    </div>
+                    
+                    <!-- Visualization Controls -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Visual Representation:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                            <button id="toggle-charge-viz" class="viz-toggle-button" onclick="toggleChargeVisualization()" disabled>
+                                🎨 Show Charge
+                            </button>
+                            <button id="toggle-strength-viz" class="viz-toggle-button" onclick="toggleStrengthVisualization()" disabled>
+                                📏 Show Strength
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Computational Results -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Computational Results:</label>
+                        <button id="show-results-window" class="diffusion-button secondary" onclick="toggleResultsWindow()" disabled>
+                            📊 Show Results Window
+                        </button>
                     </div>
                     
                     <div id="diffusion-status" class="simulation-status status-ready">
@@ -3528,74 +3830,7 @@
             toggle.innerHTML = content.classList.contains('expanded') ? '&minus;' : '&plus;';
         }
 
-        // Causal Modeling Functions
-        function populateVariableSelect() {
-            // Remove this function as we're now populating the select directly in the HTML
-        }
 
-        function simulateChange(direction) {
-            const selectedId = document.getElementById('variable-select').value;
-            if (!selectedId) return;
-
-            // Reset previous highlights and button styles
-            d3.selectAll('.node').classed('highlighted', false);
-            d3.selectAll('.link').classed('highlighted', false);
-            document.getElementById('increase-btn').style.backgroundColor = '';
-            document.getElementById('increase-btn').style.color = '';
-            document.getElementById('decrease-btn').style.backgroundColor = '';
-            document.getElementById('decrease-btn').style.color = '';
-
-            // Set button color based on direction
-            const button = document.getElementById(`${direction}-btn`);
-            if (direction === 'increase') {
-                button.style.backgroundColor = '#28a745';  // Green
-                button.style.color = 'white';
-            } else {
-                button.style.backgroundColor = '#dc3545';  // Red
-                button.style.color = 'white';
-            }
-
-            // Highlight selected node and make it larger
-            d3.selectAll('.node')
-                .classed('highlighted', d => d.id === selectedId)
-                .select('circle')
-                .attr('r', d => d.id === selectedId ? 15 : 10);
-
-            // Update text style for highlighted node
-            d3.selectAll('.node text')
-                .style('font-size', d => d.id === selectedId ? '19px' : '14px')
-                .style('font-weight', d => d.id === selectedId ? 'bold' : 'normal');
-
-            // Find and highlight connected nodes and links based on direction
-            const connectedLinks = links.filter(l => 
-                (direction === 'increase' && l.source.id === selectedId) ||
-                (direction === 'decrease' && l.target.id === selectedId)
-            );
-
-            d3.selectAll('.link')
-                .classed('highlighted', l => connectedLinks.includes(l))
-                .style('opacity', l => connectedLinks.includes(l) ? 1 : 0.2);
-
-            const connectedNodes = connectedLinks.map(l => 
-                direction === 'increase' ? l.target : l.source
-            );
-
-            // Update connected nodes style
-            d3.selectAll('.node')
-                .each(function(d) {
-                    if (connectedNodes.some(n => n.id === d.id)) {
-                        d3.select(this)
-                            .classed('highlighted', true)
-                            .select('circle')
-                            .attr('r', 12);
-                        
-                        d3.select(this)
-                            .select('text')
-                            .style('font-size', '16px')
-                            .style('font-weight', 'bold');
-                    }
-                });
-        }
 
         // ============================================
         // TOKEN DIFFUSION FUNCTIONS
@@ -3713,10 +3948,21 @@
                     let delay = Delay.MEDIUM;
                     if (rel.delay) {
                         const delayLower = rel.delay.toLowerCase();
-                        if (delayLower.includes('fast') || delayLower.includes('immediate')) {
-                            delay = Delay.FAST;
+                        // Robustly map string-based delays to numeric values
+                        if (delayLower.includes('year')) {
+                            delay = 20; // Years = very slow
+                        } else if (delayLower.includes('month')) {
+                            delay = 10; // Months = medium
+                        } else if (delayLower.includes('week')) {
+                            delay = 8; // Weeks = medium-fast
+                        } else if (delayLower.includes('day')) {
+                            delay = 3; // Days = fast
+                        } else if (delayLower.includes('fast') || delayLower.includes('immediate')) {
+                            delay = 3; // Immediate = fast
                         } else if (delayLower.includes('slow') || delayLower.includes('long')) {
-                            delay = Delay.SLOW;
+                            delay = 20; // Slow/long = very slow
+                        } else {
+                            delay = Delay.MEDIUM;
                         }
                     }
                     
@@ -3738,6 +3984,9 @@
                 if (svg && !tokenGroup) {
                     tokenGroup = svg.append('g').attr('class', 'tokens');
                 }
+                
+                // Start independent visual token animation
+                startVisualTokenAnimation();
                 
             } catch (error) {
                 console.error('❌ Failed to create diffusion graph:', error);
@@ -3843,7 +4092,7 @@
         }
         
         // Modal support functions for Phase 2
-        let selectedNodes = new Map(); // nodeId -> tokenCount
+        let selectedNodes = new Map(); // nodeId -> {tokenCount, charge}
         
         function populateNodeSelectionList() {
             const nodeList = document.getElementById('node-selection-list');
@@ -3882,8 +4131,23 @@
                         <div class="node-name">${nodeName}</div>
                         <div class="node-domain">${nodeDomain}</div>
                     </div>
-                    <input type="number" class="node-token-input" value="0" min="0" max="100" 
-                           onchange="updateNodeTokens('${nodeId}', this.value)" disabled>
+                    <div class="node-controls">
+                        <input type="number" class="node-token-input" value="0" min="0" max="100" 
+                               onchange="updateNodeTokens('${nodeId}', this.value)" disabled>
+                        <div class="charge-selector">
+                            <span class="charge-label">Charge:</span>
+                            <div class="charge-button positive selected" 
+                                 onclick="selectCharge('${nodeId}', 1, this)" 
+                                 title="Positive charge (+1)">
+                                +
+                            </div>
+                            <div class="charge-button negative" 
+                                 onclick="selectCharge('${nodeId}', -1, this)" 
+                                 title="Negative charge (-1)">
+                                -
+                            </div>
+                        </div>
+                    </div>
                 `;
                 
                 nodeItem.addEventListener('click', (e) => {
@@ -3911,7 +4175,7 @@
                 nodeItem.classList.add('selected');
                 tokenInput.disabled = false;
                 tokenInput.value = 1;
-                selectedNodes.set(nodeId, 1);
+                selectedNodes.set(nodeId, {tokenCount: 1, charge: 1}); // Default to positive charge
             }
             
             updateTokenCounts();
@@ -3920,16 +4184,31 @@
         function updateNodeTokens(nodeId, tokenCount) {
             const count = parseInt(tokenCount) || 0;
             if (count > 0) {
-                selectedNodes.set(nodeId, count);
+                const existingData = selectedNodes.get(nodeId) || {tokenCount: 0, charge: 1};
+                selectedNodes.set(nodeId, {tokenCount: count, charge: existingData.charge});
             } else {
                 selectedNodes.delete(nodeId);
             }
             updateTokenCounts();
         }
         
+        function selectCharge(nodeId, charge, buttonElement) {
+            // Update the visual selection
+            const chargeSelector = buttonElement.parentElement;
+            const buttons = chargeSelector.querySelectorAll('.charge-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            buttonElement.classList.add('selected');
+            
+            // Update the data structure
+            const existingData = selectedNodes.get(nodeId) || {tokenCount: 0, charge: 1};
+            selectedNodes.set(nodeId, {tokenCount: existingData.tokenCount, charge: charge});
+            
+            console.log(`🎨 Node ${nodeId} charge set to ${charge > 0 ? 'positive' : 'negative'}`);
+        }
+        
         function updateTokenCounts() {
             const totalTokens = parseInt(document.getElementById('total-tokens').value) || 10;
-            const allocatedTokens = Array.from(selectedNodes.values()).reduce((sum, count) => sum + count, 0);
+            const allocatedTokens = Array.from(selectedNodes.values()).reduce((sum, data) => sum + data.tokenCount, 0);
             
             document.getElementById('total-tokens-display').textContent = `Total: ${totalTokens}`;
             document.getElementById('allocated-tokens-count').textContent = `Allocated: ${allocatedTokens}`;
@@ -3968,11 +4247,26 @@
         function applyTokenAllocation() {
             try {
                 const totalTokens = parseInt(document.getElementById('total-tokens').value) || 10;
-                const allocation = Object.fromEntries(selectedNodes);
+                
+                // Extract token counts for diffusion model (ignoring visual charges)
+                const allocation = {};
+                const charges = {};
+                
+                selectedNodes.forEach((data, nodeId) => {
+                    allocation[nodeId] = data.tokenCount;
+                    charges[nodeId] = data.charge;
+                });
                 
                 console.log('🎯 Applying token allocation:', allocation);
+                console.log('🎨 Visual charges:', charges);
                 
-                // Create the diffusion model with the custom allocation
+                // Store visual charges globally for token visualization
+                visualTokenCharges.clear();
+                Object.entries(charges).forEach(([nodeId, charge]) => {
+                    visualTokenCharges.set(nodeId, charge);
+                });
+                
+                // Create the diffusion model with the custom allocation (token counts only)
                 diffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, allocation);
                 console.log('✅ Diffusion model created with custom allocation');
                 
@@ -4109,25 +4403,151 @@
             }
         }
         
+        // Initialize independent visual flow system
+        function initializeVisualTokens() {
+            if (!diffusionGraph) return;
+            
+            visualTokens = [];
+            
+            // Create visual tokens based on user allocation (independent of diffusion model)
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            let tokenId = 0;
+            
+            // Generate visual tokens for nodes with user allocation
+            if (selectedNodes && selectedNodes.size > 0) {
+                selectedNodes.forEach((data, nodeId) => {
+                    const tokenCount = Math.min(data.tokenCount || 1, VISUAL_TOKEN_COUNT); // Limit for performance
+                    
+                    for (let i = 0; i < tokenCount; i++) {
+                        const visualToken = {
+                            id: `visual_${tokenId++}`,
+                            currentNode: nodeId,
+                            targetNode: null,
+                            state: 'at_node',
+                            progress: 0,
+                            charge: data.charge || 1, // Use user-selected charge
+                            stepsAtNode: Math.floor(Math.random() * 5), // Random start time
+                            maxStepsAtNode: Math.floor(Math.random() * 8) + 3, // Random wait time
+                            lastMoveTime: Date.now()
+                        };
+                        visualTokens.push(visualToken);
+                    }
+                });
+            }
+            
+            // If no user allocation, create some default tokens for demonstration
+            if (visualTokens.length === 0 && nodeIds.length > 0) {
+                for (let i = 0; i < Math.min(5, nodeIds.length); i++) {
+                    const nodeId = nodeIds[i];
+                    const visualToken = {
+                        id: `visual_${tokenId++}`,
+                        currentNode: nodeId,
+                        targetNode: null,
+                        state: 'at_node',
+                        progress: 0,
+                        charge: 1, // Default positive charge
+                        stepsAtNode: Math.floor(Math.random() * 5),
+                        maxStepsAtNode: Math.floor(Math.random() * 8) + 3,
+                        lastMoveTime: Date.now()
+                    };
+                    visualTokens.push(visualToken);
+                }
+            }
+            
+            console.log(`🎨 Initialized ${visualTokens.length} independent visual tokens for flow representation`);
+        }
+        
+        // Update independent visual flow system
+        function updateVisualTokenStates() {
+            if (!diffusionGraph) return;
+            
+            const currentTime = Date.now();
+            
+            visualTokens.forEach(visualToken => {
+                if (visualToken.state === 'at_node') {
+                    // Check if it's time to move
+                    visualToken.stepsAtNode++;
+                    
+                    if (visualToken.stepsAtNode >= visualToken.maxStepsAtNode) {
+                        // Find a random outgoing edge to follow
+                        const currentNodeEdges = Object.values(diffusionGraph.edges).filter(edge => 
+                            edge.source === visualToken.currentNode
+                        );
+                        
+                        if (currentNodeEdges.length > 0) {
+                            // Pick a random edge to follow
+                            const randomEdge = currentNodeEdges[Math.floor(Math.random() * currentNodeEdges.length)];
+                            visualToken.targetNode = randomEdge.target;
+                            visualToken.state = 'moving';
+                            visualToken.progress = 0;
+                            visualToken.lastMoveTime = currentTime;
+                            
+                            // Store the edge delay for movement duration calculation
+                            visualToken.currentEdge = randomEdge;
+                            
+                            // Log the delay value being used for this token
+                            console.log(`🎨 Visual token ${visualToken.id} starting move: ${visualToken.currentNode} → ${visualToken.targetNode} (delay: ${randomEdge.delay})`);
+                            if (randomEdge && randomEdge.delay !== undefined) {
+                                console.log(`Token ${visualToken.id} moving on edge with delay:`, randomEdge.delay, 'raw:', randomEdge.originalData && randomEdge.originalData.delay);
+                            }
+                        } else {
+                            // No outgoing edges, reset wait time
+                            visualToken.stepsAtNode = 0;
+                            visualToken.maxStepsAtNode = Math.floor(Math.random() * 8) + 3;
+                        }
+                    }
+                } else if (visualToken.state === 'moving') {
+                    // Update movement progress using edge delay for variable speeds
+                    const timeSinceMove = currentTime - visualToken.lastMoveTime;
+                    
+                    // Calculate movement duration based on edge delay with extremely dramatic differences
+                    let moveDuration = 10000; // Default 10 seconds
+                    if (visualToken.currentEdge && visualToken.currentEdge.delay !== undefined) {
+                        // Convert delay values to movement durations with extreme speed differences
+                        // FAST (≤5) = 0.3 seconds (days), MEDIUM (≤10) = 4 seconds (months), SLOW (>10) = 15 seconds (years)
+                        const delayValue = visualToken.currentEdge.delay;
+                        if (delayValue <= 5) {
+                            moveDuration = 300; // Fast: 0.3 seconds (immediate/daily relationships)
+                        } else if (delayValue <= 10) {
+                            moveDuration = 4000; // Medium: 4 seconds (weekly/monthly relationships)
+                        } else {
+                            moveDuration = 15000; // Slow: 15 seconds (seasonal/yearly relationships)
+                        }
+                    }
+                    
+                    visualToken.progress = Math.min(timeSinceMove / moveDuration, 1);
+                    
+                    // Check if movement is complete
+                    if (visualToken.progress >= 1) {
+                        visualToken.currentNode = visualToken.targetNode;
+                        visualToken.targetNode = null;
+                        visualToken.currentEdge = null; // Clear edge reference
+                        visualToken.state = 'at_node';
+                        visualToken.progress = 0;
+                        visualToken.stepsAtNode = 0;
+                        visualToken.maxStepsAtNode = Math.floor(Math.random() * 8) + 3;
+                        
+                        // Update charge based on new node if user has set a visual charge
+                        if (visualTokenCharges.has(visualToken.currentNode)) {
+                            visualToken.charge = visualTokenCharges.get(visualToken.currentNode);
+                        }
+                        
+                        console.log(`🎨 Visual token ${visualToken.id} arrived at ${visualToken.currentNode}`);
+                    }
+                }
+            });
+        }
+        
         function updateTransitTokens() {
             try {
-                if (!window.tokenOverlay || !diffusionModel || !window.nodeSelection) {
+                if (!window.tokenOverlay || !window.nodeSelection) {
                     return;
                 }
                 
-                // Get ALL tokens from the diffusion model agents
-                const allTokens = diffusionModel.agents || [];
-                
-                // Separate tokens by state
-                const transitTokens = allTokens.filter(agent => 
-                    agent.state === 'in_transit' && agent.currentNode && agent.targetNode
-                );
-                
-                const nodeTokens = allTokens.filter(agent => 
-                    agent.state === 'ready' && agent.currentNode
-                );
-                
-                console.log(`🔍 Token states: ${transitTokens.length} in transit, ${nodeTokens.length} at nodes, ${allTokens.length} total`);
+                // Initialize visual tokens if needed
+                if (visualTokens.length === 0) {
+                    initializeVisualTokens();
+                }
                 
                 // Get node positions
                 const nodePositions = {};
@@ -4139,13 +4559,21 @@
                     });
                 }
                 
+                // Update visual token states based on flow patterns
+                updateVisualTokenStates();
+                
                 // Token trails removed
                 
                 // Node highlighting removed
                 
-                // Update transit token circles
+                // Only show moving tokens - no tokens at nodes
+                const movingTokens = visualTokens.filter(token => token.state === 'moving');
+                
+                console.log(`🎨 Visual tokens: ${movingTokens.length} moving`);
+                
+                // Update transit token circles (moving tokens)
                 const transitSelection = window.tokenOverlay.selectAll('.transit-token')
-                    .data(transitTokens, d => d.uniqueId);
+                    .data(movingTokens, d => d.id);
                 
                 // Remove old tokens with fade-out animation
                 const exitSelection = transitSelection.exit();
@@ -4182,10 +4610,9 @@
                 .attr('cx', d => {
                     const sourcePos = nodePositions[d.currentNode];
                     const targetPos = nodePositions[d.targetNode];
-                    if (sourcePos && targetPos && d.transitStepsRemaining > 0) {
-                        // Calculate total steps from the token's initial delay
-                        const totalSteps = d.transitStepsTotal || Math.max(5, d.transitStepsRemaining + 1);
-                        const progress = 1 - (d.transitStepsRemaining / totalSteps);
+                    if (sourcePos && targetPos && d.state === 'moving') {
+                        // Use visual token's progress directly
+                        const progress = d.progress;
                         const easedProgress = easeInOutCubic(progress);
                         
                         // Follow the same curved path as the arrows (SVG arc)
@@ -4206,10 +4633,9 @@
                 .attr('cy', d => {
                     const sourcePos = nodePositions[d.currentNode];
                     const targetPos = nodePositions[d.targetNode];
-                    if (sourcePos && targetPos && d.transitStepsRemaining > 0) {
-                        // Calculate total steps from the token's initial delay
-                        const totalSteps = d.transitStepsTotal || Math.max(5, d.transitStepsRemaining + 1);
-                        const progress = 1 - (d.transitStepsRemaining / totalSteps);
+                    if (sourcePos && targetPos && d.state === 'moving') {
+                        // Use visual token's progress directly
+                        const progress = d.progress;
                         const easedProgress = easeInOutCubic(progress);
                         
                         // Follow the same curved path as the arrows (SVG arc)
@@ -4226,73 +4652,71 @@
                     }
                     return sourcePos ? sourcePos.y : 0;
                 })
-                        .attr('r', d => 5 + Math.abs(d.charge) * 0.5) // Size based on token charge
-                        .style('fill', d => d.charge > 0 ? '#008080' : d.charge < 0 ? '#dc3545' : '#000')
+                        .attr('r', d => {
+                            // Base size
+                            let size = 5;
+                            
+                            // Apply strength visualization if enabled
+                            if (showStrengthVisualization && selectedNodes && selectedNodes.has(d.currentNode)) {
+                                // Use user-allocated token count for strength if available
+                                const nodeData = selectedNodes.get(d.currentNode);
+                                const strength = nodeData && nodeData.tokenCount ? nodeData.tokenCount : 1;
+                                size = 3 + Math.min(strength * 2, 15); // Scale size based on token count, max 15
+                            }
+                            
+                            return size;
+                        })
+                        .style('fill', d => {
+                            // Apply charge visualization if enabled
+                            if (showChargeVisualization) {
+                                // Use user-selected visual charge or token's own charge
+                                let visualCharge = d.charge || 1;
+                                if (visualTokenCharges && visualTokenCharges.has(d.currentNode)) {
+                                    visualCharge = visualTokenCharges.get(d.currentNode);
+                                }
+                                return visualCharge > 0 ? '#28a745' : '#dc3545';
+                            }
+                            
+                            // Default: simple black dots
+                            return '#000';
+                        })
                         .style('stroke', '#fff')
                         .style('stroke-width', '1px');
                 }
                 
-                // Visualize tokens at nodes (ready state)
-                const nodeTokenSelection = window.tokenOverlay.selectAll('.node-token')
-                    .data(nodeTokens, d => d.uniqueId);
-                
-                // Remove old node tokens
-                const exitNodeTokens = nodeTokenSelection.exit();
-                if (exitNodeTokens && !exitNodeTokens.empty()) {
-                    exitNodeTokens
-                        .transition()
-                        .duration(300)
-                        .style('opacity', 0)
-                        .remove();
-                }
-                
-                // Add new node tokens
-                const newNodeTokens = nodeTokenSelection.enter()
-                    .append('circle')
-                    .attr('class', 'node-token')
-                    .attr('r', 0)
-                    .style('opacity', 0);
-                
-                // Animate new node tokens appearing
-                if (newNodeTokens && !newNodeTokens.empty()) {
-                    newNodeTokens.transition()
-                        .duration(300)
-                        .attr('r', 4)
-                        .style('opacity', 0.8);
-                }
-                
-                // Update all node tokens
-                const mergedNodeTokens = nodeTokenSelection.merge(newNodeTokens);
-                if (mergedNodeTokens && !mergedNodeTokens.empty()) {
-                    mergedNodeTokens
-                        .attr('cx', d => {
-                            const nodePos = nodePositions[d.currentNode];
-                            if (nodePos) {
-                                // Position tokens in a small circle around the node
-                                const tokenIndex = nodeTokens.findIndex(t => t.uniqueId === d.uniqueId);
-                                const angle = (tokenIndex * 2 * Math.PI) / Math.max(1, nodeTokens.filter(t => t.currentNode === d.currentNode).length);
-                                return nodePos.x + Math.cos(angle) * 12;
-                            }
-                            return 0;
-                        })
-                        .attr('cy', d => {
-                            const nodePos = nodePositions[d.currentNode];
-                            if (nodePos) {
-                                const tokenIndex = nodeTokens.findIndex(t => t.uniqueId === d.uniqueId);
-                                const angle = (tokenIndex * 2 * Math.PI) / Math.max(1, nodeTokens.filter(t => t.currentNode === d.currentNode).length);
-                                return nodePos.y + Math.sin(angle) * 12;
-                            }
-                            return 0;
-                        })
-                        .attr('r', 4)
-                        .style('fill', d => d.charge > 0 ? '#008080' : d.charge < 0 ? '#dc3545' : '#000')
-                        .style('stroke', '#fff')
-                        .style('stroke-width', '1px')
-                        .style('opacity', 0.8);
+                // Remove any existing node tokens from the overlay
+                if (window.tokenOverlay) {
+                    window.tokenOverlay.selectAll('.node-token').remove();
                 }
                 
             } catch (error) {
                 console.error('❌ Error in updateTransitTokens:', error);
+            }
+        }
+        
+        // Continuous animation loop for independent visual tokens
+        let visualTokenAnimationInterval = null;
+        
+        function startVisualTokenAnimation() {
+            if (visualTokenAnimationInterval) {
+                clearInterval(visualTokenAnimationInterval);
+            }
+            
+            visualTokenAnimationInterval = setInterval(() => {
+                if (visualTokens.length > 0) {
+                    updateVisualTokenStates();
+                    updateTransitTokens();
+                }
+            }, 100); // Update every 100ms for smooth animation
+            
+            console.log('🎬 Started independent visual token animation loop');
+        }
+        
+        function stopVisualTokenAnimation() {
+            if (visualTokenAnimationInterval) {
+                clearInterval(visualTokenAnimationInterval);
+                visualTokenAnimationInterval = null;
+                console.log('⏹️ Stopped visual token animation loop');
             }
         }
         
@@ -4342,13 +4766,16 @@
             // Capture token movements before stepping
             captureAndAnimateTokenMovements();
             
-            // Execute the diffusion step
+            // Execute the diffusion step (COMPUTATIONAL ALGORITHM)
             diffusionModel.step();
             
             // Update visualization after a brief delay to allow animations
             setTimeout(() => {
                 updateTokenVisualization();
                 updateDashboard();
+                
+                // Update computational results window if visible
+                updateResultsWindow();
             }, 100);
         }
         
@@ -4584,10 +5011,16 @@
             
             diffusionSimulationRunning = true;
             
+            // Initialize visual tokens for illustration
+            initializeVisualTokens();
+            
             // Update UI
             document.getElementById('run-diffusion-btn').disabled = true;
             document.getElementById('pause-diffusion-btn').disabled = false;
             document.getElementById('setup-tokens-btn').disabled = true;
+            
+            // Disable node selector while running
+            updateNodeSelectorState();
             
             const statusDiv = document.getElementById('diffusion-status');
             statusDiv.textContent = 'Simulation running...';
@@ -4619,6 +5052,9 @@
             document.getElementById('run-diffusion-btn').disabled = false;
             document.getElementById('pause-diffusion-btn').disabled = true;
             
+            // Enable node selector when paused
+            updateNodeSelectorState();
+            
             const statusDiv = document.getElementById('diffusion-status');
             statusDiv.textContent = 'Simulation paused';
             statusDiv.className = 'simulation-status status-paused';
@@ -4648,6 +5084,9 @@
             document.getElementById('pause-diffusion-btn').disabled = true;
             document.getElementById('setup-tokens-btn').disabled = false;
             
+            // Enable node selector when reset
+            updateNodeSelectorState();
+            
             const statusDiv = document.getElementById('diffusion-status');
             statusDiv.textContent = 'Simulation reset';
             statusDiv.className = 'simulation-status status-ready';
@@ -4660,6 +5099,15 @@
                 window.tokenOverlay.selectAll('*').remove();
                 setTimeout(initializeTokenVisualization, 100);
             }
+            
+            // Reset independent visual token system
+            stopVisualTokenAnimation();
+            visualTokens = [];
+            setTimeout(() => {
+                if (diffusionGraph) {
+                    startVisualTokenAnimation();
+                }
+            }, 200);
             
             // Reset advanced controls
             if (autoStepMode) {
@@ -4765,6 +5213,47 @@
             console.log(`⚡ Simulation speed set to: ${speed} (${speedSettings[speed]}ms per step)`);
         }
         
+        // Visualization toggle functions
+        function toggleChargeVisualization() {
+            showChargeVisualization = !showChargeVisualization;
+            
+            const button = document.getElementById('toggle-charge-viz');
+            if (button) {
+                if (showChargeVisualization) {
+                    button.classList.add('active');
+                    button.innerHTML = '🎨 Hide Charge';
+                } else {
+                    button.classList.remove('active');
+                    button.innerHTML = '🎨 Show Charge';
+                }
+            }
+            
+            // Immediately update token visualization
+            updateTransitTokens();
+            
+            console.log(`Charge visualization: ${showChargeVisualization ? 'ON' : 'OFF'}`);
+        }
+        
+        function toggleStrengthVisualization() {
+            showStrengthVisualization = !showStrengthVisualization;
+            
+            const button = document.getElementById('toggle-strength-viz');
+            if (button) {
+                if (showStrengthVisualization) {
+                    button.classList.add('active');
+                    button.innerHTML = '📏 Hide Strength';
+                } else {
+                    button.classList.remove('active');
+                    button.innerHTML = '📏 Show Strength';
+                }
+            }
+            
+            // Immediately update token visualization
+            updateTransitTokens();
+            
+            console.log(`Strength visualization: ${showStrengthVisualization ? 'ON' : 'OFF'}`);
+        }
+        
         // Update button states when diffusion is initialized
         function updateAdvancedControlStates() {
             const hasModel = !!diffusionModel;
@@ -4774,6 +5263,938 @@
             document.getElementById('speed-slow').disabled = !hasModel;
             document.getElementById('speed-medium').disabled = !hasModel;
             document.getElementById('speed-fast').disabled = !hasModel;
+            document.getElementById('toggle-charge-viz').disabled = !hasModel;
+            document.getElementById('toggle-strength-viz').disabled = !hasModel;
+            document.getElementById('show-results-window').disabled = !hasModel;
+        }
+        
+        // ===== COMPUTATIONAL RESULTS WINDOW =====
+        // This section handles the display of actual computational token diffusion results
+        // separate from the visual token animation system
+        
+        let resultsWindowVisible = false;
+        let currentResultsView = 'timeseries';
+        
+        function toggleResultsWindow() {
+            const resultsWindow = document.getElementById('results-window');
+            const button = document.getElementById('show-results-window');
+            
+            resultsWindowVisible = !resultsWindowVisible;
+            
+            if (resultsWindowVisible) {
+                resultsWindow.classList.add('visible');
+                button.innerHTML = '📊 Hide Results Window';
+                updateResultsWindow();
+                makeResultsWindowDraggable();
+            } else {
+                resultsWindow.classList.remove('visible');
+                button.innerHTML = '📊 Show Results Window';
+            }
+            
+            console.log(`Results window: ${resultsWindowVisible ? 'SHOWN' : 'HIDDEN'}`);
+        }
+        
+        function updateResultsWindow() {
+            if (!resultsWindowVisible || !diffusionModel) return;
+            
+            // Update summary statistics
+            updateResultsSummary();
+            
+            // Update node selector if in single node view
+            if (currentResultsView === 'singlenode') {
+                populateNodeSelector();
+            }
+            
+            // Update chart based on current view
+            if (currentResultsView === 'timeseries') {
+                showTimeSeriesChart();
+            } else if (currentResultsView === 'snapshot') {
+                showCurrentSnapshot();
+            } else if (currentResultsView === 'singlenode') {
+                if (selectedNodeId) {
+                    renderSingleNodeChart(selectedNodeId);
+                } else {
+                    clearChart();
+                }
+            } else if (currentResultsView === 'allindividual') {
+                showAllNodesIndividual();
+            }
+        }
+        
+        function updateResultsSummary() {
+            if (!diffusionModel) return;
+            
+            const stepCount = diffusionModel.stepCount || 0;
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime || [];
+            
+            // Calculate statistics
+            let activeNodes = 0;
+            let peakTokens = 0;
+            let mostActiveNode = 'None';
+            let maxActivity = 0;
+            
+            if (nodeFlowsOverTime.length > 0) {
+                const latestFlows = nodeFlowsOverTime[nodeFlowsOverTime.length - 1];
+                
+                // Count active nodes and find peak
+                Object.entries(latestFlows).forEach(([nodeId, tokenCount]) => {
+                    if (Math.abs(tokenCount) > 0) {
+                        activeNodes++;
+                        if (Math.abs(tokenCount) > peakTokens) {
+                            peakTokens = Math.abs(tokenCount);
+                        }
+                    }
+                });
+                
+                // Find most active node across all time
+                const nodeActivity = {};
+                nodeFlowsOverTime.forEach(flows => {
+                    Object.entries(flows).forEach(([nodeId, tokenCount]) => {
+                        nodeActivity[nodeId] = (nodeActivity[nodeId] || 0) + Math.abs(tokenCount);
+                    });
+                });
+                
+                Object.entries(nodeActivity).forEach(([nodeId, totalActivity]) => {
+                    if (totalActivity > maxActivity) {
+                        maxActivity = totalActivity;
+                        mostActiveNode = nodeId;
+                    }
+                });
+            }
+            
+            // Update DOM elements
+            document.getElementById('summary-step').textContent = stepCount;
+            document.getElementById('summary-timepoints').textContent = nodeFlowsOverTime.length;
+            document.getElementById('summary-active-nodes').textContent = activeNodes;
+            document.getElementById('summary-peak-tokens').textContent = peakTokens;
+            document.getElementById('summary-most-active').textContent = mostActiveNode;
+        }
+        
+        function showTimeSeriesChart() {
+            currentResultsView = 'timeseries';
+            
+            // Update button states
+            document.querySelectorAll('.results-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="showTimeSeriesChart()"]').classList.add('active');
+            
+            // Hide node selector
+            document.getElementById('node-selector-container').style.display = 'none';
+            
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
+                clearChart();
+                return;
+            }
+            
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            if (nodeFlowsOverTime.length === 0) {
+                clearChart();
+                return;
+            }
+            
+            // Prepare data for cumulative time series chart
+            const nodeIds = Object.keys(nodeFlowsOverTime[0] || {});
+            const timeSeriesData = nodeIds.map(nodeId => {
+                let cumulativeCount = 0;
+                return {
+                    nodeId: nodeId,
+                    values: nodeFlowsOverTime.map((flows, timeStep) => {
+                        // Add current flow to cumulative total
+                        cumulativeCount += (flows[nodeId] || 0);
+                        return {
+                            timeStep: timeStep,
+                            value: cumulativeCount
+                        };
+                    })
+                };
+            }).filter(series => {
+                // Only show nodes that have had activity (non-zero cumulative values)
+                return series.values.some(d => Math.abs(d.value) > 0);
+            });
+            
+            renderTimeSeriesChart(timeSeriesData);
+        }
+        
+        function showCurrentSnapshot() {
+            currentResultsView = 'snapshot';
+            
+            // Update button states
+            document.querySelectorAll('.results-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="showCurrentSnapshot()"]').classList.add('active');
+            
+            // Hide node selector
+            document.getElementById('node-selector-container').style.display = 'none';
+            
+            if (!diffusionModel) {
+                clearChart();
+                return;
+            }
+            
+            const currentFlows = diffusionModel.getNodeFlows();
+            renderSnapshotChart(currentFlows);
+        }
+        
+        function renderTimeSeriesChart(timeSeriesData) {
+            const svg = d3.select('#results-chart');
+            svg.selectAll('*').remove();
+            
+            if (!timeSeriesData || timeSeriesData.length === 0) {
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .text('No data available');
+                return;
+            }
+            
+            const margin = { top: 20, right: 80, bottom: 40, left: 60 };
+            const width = 600 - margin.left - margin.right;
+            const height = 350 - margin.top - margin.bottom;
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales
+            const maxTimeStep = d3.max(timeSeriesData, d => d3.max(d.values, v => v.timeStep)) || 0;
+            const maxValue = d3.max(timeSeriesData, d => d3.max(d.values, v => Math.abs(v.value))) || 1;
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, maxTimeStep])
+                .range([0, width]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxValue, maxValue])
+                .range([height, 0]);
+            
+            const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+            
+            // Axes
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
+            
+            g.append('g')
+                .call(d3.axisLeft(yScale));
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .style('stroke', '#ddd')
+                .style('stroke-dasharray', '3,3');
+            
+            // Line generator
+            const line = d3.line()
+                .x(d => xScale(d.timeStep))
+                .y(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+            
+            // Draw lines
+            timeSeriesData.forEach((series, i) => {
+                g.append('path')
+                    .datum(series.values)
+                    .attr('fill', 'none')
+                    .attr('stroke', colorScale(i))
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+                
+                // Add legend entry
+                const legendY = 15 + i * 15;
+                g.append('circle')
+                    .attr('cx', width + 10)
+                    .attr('cy', legendY)
+                    .attr('r', 4)
+                    .style('fill', colorScale(i));
+                
+                g.append('text')
+                    .attr('x', width + 20)
+                    .attr('y', legendY)
+                    .attr('dy', '0.35em')
+                    .style('font-size', '10px')
+                    .style('fill', '#333')
+                    .text(series.nodeId.length > 10 ? series.nodeId.substring(0, 10) + '...' : series.nodeId);
+            });
+            
+            // Labels
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text('Cumulative Token Count');
+            
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 5})`)
+                .style('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text('Time Step');
+        }
+        
+        function showAllNodesIndividual() {
+            console.log('🔍 showAllNodesIndividual called');
+            currentResultsView = 'allindividual';
+            
+            // Update button states
+            document.querySelectorAll('.results-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="showAllNodesIndividual()"]').classList.add('active');
+            
+            // Hide node selector
+            document.getElementById('node-selector-container').style.display = 'none';
+            
+            console.log('🔍 diffusionModel:', diffusionModel);
+            console.log('🔍 diffusionModel.nodeFlowsOverTime:', diffusionModel?.nodeFlowsOverTime);
+            
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
+                console.log('❌ No diffusion model or nodeFlowsOverTime');
+                clearChart();
+                return;
+            }
+            
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            console.log('🔍 nodeFlowsOverTime length:', nodeFlowsOverTime.length);
+            
+            if (nodeFlowsOverTime.length === 0) {
+                console.log('❌ nodeFlowsOverTime is empty');
+                clearChart();
+                return;
+            }
+            
+            console.log('✅ Calling renderAllIndividualCharts');
+            renderAllIndividualCharts(nodeFlowsOverTime);
+        }
+        
+        function renderAllIndividualCharts(nodeFlowsOverTime) {
+            console.log('🔍 renderAllIndividualCharts called with:', nodeFlowsOverTime);
+            
+            const chartContainer = document.getElementById('results-chart');
+            console.log('🔍 chartContainer:', chartContainer);
+            chartContainer.innerHTML = '';
+            
+            // Create scrollable container
+            const scrollContainer = document.createElement('div');
+            scrollContainer.className = 'individual-charts-container';
+            chartContainer.appendChild(scrollContainer);
+            console.log('🔍 Created scroll container');
+            
+            // Get all nodes from the graph (same as single node dropdown)
+            console.log('🔍 diffusionGraph:', diffusionGraph);
+            if (!diffusionGraph || !diffusionGraph.nodes) {
+                console.log('❌ No diffusionGraph or nodes');
+                scrollContainer.innerHTML = '<div style="padding: 20px; text-align: center;">No nodes available</div>';
+                return;
+            }
+            
+            const allNodeIds = Object.keys(diffusionGraph.nodes);
+            console.log('🔍 allNodeIds:', allNodeIds);
+            const nodeList = allNodeIds.map(nodeId => ({
+                id: nodeId,
+                name: diffusionGraph.nodes[nodeId].label || nodeId
+            })).sort((a, b) => a.name.localeCompare(b.name));
+            console.log('🔍 nodeList:', nodeList);
+            
+            // Create individual charts for each node
+            console.log('🔍 Creating charts for', nodeList.length, 'nodes');
+            nodeList.forEach((node, index) => {
+                console.log(`🔍 Processing node ${index + 1}/${nodeList.length}:`, node.name);
+                const nodeData = calculateCumulativeTokenCount(nodeFlowsOverTime, node.id);
+                console.log('🔍 Node data for', node.name, ':', nodeData);
+                createIndividualChart(scrollContainer, node.id, node.name, nodeData);
+            });
+        }
+        
+        function calculateCumulativeTokenCount(nodeFlowsOverTime, nodeId) {
+            // Calculate cumulative data for the specified node (same logic as renderSingleNodeChart)
+            let cumulativeCount = 0;
+            const timeSeriesData = nodeFlowsOverTime.map((flows, timeStep) => {
+                cumulativeCount += (flows[nodeId] || 0);
+                return {
+                    timeStep: timeStep,
+                    value: cumulativeCount
+                };
+            });
+            return timeSeriesData;
+        }
+        
+        function createIndividualChart(container, nodeId, nodeName, data) {
+            // Create chart item container
+            const chartItem = document.createElement('div');
+            chartItem.className = 'individual-chart-item';
+            
+            // Add title
+            const title = document.createElement('div');
+            title.className = 'individual-chart-title';
+            title.textContent = nodeName;
+            chartItem.appendChild(title);
+            
+            // Create SVG
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'individual-chart-svg');
+            chartItem.appendChild(svg);
+            
+            container.appendChild(chartItem);
+            
+            // Render chart using D3
+            renderIndividualNodeChart(d3.select(svg), data, nodeName);
+        }
+        
+        function renderIndividualNodeChart(svg, data, nodeName) {
+            svg.selectAll('*').remove();
+            
+            if (!data || data.length === 0) {
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .style('font-size', '12px')
+                    .text('No data available');
+                return;
+            }
+            
+            const margin = { top: 15, right: 15, bottom: 30, left: 50 };
+            const width = 550 - margin.left - margin.right;
+            const height = 180 - margin.top - margin.bottom;
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales
+            const maxTimeStep = d3.max(data, d => d.timeStep) || 0;
+            const extent = d3.extent(data, d => d.value);
+            const maxValue = Math.max(Math.abs(extent[0] || 0), Math.abs(extent[1] || 0)) || 1;
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, maxTimeStep])
+                .range([0, width]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxValue * 1.1, maxValue * 1.1])
+                .range([height, 0]);
+            
+            // Axes
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(5));
+            
+            g.append('g')
+                .call(d3.axisLeft(yScale).ticks(5));
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .style('stroke', '#ddd')
+                .style('stroke-dasharray', '2,2');
+            
+            // Line generator
+            const line = d3.line()
+                .x(d => xScale(d.timeStep))
+                .y(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+            
+            // Draw line
+            g.append('path')
+                .datum(data)
+                .attr('fill', 'none')
+                .attr('stroke', '#007bff')
+                .attr('stroke-width', 2)
+                .attr('d', line);
+            
+            // Add dots
+            g.selectAll('.dot')
+                .data(data)
+                .enter().append('circle')
+                .attr('class', 'dot')
+                .attr('cx', d => xScale(d.timeStep))
+                .attr('cy', d => yScale(d.value))
+                .attr('r', 3)
+                .style('fill', '#007bff');
+            
+            // Y-axis label
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .text('Tokens');
+            
+            // X-axis label
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 5})`)
+                .style('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .text('Time Step');
+        }
+        
+        function renderSnapshotChart(currentFlows) {
+            const svg = d3.select('#results-chart');
+            svg.selectAll('*').remove();
+            
+            if (!currentFlows || Object.keys(currentFlows).length === 0) {
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .text('No current data available');
+                return;
+            }
+            
+            // Convert to array and filter active nodes
+            const data = Object.entries(currentFlows)
+                .filter(([nodeId, count]) => Math.abs(count) > 0)
+                .map(([nodeId, count]) => ({ nodeId, count }))
+                .sort((a, b) => Math.abs(b.count) - Math.abs(a.count))
+                .slice(0, 15); // Show top 15 most active nodes
+            
+            if (data.length === 0) {
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .text('No active nodes');
+                return;
+            }
+            
+            const margin = { top: 20, right: 20, bottom: 80, left: 60 };
+            const width = 600 - margin.left - margin.right;
+            const height = 350 - margin.top - margin.bottom;
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales
+            const xScale = d3.scaleBand()
+                .domain(data.map(d => d.nodeId))
+                .range([0, width])
+                .padding(0.1);
+            
+            const maxValue = d3.max(data, d => Math.abs(d.count)) || 1;
+            const yScale = d3.scaleLinear()
+                .domain([-maxValue, maxValue])
+                .range([height, 0]);
+            
+            // Axes
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale))
+                .selectAll('text')
+                .style('text-anchor', 'end')
+                .attr('dx', '-.8em')
+                .attr('dy', '.15em')
+                .attr('transform', 'rotate(-45)')
+                .style('font-size', '10px');
+            
+            g.append('g')
+                .call(d3.axisLeft(yScale));
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .style('stroke', '#ddd')
+                .style('stroke-width', 2);
+            
+            // Bars
+            g.selectAll('.bar')
+                .data(data)
+                .enter().append('rect')
+                .attr('class', 'bar')
+                .attr('x', d => xScale(d.nodeId))
+                .attr('width', xScale.bandwidth())
+                .attr('y', d => d.count >= 0 ? yScale(d.count) : yScale(0))
+                .attr('height', d => Math.abs(yScale(d.count) - yScale(0)))
+                .style('fill', d => d.count >= 0 ? '#28a745' : '#dc3545')
+                .style('opacity', 0.8);
+            
+            // Value labels
+            g.selectAll('.value-label')
+                .data(data)
+                .enter().append('text')
+                .attr('class', 'value-label')
+                .attr('x', d => xScale(d.nodeId) + xScale.bandwidth() / 2)
+                .attr('y', d => d.count >= 0 ? yScale(d.count) - 5 : yScale(d.count) + 15)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .style('fill', '#333')
+                .text(d => d.count);
+            
+            // Labels
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text('Token Count');
+        }
+        
+        function clearChart() {
+            const svg = d3.select('#results-chart');
+            svg.selectAll('*').remove();
+            svg.append('text')
+                .attr('x', '50%')
+                .attr('y', '50%')
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .style('fill', '#666')
+                .text('Initialize diffusion to see results');
+        }
+        
+        function exportResults() {
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
+                alert('No data to export. Please run the simulation first.');
+                return;
+            }
+            
+            const data = {
+                metadata: {
+                    exportTime: new Date().toISOString(),
+                    stepCount: diffusionModel.stepCount,
+                    totalTimePoints: diffusionModel.nodeFlowsOverTime.length
+                },
+                nodeFlowsOverTime: diffusionModel.nodeFlowsOverTime,
+                edgeFlowsOverTime: diffusionModel.edgeFlowsOverTime || []
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `token-diffusion-results-${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            console.log('📊 Results exported successfully');
+        }
+        
+        function clearResults() {
+            if (diffusionModel) {
+                diffusionModel.nodeFlowsOverTime = [];
+                diffusionModel.edgeFlowsOverTime = [];
+                diffusionModel.stepCount = 0;
+                updateResultsWindow();
+                console.log('🗑️ Results cleared');
+            }
+        }
+        
+        function makeResultsWindowDraggable() {
+            const resultsWindow = document.getElementById('results-window');
+            const header = resultsWindow.querySelector('.results-header');
+            
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+            
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+                
+                if (e.target === header || header.contains(e.target)) {
+                    isDragging = true;
+                }
+            }
+            
+            function dragMove(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    
+                    resultsWindow.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                }
+            }
+            
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+            }
+        }
+        
+        // Single Node Chart Functions
+        let selectedNodeId = '';
+        
+        function showSingleNodeChart() {
+            currentResultsView = 'singlenode';
+            
+            // Update button states
+            document.querySelectorAll('.results-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('button[onclick="showSingleNodeChart()"]').classList.add('active');
+            
+            // Show node selector
+            document.getElementById('node-selector-container').style.display = 'flex';
+            
+            // Populate node selector if not already done
+            populateNodeSelector();
+            
+            // Render chart for currently selected node
+            if (selectedNodeId) {
+                renderSingleNodeChart(selectedNodeId);
+            } else {
+                clearChart();
+            }
+        }
+        
+        function populateNodeSelector() {
+            const selector = document.getElementById('node-selector');
+            
+            // Check if we have the diffusion graph with nodes
+            if (!diffusionGraph || !diffusionGraph.nodes) {
+                selector.innerHTML = '<option value="">No nodes available</option>';
+                return;
+            }
+            
+            // Get all nodes from the diffusion graph
+            const allNodeIds = Object.keys(diffusionGraph.nodes);
+            
+            if (allNodeIds.length === 0) {
+                selector.innerHTML = '<option value="">No nodes available</option>';
+                return;
+            }
+            
+            // Create array of all nodes with names for sorting
+            const nodeList = allNodeIds.map(nodeId => {
+                let nodeName = nodeId; // fallback to ID
+                
+                // Get actual node name from diffusionGraph
+                if (diffusionGraph.nodes[nodeId]) {
+                    nodeName = diffusionGraph.nodes[nodeId].label || nodeId;
+                }
+                
+                return {
+                    id: nodeId,
+                    name: nodeName
+                };
+            });
+            
+            // Sort nodes alphabetically by name
+            nodeList.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Clear and populate selector
+            selector.innerHTML = '<option value="">Choose a node...</option>';
+            nodeList.forEach(node => {
+                const option = document.createElement('option');
+                option.value = node.id;
+                option.textContent = node.name.length > 50 ? node.name.substring(0, 50) + '...' : node.name;
+                option.title = node.name; // Full name in tooltip
+                selector.appendChild(option);
+            });
+            
+            // Restore previous selection if valid
+            if (selectedNodeId && allNodeIds.includes(selectedNodeId)) {
+                selector.value = selectedNodeId;
+            }
+            
+            // Update selector state based on simulation status
+            updateNodeSelectorState();
+        }
+        
+        function onNodeSelectionChange() {
+            const selector = document.getElementById('node-selector');
+            selectedNodeId = selector.value;
+            
+            console.log('🔄 Node selection changed:', selectedNodeId, 'Current view:', currentResultsView);
+            
+            if (selectedNodeId && currentResultsView === 'singlenode') {
+                console.log('✅ Rendering single node chart for:', selectedNodeId);
+                renderSingleNodeChart(selectedNodeId);
+            } else {
+                console.log('🔄 Clearing chart - no node selected or wrong view');
+                clearChart();
+            }
+        }
+        
+        function updateNodeSelectorState() {
+            const selector = document.getElementById('node-selector');
+            if (selector) {
+                // Disable dropdown while simulation is running
+                selector.disabled = diffusionSimulationRunning;
+                
+                // Update visual styling
+                if (diffusionSimulationRunning) {
+                    selector.style.opacity = '0.6';
+                    selector.style.cursor = 'not-allowed';
+                } else {
+                    selector.style.opacity = '1';
+                    selector.style.cursor = 'pointer';
+                }
+            }
+        }
+        
+        function renderSingleNodeChart(nodeId) {
+            if (!diffusionModel) {
+                clearChart();
+                return;
+            }
+            
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime || [];
+            
+            // If no simulation data yet, show a message
+            if (nodeFlowsOverTime.length === 0) {
+                const svg = d3.select('#results-chart');
+                svg.selectAll('*').remove();
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .text('No simulation data yet. Run the token diffusion to see results.');
+                return;
+            }
+            
+            // Calculate cumulative data for the selected node
+            let cumulativeCount = 0;
+            const timeSeriesData = nodeFlowsOverTime.map((flows, timeStep) => {
+                cumulativeCount += (flows[nodeId] || 0);
+                return {
+                    timeStep: timeStep,
+                    value: cumulativeCount
+                };
+            });
+            
+            // Render single line chart
+            renderSingleNodeTimeSeriesChart(nodeId, timeSeriesData);
+        }
+        
+        function renderSingleNodeTimeSeriesChart(nodeId, data) {
+            const svg = d3.select('#results-chart');
+            svg.selectAll('*').remove();
+            
+            if (!data || data.length === 0) {
+                svg.append('text')
+                    .attr('x', '50%')
+                    .attr('y', '50%')
+                    .attr('text-anchor', 'middle')
+                    .attr('dominant-baseline', 'middle')
+                    .style('fill', '#666')
+                    .text('No data available for selected node');
+                return;
+            }
+            
+            const margin = { top: 30, right: 30, bottom: 60, left: 80 };
+            const width = 600 - margin.left - margin.right;
+            const height = 350 - margin.top - margin.bottom;
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales
+            const maxTimeStep = d3.max(data, d => d.timeStep) || 0;
+            const extent = d3.extent(data, d => d.value);
+            const maxValue = Math.max(Math.abs(extent[0] || 0), Math.abs(extent[1] || 0)) || 1;
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, maxTimeStep])
+                .range([0, width]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxValue, maxValue])
+                .range([height, 0]);
+            
+            // Axes
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).tickFormat(d3.format('d')));
+            
+            g.append('g')
+                .call(d3.axisLeft(yScale));
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .style('stroke', '#ddd')
+                .style('stroke-dasharray', '3,3');
+            
+            // Line generator
+            const line = d3.line()
+                .x(d => xScale(d.timeStep))
+                .y(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+            
+            // Draw line
+            g.append('path')
+                .datum(data)
+                .attr('fill', 'none')
+                .attr('stroke', '#007bff')
+                .attr('stroke-width', 3)
+                .attr('d', line);
+            
+            // Add dots at data points
+            g.selectAll('.data-point')
+                .data(data)
+                .enter().append('circle')
+                .attr('class', 'data-point')
+                .attr('cx', d => xScale(d.timeStep))
+                .attr('cy', d => yScale(d.value))
+                .attr('r', 3)
+                .style('fill', '#007bff')
+                .style('stroke', 'white')
+                .style('stroke-width', 1);
+            
+            // Chart title - use node name if available
+            let nodeDisplayName = nodeId;
+            if (diffusionGraph && diffusionGraph.nodes && diffusionGraph.nodes[nodeId]) {
+                nodeDisplayName = diffusionGraph.nodes[nodeId].label || nodeId;
+            }
+            
+            g.append('text')
+                .attr('x', width / 2)
+                .attr('y', -10)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '14px')
+                .style('font-weight', 'bold')
+                .style('fill', '#333')
+                .text(nodeDisplayName.length > 40 ? nodeDisplayName.substring(0, 40) + '...' : nodeDisplayName);
+            
+            // Labels
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text('Cumulative Token Count');
+            
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 10})`)
+                .style('text-anchor', 'middle')
+                .style('font-size', '12px')
+                .text('Time Step');
         }
 
         // Legacy simulation functions removed
@@ -5654,11 +7075,13 @@
             });
         }
 
-        // Update the simulation to handle dynamic node sizes
-        simulation.force("collision", d3.forceCollide().radius(d => {
-            const circle = d3.select(`#node-${d.id}`).select('circle');
-            return circle.attr('r') ? parseFloat(circle.attr('r')) + 2 : 12;
-        }));
+        // Update the simulation to handle dynamic node sizes (only if simulation exists)
+        if (typeof simulation !== 'undefined' && simulation) {
+            simulation.force("collision", d3.forceCollide().radius(d => {
+                const circle = d3.select(`#node-${d.id}`).select('circle');
+                return circle.attr('r') ? parseFloat(circle.attr('r')) + 2 : 12;
+            }));
+        }
 
         // Add this function near the other filter-related functions
         function handleNodeSelection(nodeId) {
@@ -6013,52 +7436,67 @@ def get_top_centrality_nodes(metric):
             document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = true);
         });
 
-        // Add event listener for Katz centrality button
-        document.getElementById('katz-centrality-btn').addEventListener('click', function() {
-            // Show Katz explanation
-            document.getElementById('katz-explanation').style.display = 'block';
-            // Hide other explanations
-            document.getElementById('degree-explanation').style.display = 'none';
-            document.getElementById('betweenness-explanation').style.display = 'none';
-            document.getElementById('closeness-explanation').style.display = 'none';
-            document.getElementById('eigenvector-explanation').style.display = 'none';
-            
-            // Show Katz results
-            document.getElementById('katz-results').style.display = 'block';
-            // Hide other results
-            document.getElementById('degree-results').style.display = 'none';
-            document.getElementById('betweenness-results').style.display = 'none';
-            document.getElementById('closeness-results').style.display = 'none';
-            document.getElementById('eigenvector-results').style.display = 'none';
-            
-            // Calculate and display Katz centrality
-            pyodide.runPython(`
-                import json
-                from networkx_loader import get_top_centrality_nodes
-                result = get_top_centrality_nodes('katz')
-                result
-            `).then(result => {
-                const data = JSON.parse(result);
-                if (data.error) {
-                    document.getElementById('katz-list').innerHTML = `<p>Error: ${data.error}</p>`;
-                    return;
-                }
+        // Add event listener for Katz centrality button (only if element exists)
+        const katzBtn = document.getElementById('katz-centrality-btn');
+        if (katzBtn) {
+            katzBtn.addEventListener('click', function() {
+                // Show Katz explanation
+                const katzExplanation = document.getElementById('katz-explanation');
+                if (katzExplanation) katzExplanation.style.display = 'block';
+                // Hide other explanations
+                const degreeExplanation = document.getElementById('degree-explanation');
+                if (degreeExplanation) degreeExplanation.style.display = 'none';
+                const betweennessExplanation = document.getElementById('betweenness-explanation');
+                if (betweennessExplanation) betweennessExplanation.style.display = 'none';
+                const closenessExplanation = document.getElementById('closeness-explanation');
+                if (closenessExplanation) closenessExplanation.style.display = 'none';
+                const eigenvectorExplanation = document.getElementById('eigenvector-explanation');
+                if (eigenvectorExplanation) eigenvectorExplanation.style.display = 'none';
                 
-                const list = document.getElementById('katz-list');
-                list.innerHTML = '';
-                
-                data.nodes.forEach(node => {
-                    const item = document.createElement('div');
-                    item.className = 'result-item';
-                    item.innerHTML = `
-                        <span class="node-name">${node.name}</span>
-                        <span class="node-domain">${node.domain}</span>
-                        <span class="node-score">${node.centrality.toFixed(2)}%</span>
-                    `;
-                    list.appendChild(item);
-                });
+                // Show Katz results
+                const katzResults = document.getElementById('katz-results');
+                if (katzResults) katzResults.style.display = 'block';
+                // Hide other results
+                const degreeResults = document.getElementById('degree-results');
+                if (degreeResults) degreeResults.style.display = 'none';
+                const betweennessResults = document.getElementById('betweenness-results');
+                if (betweennessResults) betweennessResults.style.display = 'none';
+                const closenessResults = document.getElementById('closeness-results');
+                if (closenessResults) closenessResults.style.display = 'none';
+                const eigenvectorResults = document.getElementById('eigenvector-results');
+                if (eigenvectorResults) eigenvectorResults.style.display = 'none';
             });
-        });
+        }
+            
+            // Calculate and display Katz centrality (only if pyodide is available)
+            if (typeof pyodide !== 'undefined' && pyodide) {
+                pyodide.runPython(`
+                    import json
+                    from networkx_loader import get_top_centrality_nodes
+                    result = get_top_centrality_nodes('katz')
+                    result
+                `).then(result => {
+                    const data = JSON.parse(result);
+                    if (data.error) {
+                        document.getElementById('katz-list').innerHTML = `<p>Error: ${data.error}</p>`;
+                        return;
+                    }
+                    
+                    const list = document.getElementById('katz-list');
+                    list.innerHTML = '';
+                    
+                    data.nodes.forEach(node => {
+                        const item = document.createElement('div');
+                        item.className = 'result-item';
+                        item.innerHTML = `
+                            <span class="node-name">${node.name}</span>
+                            <span class="node-domain">${node.domain}</span>
+                            <span class="node-score">${node.centrality.toFixed(2)}%</span>
+                        `;
+                        list.appendChild(item);
+                    });
+                });
+            }
 
         // After Pyodide and the visualization are initialized, enable and attach event listeners to centrality buttons
         function enableCentralityButtons() {
@@ -7565,19 +9003,31 @@ def get_top_centrality_nodes(metric):
             document.getElementById('overlay').style.display = 'block';
         }
 
-        // Add event listener to comprehensive centrality button
-        document.getElementById('comprehensive-centrality-btn').addEventListener('click', showComprehensiveCentrality);
+        // Add event listener to comprehensive centrality button (only if element exists)
+        const comprehensiveBtn = document.getElementById('comprehensive-centrality-btn');
+        if (comprehensiveBtn) {
+            comprehensiveBtn.addEventListener('click', showComprehensiveCentrality);
+        }
         
-        // Add event listener to centrality popup close button
-        document.getElementById('centrality-popup-close').addEventListener('click', hideComprehensiveCentrality);
+        // Add event listener to centrality popup close button (only if element exists)
+        const popupCloseBtn = document.getElementById('centrality-popup-close');
+        if (popupCloseBtn) {
+            popupCloseBtn.addEventListener('click', hideComprehensiveCentrality);
+        }
         
-        // Close popup when clicking on overlay
-        document.getElementById('overlay').addEventListener('click', hideComprehensiveCentrality);
+        // Close popup when clicking on overlay (only if element exists)
+        const overlayElement = document.getElementById('overlay');
+        if (overlayElement) {
+            overlayElement.addEventListener('click', hideComprehensiveCentrality);
+        }
         
-        // Prevent popup closing when clicking inside popup
-        document.getElementById('centrality-popup').addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
+        // Prevent popup closing when clicking inside popup (only if element exists)
+        const centralityPopup = document.getElementById('centrality-popup');
+        if (centralityPopup) {
+            centralityPopup.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        }
 
         // Add click handler to SVG/canvas background to reset everything
         function addCanvasResetHandler() {
