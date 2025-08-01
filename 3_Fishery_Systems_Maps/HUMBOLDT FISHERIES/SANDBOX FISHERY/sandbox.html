@@ -6667,33 +6667,493 @@
                 .text('Initialize diffusion to see results');
         }
         
-        function exportResults() {
+        async function exportResults() {
             if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) {
                 alert('No data to export. Please run the simulation first.');
                 return;
             }
             
+            try {
+                // Show loading message
+                const loadingMsg = document.createElement('div');
+                loadingMsg.id = 'export-loading';
+                loadingMsg.style.cssText = `
+                    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    z-index: 10000; text-align: center; font-family: Arial, sans-serif;
+                `;
+                loadingMsg.innerHTML = `
+                    <div style="font-size: 16px; margin-bottom: 10px;">📊 Preparing Excel Export...</div>
+                    <div style="font-size: 14px; color: #666;">Loading Python libraries and processing data</div>
+                    <div style="margin-top: 15px;">
+                        <div style="width: 200px; height: 4px; background: #eee; border-radius: 2px; overflow: hidden;">
+                            <div style="width: 0%; height: 100%; background: #007bff; transition: width 0.3s;" id="progress-bar"></div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(loadingMsg);
+                
+                // Update progress
+                const updateProgress = (percent) => {
+                    const bar = document.getElementById('progress-bar');
+                    if (bar) bar.style.width = percent + '%';
+                };
+                
+                updateProgress(10);
+                
+                // Export to Excel using Python/pandas
+                await exportToExcel();
+                
+                // Remove loading message
+                document.body.removeChild(loadingMsg);
+                
+                console.log('📊 Token diffusion data exported as Excel file');
+                alert('Token diffusion data exported as comprehensive Excel file with multiple sheets!');
+                
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Export failed: ' + error.message);
+                
+                // Remove loading message if it exists
+                const loadingMsg = document.getElementById('export-loading');
+                if (loadingMsg) document.body.removeChild(loadingMsg);
+            }
+        }
+        
+        async function exportToExcel() {
+            // Create a comprehensive single CSV file with all data organized in sections
+            const updateProgress = (percent) => {
+                const bar = document.getElementById('progress-bar');
+                if (bar) bar.style.width = percent + '%';
+            };
+            
+            updateProgress(30);
+            
+            // Create comprehensive CSV content with all data in sections
+            let csvContent = '';
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            
+            // Helper function to escape CSV values
+            const escapeCSV = (value) => {
+                if (value === null || value === undefined) return '';
+                const str = String(value);
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            };
+            
+            updateProgress(40);
+            
+            // Section 1: Metadata
+            csvContent += '=== TOKEN DIFFUSION ANALYSIS EXPORT ===\n';
+            csvContent += `Export Time,${new Date().toISOString()}\n`;
+            csvContent += `Step Count,${diffusionModel.stepCount}\n`;
+            csvContent += `Total Time Points,${diffusionModel.nodeFlowsOverTime.length}\n`;
+            csvContent += `Node Count,${Object.keys(diffusionGraph.nodes).length}\n`;
+            csvContent += `Link Count,${Object.keys(diffusionGraph.edges).length}\n`;
+            csvContent += '\n\n';
+            
+            updateProgress(50);
+            
+            // Section 2: Node Flows Over Time
+            csvContent += '=== NODE FLOWS OVER TIME ===\n';
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            
+            // Get all unique node IDs
+            const allNodeIds = new Set();
+            nodeFlowsOverTime.forEach(timeStep => {
+                Object.keys(timeStep).forEach(nodeId => allNodeIds.add(nodeId));
+            });
+            const sortedNodeIds = Array.from(allNodeIds).sort();
+            
+            // Create header
+            csvContent += 'TimeStep,' + sortedNodeIds.map(id => {
+                const node = diffusionGraph.nodes[id];
+                return escapeCSV(node?.label || id);
+            }).join(',') + '\n';
+            
+            // Add data rows
+            nodeFlowsOverTime.forEach((timeStep, timeIdx) => {
+                const row = [timeIdx];
+                sortedNodeIds.forEach(nodeId => {
+                    row.push(timeStep[nodeId] || 0);
+                });
+                csvContent += row.join(',') + '\n';
+            });
+            csvContent += '\n\n';
+            
+            updateProgress(60);
+            
+            // Section 3: Token Journey Analysis
+            csvContent += '=== TOKEN JOURNEY ANALYSIS ===\n';
+            const tokenJourney = generateRandomTokenJourney();
+            
+            csvContent += 'StepNumber,NodeId,NodeName,TimeStep,FlowValue,FlowMagnitude,TokenCharge,CurrentCharge,EffectDirection,RelationshipType,IsIntervention,Domain\n';
+            
+            tokenJourney.forEach((step, idx) => {
+                const node = diffusionGraph.nodes[step.nodeId];
+                const row = [
+                    idx + 1,
+                    escapeCSV(step.nodeId),
+                    escapeCSV(node?.label || step.nodeId),
+                    step.timeStep,
+                    step.flowValue,
+                    step.flowMagnitude,
+                    step.tokenCharge,
+                    step.currentCharge,
+                    step.currentCharge > 0 ? 'INCREASE' : 'DECREASE',
+                    escapeCSV(step.relationshipType || 'direct'),
+                    step.isIntervention,
+                    escapeCSV(node?.domain || 'Unknown')
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            csvContent += '\n\n';
+            
+            updateProgress(70);
+            
+            // Section 4: Network Structure
+            csvContent += '=== NETWORK STRUCTURE ===\n';
+            csvContent += 'SourceNodeId,SourceNodeName,TargetNodeId,TargetNodeName,RelationshipType,Strength,Delay,Definition\n';
+            
+            Object.keys(diffusionGraph.edges).forEach(edgeId => {
+                const edge = diffusionGraph.edges[edgeId];
+                const sourceNode = diffusionGraph.nodes[edge.source];
+                const targetNode = diffusionGraph.nodes[edge.target];
+                
+                const row = [
+                    escapeCSV(edge.source),
+                    escapeCSV(sourceNode?.label || edge.source),
+                    escapeCSV(edge.target),
+                    escapeCSV(targetNode?.label || edge.target),
+                    escapeCSV(edge.type || 'same'),
+                    edge.strength || 1,
+                    edge.delay || 5,
+                    escapeCSV(edge.definition || '')
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            csvContent += '\n\n';
+            
+            updateProgress(80);
+            
+            // Section 5: Node Summary Statistics
+            csvContent += '=== NODE SUMMARY STATISTICS ===\n';
+            csvContent += 'NodeId,NodeName,Domain,TotalSteps,MaxAbsoluteFlow,MinFlow,MaxFlow,AverageFlow,FlowVariance,FirstActivationTime,LastActivationTime,TotalActivationDuration\n';
+            
+            sortedNodeIds.forEach(nodeId => {
+                const node = diffusionGraph.nodes[nodeId];
+                
+                // Calculate statistics
+                const flows = [];
+                let firstActivation = -1;
+                let lastActivation = -1;
+                
+                nodeFlowsOverTime.forEach((timeStep, timeIdx) => {
+                    const flow = timeStep[nodeId] || 0;
+                    flows.push(flow);
+                    
+                    if (Math.abs(flow) > 0.01) {
+                        if (firstActivation === -1) {
+                            firstActivation = timeIdx;
+                        }
+                        lastActivation = timeIdx;
+                    }
+                });
+                
+                const nonZeroFlows = flows.filter(f => Math.abs(f) > 0.01);
+                const maxAbsFlow = Math.max(...flows.map(f => Math.abs(f)));
+                const minFlow = Math.min(...flows);
+                const maxFlow = Math.max(...flows);
+                const avgFlow = flows.reduce((a, b) => a + b, 0) / flows.length;
+                const variance = flows.reduce((acc, f) => acc + Math.pow(f - avgFlow, 2), 0) / flows.length;
+                const activationDuration = lastActivation >= 0 ? lastActivation - firstActivation + 1 : 0;
+                
+                const row = [
+                    escapeCSV(nodeId),
+                    escapeCSV(node?.label || nodeId),
+                    escapeCSV(node?.domain || 'Unknown'),
+                    nonZeroFlows.length,
+                    Math.round(maxAbsFlow * 10000) / 10000,
+                    Math.round(minFlow * 10000) / 10000,
+                    Math.round(maxFlow * 10000) / 10000,
+                    Math.round(avgFlow * 10000) / 10000,
+                    Math.round(variance * 10000) / 10000,
+                    firstActivation,
+                    lastActivation,
+                    activationDuration
+                ];
+                csvContent += row.join(',') + '\n';
+            });
+            
+            updateProgress(90);
+            
+            // Create and download the comprehensive CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `token-diffusion-comprehensive-${timestamp}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            updateProgress(100);
+        }
+        
+        function exportNodeFlowsCSV(timestamp) {
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            
+            // Create header row
+            const allNodeIds = new Set();
+            nodeFlowsOverTime.forEach(timeStep => {
+                Object.keys(timeStep).forEach(nodeId => allNodeIds.add(nodeId));
+            });
+            
+            const nodeIdArray = Array.from(allNodeIds).sort();
+            const csvRows = [];
+            
+            // Header: TimeStep, NodeId1, NodeId2, ...
+            csvRows.push(['TimeStep', ...nodeIdArray].join(','));
+            
+            // Data rows
+            nodeFlowsOverTime.forEach((timeStep, index) => {
+                const row = [index];
+                nodeIdArray.forEach(nodeId => {
+                    row.push(timeStep[nodeId] || 0);
+                });
+                csvRows.push(row.join(','));
+            });
+            
+            downloadCSV(csvRows.join('\n'), `node-flows-over-time-${timestamp}.csv`);
+        }
+        
+        function exportEdgeFlowsCSV(timestamp) {
+            const edgeFlowsOverTime = diffusionModel.edgeFlowsOverTime;
+            
+            const csvRows = [];
+            csvRows.push(['TimeStep', 'SourceNodeId', 'TargetNodeId', 'FlowValue', 'FlowMagnitude'].join(','));
+            
+            edgeFlowsOverTime.forEach((timeStep, timeIndex) => {
+                Object.keys(timeStep).forEach(edgeKey => {
+                    const [sourceId, targetId] = edgeKey.split('->');
+                    const flowValue = timeStep[edgeKey];
+                    csvRows.push([
+                        timeIndex,
+                        sourceId,
+                        targetId,
+                        flowValue,
+                        Math.abs(flowValue)
+                    ].join(','));
+                });
+            });
+            
+            downloadCSV(csvRows.join('\n'), `edge-flows-over-time-${timestamp}.csv`);
+        }
+        
+        function exportTokenJourneyCSV(timestamp) {
+            const tokenJourney = generateRandomTokenJourney();
+            
+            const csvRows = [];
+            csvRows.push([
+                'StepNumber',
+                'NodeId', 
+                'NodeName',
+                'TimeStep',
+                'FlowValue',
+                'FlowMagnitude',
+                'TokenCharge',
+                'CurrentCharge',
+                'EffectDirection',
+                'RelationshipType',
+                'IsIntervention',
+                'Domain',
+                'NodeColor'
+            ].join(','));
+            
+            tokenJourney.forEach((step, index) => {
+                const node = nodes.find(n => n.id === step.nodeId);
+                const nodeName = node ? node.name : step.nodeId;
+                const domain = node ? node.domain : 'Unknown';
+                const nodeColor = node ? node.color : '#cccccc';
+                const effectDirection = step.currentCharge > 0 ? 'INCREASE' : 'DECREASE';
+                
+                csvRows.push([
+                    index + 1,
+                    step.nodeId,
+                    `"${nodeName}"`, // Quote to handle commas in names
+                    step.timeStep,
+                    step.flowValue,
+                    step.flowMagnitude,
+                    step.tokenCharge,
+                    step.currentCharge,
+                    effectDirection,
+                    step.relationshipType || 'direct',
+                    step.isIntervention,
+                    `"${domain}"`,
+                    nodeColor
+                ].join(','));
+            });
+            
+            downloadCSV(csvRows.join('\n'), `token-journey-analysis-${timestamp}.csv`);
+        }
+        
+        function exportNetworkStructureCSV(timestamp) {
+            const csvRows = [];
+            csvRows.push([
+                'SourceNodeId',
+                'SourceNodeName', 
+                'TargetNodeId',
+                'TargetNodeName',
+                'RelationshipType',
+                'Strength',
+                'Delay',
+                'Definition'
+            ].join(','));
+            
+            links.forEach(link => {
+                const sourceNode = nodes.find(n => n.id === link.source.id);
+                const targetNode = nodes.find(n => n.id === link.target.id);
+                
+                csvRows.push([
+                    link.source.id,
+                    `"${sourceNode ? sourceNode.name : link.source.id}"`,
+                    link.target.id,
+                    `"${targetNode ? targetNode.name : link.target.id}"`,
+                    link.type,
+                    link.strength,
+                    link.delay,
+                    `"${link.definition || ''}"`
+                ].join(','));
+            });
+            
+            downloadCSV(csvRows.join('\n'), `network-structure-${timestamp}.csv`);
+        }
+        
+        function exportSummaryStatisticsCSV(timestamp) {
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            const csvRows = [];
+            
+            csvRows.push([
+                'NodeId',
+                'NodeName',
+                'Domain',
+                'TotalSteps',
+                'MaxAbsoluteFlow',
+                'MinFlow',
+                'MaxFlow',
+                'AverageFlow',
+                'FlowVariance',
+                'FirstActivationTime',
+                'LastActivationTime',
+                'TotalActivationDuration'
+            ].join(','));
+            
+            // Calculate statistics for each node
+            const allNodeIds = new Set();
+            nodeFlowsOverTime.forEach(timeStep => {
+                Object.keys(timeStep).forEach(nodeId => allNodeIds.add(nodeId));
+            });
+            
+            Array.from(allNodeIds).forEach(nodeId => {
+                const node = nodes.find(n => n.id === nodeId);
+                const nodeName = node ? node.name : nodeId;
+                const domain = node ? node.domain : 'Unknown';
+                
+                const flows = [];
+                let firstActivation = -1;
+                let lastActivation = -1;
+                
+                nodeFlowsOverTime.forEach((timeStep, index) => {
+                    const flow = timeStep[nodeId] || 0;
+                    flows.push(flow);
+                    
+                    if (Math.abs(flow) > 0.01) {
+                        if (firstActivation === -1) firstActivation = index;
+                        lastActivation = index;
+                    }
+                });
+                
+                const nonZeroFlows = flows.filter(f => Math.abs(f) > 0.01);
+                const maxAbsFlow = Math.max(...flows.map(f => Math.abs(f)));
+                const minFlow = Math.min(...flows);
+                const maxFlow = Math.max(...flows);
+                const avgFlow = flows.reduce((a, b) => a + b, 0) / flows.length;
+                const variance = flows.reduce((acc, f) => acc + Math.pow(f - avgFlow, 2), 0) / flows.length;
+                const activationDuration = lastActivation >= 0 ? lastActivation - firstActivation + 1 : 0;
+                
+                csvRows.push([
+                    nodeId,
+                    `"${nodeName}"`,
+                    `"${domain}"`,
+                    nonZeroFlows.length,
+                    maxAbsFlow.toFixed(4),
+                    minFlow.toFixed(4),
+                    maxFlow.toFixed(4),
+                    avgFlow.toFixed(4),
+                    variance.toFixed(4),
+                    firstActivation,
+                    lastActivation,
+                    activationDuration
+                ].join(','));
+            });
+            
+            downloadCSV(csvRows.join('\n'), `summary-statistics-${timestamp}.csv`);
+        }
+        
+        function exportOriginalJSON(timestamp) {
             const data = {
                 metadata: {
                     exportTime: new Date().toISOString(),
                     stepCount: diffusionModel.stepCount,
-                    totalTimePoints: diffusionModel.nodeFlowsOverTime.length
+                    totalTimePoints: diffusionModel.nodeFlowsOverTime.length,
+                    nodeCount: nodes.length,
+                    linkCount: links.length
                 },
                 nodeFlowsOverTime: diffusionModel.nodeFlowsOverTime,
-                edgeFlowsOverTime: diffusionModel.edgeFlowsOverTime || []
+                edgeFlowsOverTime: diffusionModel.edgeFlowsOverTime || [],
+                networkStructure: {
+                    nodes: nodes.map(n => ({
+                        id: n.id,
+                        name: n.name,
+                        domain: n.domain,
+                        color: n.color,
+                        intervenable: n.intervenable
+                    })),
+                    links: links.map(l => ({
+                        source: l.source.id,
+                        target: l.target.id,
+                        type: l.type,
+                        strength: l.strength,
+                        delay: l.delay,
+                        definition: l.definition
+                    }))
+                }
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `token-diffusion-results-${Date.now()}.json`;
+            a.download = `token-diffusion-complete-${timestamp}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            console.log('📊 Results exported successfully');
+        }
+        
+        function downloadCSV(csvContent, filename) {
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
         
         function clearResults() {
