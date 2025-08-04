@@ -230,7 +230,7 @@
             padding: 0 10px;
         }
         .filter-section-content.expanded {
-            max-height: 400px; /* Increased max height to fit more content */
+            max-height: 600px; /* Further increased max height to reduce scrolling */
             padding: 8px;
             overflow-y: auto;
         }
@@ -1168,14 +1168,15 @@
         }
         
         .speed-button {
-            padding: 4px 6px;
-            font-size: 9px;
+            padding: 8px 10px;
+            font-size: 12px;
             border: 1px solid #ddd;
             background: #f8f9fa;
             color: #666;
             cursor: pointer;
             transition: all 0.2s ease;
-            border-radius: 3px;
+            border-radius: 4px;
+            min-width: 65px;
         }
         
         .speed-button:hover:not(:disabled) {
@@ -1198,14 +1199,15 @@
         }
         
         .viz-toggle-button {
-            padding: 4px 6px;
-            font-size: 9px;
+            padding: 8px 10px;
+            font-size: 12px;
             border: 1px solid #ddd;
             background: #f8f9fa;
             color: #666;
             cursor: pointer;
             transition: all 0.2s ease;
-            border-radius: 3px;
+            border-radius: 4px;
+            min-width: 100px;
         }
         
         .viz-toggle-button:hover:not(:disabled) {
@@ -1977,8 +1979,8 @@
     <div id="graph"></div>
     
     <!-- Floating Octopus Image -->
-    <div id="octopus-float" style="position: fixed; top: 80px; right: 20px; z-index: 100; pointer-events: none; opacity: 0.8; transition: opacity 0.3s ease;">
-        <img src="pulpo-del-norte.png" alt="Pulpo del Norte" style="width: 450px; height: auto; filter: drop-shadow(4px 4px 8px rgba(0,0,0,0.3));">
+    <div id="octopus-float" style="position: fixed; bottom: 10px; right: 10px; z-index: 100; pointer-events: none; opacity: 0.8; transition: opacity 0.3s ease;">
+        <img src="pulpo-del-norte.png" alt="Pulpo del Norte" style="width: 200px; height: auto; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));">
     </div>
     
     <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#f8f9fa;"></div>
@@ -1996,7 +1998,7 @@
                 <button class="results-button" onclick="showAllNodesIndividual()">All Individual</button>
                 <button class="results-button" onclick="showGoalsIndividual()">Goals</button>
                 <button class="results-button" onclick="showControlGauge()">Control</button>
-                <button class="results-button" onclick="showSingleTokenJourney()">Single Token</button>
+
                 <button class="results-button" onclick="showSingleNodeChart()">Single Node</button>
                 <button class="results-button" onclick="showCurrentSnapshot()">Current State</button>
                 <button class="results-button" onclick="exportResults()">Export Data</button>
@@ -3176,7 +3178,7 @@
                     <!-- Computational Results -->
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Computational Results:</label>
-                        <button id="show-results-window" class="diffusion-button secondary" onclick="toggleResultsWindow()" disabled>
+                        <button id="show-results-window" class="diffusion-button secondary results-button-highlight" onclick="toggleResultsWindow()" disabled style="width: 100%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; font-weight: 600; border: 2px solid #20c997; box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);">
                             📊 Show Results Window
                         </button>
                     </div>
@@ -6033,265 +6035,7 @@
             });
         }
         
-        function showSingleTokenJourney() {
-            currentResultsView = 'singletoken';
-            
-            // Update button states
-            document.querySelectorAll('.results-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('button[onclick="showSingleTokenJourney()"]').classList.add('active');
-            
-            // Hide node selector
-            document.getElementById('node-selector-container').style.display = 'none';
-            
-            // Render the single token journey
-            renderSingleTokenJourney();
-        }
-        
-        function renderSingleTokenJourney() {
-            // Replace SVG with div container for text-based display
-            const chartContainer = document.getElementById('results-chart-container');
-            chartContainer.innerHTML = '';
-            
-            // Create main container div
-            const mainDiv = document.createElement('div');
-            mainDiv.id = 'single-token-container';
-            mainDiv.style.cssText = `
-                padding: 20px;
-                max-height: 600px;
-                overflow-y: auto;
-                background: white;
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                border: 1px solid #ddd;
-                border-radius: 8px;
-            `;
-            
-            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime || diffusionModel.nodeFlowsOverTime.length === 0) {
-                mainDiv.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #666;">
-                        <h3>No Token Data Available</h3>
-                        <p>Run a token diffusion simulation to see token journeys.</p>
-                    </div>
-                `;
-                chartContainer.appendChild(mainDiv);
-                return;
-            }
-            
-            // Generate a single token journey
-            const tokenJourney = generateRandomTokenJourney();
-            
-            if (!tokenJourney || tokenJourney.length === 0) {
-                mainDiv.innerHTML = `
-                    <div style="text-align: center; padding: 50px; color: #666;">
-                        <h3>No Token Journey Found</h3>
-                        <p>No token movements detected in the simulation data.</p>
-                    </div>
-                `;
-                chartContainer.appendChild(mainDiv);
-                return;
-            }
-            
-            // Create the journey visualization
-            let journeyHTML = `
-                <div style="margin-bottom: 20px;">
-                    <h2 style="color: #2c3e50; margin-bottom: 10px; font-size: 24px;">🎯 Single Token Journey</h2>
-                    <p style="color: #666; font-size: 14px; margin-bottom: 15px;">Token with ${tokenJourney[0].tokenCharge > 0 ? 'POSITIVE' : 'NEGATIVE'} charge affects ${tokenJourney.length} nodes over ${tokenJourney[tokenJourney.length-1].timeStep + 1} steps</p>
-                </div>
-                
-                <div class="journey-timeline" style="display: flex; flex-direction: column; gap: 8px;">
-            `;
-            
-            // Add each step in the journey
-            for (let i = 0; i < tokenJourney.length; i++) {
-                const step = tokenJourney[i];
-                const isLast = i === tokenJourney.length - 1;
-                const nextStep = !isLast ? tokenJourney[i + 1] : null;
-                
-                // Get node information
-                const node = diffusionGraph.nodes[step.nodeId];
-                const nodeName = node ? node.label : step.nodeId;
-                const nodeColor = getNodeColor(node);
-                
-                // Determine effect direction and strength
-                let effectInfo = '';
-                if (nextStep) {
-                    const effect = determineEffect(step, nextStep);
-                    effectInfo = `
-                        <div style="margin: 10px 0; padding: 10px; background: ${effect.bgColor}; border-left: 4px solid ${effect.color}; border-radius: 4px;">
-                            <strong>${effect.direction}</strong> ${effect.description}
-                        </div>
-                    `;
-                }
-                
-                // Create compact badge based on CAUSAL EFFECT (accounts for relationship polarity)
-                // Use currentCharge which tracks token effect through relationship polarities
-                const isIncrease = step.currentCharge > 0;
-                const flowColor = isIncrease ? '#28a745' : '#dc3545';
-                const flowBg = isIncrease ? '#d4edda' : '#f8d7da';
-                const flowIcon = isIncrease ? '⬆️' : '⬇️';
-                const flowText = isIncrease ? 'INC' : 'DEC';
-                const effectText = step.isIntervention ? 'ORIGIN' : (isIncrease ? 'INCREASES' : 'DECREASES');
-                
-                journeyHTML += `
-                    <div class="journey-step" style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #f9f9f9; border-radius: 6px;">
-                        <!-- Step Number -->
-                        <div style="
-                            width: 24px; height: 24px; border-radius: 50%; 
-                            background: ${nodeColor}; color: white; 
-                            display: flex; align-items: center; justify-content: center;
-                            font-weight: bold; font-size: 12px; flex-shrink: 0;
-                        ">${i + 1}</div>
-                        
-                        <!-- Node Badge -->
-                        <div style="
-                            background: white;
-                            border: 1px solid #ddd;
-                            border-radius: 4px;
-                            padding: 4px 8px;
-                            font-size: 14px;
-                            font-weight: 500;
-                            color: #2c3e50;
-                            flex: 1;
-                            min-width: 0;
-                        ">
-                            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${nodeName}</div>
-                            <div style="font-size: 11px; color: #666;">T${step.timeStep}</div>
-                        </div>
-                        
-                        <!-- Action Badge -->
-                        <div style="
-                            background: ${flowBg};
-                            border: 1px solid ${flowColor};
-                            border-radius: 4px;
-                            padding: 4px 8px;
-                            font-size: 12px;
-                            font-weight: 600;
-                            color: ${flowColor};
-                            display: flex;
-                            align-items: center;
-                            gap: 4px;
-                            flex-shrink: 0;
-                        >
-                            <span>${flowIcon}</span>
-                            <span>${step.isIntervention ? 'ORIGIN' : flowText}</span>
-                            <span style="font-size: 10px;">${step.currentCharge > 0 ? '+' : ''}${step.flowMagnitude.toFixed(1)}</span>
-                        </div>
-                        
-                        ${!isLast ? `
-                            <!-- Arrow to next -->
-                            <div style="color: #666; font-size: 16px; flex-shrink: 0;">→</div>
-                        ` : ''}
-                    </div>
-                `;
-            }
-            
-            journeyHTML += `
-                </div>
-                <div style="margin-top: 30px; padding: 15px; background: #e8f5e8; border-radius: 8px; border-left: 4px solid #28a745;">
-                    <strong>💡 Insight:</strong> This token journey shows how an intervention cascades through the system, 
-                    revealing the chain of causality from the initial change to downstream effects.
-                </div>
-            `;
-            
-            mainDiv.innerHTML = journeyHTML;
-            chartContainer.appendChild(mainDiv);
-        }
-        
-        function generateRandomTokenJourney() {
-            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime) return [];
-            
-            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
-            
-            // Find the initial intervention (largest change at time step 0)
-            let interventionNode = null;
-            let interventionCharge = 0;
-            
-            if (nodeFlowsOverTime.length > 0) {
-                const initialFlows = nodeFlowsOverTime[0];
-                let maxAbsFlow = 0;
-                
-                Object.keys(initialFlows).forEach(nodeId => {
-                    const flow = initialFlows[nodeId];
-                    if (Math.abs(flow) > maxAbsFlow) {
-                        maxAbsFlow = Math.abs(flow);
-                        interventionNode = nodeId;
-                        interventionCharge = flow > 0 ? 1 : -1; // Token charge: +1 for positive, -1 for negative
-                    }
-                });
-            }
-            
-            if (!interventionNode) return [];
-            
-            // Track the token journey starting from the intervention
-            const tokenJourney = [];
-            
-            // Add the initial intervention
-            const interventionFlowValue = nodeFlowsOverTime[0][interventionNode];
-            tokenJourney.push({
-                nodeId: interventionNode,
-                timeStep: 0,
-                flowValue: interventionFlowValue,
-                flowMagnitude: Math.abs(interventionFlowValue),
-                tokenCharge: interventionCharge,
-                currentCharge: interventionCharge, // Track current charge as token propagates
-                isIntervention: true
-            });
-            
-            // Follow the token as it propagates through the network
-            // Calculate effect based on direct relationship from intervention node
-            nodeFlowsOverTime.forEach((flows, timeStep) => {
-                if (timeStep === 0) return; // Skip initial intervention step
-                
-                Object.keys(flows).forEach(nodeId => {
-                    const flowMagnitude = Math.abs(flows[nodeId]);
-                    if (flowMagnitude > 0.01 && nodeId !== interventionNode) {
-                        
-                        // Find the direct relationship from intervention node to current node
-                        // This captures the causal effect of the intervention
-                        const relationship = links.find(link => 
-                            (link.source.id === interventionNode && link.target.id === nodeId) ||
-                            (link.target.id === interventionNode && link.source.id === nodeId)
-                        );
-                        
-                        // Calculate effect: TOKEN CHARGE × RELATIONSHIP TYPE
-                        // Truth table:
-                        // Positive token + Same relationship = Increase
-                        // Positive token + Opposite relationship = Decrease  
-                        // Negative token + Same relationship = Decrease
-                        // Negative token + Opposite relationship = Increase
-                        let effectDirection;
-                        if (relationship) {
-                            const relationshipMultiplier = relationship.type === 'same' ? 1 : -1;
-                            effectDirection = interventionCharge * relationshipMultiplier;
-                        } else {
-                            // No direct relationship found, this might be an indirect effect
-                            // Use flow value sign as it represents the actual system response
-                            effectDirection = flows[nodeId] > 0 ? 1 : -1;
-                        }
-                        
-                        tokenJourney.push({
-                            nodeId: nodeId,
-                            timeStep: timeStep,
-                            flowValue: flows[nodeId],
-                            flowMagnitude: flowMagnitude,
-                            tokenCharge: interventionCharge, // Original token charge
-                            currentCharge: effectDirection, // Effect direction based on relationship
-                            relationshipType: relationship ? relationship.type : 'indirect',
-                            isIntervention: false
-                        });
-                    }
-                });
-            });
-            
-            // Sort by time step, then by flow magnitude
-            tokenJourney.sort((a, b) => {
-                if (a.timeStep !== b.timeStep) {
-                    return a.timeStep - b.timeStep;
-                }
-                return b.flowMagnitude - a.flowMagnitude;
-            });
-            
-            return tokenJourney;
-        }
+
         
         function determineEffect(currentStep, nextStep) {
             const currentFlow = currentStep.flow;
@@ -10728,7 +10472,7 @@ def get_top_centrality_nodes(metric):
             <div class="token-allocation-controls">
                 <div class="token-input-group">
                     <label for="total-tokens">Total Tokens:</label>
-                    <input type="number" id="total-tokens" value="10" min="1" max="100">
+                    <input type="number" id="total-tokens" value="100" min="1" max="100">
                 </div>
                 <div class="token-input-group">
                     <label for="node-search">Search Nodes:</label>
