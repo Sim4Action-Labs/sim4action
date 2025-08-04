@@ -3111,10 +3111,10 @@
 
             
             // TOKEN DIFFUSION SECTION
-            const diffusionSection = createBasicSection("Token Diffusion Modeling");
+            const diffusionSection = createBasicSection("Token Diffusion (Scenario)");
             diffusionSection.querySelector('.filter-section-content').innerHTML = `
                 <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
-                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion Modeling:</strong> Computational algorithm that simulates token flow through the causal network. The visual tokens are for illustration only - the actual calculations and results are shown in the Results Window.
+                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Scenario):</strong> Run a single token diffusion scenario to visualize how effects propagate through the causal network. The visual tokens are for illustration only - the actual calculations and results are shown in the Results Window.
                 </div>
                 
                 <div id="diffusion-container" class="diffusion-controls">
@@ -3244,6 +3244,126 @@
             `;
             
             interventionDiv.appendChild(diffusionSection);
+            
+            // TOKEN DIFFUSION ENSEMBLE SECTION
+            const ensembleSection = createBasicSection("Token Diffusion (Ensemble)");
+            ensembleSection.querySelector('.filter-section-content').innerHTML = `
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Ensemble):</strong> Run multiple token diffusion scenarios to analyze statistical distributions of effects across the causal network. Shows max, min, and mean net token counts for each node.
+                </div>
+                
+                <div id="ensemble-container" class="diffusion-controls">
+                    <!-- Ensemble Controls -->
+                    <div style="margin-bottom: 10px;">
+                        <button id="init-ensemble-btn" class="diffusion-button" onclick="initializeEnsembleUI()">
+                            🎯 Initialize Ensemble
+                        </button>
+                        <button id="setup-ensemble-tokens-btn" class="diffusion-button" onclick="showEnsembleTokenAllocationModal()" disabled>
+                            ⚙️ Setup Tokens
+                        </button>
+                    </div>
+                    
+                    <!-- Ensemble Parameters -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Ensemble Parameters:</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 10px; color: #666;">Number of Runs:</label>
+                                <input type="number" id="ensemble-runs" value="100" min="10" max="1000" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ddd; border-radius: 3px;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 10px; color: #666;">Time Steps:</label>
+                                <input type="number" id="ensemble-timesteps" value="500" min="50" max="2000" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ddd; border-radius: 3px;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 10px; color: #666;">Random Seed:</label>
+                                <input type="number" id="ensemble-seed" value="42" min="1" max="9999" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid #ddd; border-radius: 3px;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ensemble Execution -->
+                    <div style="margin-bottom: 10px;">
+                        <button id="run-ensemble-btn" class="diffusion-button" onclick="runEnsembleSimulation()" disabled>
+                            ▶️ Run Ensemble
+                        </button>
+                        <button id="pause-ensemble-btn" class="diffusion-button" onclick="pauseEnsembleSimulation()" disabled>
+                            ⏸️ Pause Ensemble
+                        </button>
+                        <button id="reset-ensemble-btn" class="diffusion-button" onclick="resetEnsembleSimulation()" disabled>
+                            🔄 Reset Ensemble
+                        </button>
+                    </div>
+                    
+                    <!-- Ensemble Results -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Ensemble Results:</label>
+                        <button id="show-ensemble-results-window" class="diffusion-button secondary results-button-highlight" onclick="toggleEnsembleResultsWindow()" disabled style="width: 100%; background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); color: white; font-weight: 600; border: 2px solid #8e44ad; box-shadow: 0 2px 4px rgba(111, 66, 193, 0.3);">
+                            📈 Show Ensemble Results
+                        </button>
+                    </div>
+                    
+                    <div id="ensemble-status" class="simulation-status status-ready">
+                        Status: Ready to initialize
+                    </div>
+                    
+                    <div id="ensemble-stats" class="diffusion-dashboard">
+                        <div class="dashboard-row">
+                            <div class="stat-card">
+                                <div class="stat-label">Runs Completed</div>
+                                <div id="ensemble-stat-runs" class="stat-value">0</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Total Scenarios</div>
+                                <div id="ensemble-stat-total" class="stat-value">100</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Progress</div>
+                                <div id="ensemble-stat-progress" class="stat-value">0%</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-row">
+                            <div class="stat-card positive">
+                                <div class="stat-label">Nodes Analyzed</div>
+                                <div id="ensemble-stat-nodes" class="stat-value">0</div>
+                            </div>
+                            <div class="stat-card negative">
+                                <div class="stat-label">Avg Runtime</div>
+                                <div id="ensemble-stat-runtime" class="stat-value">0ms</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Est. Remaining</div>
+                                <div id="ensemble-stat-remaining" class="stat-value">--</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-section">
+                            <div class="section-label">Most Variable Nodes</div>
+                            <div id="ensemble-variable-nodes-list" class="active-nodes">
+                                <div class="node-activity">No data</div>
+                            </div>
+                        </div>
+                        <div class="dashboard-section">
+                            <div class="section-label">Ensemble Health</div>
+                            <div class="health-indicators">
+                                <div class="health-bar">
+                                    <div class="health-label">Completion Rate</div>
+                                    <div class="progress-bar">
+                                        <div id="ensemble-completion-bar" class="progress-fill"></div>
+                                    </div>
+                                </div>
+                                <div class="health-bar">
+                                    <div class="health-label">Convergence</div>
+                                    <div class="progress-bar">
+                                        <div id="ensemble-convergence-bar" class="progress-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            interventionDiv.appendChild(ensembleSection);
             filtersDiv.appendChild(interventionDiv);
 
             // Set initial lab
@@ -4196,6 +4316,23 @@
                 
                 // Populate the modal with node data
                 populateNodeSelectionList();
+                
+                // Reset the apply button to normal mode (not ensemble)
+                const applyButton = document.getElementById('apply-token-allocation');
+                if (applyButton) {
+                    // Reset to original onclick handler for scenario mode
+                    applyButton.removeAttribute('onclick');
+                    applyButton.onclick = function() {
+                        applyTokenAllocation();
+                    };
+                    applyButton.removeAttribute('data-mode');
+                }
+                
+                // Reset modal title to normal
+                const modalHeader = document.querySelector('.token-modal-header h3');
+                if (modalHeader) {
+                    modalHeader.textContent = '🎯 Token Allocation Setup';
+                }
                 
                 // Show the modal
                 document.getElementById('token-allocation-modal').style.display = 'block';
@@ -6908,6 +7045,1452 @@
                 updateResultsWindow();
                 console.log('🗑️ Results cleared');
             }
+        }
+        
+        // ===== ENSEMBLE DIFFUSION FUNCTIONS =====
+        
+        let ensembleModel = null;
+        let ensembleTokenAllocation = {};
+        let ensembleRunning = false;
+        let ensemblePaused = false;
+        let ensembleResults = [];
+        
+        async function initializeEnsembleUI() {
+            console.log('🎯 Initializing Ensemble UI...');
+            
+            // Update button states
+            document.getElementById('init-ensemble-btn').disabled = true;
+            document.getElementById('setup-ensemble-tokens-btn').disabled = false;
+            document.getElementById('run-ensemble-btn').disabled = true;
+            document.getElementById('pause-ensemble-btn').disabled = true;
+            document.getElementById('reset-ensemble-btn').disabled = false;
+            
+            // Update status
+            const statusElement = document.getElementById('ensemble-status');
+            statusElement.textContent = 'Status: Ready for token setup';
+            statusElement.className = 'simulation-status status-ready';
+            
+            // Initialize ensemble model
+            ensembleModel = {
+                initialized: true,
+                totalRuns: parseInt(document.getElementById('ensemble-runs').value) || 100,
+                completedRuns: 0,
+                seed: parseInt(document.getElementById('ensemble-seed').value) || 42,
+                nodeStats: {}, // Will store {nodeId: {min, max, mean, values: []}}
+                startTime: null,
+                endTime: null
+            };
+            
+            // Update stats display
+            document.getElementById('ensemble-stat-total').textContent = ensembleModel.totalRuns;
+            document.getElementById('ensemble-stat-runs').textContent = '0';
+            document.getElementById('ensemble-stat-progress').textContent = '0%';
+            
+            console.log('✅ Ensemble UI initialized');
+        }
+        
+        function showEnsembleTokenAllocationModal() {
+            // Reuse the existing token allocation modal but for ensemble
+            showTokenAllocationModal();
+            
+            // Wait for modal to be fully rendered, then update it
+            setTimeout(() => {
+                // Update modal title to indicate it's for ensemble
+                const modalHeader = document.querySelector('.token-modal-header h3');
+                if (modalHeader) {
+                    modalHeader.textContent = '🎯 Ensemble Token Allocation Setup';
+                }
+                
+                // Update the apply button to use ensemble logic
+                const applyButton = document.getElementById('apply-token-allocation');
+                if (applyButton) {
+                    // Remove existing onclick handler and add new one
+                    applyButton.removeAttribute('onclick');
+                    applyButton.onclick = function() {
+                        applyEnsembleTokenAllocation();
+                    };
+                    // Also set a data attribute to track this is ensemble mode
+                    applyButton.setAttribute('data-mode', 'ensemble');
+                }
+            }, 100);
+        }
+        
+        function applyEnsembleTokenAllocation() {
+            console.log('🎯 Applying ensemble token allocation...');
+            
+            const totalTokens = parseInt(document.getElementById('total-tokens').value) || 100;
+            const selectedNodes = document.querySelectorAll('.node-item.selected');
+            
+            console.log('Total tokens:', totalTokens);
+            console.log('Selected nodes:', selectedNodes.length);
+            
+            let allocatedTokens = 0;
+            const allocation = {};
+            
+            selectedNodes.forEach(nodeElement => {
+                const nodeId = nodeElement.dataset.nodeId;
+                // Fix: Use correct class name 'node-token-input' instead of 'token-input'
+                const tokensInput = nodeElement.querySelector('.node-token-input');
+                
+                if (!tokensInput) {
+                    console.error('Token input not found for node:', nodeId);
+                    return;
+                }
+                
+                const tokens = parseInt(tokensInput.value) || 0;
+                console.log(`Node ${nodeId}: ${tokens} tokens`);
+                
+                if (tokens > 0) {
+                    allocation[nodeId] = tokens;
+                    allocatedTokens += tokens;
+                }
+            });
+            
+            console.log('Total allocated tokens:', allocatedTokens);
+            console.log('Allocation object:', allocation);
+            
+            if (allocatedTokens !== totalTokens) {
+                alert(`Token allocation must equal ${totalTokens}. Currently allocated: ${allocatedTokens}`);
+                return;
+            }
+            
+            // Store ensemble token allocation
+            ensembleTokenAllocation = allocation;
+            
+            // Update button states
+            document.getElementById('setup-ensemble-tokens-btn').disabled = false;
+            document.getElementById('run-ensemble-btn').disabled = false;
+            
+            // Update status
+            const statusElement = document.getElementById('ensemble-status');
+            statusElement.textContent = `Status: ${Object.keys(allocation).length} nodes configured with ${totalTokens} tokens`;
+            statusElement.className = 'simulation-status status-ready';
+            
+            // Close modal
+            closeTokenAllocationModal();
+            
+            console.log('✅ Ensemble token allocation applied successfully:', allocation);
+        }
+        
+        async function runEnsembleSimulation() {
+            if (!ensembleModel || !ensembleModel.initialized) {
+                alert('Please initialize the ensemble first.');
+                return;
+            }
+            
+            if (Object.keys(ensembleTokenAllocation).length === 0) {
+                alert('Please set up token allocation first.');
+                return;
+            }
+            
+            // Get simulation parameters
+            const numRuns = parseInt(document.getElementById('ensemble-runs').value) || 100;
+            const timeSteps = parseInt(document.getElementById('ensemble-timesteps').value) || 500;
+            const randomSeed = parseInt(document.getElementById('ensemble-seed').value) || 42;
+            
+            console.log('🚀 Starting ensemble simulation with:', {numRuns, timeSteps, randomSeed});
+            
+            // Update button states
+            document.getElementById('run-ensemble-btn').disabled = true;
+            document.getElementById('pause-ensemble-btn').disabled = false;
+            document.getElementById('reset-ensemble-btn').disabled = true;
+            document.getElementById('show-ensemble-results-window').disabled = true;
+            
+            ensembleRunning = true;
+            ensemblePaused = false;
+            ensembleModel.startTime = Date.now();
+            ensembleModel.completedRuns = 0;
+            ensembleModel.totalRuns = numRuns;
+            ensembleModel.timeSteps = timeSteps;
+            ensembleModel.randomSeed = randomSeed;
+            ensembleResults = [];
+            
+            // Initialize node stats with time series tracking
+            ensembleModel.nodeStats = {};
+            ensembleModel.allRunsTimeSeriesData = []; // Store all runs' complete time series
+            ensembleModel.nodeTimeSeriesStats = {}; // Final processed min/max/mean time series
+            
+            Object.keys(diffusionGraph.nodes).forEach(nodeId => {
+                ensembleModel.nodeStats[nodeId] = {
+                    values: [],
+                    min: Infinity,
+                    max: -Infinity,
+                    mean: 0
+                };
+                ensembleModel.nodeTimeSeriesStats[nodeId] = {
+                    timeSteps: [],
+                    minSeries: [],
+                    maxSeries: [],
+                    meanSeries: []
+                };
+            });
+            
+            console.log('📊 Initialized ensemble time series tracking for', Object.keys(diffusionGraph.nodes).length, 'nodes');
+            
+            // Update status
+            const statusElement = document.getElementById('ensemble-status');
+            statusElement.textContent = 'Status: Running ensemble...';
+            statusElement.className = 'simulation-status status-running';
+            
+            // Run ensemble scenarios
+            for (let run = 0; run < ensembleModel.totalRuns && ensembleRunning; run++) {
+                if (ensemblePaused) {
+                    await new Promise(resolve => {
+                        const checkPause = () => {
+                            if (!ensemblePaused || !ensembleRunning) {
+                                resolve();
+                            } else {
+                                setTimeout(checkPause, 100);
+                            }
+                        };
+                        checkPause();
+                    });
+                }
+                
+                if (!ensembleRunning) break;
+                
+                // Run single scenario with variation
+                const scenarioResult = await runSingleEnsembleScenario(run);
+                ensembleResults.push(scenarioResult);
+                
+                // Update node statistics (final values)
+                Object.keys(scenarioResult.finalNodeFlows).forEach(nodeId => {
+                    const value = scenarioResult.finalNodeFlows[nodeId];
+                    const stats = ensembleModel.nodeStats[nodeId];
+                    
+                    stats.values.push(value);
+                    stats.min = Math.min(stats.min, value);
+                    stats.max = Math.max(stats.max, value);
+                    stats.mean = stats.values.reduce((sum, v) => sum + v, 0) / stats.values.length;
+                });
+                
+                // Store complete time series data from this run
+                ensembleModel.allRunsTimeSeriesData.push({
+                    runIndex: scenarioResult.runIndex,
+                    nodeFlowsOverTime: scenarioResult.nodeFlowsOverTime
+                });
+                
+                ensembleModel.completedRuns++;
+                updateEnsembleProgress();
+                
+                // Small delay to prevent UI blocking
+                await new Promise(resolve => setTimeout(resolve, 10));
+            }
+            
+            if (ensembleRunning) {
+                ensembleModel.endTime = Date.now();
+                completeEnsembleSimulation();
+            }
+        }
+        
+        async function runSingleEnsembleScenario(runIndex) {
+            // Create a variation of the token allocation with some randomness
+            const seed = ensembleModel.seed + runIndex;
+            const rng = seedRandom(seed);
+            
+            const variedAllocation = {};
+            const totalTokens = Object.values(ensembleTokenAllocation).reduce((sum, tokens) => sum + tokens, 0);
+            
+            // Add small random variations to token allocation (±10%)
+            Object.keys(ensembleTokenAllocation).forEach(nodeId => {
+                const baseTokens = ensembleTokenAllocation[nodeId];
+                const variation = (rng() - 0.5) * 0.2; // ±10% variation
+                const variedTokens = Math.max(1, Math.round(baseTokens * (1 + variation)));
+                variedAllocation[nodeId] = variedTokens;
+            });
+            
+            // Create temporary diffusion model for this scenario
+            const tempModel = {
+                initialized: true,
+                nodeFlowsOverTime: [],
+                edgeFlowsOverTime: [],
+                stepCount: 0,
+                tokens: []
+            };
+            
+            // Initialize tokens for this scenario
+            Object.keys(variedAllocation).forEach(nodeId => {
+                const tokenCount = variedAllocation[nodeId];
+                for (let i = 0; i < tokenCount; i++) {
+                    tempModel.tokens.push({
+                        id: `token_${runIndex}_${i}`,
+                        charge: Math.random() > 0.5 ? 1 : -1,
+                        currentNode: nodeId,
+                        age: 0,
+                        maxAge: Math.floor(Math.random() * 20) + 10
+                    });
+                }
+            });
+            
+            // Run simulation steps (simplified, no visualization)
+            const maxSteps = ensembleModel.timeSteps || 500;
+            for (let step = 0; step < maxSteps; step++) {
+                const nodeFlows = {};
+                
+                // Initialize all nodes to 0
+                Object.keys(diffusionGraph.nodes).forEach(nodeId => {
+                    nodeFlows[nodeId] = 0;
+                });
+                
+                // Calculate flows from tokens
+                tempModel.tokens.forEach(token => {
+                    if (token.currentNode) {
+                        nodeFlows[token.currentNode] += token.charge;
+                    }
+                });
+                
+                tempModel.nodeFlowsOverTime.push(nodeFlows);
+                
+                // Move tokens (simplified logic)
+                tempModel.tokens.forEach(token => {
+                    token.age++;
+                    if (token.age < token.maxAge && Math.random() > 0.7) {
+                        // Find connected nodes
+                        const connectedLinks = links.filter(link => {
+                            const sourceId = link.source.id || link.source;
+                            const targetId = link.target.id || link.target;
+                            return sourceId === token.currentNode || targetId === token.currentNode;
+                        });
+                        
+                        if (connectedLinks.length > 0) {
+                            const randomLink = connectedLinks[Math.floor(Math.random() * connectedLinks.length)];
+                            const sourceId = randomLink.source.id || randomLink.source;
+                            const targetId = randomLink.target.id || randomLink.target;
+                            token.currentNode = sourceId === token.currentNode ? targetId : sourceId;
+                            
+                            // Apply relationship effect
+                            if (randomLink.type === 'opposite') {
+                                token.charge *= -1;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Return complete time series data
+            const finalNodeFlows = tempModel.nodeFlowsOverTime[tempModel.nodeFlowsOverTime.length - 1] || {};
+            
+            return {
+                runIndex,
+                seed,
+                allocation: variedAllocation,
+                finalNodeFlows,
+                nodeFlowsOverTime: tempModel.nodeFlowsOverTime, // Include full time series
+                steps: tempModel.nodeFlowsOverTime.length
+            };
+        }
+        
+        function processAllEnsembleTimeSeriesData() {
+            console.log('🔄 Processing all ensemble time series data from', ensembleModel.allRunsTimeSeriesData.length, 'runs');
+            
+            if (ensembleModel.allRunsTimeSeriesData.length === 0) {
+                console.warn('No time series data to process');
+                return;
+            }
+            
+            // Find the maximum number of time steps across all runs
+            let maxTimeSteps = 0;
+            ensembleModel.allRunsTimeSeriesData.forEach(runData => {
+                if (runData.nodeFlowsOverTime) {
+                    maxTimeSteps = Math.max(maxTimeSteps, runData.nodeFlowsOverTime.length);
+                }
+            });
+            
+            console.log('Max time steps found:', maxTimeSteps);
+            
+            // Initialize time series arrays for each node
+            Object.keys(diffusionGraph.nodes).forEach(nodeId => {
+                const nodeStats = ensembleModel.nodeTimeSeriesStats[nodeId];
+                nodeStats.timeSteps = Array.from({length: maxTimeSteps}, (_, i) => i);
+                nodeStats.minSeries = new Array(maxTimeSteps).fill(0);
+                nodeStats.maxSeries = new Array(maxTimeSteps).fill(0);
+                nodeStats.meanSeries = new Array(maxTimeSteps).fill(0);
+            });
+            
+            // Process each time step
+            for (let stepIndex = 0; stepIndex < maxTimeSteps; stepIndex++) {
+                // Collect all values for this time step across all runs
+                const stepData = {}; // nodeId -> [values from all runs]
+                
+                ensembleModel.allRunsTimeSeriesData.forEach(runData => {
+                    if (runData.nodeFlowsOverTime && runData.nodeFlowsOverTime[stepIndex]) {
+                        const timeStepFlows = runData.nodeFlowsOverTime[stepIndex];
+                        Object.keys(timeStepFlows).forEach(nodeId => {
+                            if (!stepData[nodeId]) stepData[nodeId] = [];
+                            stepData[nodeId].push(timeStepFlows[nodeId] || 0);
+                        });
+                    }
+                });
+                
+                // Calculate min, max, mean for each node at this time step
+                Object.keys(stepData).forEach(nodeId => {
+                    const values = stepData[nodeId];
+                    if (values.length > 0) {
+                        const nodeStats = ensembleModel.nodeTimeSeriesStats[nodeId];
+                        nodeStats.minSeries[stepIndex] = Math.min(...values);
+                        nodeStats.maxSeries[stepIndex] = Math.max(...values);
+                        nodeStats.meanSeries[stepIndex] = values.reduce((sum, v) => sum + v, 0) / values.length;
+                    }
+                });
+            }
+            
+            // Log sample results
+            const sampleNodeId = Object.keys(diffusionGraph.nodes)[0];
+            if (sampleNodeId && ensembleModel.nodeTimeSeriesStats[sampleNodeId]) {
+                const sampleStats = ensembleModel.nodeTimeSeriesStats[sampleNodeId];
+                console.log('Sample time series for', sampleNodeId, ':', {
+                    timeSteps: sampleStats.timeSteps.length,
+                    minSeries: sampleStats.minSeries.slice(0, 5),
+                    maxSeries: sampleStats.maxSeries.slice(0, 5),
+                    meanSeries: sampleStats.meanSeries.slice(0, 5)
+                });
+            }
+            
+            console.log('✅ Time series processing complete');
+        }
+        
+        function calculateEnsembleTimeSeriesStatistics() {
+            console.log('🔢 Calculating final time series statistics...');
+            
+            // Calculate min, max, mean for each time step across all runs
+            Object.keys(ensembleModel.nodeTimeSeriesStats).forEach(nodeId => {
+                const nodeStats = ensembleModel.nodeTimeSeriesStats[nodeId];
+                
+                console.log(`Processing node ${nodeId}:`, {
+                    timeSteps: nodeStats.timeSteps.length,
+                    minSeriesLength: nodeStats.minSeries.length,
+                    sampleMinData: nodeStats.minSeries[0]
+                });
+                
+                // Convert arrays of values to actual min/max/mean statistics
+                nodeStats.minSeries = nodeStats.minSeries.map((values, stepIndex) => {
+                    if (!Array.isArray(values) || values.length === 0) {
+                        console.warn(`No values for node ${nodeId} at step ${stepIndex}`);
+                        return 0;
+                    }
+                    return Math.min(...values);
+                });
+                
+                nodeStats.maxSeries = nodeStats.maxSeries.map((values, stepIndex) => {
+                    if (!Array.isArray(values) || values.length === 0) {
+                        return 0;
+                    }
+                    return Math.max(...values);
+                });
+                
+                nodeStats.meanSeries = nodeStats.meanSeries.map((values, stepIndex) => {
+                    if (!Array.isArray(values) || values.length === 0) {
+                        return 0;
+                    }
+                    return values.reduce((sum, v) => sum + v, 0) / values.length;
+                });
+                
+                console.log(`Final stats for ${nodeId}:`, {
+                    minSeries: nodeStats.minSeries.slice(0, 5),
+                    maxSeries: nodeStats.maxSeries.slice(0, 5),
+                    meanSeries: nodeStats.meanSeries.slice(0, 5)
+                });
+            });
+            
+            console.log('✅ Time series statistics calculation complete');
+        }
+        
+        function updateEnsembleProgress() {
+            const progress = (ensembleModel.completedRuns / ensembleModel.totalRuns) * 100;
+            
+            // Update progress display
+            document.getElementById('ensemble-stat-runs').textContent = ensembleModel.completedRuns;
+            document.getElementById('ensemble-stat-progress').textContent = `${progress.toFixed(1)}%`;
+            
+            // Update progress bar
+            const progressBar = document.getElementById('ensemble-completion-bar');
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            // Update runtime statistics
+            if (ensembleModel.startTime && ensembleModel.completedRuns > 0) {
+                const elapsed = Date.now() - ensembleModel.startTime;
+                const avgRuntime = elapsed / ensembleModel.completedRuns;
+                const remaining = (ensembleModel.totalRuns - ensembleModel.completedRuns) * avgRuntime;
+                
+                document.getElementById('ensemble-stat-runtime').textContent = `${avgRuntime.toFixed(0)}ms`;
+                document.getElementById('ensemble-stat-remaining').textContent = `${(remaining / 1000).toFixed(1)}s`;
+            }
+            
+            // Update node count
+            const activeNodes = Object.keys(ensembleModel.nodeStats).filter(nodeId => 
+                ensembleModel.nodeStats[nodeId].values.length > 0
+            ).length;
+            document.getElementById('ensemble-stat-nodes').textContent = activeNodes;
+        }
+        
+        function completeEnsembleSimulation() {
+            ensembleRunning = false;
+            
+            // Process all collected time series data
+            processAllEnsembleTimeSeriesData();
+            
+            // Update button states
+            document.getElementById('run-ensemble-btn').disabled = false;
+            document.getElementById('pause-ensemble-btn').disabled = true;
+            document.getElementById('reset-ensemble-btn').disabled = false;
+            document.getElementById('show-ensemble-results-window').disabled = false;
+            
+            // Update status
+            const statusElement = document.getElementById('ensemble-status');
+            const runtime = ((ensembleModel.endTime - ensembleModel.startTime) / 1000).toFixed(1);
+            statusElement.textContent = `Status: Completed ${ensembleModel.completedRuns} runs in ${runtime}s`;
+            statusElement.className = 'simulation-status status-ready';
+            
+            // Update most variable nodes
+            updateMostVariableNodes();
+            
+            console.log('✅ Ensemble simulation completed:', ensembleModel);
+            console.log('📈 Time series statistics processed for', Object.keys(ensembleModel.nodeTimeSeriesStats).length, 'nodes');
+        }
+        
+        function updateMostVariableNodes() {
+            const variableNodes = [];
+            
+            Object.keys(ensembleModel.nodeStats).forEach(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                if (stats.values.length > 0) {
+                    const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    if (stdDev > 0.1) { // Only show nodes with significant variation
+                        const node = diffusionGraph.nodes[nodeId];
+                        variableNodes.push({
+                            id: nodeId,
+                            name: node ? node.label : nodeId,
+                            stdDev,
+                            range: stats.max - stats.min
+                        });
+                    }
+                }
+            });
+            
+            // Sort by standard deviation
+            variableNodes.sort((a, b) => b.stdDev - a.stdDev);
+            
+            // Update display
+            const container = document.getElementById('ensemble-variable-nodes-list');
+            if (variableNodes.length > 0) {
+                container.innerHTML = variableNodes.slice(0, 3).map(node => 
+                    `<div class="node-activity">${node.name} (σ=${node.stdDev.toFixed(1)})</div>`
+                ).join('');
+            } else {
+                container.innerHTML = '<div class="node-activity">No significant variation</div>';
+            }
+        }
+        
+        function pauseEnsembleSimulation() {
+            if (ensembleRunning) {
+                ensemblePaused = !ensemblePaused;
+                const button = document.getElementById('pause-ensemble-btn');
+                
+                if (ensemblePaused) {
+                    button.textContent = '▶️ Resume Ensemble';
+                    document.getElementById('ensemble-status').textContent = 'Status: Paused';
+                } else {
+                    button.textContent = '⏸️ Pause Ensemble';
+                    document.getElementById('ensemble-status').textContent = 'Status: Running ensemble...';
+                }
+            }
+        }
+        
+        function resetEnsembleSimulation() {
+            ensembleRunning = false;
+            ensemblePaused = false;
+            ensembleResults = [];
+            
+            if (ensembleModel) {
+                ensembleModel.completedRuns = 0;
+                ensembleModel.nodeStats = {};
+            }
+            
+            // Reset button states
+            document.getElementById('init-ensemble-btn').disabled = false;
+            document.getElementById('setup-ensemble-tokens-btn').disabled = true;
+            document.getElementById('run-ensemble-btn').disabled = true;
+            document.getElementById('pause-ensemble-btn').disabled = true;
+            document.getElementById('reset-ensemble-btn').disabled = true;
+            document.getElementById('show-ensemble-results-window').disabled = true;
+            
+            // Reset status
+            const statusElement = document.getElementById('ensemble-status');
+            statusElement.textContent = 'Status: Ready to initialize';
+            statusElement.className = 'simulation-status status-ready';
+            
+            // Reset stats display
+            document.getElementById('ensemble-stat-runs').textContent = '0';
+            document.getElementById('ensemble-stat-progress').textContent = '0%';
+            document.getElementById('ensemble-stat-runtime').textContent = '0ms';
+            document.getElementById('ensemble-stat-remaining').textContent = '--';
+            document.getElementById('ensemble-stat-nodes').textContent = '0';
+            
+            // Reset progress bars
+            const progressBar = document.getElementById('ensemble-completion-bar');
+            if (progressBar) progressBar.style.width = '0%';
+            
+            console.log('🔄 Ensemble simulation reset');
+        }
+        
+        function toggleEnsembleResultsWindow() {
+            if (!ensembleModel || ensembleModel.completedRuns === 0) {
+                alert('No ensemble results available. Please run an ensemble simulation first.');
+                return;
+            }
+            
+            const resultsWindow = document.getElementById('ensemble-results-window');
+            const isVisible = resultsWindow.classList.contains('visible');
+            
+            if (isVisible) {
+                resultsWindow.classList.remove('visible');
+            } else {
+                resultsWindow.classList.add('visible');
+                // Initialize with default view
+                showEnsembleAllNodesIndividual();
+                updateEnsembleStatisticsSummary();
+                makeEnsembleResultsWindowDraggable();
+            }
+        }
+        
+        function showEnsembleTimeSeriesChart() {
+            updateEnsembleResultsButtons('showEnsembleTimeSeriesChart');
+            
+            // Hide node selector
+            document.getElementById('ensemble-node-selector-container').style.display = 'none';
+            
+            // Calculate aggregate statistics across all nodes
+            const chartContainer = document.getElementById('ensemble-results-chart-container');
+            chartContainer.innerHTML = '<svg id="ensemble-results-chart" class="chart-svg"></svg>';
+            
+            if (!ensembleResults || ensembleResults.length === 0) {
+                chartContainer.innerHTML = '<p class="no-data">No ensemble data available</p>';
+                return;
+            }
+            
+            // Calculate system-wide statistics over time
+            const maxSteps = Math.max(...ensembleResults.map(result => result.steps));
+            const systemStats = {
+                min: new Array(maxSteps).fill(0),
+                max: new Array(maxSteps).fill(0),
+                mean: new Array(maxSteps).fill(0)
+            };
+            
+            // Aggregate all node flows for each time step across all runs
+            for (let step = 0; step < maxSteps; step++) {
+                const stepValues = [];
+                
+                ensembleResults.forEach(result => {
+                    if (result.steps > step) {
+                        // Sum all node values for this step in this run
+                        let stepSum = 0;
+                        Object.values(result.finalNodeFlows).forEach(value => {
+                            stepSum += value;
+                        });
+                        stepValues.push(stepSum);
+                    }
+                });
+                
+                if (stepValues.length > 0) {
+                    systemStats.min[step] = Math.min(...stepValues);
+                    systemStats.max[step] = Math.max(...stepValues);
+                    systemStats.mean[step] = stepValues.reduce((sum, v) => sum + v, 0) / stepValues.length;
+                }
+            }
+            
+            renderEnsembleStatisticalChart(systemStats, 'System-wide Token Flow', maxSteps);
+        }
+        
+        function renderEnsembleStatisticalChart(statsData, title, maxSteps) {
+            const chartContainer = document.getElementById('ensemble-results-chart-container');
+            chartContainer.innerHTML = '<svg id="ensemble-results-chart" class="chart-svg"></svg>';
+            
+            const margin = {top: 40, right: 80, bottom: 60, left: 60};
+            const width = 800 - margin.left - margin.right;
+            const height = 400 - margin.bottom - margin.top;
+            
+            const svg = d3.select('#ensemble-results-chart')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales
+            const xScale = d3.scaleLinear()
+                .domain([0, maxSteps - 1])
+                .range([0, width]);
+            
+            const allValues = [...statsData.min, ...statsData.max, ...statsData.mean].filter(v => v !== undefined && v !== null);
+            const maxAbsValue = Math.max(...allValues.map(Math.abs));
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxAbsValue * 1.1, maxAbsValue * 1.1])
+                .range([height, 0]);
+            
+            // Line generator
+            const line = d3.line()
+                .x((d, i) => xScale(i))
+                .y(d => yScale(d))
+                .curve(d3.curveMonotoneX);
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .attr('stroke', '#666')
+                .attr('stroke-dasharray', '2,2')
+                .attr('opacity', 0.5);
+            
+            // Min line (red)
+            if (statsData.min && statsData.min.length > 0) {
+                g.append('path')
+                    .datum(statsData.min)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#dc3545')
+                    .attr('stroke-width', 2)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Max line (green)
+            if (statsData.max && statsData.max.length > 0) {
+                g.append('path')
+                    .datum(statsData.max)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#28a745')
+                    .attr('stroke-width', 2)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Mean line (blue, thicker)
+            if (statsData.mean && statsData.mean.length > 0) {
+                g.append('path')
+                    .datum(statsData.mean)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#007bff')
+                    .attr('stroke-width', 3)
+                    .attr('d', line);
+            }
+            
+            // X-axis
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(8).tickFormat(d3.format('d')))
+                .selectAll('text')
+                .attr('font-size', '12px');
+            
+            // Y-axis
+            g.append('g')
+                .call(d3.axisLeft(yScale).ticks(6))
+                .selectAll('text')
+                .attr('font-size', '12px');
+            
+            // Title
+            g.append('text')
+                .attr('x', width / 2)
+                .attr('y', -20)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '16px')
+                .attr('font-weight', 'bold')
+                .attr('fill', '#333')
+                .text(title);
+            
+            // X-axis label
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + 40})`)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('fill', '#666')
+                .text('Time Step');
+            
+            // Y-axis label
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('fill', '#666')
+                .text('Net Tokens');
+            
+            // Legend
+            const legend = g.append('g')
+                .attr('transform', `translate(${width - 120}, 20)`);
+            
+            const legendData = [
+                {label: 'Min', color: '#dc3545'},
+                {label: 'Mean', color: '#007bff'},
+                {label: 'Max', color: '#28a745'}
+            ];
+            
+            legendData.forEach((item, i) => {
+                const legendItem = legend.append('g')
+                    .attr('transform', `translate(0, ${i * 20})`);
+                
+                legendItem.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', 20)
+                    .attr('y1', 0)
+                    .attr('y2', 0)
+                    .attr('stroke', item.color)
+                    .attr('stroke-width', item.label === 'Mean' ? 3 : 2);
+                
+                legendItem.append('text')
+                    .attr('x', 25)
+                    .attr('y', 0)
+                    .attr('dy', '0.32em')
+                    .attr('font-size', '12px')
+                    .attr('fill', '#333')
+                    .text(item.label);
+            });
+        }
+        
+        function showEnsembleAllNodesIndividual() {
+            updateEnsembleResultsButtons('showEnsembleAllNodesIndividual');
+            
+            // Hide node selector
+            document.getElementById('ensemble-node-selector-container').style.display = 'none';
+            
+            if (!ensembleModel || !ensembleModel.nodeTimeSeriesStats) {
+                const chartContainer = document.getElementById('ensemble-results-chart-container');
+                chartContainer.innerHTML = '<p class="no-data">No ensemble time series data available</p>';
+                return;
+            }
+            
+            // Prepare data for individual charts - same logic as scenario mode
+            const nodeIds = Object.keys(ensembleModel.nodeTimeSeriesStats);
+            const activeNodesData = nodeIds.map(nodeId => {
+                const timeSeriesData = ensembleModel.nodeTimeSeriesStats[nodeId];
+                
+                if (!timeSeriesData || !timeSeriesData.timeSteps || timeSeriesData.timeSteps.length === 0) {
+                    return null;
+                }
+                
+                // Create data structure for min, max, mean series
+                const minValues = timeSeriesData.timeSteps.map((timeStep, index) => ({
+                    timeStep: timeStep,
+                    value: timeSeriesData.minSeries[index] || 0
+                }));
+                
+                const maxValues = timeSeriesData.timeSteps.map((timeStep, index) => ({
+                    timeStep: timeStep,
+                    value: timeSeriesData.maxSeries[index] || 0
+                }));
+                
+                const meanValues = timeSeriesData.timeSteps.map((timeStep, index) => ({
+                    timeStep: timeStep,
+                    value: timeSeriesData.meanSeries[index] || 0
+                }));
+                
+                // Check if node has any activity
+                const hasActivity = minValues.some(d => Math.abs(d.value) > 0) || 
+                                  maxValues.some(d => Math.abs(d.value) > 0) || 
+                                  meanValues.some(d => Math.abs(d.value) > 0);
+                
+                return {
+                    nodeId: nodeId,
+                    minValues: minValues,
+                    maxValues: maxValues,
+                    meanValues: meanValues,
+                    hasActivity: hasActivity
+                };
+            }).filter(nodeData => nodeData && nodeData.hasActivity);
+            
+            renderEnsembleIndividualCharts(activeNodesData);
+        }
+        
+        function renderEnsembleIndividualCharts(activeNodesData) {
+            // Get the main chart container
+            const chartContainer = document.getElementById('ensemble-results-chart-container');
+            
+            // Clear existing content
+            chartContainer.innerHTML = '';
+            
+            if (!activeNodesData || activeNodesData.length === 0) {
+                chartContainer.innerHTML = '<div style="text-align: center; padding: 50px; color: #666;">No active nodes to display</div>';
+                return;
+            }
+            
+            // Set up scrollable container
+            chartContainer.style.overflowY = 'auto';
+            chartContainer.style.maxHeight = '500px';
+            chartContainer.style.display = 'block'; // Reset any grid styling
+            
+            // Create div container for individual charts
+            const chartsContainer = d3.select(chartContainer)
+                .append('div')
+                .attr('id', 'ensemble-individual-charts-container')
+                .style('padding', '10px');
+            
+            // Sort nodes alphabetically by name for consistent display
+            const sortedNodes = activeNodesData.sort((a, b) => {
+                const nameA = (diffusionGraph.nodes[a.nodeId]?.label || a.nodeId).toLowerCase();
+                const nameB = (diffusionGraph.nodes[b.nodeId]?.label || b.nodeId).toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
+            // Create individual chart for each node
+            sortedNodes.forEach((nodeData, index) => {
+                createEnsembleIndividualNodeChart(chartsContainer, nodeData, index);
+            });
+        }
+        
+        function createEnsembleIndividualNodeChart(container, nodeData, index) {
+            const nodeId = nodeData.nodeId;
+            const minValues = nodeData.minValues;
+            const maxValues = nodeData.maxValues;
+            const meanValues = nodeData.meanValues;
+            
+            // Get node display name
+            const nodeDisplayName = diffusionGraph.nodes[nodeId]?.label || nodeId;
+            
+            // Create chart container
+            const chartDiv = container.append('div')
+                .style('margin-bottom', '30px')
+                .style('border', '1px solid #ddd')
+                .style('border-radius', '5px')
+                .style('padding', '15px')
+                .style('background-color', '#fafafa');
+            
+            // Add title
+            chartDiv.append('h4')
+                .style('margin', '0 0 10px 0')
+                .style('font-size', '14px')
+                .style('color', '#333')
+                .text(nodeDisplayName.length > 60 ? nodeDisplayName.substring(0, 60) + '...' : nodeDisplayName);
+            
+            // Create SVG for this chart
+            const margin = { top: 10, right: 80, bottom: 40, left: 60 };
+            const width = 700 - margin.left - margin.right;
+            const height = 150 - margin.top - margin.bottom;
+            
+            const svg = chartDiv.append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+            
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Scales - center y-axis at zero
+            const maxTimeStep = d3.max(meanValues, d => d.timeStep) || 0;
+            
+            // Find global min/max across all series
+            const allValues = [...minValues, ...maxValues, ...meanValues].map(d => d.value);
+            const extent = d3.extent(allValues);
+            const maxValue = Math.max(Math.abs(extent[0] || 0), Math.abs(extent[1] || 0)) || 1;
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, maxTimeStep])
+                .range([0, width]);
+            
+            // Always center y-axis at zero with symmetric range
+            const yScale = d3.scaleLinear()
+                .domain([-maxValue, maxValue])
+                .range([height, 0]);
+            
+            // Axes
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(6).tickFormat(d3.format('d')));
+            
+            g.append('g')
+                .call(d3.axisLeft(yScale).ticks(4));
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .style('stroke', '#ddd')
+                .style('stroke-dasharray', '3,3');
+            
+            // Line generator
+            const line = d3.line()
+                .x(d => xScale(d.timeStep))
+                .y(d => yScale(d.value))
+                .curve(d3.curveMonotoneX);
+            
+            // Draw min line (red)
+            if (minValues.length > 0) {
+                g.append('path')
+                    .datum(minValues)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#dc3545')  // Red
+                    .attr('stroke-width', 1.5)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Draw max line (green)
+            if (maxValues.length > 0) {
+                g.append('path')
+                    .datum(maxValues)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#28a745')  // Green
+                    .attr('stroke-width', 1.5)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Draw mean line (blue, thicker)
+            if (meanValues.length > 0) {
+                g.append('path')
+                    .datum(meanValues)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#007bff')  // Blue
+                    .attr('stroke-width', 2.5)
+                    .attr('d', line);
+            }
+            
+            // Add legend
+            const legend = g.append('g')
+                .attr('transform', `translate(${width - 70}, 10)`);
+            
+            const legendData = [
+                {label: 'Min', color: '#dc3545'},
+                {label: 'Mean', color: '#007bff'},
+                {label: 'Max', color: '#28a745'}
+            ];
+            
+            legendData.forEach((item, i) => {
+                const legendItem = legend.append('g')
+                    .attr('transform', `translate(0, ${i * 15})`);
+                
+                legendItem.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', 15)
+                    .attr('y1', 0)
+                    .attr('y2', 0)
+                    .attr('stroke', item.color)
+                    .attr('stroke-width', item.label === 'Mean' ? 2.5 : 1.5);
+                
+                legendItem.append('text')
+                    .attr('x', 18)
+                    .attr('y', 0)
+                    .attr('dy', '0.32em')
+                    .attr('font-size', '10px')
+                    .attr('fill', '#333')
+                    .text(item.label);
+            });
+            
+            // Y-axis label
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left + 15)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .style('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .style('fill', '#666')
+                .text('Net Tokens');
+            
+            // X-axis label
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + 35})`)
+                .style('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .style('fill', '#666')
+                .text('Time Step');
+        }
+        
+        function renderIndividualEnsembleNodeChart(svg, nodeId, stats, nodeName) {
+            // Create time series line chart showing min, max, mean over time
+            const margin = {top: 20, right: 60, bottom: 40, left: 40};
+            const width = 280 - margin.left - margin.right;
+            const height = 180 - margin.bottom - margin.top;
+            
+            const svgElement = d3.select(svg);
+            svgElement.selectAll('*').remove();
+            
+            // Get time series data for this node
+            const timeSeriesData = ensembleModel.nodeTimeSeriesStats[nodeId];
+            console.log('Rendering chart for node:', nodeId, 'timeSeriesData:', timeSeriesData);
+            
+            if (!timeSeriesData || timeSeriesData.timeSteps.length === 0) {
+                console.warn('No time series data for node:', nodeId, 'data:', timeSeriesData);
+                // Fallback to simple text if no time series data
+                svgElement.append('text')
+                    .attr('x', width / 2)
+                    .attr('y', height / 2)
+                    .attr('text-anchor', 'middle')
+                    .attr('font-size', '12px')
+                    .attr('fill', '#666')
+                    .text('No time series data available');
+                return;
+            }
+            
+            const g = svgElement.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            // Prepare data for plotting
+            const timeSteps = timeSeriesData.timeSteps;
+            const minSeries = timeSeriesData.minSeries;
+            const maxSeries = timeSeriesData.maxSeries;
+            const meanSeries = timeSeriesData.meanSeries;
+            
+            // Find global min/max for y-scale
+            const allValues = [...minSeries, ...maxSeries, ...meanSeries].filter(v => v !== undefined && v !== null);
+            const maxAbsValue = Math.max(...allValues.map(Math.abs));
+            
+            // Scales
+            const xScale = d3.scaleLinear()
+                .domain([0, Math.max(timeSteps.length - 1, 1)])
+                .range([0, width]);
+            
+            const yScale = d3.scaleLinear()
+                .domain([-maxAbsValue * 1.1, maxAbsValue * 1.1])
+                .range([height, 0]);
+            
+            // Line generators
+            const line = d3.line()
+                .x((d, i) => xScale(i))
+                .y(d => yScale(d))
+                .curve(d3.curveMonotoneX);
+            
+            // Zero line
+            g.append('line')
+                .attr('x1', 0)
+                .attr('x2', width)
+                .attr('y1', yScale(0))
+                .attr('y2', yScale(0))
+                .attr('stroke', '#666')
+                .attr('stroke-dasharray', '2,2')
+                .attr('opacity', 0.5);
+            
+            // Min line (red)
+            if (minSeries.length > 0) {
+                g.append('path')
+                    .datum(minSeries)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#dc3545')
+                    .attr('stroke-width', 1.5)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Max line (green)
+            if (maxSeries.length > 0) {
+                g.append('path')
+                    .datum(maxSeries)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#28a745')
+                    .attr('stroke-width', 1.5)
+                    .attr('opacity', 0.8)
+                    .attr('d', line);
+            }
+            
+            // Mean line (blue, thicker)
+            if (meanSeries.length > 0) {
+                g.append('path')
+                    .datum(meanSeries)
+                    .attr('fill', 'none')
+                    .attr('stroke', '#007bff')
+                    .attr('stroke-width', 2)
+                    .attr('d', line);
+            }
+            
+            // X-axis
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).ticks(4).tickFormat(d3.format('d')))
+                .selectAll('text')
+                .attr('font-size', '10px');
+            
+            // Y-axis
+            g.append('g')
+                .call(d3.axisLeft(yScale).ticks(4))
+                .selectAll('text')
+                .attr('font-size', '10px');
+            
+            // Legend
+            const legend = g.append('g')
+                .attr('transform', `translate(${width + 5}, 10)`);
+            
+            const legendData = [
+                {label: 'Min', color: '#dc3545'},
+                {label: 'Mean', color: '#007bff'},
+                {label: 'Max', color: '#28a745'}
+            ];
+            
+            legendData.forEach((item, i) => {
+                const legendItem = legend.append('g')
+                    .attr('transform', `translate(0, ${i * 15})`);
+                
+                legendItem.append('line')
+                    .attr('x1', 0)
+                    .attr('x2', 12)
+                    .attr('y1', 0)
+                    .attr('y2', 0)
+                    .attr('stroke', item.color)
+                    .attr('stroke-width', item.label === 'Mean' ? 2 : 1.5);
+                
+                legendItem.append('text')
+                    .attr('x', 15)
+                    .attr('y', 0)
+                    .attr('dy', '0.32em')
+                    .attr('font-size', '9px')
+                    .attr('fill', '#333')
+                    .text(item.label);
+            });
+            
+            // Axis labels
+            g.append('text')
+                .attr('transform', 'rotate(-90)')
+                .attr('y', 0 - margin.left)
+                .attr('x', 0 - (height / 2))
+                .attr('dy', '1em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '10px')
+                .attr('fill', '#666')
+                .text('Net Tokens');
+            
+            g.append('text')
+                .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 5})`)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '10px')
+                .attr('fill', '#666')
+                .text('Time Step');
+        }
+        
+        function updateEnsembleResultsButtons(activeFunction) {
+            const buttons = document.querySelectorAll('#ensemble-results-window .results-button');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+                if (button.onclick && button.onclick.toString().includes(activeFunction)) {
+                    button.classList.add('active');
+                }
+            });
+        }
+        
+        function updateEnsembleStatisticsSummary() {
+            if (!ensembleModel) return;
+            
+            // Update summary statistics
+            document.getElementById('ensemble-summary-runs').textContent = ensembleModel.completedRuns;
+            
+            const significantNodes = Object.keys(ensembleModel.nodeStats).filter(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                return stats.values.length > 0 && Math.abs(stats.mean) > 0.1;
+            });
+            
+            document.getElementById('ensemble-summary-nodes').textContent = significantNodes.length;
+            
+            // Find most variable node
+            let mostVariableNode = 'None';
+            let maxVariability = 0;
+            
+            Object.keys(ensembleModel.nodeStats).forEach(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                if (stats.values.length > 0) {
+                    const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    if (stdDev > maxVariability) {
+                        maxVariability = stdDev;
+                        const node = diffusionGraph.nodes[nodeId];
+                        mostVariableNode = node ? node.label : nodeId;
+                    }
+                }
+            });
+            
+            document.getElementById('ensemble-summary-variable').textContent = mostVariableNode;
+            
+            // Update node lists
+            updateEnsembleNodeLists();
+        }
+        
+        function updateEnsembleNodeLists() {
+            if (!ensembleModel) return;
+            
+            const positiveNodes = [];
+            const negativeNodes = [];
+            const variableNodes = [];
+            
+            Object.keys(ensembleModel.nodeStats).forEach(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                if (stats.values.length > 0) {
+                    const node = diffusionGraph.nodes[nodeId];
+                    const nodeName = node ? node.label : nodeId;
+                    
+                    const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    if (stats.mean > 0.5) {
+                        positiveNodes.push({name: nodeName, value: stats.mean});
+                    } else if (stats.mean < -0.5) {
+                        negativeNodes.push({name: nodeName, value: Math.abs(stats.mean)});
+                    }
+                    
+                    if (stdDev > 0.5) {
+                        variableNodes.push({name: nodeName, value: stdDev});
+                    }
+                }
+            });
+            
+            // Sort and display
+            positiveNodes.sort((a, b) => b.value - a.value);
+            negativeNodes.sort((a, b) => b.value - a.value);
+            variableNodes.sort((a, b) => b.value - a.value);
+            
+            // Update positive nodes
+            const positiveContainer = document.getElementById('ensemble-positive-nodes');
+            if (positiveNodes.length > 0) {
+                positiveContainer.innerHTML = positiveNodes.slice(0, 5).map(node => 
+                    `<div class="node-item-status">${node.name} (+${node.value.toFixed(1)})</div>`
+                ).join('');
+            } else {
+                positiveContainer.innerHTML = '<div class="node-item-status">No significant positive impacts</div>';
+            }
+            
+            // Update negative nodes
+            const negativeContainer = document.getElementById('ensemble-negative-nodes');
+            if (negativeNodes.length > 0) {
+                negativeContainer.innerHTML = negativeNodes.slice(0, 5).map(node => 
+                    `<div class="node-item-status">${node.name} (-${node.value.toFixed(1)})</div>`
+                ).join('');
+            } else {
+                negativeContainer.innerHTML = '<div class="node-item-status">No significant negative impacts</div>';
+            }
+            
+            // Update variable nodes
+            const variableContainer = document.getElementById('ensemble-variable-nodes');
+            if (variableNodes.length > 0) {
+                variableContainer.innerHTML = variableNodes.slice(0, 5).map(node => 
+                    `<div class="node-item-status">${node.name} (σ=${node.value.toFixed(1)})</div>`
+                ).join('');
+            } else {
+                variableContainer.innerHTML = '<div class="node-item-status">No significant variability</div>';
+            }
+        }
+        
+        function makeEnsembleResultsWindowDraggable() {
+            const resultsWindow = document.getElementById('ensemble-results-window');
+            const header = resultsWindow.querySelector('.results-header');
+            
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            
+            function dragStart(e) {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+                
+                if (e.target === header || header.contains(e.target)) {
+                    isDragging = true;
+                    header.style.cursor = 'grabbing';
+                }
+            }
+            
+            function drag(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    xOffset = currentX;
+                    yOffset = currentY;
+                    
+                    resultsWindow.style.transform = `translate(${currentX}px, ${currentY}px)`;
+                }
+            }
+            
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                header.style.cursor = 'grab';
+            }
+        }
+        
+        // Placeholder functions for other ensemble result views
+        function showEnsembleGoalsIndividual() {
+            updateEnsembleResultsButtons('showEnsembleGoalsIndividual');
+            // Filter to show only goal nodes
+            showEnsembleAllNodesIndividual(); // For now, same as all nodes
+        }
+        
+        function showEnsembleControlGauge() {
+            updateEnsembleResultsButtons('showEnsembleControlGauge');
+            // Show control-related statistics
+            showEnsembleTimeSeriesChart(); // For now, same as time series
+        }
+        
+        function showEnsembleSingleNodeChart() {
+            updateEnsembleResultsButtons('showEnsembleSingleNodeChart');
+            // Show node selector and individual node statistics
+            document.getElementById('ensemble-node-selector-container').style.display = 'block';
+            // Populate node selector if not already done
+            // Implementation would be similar to regular single node chart
+        }
+        
+        function showEnsembleCurrentSnapshot() {
+            updateEnsembleResultsButtons('showEnsembleCurrentSnapshot');
+            // Show final state statistics
+            showEnsembleAllNodesIndividual(); // For now, same as individual view
+        }
+        
+        function exportEnsembleResults() {
+            if (!ensembleModel || ensembleModel.completedRuns === 0) {
+                alert('No ensemble results to export.');
+                return;
+            }
+            
+            // Create CSV data
+            let csvContent = 'Node,Min,Max,Mean,StdDev,Runs\n';
+            
+            Object.keys(ensembleModel.nodeStats).forEach(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                if (stats.values.length > 0) {
+                    const node = diffusionGraph.nodes[nodeId];
+                    const nodeName = node ? node.label : nodeId;
+                    const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
+                    const stdDev = Math.sqrt(variance);
+                    
+                    csvContent += `"${nodeName}",${stats.min.toFixed(3)},${stats.max.toFixed(3)},${stats.mean.toFixed(3)},${stdDev.toFixed(3)},${stats.values.length}\n`;
+                }
+            });
+            
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ensemble_results_${ensembleModel.completedRuns}_runs.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function clearEnsembleResults() {
+            if (confirm('Are you sure you want to clear all ensemble results?')) {
+                resetEnsembleSimulation();
+                toggleEnsembleResultsWindow(); // Close the window
+            }
+        }
+        
+        // Simple seedable random number generator
+        function seedRandom(seed) {
+            let state = seed;
+            return function() {
+                state = (state * 1664525 + 1013904223) % Math.pow(2, 32);
+                return state / Math.pow(2, 32);
+            };
         }
         
         function makeResultsWindowDraggable() {
@@ -10461,6 +12044,81 @@ def get_top_centrality_nodes(metric):
     </script>
     <!-- Load Chart.js properly at the end of the body for better performance -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Ensemble Results Window -->
+    <div id="ensemble-results-window" class="results-window">
+        <div class="results-header">
+            <span>📈 Ensemble Results (Statistical Analysis)</span>
+            <button class="results-close" onclick="toggleEnsembleResultsWindow()">&times;</button>
+        </div>
+        <div class="results-content">
+            <div class="results-controls">
+                <button class="results-button active" onclick="showEnsembleAllNodesIndividual()">All Nodes Time Series</button>
+                <button class="results-button" onclick="showEnsembleGoalsIndividual()">Goals</button>
+                <button class="results-button" onclick="exportEnsembleResults()">Export Data</button>
+                <button class="results-button" onclick="clearEnsembleResults()">Clear</button>
+            </div>
+            
+            <div id="ensemble-node-selector-container" class="node-selector-container" style="display: none;">
+                <label for="ensemble-node-selector">Select Node:</label>
+                <select id="ensemble-node-selector" class="node-selector" onchange="onEnsembleNodeSelectionChange()">
+                    <option value="">Choose a node...</option>
+                </select>
+            </div>
+            
+            <div id="ensemble-results-chart-container" class="chart-container">
+                <svg id="ensemble-results-chart" class="chart-svg"></svg>
+            </div>
+            
+            <!-- Ensemble Statistics Section -->
+            <div id="ensemble-statistics-section" class="node-status-section">
+                <h4>📊 Ensemble Statistics Summary</h4>
+                <div id="ensemble-statistics-content">
+                    <div class="status-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Runs:</span>
+                            <span id="ensemble-summary-runs" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Nodes Analyzed:</span>
+                            <span id="ensemble-summary-nodes" class="summary-value">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Most Variable Node:</span>
+                            <span id="ensemble-summary-variable" class="summary-value">None</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Convergence:</span>
+                            <span id="ensemble-summary-convergence" class="summary-value">N/A</span>
+                        </div>
+                    </div>
+                    
+                    <div class="node-lists">
+                        <div class="node-list-section">
+                            <h5 style="color: #28a745; margin: 10px 0 5px 0;">Most Positive Impact (Mean)</h5>
+                            <div id="ensemble-positive-nodes" class="node-list">
+                                <div class="node-item-status">No data available</div>
+                            </div>
+                        </div>
+                        
+                        <div class="node-list-section">
+                            <h5 style="color: #dc3545; margin: 10px 0 5px 0;">Most Negative Impact (Mean)</h5>
+                            <div id="ensemble-negative-nodes" class="node-list">
+                                <div class="node-item-status">No data available</div>
+                            </div>
+                        </div>
+                        
+                        <div class="node-list-section">
+                            <h5 style="color: #6f42c1; margin: 10px 0 5px 0;">Highest Variability</h5>
+                            <div id="ensemble-variable-nodes" class="node-list">
+                                <div class="node-item-status">No data available</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Token Allocation Modal -->
     <div id="token-allocation-modal" class="token-modal">
         <div class="token-modal-content">
