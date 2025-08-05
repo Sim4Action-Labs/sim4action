@@ -78,8 +78,12 @@ class TokenAgent {
         this.transitStepsTotal = delay; // Store total for animation synchronization
         
         // Update charge based on edge polarity
+        const originalCharge = this.charge;
         if (edgeData.polarity === Polarity.OPPOSITE || edgeData.polarity === -1) {
             this.charge *= -1; // Flip charge if polarity is OPPOSITE
+            debug(`🔄 Token ${this.uniqueId} charge FLIPPED: ${originalCharge} -> ${this.charge} (OPPOSITE polarity: ${edgeData.polarity})`);
+        } else {
+            debug(`✅ Token ${this.uniqueId} charge KEPT: ${this.charge} (SAME polarity: ${edgeData.polarity})`);
         }
         
         debug(`Token ${this.uniqueId} moving: ${this.currentNode} -> ${targetNode} (delay: ${delay})`);
@@ -233,8 +237,10 @@ class CausalTokenModel {
         
         let tokenId = 0;
         for (const [node, count] of Object.entries(initialAllocation)) {
+            debug(`🎨 Creating ${count} tokens at node ${node}`);
             for (let i = 0; i < count; i++) {
                 const token = new TokenAgent(tokenId, this, node);
+                debug(`  Token ${tokenId}: charge=${token.charge}, node=${token.currentNode}`);
                 this.agents.push(token);
                 tokenId++;
             }

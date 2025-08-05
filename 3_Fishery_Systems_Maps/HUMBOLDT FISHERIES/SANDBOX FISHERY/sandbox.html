@@ -3249,7 +3249,7 @@
             const ensembleSection = createBasicSection("Token Diffusion (Ensemble)");
             ensembleSection.querySelector('.filter-section-content').innerHTML = `
                 <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
-                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Ensemble):</strong> Run multiple token diffusion scenarios to analyze statistical distributions of effects across the causal network. Shows max, min, and mean net token counts for each node.
+                    <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Ensemble):</strong> Run multiple token diffusion scenarios to analyze statistical distributions of effects across the causal network. Shows max, min, and mean cumulative net token counts for each node.
                 </div>
                 
                 <div id="ensemble-container" class="diffusion-controls">
@@ -4172,7 +4172,22 @@
                 
                 // Add edges from relationships
                 relationships.forEach(rel => {
-                    const polarity = rel.polarity === 'positive' ? Polarity.SAME : Polarity.OPPOSITE;
+                    const polarity = rel.polarity === 'same' ? Polarity.SAME : Polarity.OPPOSITE;
+                    
+                    // Debug specific relationship: Sea Surface Temperature (0) -> Maturation Rate (1)
+                    if ((rel.source === '0' || rel.source === 0) && (rel.target === '1' || rel.target === 1)) {
+                        console.log('🔍 DEBUG: Sea Surface Temperature -> Maturation Rate relationship:');
+                        console.log('  Source:', rel.source, '(Sea Surface Temperature)');
+                        console.log('  Target:', rel.target, '(Maturation Rate)');
+                        console.log('  Polarity:', rel.polarity);
+                        console.log('  Polarity constant:', polarity);
+                        console.log('  Full relationship data:', rel);
+                    }
+                    
+                    // Log first few relationships to understand structure
+                    if (relationships.indexOf(rel) < 5) {
+                        console.log(`🔍 DEBUG: Relationship ${relationships.indexOf(rel) + 1}:`, rel);
+                    }
                     
                     // Parse strength (default to medium if not specified)
                     let strength = Strength.MEDIUM;
@@ -7299,76 +7314,165 @@
                 variedAllocation[nodeId] = variedTokens;
             });
             
-            // Create temporary diffusion model for this scenario
+            // Create temporary model to store results (no custom token creation needed)
             const tempModel = {
                 initialized: true,
                 nodeFlowsOverTime: [],
                 edgeFlowsOverTime: [],
-                stepCount: 0,
-                tokens: []
+                stepCount: 0
             };
             
-            // Initialize tokens for this scenario
-            Object.keys(variedAllocation).forEach(nodeId => {
-                const tokenCount = variedAllocation[nodeId];
-                for (let i = 0; i < tokenCount; i++) {
-                    tempModel.tokens.push({
-                        id: `token_${runIndex}_${i}`,
-                        charge: Math.random() > 0.5 ? 1 : -1,
-                        currentNode: nodeId,
-                        age: 0,
-                        maxAge: Math.floor(Math.random() * 20) + 10
-                    });
-                }
-            });
+            // Create a proper diffusion model for this ensemble run (using same algorithm as regular scenarios)
+            let ensembleDiffusionModel;
+            try {
+                console.log('🔍 DEBUG: Token allocation for this run:', variedAllocation);
+                console.log('🔍 DEBUG: Total tokens:', totalTokens);
+                console.log('🔍 DEBUG: Available node IDs:', Object.keys(diffusionGraph.nodes));
+                
+                // Verify allocation contains only positive token counts
+                console.log('🔍 DEBUG: Allocation verification:');
+                Object.entries(variedAllocation).forEach(([nodeId, count]) => {
+                    if (count !== 0) {
+                        console.log(`  Node ${nodeId} (${diffusionGraph.nodes[nodeId]?.label}): ${count} tokens`);
+                    }
+                });
+                
+                ensembleDiffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, variedAllocation);
+                console.log('✅ Ensemble diffusion model created:', ensembleDiffusionModel);
+                console.log('🔍 DEBUG: Initial agents:', ensembleDiffusionModel.agents.length);
+                
+                // Detailed agent analysis
+                console.log('🔍 DEBUG: Agent charge analysis:');
+                const agentsByNode = {};
+                const chargesByNode = {};
+                ensembleDiffusionModel.agents.forEach(agent => {
+                    const nodeId = agent.currentNode;
+                    if (!agentsByNode[nodeId]) {
+                        agentsByNode[nodeId] = 0;
+                        chargesByNode[nodeId] = 0;
+                    }
+                    agentsByNode[nodeId]++;
+                    chargesByNode[nodeId] += agent.charge || 0;
+                });
+                
+                console.log('  Agents per node:', agentsByNode);
+                console.log('  Total charge per node:', chargesByNode);
+                
+                // Show first few agents with details
+                console.log('🔍 DEBUG: First 10 agents:');
+                ensembleDiffusionModel.agents.slice(0, 10).forEach((agent, i) => {
+                    console.log(`  Agent ${i}: node=${agent.currentNode}, charge=${agent.charge}, id=${agent.id}`);
+                });
+            } catch (error) {
+                console.error('❌ Failed to create ensemble diffusion model:', error);
+                // Return empty result if model creation fails
+                return {
+                    runIndex,
+                    seed,
+                    allocation: variedAllocation,
+                    finalNodeFlows: {},
+                    nodeFlowsOverTime: [],
+                    steps: 0,
+                    error: 'Failed to create diffusion model'
+                };
+            }
             
-            // Run simulation steps (simplified, no visualization)
+            // Verify the model has agents (tokens are called 'agents' in CausalTokenModel)
+            if (!ensembleDiffusionModel.agents || !Array.isArray(ensembleDiffusionModel.agents)) {
+                console.error('❌ Diffusion model has no agents array:', ensembleDiffusionModel);
+                // Return empty result if no agents
+                return {
+                    runIndex,
+                    seed,
+                    allocation: variedAllocation,
+                    finalNodeFlows: {},
+                    nodeFlowsOverTime: [],
+                    steps: 0,
+                    error: 'Diffusion model has no agents'
+                };
+            }
+            
+            // Run simulation steps using the actual diffusion algorithm
             const maxSteps = ensembleModel.timeSteps || 500;
+            
             for (let step = 0; step < maxSteps; step++) {
-                const nodeFlows = {};
-                
-                // Initialize all nodes to 0
-                Object.keys(diffusionGraph.nodes).forEach(nodeId => {
-                    nodeFlows[nodeId] = 0;
-                });
-                
-                // Calculate flows from tokens
-                tempModel.tokens.forEach(token => {
-                    if (token.currentNode) {
-                        nodeFlows[token.currentNode] += token.charge;
-                    }
-                });
-                
-                tempModel.nodeFlowsOverTime.push(nodeFlows);
-                
-                // Move tokens (simplified logic)
-                tempModel.tokens.forEach(token => {
-                    token.age++;
-                    if (token.age < token.maxAge && Math.random() > 0.7) {
-                        // Find connected nodes
-                        const connectedLinks = links.filter(link => {
-                            const sourceId = link.source.id || link.source;
-                            const targetId = link.target.id || link.target;
-                            return sourceId === token.currentNode || targetId === token.currentNode;
-                        });
-                        
-                        if (connectedLinks.length > 0) {
-                            const randomLink = connectedLinks[Math.floor(Math.random() * connectedLinks.length)];
-                            const sourceId = randomLink.source.id || randomLink.source;
-                            const targetId = randomLink.target.id || randomLink.target;
-                            token.currentNode = sourceId === token.currentNode ? targetId : sourceId;
-                            
-                            // Apply relationship effect
-                            if (randomLink.type === 'opposite') {
-                                token.charge *= -1;
+                try {
+                    // Use the actual diffusion algorithm (same as regular token scenarios)
+                    ensembleDiffusionModel.step();
+                    
+                    // Calculate current token distribution at each node for this step
+                    const currentStepDistribution = {};
+                    
+                    // Initialize all nodes to 0 for this step
+                    Object.keys(diffusionGraph.nodes).forEach(nodeId => {
+                        currentStepDistribution[nodeId] = 0;
+                    });
+                    
+                    // Count agents from the actual diffusion model (with safety check)
+                    if (ensembleDiffusionModel.agents && Array.isArray(ensembleDiffusionModel.agents)) {
+                        ensembleDiffusionModel.agents.forEach(agent => {
+                            if (agent && agent.currentNode) {
+                                currentStepDistribution[agent.currentNode] += agent.charge || 0;
                             }
-                        }
+                        });
                     }
-                });
+                    
+                    // Debug logging for first few steps
+                    if (step < 5) {
+                        console.log(`🔍 DEBUG Step ${step}:`);
+                        console.log('  Current step distribution:', currentStepDistribution);
+                        
+                        // Find the Sea Surface Temperature node (it might have a different ID)
+                        const seaTempNodeId = Object.keys(currentStepDistribution).find(id => 
+                            diffusionGraph.nodes[id]?.label?.toLowerCase().includes('sea surface'));
+                        if (seaTempNodeId) {
+                            console.log(`  Sea Surface node (${seaTempNodeId}) tokens:`, currentStepDistribution[seaTempNodeId]);
+                            console.log(`  Agents at Sea Surface node:`, 
+                                ensembleDiffusionModel.agents.filter(a => a.currentNode === seaTempNodeId).map(a => ({charge: a.charge, node: a.currentNode})));
+                        }
+                        
+                        // Show all nodes with non-zero tokens
+                        const nodesWithTokens = Object.keys(currentStepDistribution).filter(id => currentStepDistribution[id] !== 0);
+                        console.log('  All nodes with tokens:', nodesWithTokens.map(id => ({id, tokens: currentStepDistribution[id], label: diffusionGraph.nodes[id]?.label})));
+                    }
+                    
+                    // Store current distribution snapshot for time series
+                    tempModel.nodeFlowsOverTime.push({...currentStepDistribution});
+                } catch (stepError) {
+                    console.error(`❌ Error in ensemble step ${step}:`, stepError);
+                    break; // Stop simulation on error
+                }
             }
             
             // Return complete time series data
             const finalNodeFlows = tempModel.nodeFlowsOverTime[tempModel.nodeFlowsOverTime.length - 1] || {};
+            
+            // Debug final results
+            console.log(`🏁 DEBUG: Simulation completed for run ${runIndex}:`);
+            console.log(`  Total steps: ${tempModel.nodeFlowsOverTime.length}`);
+            console.log(`  Max steps configured: ${maxSteps}`);
+            
+            // Show final token distribution for key nodes
+            const seaTempNodeId = Object.keys(finalNodeFlows).find(id => 
+                diffusionGraph.nodes[id]?.label?.toLowerCase().includes('sea surface'));
+            const maturationNodeId = Object.keys(finalNodeFlows).find(id => 
+                diffusionGraph.nodes[id]?.label?.toLowerCase().includes('maturation'));
+            
+            if (seaTempNodeId) {
+                console.log(`  Sea Surface Temperature final tokens: ${finalNodeFlows[seaTempNodeId]}`);
+            }
+            if (maturationNodeId) {
+                console.log(`  Maturation Rate final tokens: ${finalNodeFlows[maturationNodeId]}`);
+            }
+            
+            // Show top 5 nodes by absolute token count
+            const sortedNodes = Object.entries(finalNodeFlows)
+                .sort(([,a], [,b]) => Math.abs(b) - Math.abs(a))
+                .slice(0, 5);
+            console.log('  Top 5 nodes by final token count:');
+            sortedNodes.forEach(([nodeId, tokens]) => {
+                console.log(`    ${diffusionGraph.nodes[nodeId]?.label || nodeId}: ${tokens}`);
+            });
             
             return {
                 runIndex,
