@@ -1677,6 +1677,89 @@
             display: flex;
         }
         
+        /* Toggle Switch Styles */
+        .view-toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .toggle-label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #495057;
+            margin: 0;
+        }
+        
+        .toggle-label-text {
+            font-weight: 600;
+            font-size: 13px;
+            color: #007bff;
+            min-width: 90px;
+            text-align: left;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+            margin: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch label:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            top: 3px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch input:checked + label {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1), 0 0 8px rgba(0,123,255,0.3);
+        }
+        
+        .toggle-switch input:checked + label:before {
+            transform: translateX(20px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        
+
+        
+        #view-mode-description {
+            font-size: 12px;
+            color: #6c757d;
+            font-style: italic;
+            margin: 0;
+        }
+        
         .results-header {
             background: #007bff;
             color: white;
@@ -6315,7 +6398,8 @@
                 .style('margin', '0 0 10px 0')
                 .style('font-size', '14px')
                 .style('color', '#333')
-                .text(nodeDisplayName.length > 60 ? nodeDisplayName.substring(0, 60) + '...' : nodeDisplayName);
+                .text((nodeDisplayName.length > 50 ? nodeDisplayName.substring(0, 50) + '...' : nodeDisplayName) + 
+                     (isIntegralView ? ' (Cumulative Impact)' : ''));
             
             // Create SVG for this chart
             const margin = { top: 10, right: 30, bottom: 40, left: 60 };
@@ -7069,6 +7153,7 @@
         let ensembleRunning = false;
         let ensemblePaused = false;
         let ensembleResults = [];
+        let isIntegralView = false; // Track which view mode is active
         
         async function initializeEnsembleUI() {
             console.log('🎯 Initializing Ensemble UI...');
@@ -7924,7 +8009,7 @@
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '12px')
                 .attr('fill', '#666')
-                .text('Net Tokens');
+                .text(isIntegralView ? 'Cumulative Impact' : 'Net Tokens');
             
             // Legend
             const legend = g.append('g')
@@ -8048,11 +8133,124 @@
             });
         }
         
+        function toggleIntegralView() {
+            console.log('=== TOGGLE INTEGRAL VIEW START ===');
+            console.log('Previous isIntegralView:', isIntegralView);
+            
+            // Get the checkbox state
+            const checkbox = document.getElementById('integral-toggle');
+            if (!checkbox) {
+                console.error('Toggle checkbox not found!');
+                return;
+            }
+            
+            isIntegralView = checkbox.checked;
+            console.log('New isIntegralView:', isIntegralView);
+            
+            // Update label text based on toggle state
+            const labelText = document.getElementById('toggle-label-text');
+            if (labelText) {
+                labelText.textContent = isIntegralView ? 'Integral View' : 'Standard View';
+                console.log('Updated label to:', labelText.textContent);
+            }
+            
+            // Update description
+            const description = document.getElementById('view-mode-description');
+            if (description) {
+                description.textContent = isIntegralView ? 'Showing cumulative area under curve (integral)' : 'Showing token distribution over time';
+                console.log('Updated description to:', description.textContent);
+            }
+            
+            // Force refresh the current view - GUARANTEED approach
+            console.log('Starting chart refresh...');
+            
+            try {
+                // Clear any existing timeout
+                if (window.toggleRefreshTimeout) {
+                    clearTimeout(window.toggleRefreshTimeout);
+                }
+                
+                // Immediate refresh without timeout
+                const activeButton = document.querySelector('.results-button.active');
+                console.log('Active button:', activeButton ? activeButton.textContent.trim() : 'NONE FOUND');
+                
+                if (activeButton) {
+                    const buttonText = activeButton.textContent.trim();
+                    console.log('Button text:', buttonText);
+                    
+                    // Direct function calls with error handling
+                    if (buttonText === 'All Nodes Time Series') {
+                        console.log('Attempting to call showEnsembleAllNodesIndividual()');
+                        if (typeof showEnsembleAllNodesIndividual === 'function') {
+                            showEnsembleAllNodesIndividual();
+                            console.log('Successfully called showEnsembleAllNodesIndividual()');
+                        } else {
+                            console.error('showEnsembleAllNodesIndividual is not a function!');
+                        }
+                    } else if (buttonText === 'Goals') {
+                        console.log('Attempting to call showEnsembleGoalsIndividual()');
+                        if (typeof showEnsembleGoalsIndividual === 'function') {
+                            showEnsembleGoalsIndividual();
+                            console.log('Successfully called showEnsembleGoalsIndividual()');
+                        } else {
+                            console.error('showEnsembleGoalsIndividual is not a function!');
+                        }
+                    } else {
+                        console.log('Unknown button text, defaulting to all nodes');
+                        if (typeof showEnsembleAllNodesIndividual === 'function') {
+                            showEnsembleAllNodesIndividual();
+                            console.log('Successfully called default showEnsembleAllNodesIndividual()');
+                        }
+                    }
+                } else {
+                    console.log('No active button found, calling default function');
+                    if (typeof showEnsembleAllNodesIndividual === 'function') {
+                        showEnsembleAllNodesIndividual();
+                        console.log('Successfully called fallback showEnsembleAllNodesIndividual()');
+                    } else {
+                        console.error('showEnsembleAllNodesIndividual function not available!');
+                    }
+                }
+            } catch (error) {
+                console.error('Error in toggle refresh:', error);
+            }
+            
+            console.log('=== TOGGLE INTEGRAL VIEW END ===');
+        }
+        
+        // Calculate the integral (cumulative area under curve) for a series of values
+        function calculateIntegral(values) {
+            if (!values || values.length === 0) return [];
+            
+            let integral = [];
+            let cumulativeSum = 0;
+            
+            for (let i = 0; i < values.length; i++) {
+                // Add current value to running sum
+                cumulativeSum += values[i].value;
+                
+                // Store the cumulative sum at this time step
+                integral.push({
+                    timeStep: values[i].timeStep,
+                    value: cumulativeSum
+                });
+            }
+            
+            return integral;
+        }
+        
         function createEnsembleIndividualNodeChart(container, nodeData, index) {
             const nodeId = nodeData.nodeId;
-            const minValues = nodeData.minValues;
-            const maxValues = nodeData.maxValues;
-            const meanValues = nodeData.meanValues;
+            let minValues = nodeData.minValues;
+            let maxValues = nodeData.maxValues;
+            let meanValues = nodeData.meanValues;
+            
+            // If in integral view, transform the data to show cumulative area
+            if (isIntegralView) {
+                minValues = calculateIntegral(minValues);
+                maxValues = calculateIntegral(maxValues);
+                meanValues = calculateIntegral(meanValues);
+            }
             
             // Get node display name
             const nodeDisplayName = diffusionGraph.nodes[nodeId]?.label || nodeId;
@@ -8070,7 +8268,8 @@
                 .style('margin', '0 0 10px 0')
                 .style('font-size', '14px')
                 .style('color', '#333')
-                .text(nodeDisplayName.length > 60 ? nodeDisplayName.substring(0, 60) + '...' : nodeDisplayName);
+                .text((nodeDisplayName.length > 50 ? nodeDisplayName.substring(0, 50) + '...' : nodeDisplayName) + 
+                     (isIntegralView ? ' (Cumulative Impact)' : ''));
             
             // Create SVG for this chart
             const margin = { top: 10, right: 80, bottom: 40, left: 60 };
@@ -8196,7 +8395,7 @@
                 .style('text-anchor', 'middle')
                 .style('font-size', '10px')
                 .style('fill', '#666')
-                .text('Net Tokens');
+                .text(isIntegralView ? 'Cumulative Impact' : 'Net Tokens');
             
             // X-axis label
             g.append('text')
@@ -8356,7 +8555,7 @@
                 .attr('text-anchor', 'middle')
                 .attr('font-size', '10px')
                 .attr('fill', '#666')
-                .text('Net Tokens');
+                .text(isIntegralView ? 'Cumulative Impact' : 'Net Tokens');
             
             g.append('text')
                 .attr('transform', `translate(${width / 2}, ${height + margin.bottom - 5})`)
@@ -12160,6 +12359,16 @@ def get_top_centrality_nodes(metric):
                 <button class="results-button" onclick="showEnsembleGoalsIndividual()">Goals</button>
                 <button class="results-button" onclick="exportEnsembleResults()">Export Data</button>
                 <button class="results-button" onclick="clearEnsembleResults()">Clear</button>
+            </div>
+            
+            <div class="view-toggle-container">
+                <label class="toggle-label">View Mode:</label>
+                <span class="toggle-label-text" id="toggle-label-text">Standard View</span>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="integral-toggle" onchange="toggleIntegralView()">
+                    <label for="integral-toggle"></label>
+                </div>
+                <span id="view-mode-description">Showing token distribution over time</span>
             </div>
             
             <div id="ensemble-node-selector-container" class="node-selector-container" style="display: none;">
