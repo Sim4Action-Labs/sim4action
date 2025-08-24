@@ -3,7 +3,7 @@ import socketserver
 import os
 
 # Set the port number
-PORT = 8000
+PORT = 8003
 
 # Change to the directory containing the HTML file
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
