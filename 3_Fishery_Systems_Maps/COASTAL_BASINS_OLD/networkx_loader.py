@@ -4,17 +4,9 @@ import json
 from pyodide.http import open_url
 from js import console, document, js
 
-# Google Sheets configuration - DEFAULT VALUES
-# These can be overridden by calling set_spreadsheet_config()
-SPREADSHEET_ID = '1Koxmt-s4Btgvx-hPOD5er9K2WExTYpSeAOuanUKDcho'  # Default to main spreadsheet
+# Google Sheets configuration
+SPREADSHEET_ID = '1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU'
 API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA'
-
-def set_config(spreadsheet_id, api_key=None):
-    """Update the spreadsheet configuration."""
-    global SPREADSHEET_ID, API_KEY
-    SPREADSHEET_ID = spreadsheet_id
-    if api_key:
-        API_KEY = api_key
 
 def fetch_sheet_data(sheet_name):
     """Fetch data from a specific sheet in the Google Spreadsheet."""

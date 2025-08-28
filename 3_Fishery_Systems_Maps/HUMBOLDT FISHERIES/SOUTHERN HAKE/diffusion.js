@@ -181,7 +181,10 @@ class TokenAgent {
                 
                 this.startMovement(targetNode, edgeData);
             } else {
-                debug(`Token ${this.uniqueId} is stuck at ${this.currentNode}`);
+                // Token has reached a dead end - inactivate it to prevent token explosion
+                debug(`🚫 Token ${this.uniqueId} reached dead end at ${this.currentNode} - INACTIVATING`);
+                this.active = false;
+                this.state = TokenState.ACCUMULATED;
             }
         }
     }
@@ -269,8 +272,9 @@ class CausalTokenModel {
         }
         
         // Count tokens at each node, accounting for charge
+        // Only count active tokens to prevent explosion at dead ends
         for (const agent of this.agents) {
-            if (agent.state !== TokenState.IN_TRANSIT) {
+            if (agent.state !== TokenState.IN_TRANSIT && agent.active) {
                 // Add or subtract based on token charge
                 nodeFlows[agent.currentNode] = (nodeFlows[agent.currentNode] || 0) + agent.charge;
             }
@@ -312,14 +316,17 @@ class CausalTokenModel {
         
         // Update all agents
         let tokensUpdated = 0;
+        let inactiveTokens = 0;
         for (const agent of this.agents) {
             if (agent.active) {
                 agent.step();
                 tokensUpdated++;
+            } else {
+                inactiveTokens++;
             }
         }
         
-        debug(`Updated ${tokensUpdated} tokens`);
+        debug(`Updated ${tokensUpdated} tokens, ${inactiveTokens} inactive tokens`);
         
         // Record flows
         const nodeFlows = this.getNodeFlows();

@@ -4167,8 +4167,8 @@
             try {
                 console.log('🔄 Starting diffusion module import...');
                 
-                // Import the diffusion module
-                const diffusionModule = await import('./diffusion.js');
+                // Import the diffusion module with cache busting
+                const diffusionModule = await import('./diffusion.js?v=' + Date.now());
                 console.log('🔄 Diffusion module imported:', diffusionModule);
                 
                 // Extract classes and constants

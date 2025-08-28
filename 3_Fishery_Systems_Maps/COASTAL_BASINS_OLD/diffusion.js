@@ -16,9 +16,9 @@ const Strength = {
 };
 
 const Delay = {
-    FAST: 5,     // 1 second (5 steps * 200ms)
-    MEDIUM: 10,  // 2 seconds (10 steps * 200ms) 
-    SLOW: 20     // 4 seconds (20 steps * 200ms)
+    FAST: 1,
+    MEDIUM: 3,
+    SLOW: 10
 };
 
 const TokenState = {
@@ -75,15 +75,10 @@ class TokenAgent {
         // Simple handling of delay value - just use the number
         const delay = typeof edgeData.delay === 'number' ? edgeData.delay : Delay.MEDIUM;
         this.transitStepsRemaining = delay;
-        this.transitStepsTotal = delay; // Store total for animation synchronization
         
         // Update charge based on edge polarity
-        const originalCharge = this.charge;
         if (edgeData.polarity === Polarity.OPPOSITE || edgeData.polarity === -1) {
             this.charge *= -1; // Flip charge if polarity is OPPOSITE
-            debug(`🔄 Token ${this.uniqueId} charge FLIPPED: ${originalCharge} -> ${this.charge} (OPPOSITE polarity: ${edgeData.polarity})`);
-        } else {
-            debug(`✅ Token ${this.uniqueId} charge KEPT: ${this.charge} (SAME polarity: ${edgeData.polarity})`);
         }
         
         debug(`Token ${this.uniqueId} moving: ${this.currentNode} -> ${targetNode} (delay: ${delay})`);
@@ -181,10 +176,7 @@ class TokenAgent {
                 
                 this.startMovement(targetNode, edgeData);
             } else {
-                // Token has reached a dead end - inactivate it to prevent token explosion
-                debug(`🚫 Token ${this.uniqueId} reached dead end at ${this.currentNode} - INACTIVATING`);
-                this.active = false;
-                this.state = TokenState.ACCUMULATED;
+                debug(`Token ${this.uniqueId} is stuck at ${this.currentNode}`);
             }
         }
     }
@@ -240,10 +232,8 @@ class CausalTokenModel {
         
         let tokenId = 0;
         for (const [node, count] of Object.entries(initialAllocation)) {
-            debug(`🎨 Creating ${count} tokens at node ${node}`);
             for (let i = 0; i < count; i++) {
                 const token = new TokenAgent(tokenId, this, node);
-                debug(`  Token ${tokenId}: charge=${token.charge}, node=${token.currentNode}`);
                 this.agents.push(token);
                 tokenId++;
             }
@@ -272,9 +262,8 @@ class CausalTokenModel {
         }
         
         // Count tokens at each node, accounting for charge
-        // Only count active tokens to prevent explosion at dead ends
         for (const agent of this.agents) {
-            if (agent.state !== TokenState.IN_TRANSIT && agent.active) {
+            if (agent.state !== TokenState.IN_TRANSIT) {
                 // Add or subtract based on token charge
                 nodeFlows[agent.currentNode] = (nodeFlows[agent.currentNode] || 0) + agent.charge;
             }
@@ -316,17 +305,14 @@ class CausalTokenModel {
         
         // Update all agents
         let tokensUpdated = 0;
-        let inactiveTokens = 0;
         for (const agent of this.agents) {
             if (agent.active) {
                 agent.step();
                 tokensUpdated++;
-            } else {
-                inactiveTokens++;
             }
         }
         
-        debug(`Updated ${tokensUpdated} tokens, ${inactiveTokens} inactive tokens`);
+        debug(`Updated ${tokensUpdated} tokens`);
         
         // Record flows
         const nodeFlows = this.getNodeFlows();
