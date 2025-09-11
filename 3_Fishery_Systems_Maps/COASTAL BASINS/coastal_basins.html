@@ -2990,31 +2990,42 @@
             `;
             diagnosticsDiv.appendChild(systemStatsSection);
             
-            // Variable Categories
+            // Variable Categories - Generate domain buttons dynamically
             const variableCategoriesSection = createBasicSection("Domains");
+            
+            // Extract unique domains from factors data
+            const uniqueDomainsForFilter = [...new Set(factors
+                .map(factor => factor.domain_name || factor.domain)
+                .filter(domain => domain)
+            )].sort();
+            
+            // Generate domain filter buttons dynamically
+            const domainFilterButtons = uniqueDomainsForFilter.map(domain => {
+                // Create a clean display name for the button
+                const displayName = domain.replace(/-/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+                const capitalizedName = displayName.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+                
+                // Get the color for this domain
+                const domainColor = getDomainColor(domain);
+                
+                // Create shortened display name for button
+                const shortName = domain === 'FOCAL FACTORS' ? 'Focal' : 
+                                 domain === 'Economics-Markets' ? 'Economics' :
+                                 capitalizedName.length > 12 ? capitalizedName.substring(0, 12) : capitalizedName;
+                
+                return `<button class="filter-button" onclick="toggleFilter(this, '${domain}', 'domains')" title="Filter ${capitalizedName.toLowerCase()} variables" style="padding: 5px;">
+                    <span class="color-dot" style="background-color: ${domainColor}; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>${shortName}
+                </button>`;
+            }).join('');
+            
             variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
                 <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
                     <i class="fa fa-info-circle"></i> Filter to show connections between specific domains in the fishery system
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
-                    <button class="filter-button" onclick="toggleFilter(this, 'FOCAL FACTORS', 'domains')" title="Highlight the focal factors in this system" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #FF3366; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Focal
-                    </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Biology', 'domains')" title="Biological variables and factors" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #9966CC; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Biology
-                    </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Economics-Markets', 'domains')" title="Economic and market-related variables" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #3399FF; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Economics
-                    </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Environmental', 'domains')" title="Environmental factors" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #66CC66; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Environmental
-                    </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Management', 'domains')" title="Management and regulatory variables" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #FF9966; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Management
-                    </button>
-                    <button class="filter-button" onclick="toggleFilter(this, 'Social', 'domains')" title="Social and community variables" style="padding: 5px;">
-                        <span class="color-dot" style="background-color: #CC99FF; display: inline-block; width: 16px; height: 16px; border-radius: 50%;"></span>Social
-                    </button>
+                    ${domainFilterButtons}
                 </div>
             `;
             diagnosticsDiv.appendChild(variableCategoriesSection);
