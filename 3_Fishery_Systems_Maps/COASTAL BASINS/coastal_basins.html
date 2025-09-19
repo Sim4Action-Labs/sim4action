@@ -2502,6 +2502,10 @@
                     definition: row[4]   // definition
                 }));
                 console.log('Loaded factors:', factors);
+                
+                // Generate dynamic domain color mapping based on loaded factors
+                updateLoadingProgress(58, "Generating domain color mapping...");
+                generateDomainColorMap(factors);
 
                 // Load relationships
                 updateLoadingProgress(65, "Loading relationships data...");
@@ -4137,20 +4141,124 @@
             updateVisibility();
         }
 
-        // Add domain color mapping function
-        function getDomainColor(domain) {
-            const colorMap = {
-                'Focal Factors': '#20B2AA',              // Teal for focal variables
-                'FOCAL FACTORS': '#20B2AA',              // Teal for focal variables (uppercase)
-                'Stock': '#ff0000',                    // Red
-                'Technical': '#8B4513',                // Brown
-                'Environmental-Ecosystem': '#228B22',   // Green
-                'Economics-Markets': '#0000FF',        // Blue
-                'Management': '#800080',               // Purple
-                'Social': '#FF69B4',                   // Pink
-                'Indigenous': '#FFD700'                // Gold
+        // Dynamic domain color mapping
+        let domainColorMap = {};
+        
+        // Maximally distinct categorical color palette
+        const colorPalette = [
+            '#FF3366',  // Pink-red
+            '#228B22',  // Forest green  
+            '#1E90FF',  // Dodger blue
+            '#9966CC',  // Medium purple
+            '#FF8C00',  // Dark orange
+            '#CC99FF',  // Light purple
+            '#FFD700',  // Gold
+            '#DC143C',  // Crimson red
+            '#20B2AA',  // Teal
+            '#87CEEB',  // Sky blue
+            '#98FB98',  // Pale green
+            '#F0E68C',  // Khaki
+            '#FA8072',  // Salmon
+            '#8B4513',  // Saddle brown
+            '#4169E1',  // Royal blue
+            '#32CD32',  // Lime green
+            '#DA70D6',  // Orchid
+            '#FF6347',  // Tomato
+            '#40E0D0',  // Turquoise
+            '#DDA0DD'   // Plum
+        ];
+        
+        // Function to generate dynamic domain color mapping
+        function generateDomainColorMap(factors) {
+            // Extract unique domains from factors
+            const uniqueDomains = [...new Set(factors
+                .map(factor => factor.domain_name || factor.domain)
+                .filter(domain => domain)
+            )].sort();
+            
+            // Clear existing mapping
+            domainColorMap = {};
+            
+            // Categorical color assignment with maximum visual distinction
+            const smartColorMap = {
+                // Each domain gets a unique, maximally distinct color
+                'FOCAL FACTORS': '#FF3366',       // Pink-red
+                'Focal Factors': '#FF3366',       // Pink-red
+                'Focal': '#FF3366',               // Pink-red
+                
+                'Environmental': '#228B22',       // Forest green
+                'Environmental-Ecosystem': '#228B22', // Forest green (same as Environmental)
+                'Ecosystem': '#228B22',           // Forest green (same as Environmental)
+                
+                'Biology': '#9966CC',             // Medium purple (distinct from Environmental)
+                
+                'Economics': '#1E90FF',           // Dodger blue
+                'Economics-Markets': '#1E90FF',   // Dodger blue (same as Economics)
+                'Markets': '#1E90FF',             // Dodger blue (same as Economics)
+                
+                'Management': '#FF8C00',          // Dark orange
+                'Policy': '#FF8C00',              // Dark orange (same as Management)
+                'Governance': '#FF8C00',          // Dark orange (same as Management)
+                
+                'Social': '#CC99FF',              // Light purple (distinct from Biology)
+                'Community': '#CC99FF',           // Light purple (same as Social)
+                
+                'Stock': '#DC143C',               // Crimson red
+                
+                'Technical': '#20B2AA',           // Light sea green (teal)
+                'Technology': '#20B2AA',          // Light sea green (same as Technical)
+                'Systems': '#20B2AA',             // Light sea green (same as Technical)
+                
+                'Indigenous': '#FFD700',          // Gold
+                'Cultural': '#FFD700',            // Gold (same as Indigenous)
+                
+                'Climate': '#87CEEB',             // Sky blue
+                'Sustainability': '#98FB98',      // Pale green (distinct from Environmental)
+                'Resources': '#F0E68C',           // Khaki
+                'Health': '#FA8072',              // Salmon
+                'Safety': '#FA8072',              // Salmon (same as Health)
             };
-            return colorMap[domain] || '#999999'; // Default gray if domain not found
+            
+            // Assign smart colors first, then use palette for remaining domains
+            let paletteIndex = 0;
+            uniqueDomains.forEach(domain => {
+                if (smartColorMap[domain]) {
+                    domainColorMap[domain] = smartColorMap[domain];
+                } else {
+                    // Use remaining palette colors or generate new ones
+                    if (paletteIndex < colorPalette.length) {
+                        // Skip colors already used in smart mapping
+                        while (paletteIndex < colorPalette.length && 
+                               Object.values(smartColorMap).includes(colorPalette[paletteIndex])) {
+                            paletteIndex++;
+                        }
+                        if (paletteIndex < colorPalette.length) {
+                            domainColorMap[domain] = colorPalette[paletteIndex];
+                            paletteIndex++;
+                        } else {
+                            // Generate additional colors using HSL
+                            const hue = (Object.keys(domainColorMap).length * 137.508) % 360;
+                            const saturation = 65 + (Object.keys(domainColorMap).length % 3) * 10;
+                            const lightness = 55 + (Object.keys(domainColorMap).length % 2) * 10;
+                            domainColorMap[domain] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                        }
+                    } else {
+                        // Generate additional colors using HSL
+                        const hue = (Object.keys(domainColorMap).length * 137.508) % 360;
+                        const saturation = 65 + (Object.keys(domainColorMap).length % 3) * 10;
+                        const lightness = 55 + (Object.keys(domainColorMap).length % 2) * 10;
+                        domainColorMap[domain] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                    }
+                }
+            });
+            
+            console.log('Generated domain color map:', domainColorMap);
+            return domainColorMap;
+        }
+        
+        // Updated getDomainColor function to use dynamic mapping
+        function getDomainColor(domain) {
+            return domainColorMap[domain] || '#999999'; // Default gray if domain not found
         }
 
         // Initialize the application
@@ -9071,6 +9179,9 @@
                 if (!factors.length) {
                     throw new Error('No valid factor data found');
                 }
+
+                // Generate dynamic domain color mapping based on loaded factors
+                generateDomainColorMap(factors);
 
                 domains = Array.from(uniqueDomains).map(name => ({
                     id: name,
