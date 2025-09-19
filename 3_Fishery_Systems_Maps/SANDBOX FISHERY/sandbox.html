@@ -13,10 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology-metrics/2.1.0/graphology-metrics.min.js"></script>
     <!-- Token Diffusion Algorithm loaded dynamically -->
-    <!-- Drawing Layer -->
-    <link rel="stylesheet" href="drawing-controls.css">
-    <script src="drawing-layer.js"></script>
-    <script src="drawing-integration.js"></script>
+    <!-- Drawing Layer removed -->
     <!-- Replace existing Chart.js script with updated version -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js" integrity="sha384-9/LhQeF+1S+LmMo41I/LhRcxXgJQKCnJFcL0GpxIJJg7B5BSgA8f6jeHXFJ9eiDX" crossorigin="anonymous"></script> -->
     <style>
@@ -99,6 +96,17 @@
         .link.weak { 
             stroke-width: 1px; 
         }
+        
+        /* Cluster visualization styles */
+        .cluster-hull {
+            pointer-events: none;
+        }
+        
+        .cluster-label {
+            pointer-events: none;
+            user-select: none;
+        }
+        
         .link.uncertain { 
             display: none;
         }
@@ -2267,6 +2275,8 @@
 ];
         let factors = [];
         let relationships = [];
+        let nodes = []; // Global nodes array for cluster visualization
+        let links = []; // Global links array for cluster visualization
         let simulation;
         let transform = d3.zoomIdentity;
         
@@ -2296,7 +2306,7 @@
         let showChargeVisualization = false;
         let showStrengthVisualization = false;
         let visualTokenIdCounter = 0;
-        let links = [];  // Add this to store link data globally
+        // links already declared above as global variable
         let svg; // Make svg global to access it during reload
         let zoom; // Make zoom behavior global
         let selectedLoopLengths = []; // Track selected feedback loop lengths
@@ -2545,7 +2555,7 @@
         // Initialize visualization with data from Google Sheets
         function initializeVisualization() {
             // Transform the data into the format needed for D3
-            const nodes = factors.map(factor => ({
+            nodes = factors.map(factor => ({
                 id: factor.id,
                 name: factor.name,
                 domain: factor.domain_name,
@@ -2617,6 +2627,8 @@
                 .on("zoom", (event) => {
                     container.attr("transform", event.transform);
                     transform = event.transform;
+                    // Update cluster hulls on zoom/pan
+                    updateClusterHulls();
                 });
 
             svg.call(zoom);
@@ -2672,16 +2684,13 @@
                     const dx = d.target.x - d.source.x,
                           dy = d.target.y - d.source.y,
                           dr = Math.sqrt(dx * dx + dy * dy);
-                    
-                    // Adjust the end point to account for the node radius and line width
-                    const scale = (dr - 8) / dr;  // Subtract node radius from the distance
-                    const endX = d.source.x + dx * scale,
-                          endY = d.source.y + dy * scale;
-                    
-                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${endX},${endY}`;
+                    return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
                 });
 
                 node.attr("transform", d => `translate(${d.x},${d.y})`);
+                
+                // Update cluster hulls when nodes move
+                updateClusterHulls();
                 
                 // Update token visualization when nodes move
                 if (window.tokenOverlay && diffusionModel) {
@@ -3153,6 +3162,41 @@
                 </div>
             `;
             diagnosticsDiv.appendChild(storylineSection);
+
+            // Cluster Detection
+            const clusterSection = createBasicSection("Cluster Detection");
+            clusterSection.querySelector('.filter-section-content').innerHTML = `
+                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                    <i class="fa fa-info-circle"></i> Detect and visualize network clusters
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-size: 11px; color: #666; display: block; margin-bottom: 4px;">Algorithm:</label>
+                    <select id="cluster-algorithm" class="filter-button" style="width: 100%; padding: 4px; font-size: 11px;" onchange="handleClusterAlgorithmChange(this.value)">
+                        <option value="louvain">Louvain (Auto-detect)</option>
+                        <option value="girvan_newman">Girvan-Newman (User-controlled)</option>
+                    </select>
+                </div>
+                <div id="cluster-count-control" style="margin-bottom: 10px; display: none;">
+                    <label style="font-size: 11px; color: #666; display: block; margin-bottom: 4px;">Number of Clusters:</label>
+                    <input type="range" id="cluster-count-slider" min="2" max="10" value="3" style="width: 100%; margin-bottom: 4px;" oninput="updateClusterCount(this.value)">
+                    <div style="font-size: 10px; color: #888; text-align: center;">
+                        <span id="cluster-count-display">3</span> clusters
+                    </div>
+                </div>
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <button id="detect-clusters-btn" class="filter-button" style="flex: 1; padding: 6px; font-size: 11px;" onclick="detectClusters()" title="Detect clusters in the network">
+                        <i class="fa fa-search"></i> Detect Clusters
+                    </button>
+                    <button id="clear-clusters-btn" class="filter-button" style="flex: 1; padding: 6px; font-size: 11px;" onclick="clearClusters()" title="Clear cluster visualization" disabled>
+                        <i class="fa fa-times"></i> Clear
+                    </button>
+                </div>
+                <div id="cluster-info" style="font-size: 11px; color: #666; margin-top: 8px; display: none;">
+                    <div id="cluster-stats"></div>
+                    <div id="cluster-legend" style="margin-top: 8px;"></div>
+                </div>
+            `;
+            diagnosticsDiv.appendChild(clusterSection);
 
             // Node Selector
             const nodeSelectorSection = createBasicSection("Node Selector");
@@ -10026,6 +10070,88 @@ def get_top_centrality_nodes(metric):
     except Exception as e:
         console.error(f"Error calculating {metric} centrality: {str(e)}")
         return json.dumps({'error': f"Error calculating {metric} centrality: {str(e)}"})
+
+# Cluster detection functions
+def detect_clusters(algorithm='louvain', num_clusters=None):
+    """Detect clusters in the network using specified algorithm"""
+    try:
+        G, _ = create_networkx_graph()
+        if G is None:
+            return json.dumps({'error': 'Failed to create graph'})
+        
+        # Import community detection algorithms
+        import networkx.algorithms.community as nx_comm
+        
+        if algorithm == 'louvain':
+            # Louvain algorithm for automatic cluster detection
+            communities = nx_comm.louvain_communities(G, seed=42)
+            
+        elif algorithm == 'girvan_newman':
+            # Girvan-Newman algorithm with user-specified number of clusters
+            if num_clusters is None:
+                num_clusters = 3
+            
+            # Get hierarchical communities and select the desired level
+            communities_generator = nx_comm.girvan_newman(G)
+            communities = None
+            
+            for i, level_communities in enumerate(communities_generator):
+                if len(level_communities) >= num_clusters:
+                    communities = level_communities
+                    break
+                if i > 10:  # Safety limit to prevent infinite loops
+                    break
+            
+            if communities is None:
+                communities = nx_comm.louvain_communities(G, seed=42)  # Fallback
+                
+        else:
+            return json.dumps({'error': f'Unknown algorithm: {algorithm}'})
+        
+        # Convert communities to a format suitable for visualization
+        cluster_data = []
+        node_to_cluster = {}
+        
+        for cluster_id, community in enumerate(communities):
+            cluster_nodes = list(community)
+            cluster_data.append({
+                'id': cluster_id,
+                'nodes': cluster_nodes,
+                'size': len(cluster_nodes)
+            })
+            
+            # Map each node to its cluster
+            for node in cluster_nodes:
+                node_to_cluster[node] = cluster_id
+        
+        # Calculate cluster statistics
+        total_nodes = G.number_of_nodes()
+        num_clusters_found = len(cluster_data)
+        avg_cluster_size = total_nodes / num_clusters_found if num_clusters_found > 0 else 0
+        
+        # Calculate modularity (quality measure for clustering)
+        try:
+            modularity = nx_comm.modularity(G, communities)
+        except:
+            modularity = 0.0
+        
+        result = {
+            'clusters': cluster_data,
+            'node_to_cluster': node_to_cluster,
+            'statistics': {
+                'num_clusters': num_clusters_found,
+                'total_nodes': total_nodes,
+                'avg_cluster_size': round(avg_cluster_size, 2),
+                'modularity': round(modularity, 3)
+            },
+            'algorithm': algorithm
+        }
+        
+        return json.dumps(result)
+        
+    except Exception as e:
+        console.error(f"Error detecting clusters: {str(e)}")
+        return json.dumps({'error': f"Error detecting clusters: {str(e)}"})
 `;
                 
                 pyodide.FS.writeFile('networkx_loader.py', simplifiedCode);
@@ -10151,8 +10277,336 @@ def get_top_centrality_nodes(metric):
         // ...
         // document.querySelectorAll('.centrality-button').forEach(btn => btn.disabled = false);
         enableCentralityButtons();
-        // ...
 
+        // Cluster Detection Functions
+        let currentClusters = null;
+        let clusterColors = [];
+        let selectedClusters = new Set(); // Track selected clusters for filtering
+        
+        // Generate distinct colors for clusters
+        function generateClusterColors(numClusters) {
+            const colors = [
+                '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+                '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
+                '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2',
+                '#A3E4D7', '#F9E79F', '#D5A6BD', '#AED6F1', '#A9DFBF'
+            ];
+            
+            if (numClusters <= colors.length) {
+                return colors.slice(0, numClusters);
+            }
+            
+            // Generate additional colors using HSL if needed
+            const additionalColors = [];
+            for (let i = colors.length; i < numClusters; i++) {
+                const hue = (i * 137.508) % 360;
+                const saturation = 70 + (i % 3) * 10;
+                const lightness = 50 + (i % 2) * 15;
+                additionalColors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            }
+            
+            return [...colors, ...additionalColors];
+        }
+        
+        // Handle cluster algorithm change
+        function handleClusterAlgorithmChange(algorithm) {
+            const clusterCountControl = document.getElementById('cluster-count-control');
+            if (algorithm === 'girvan_newman') {
+                clusterCountControl.style.display = 'block';
+            } else {
+                clusterCountControl.style.display = 'none';
+            }
+        }
+        
+        // Update cluster count display
+        function updateClusterCount(value) {
+            document.getElementById('cluster-count-display').textContent = value;
+        }
+        
+        // Detect clusters using selected algorithm
+        async function detectClusters() {
+            const algorithm = document.getElementById('cluster-algorithm').value;
+            const numClusters = algorithm === 'girvan_newman' ? 
+                parseInt(document.getElementById('cluster-count-slider').value) : null;
+            
+            const detectBtn = document.getElementById('detect-clusters-btn');
+            const clearBtn = document.getElementById('clear-clusters-btn');
+            
+            try {
+                detectBtn.disabled = true;
+                detectBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Detecting...';
+                
+                // Call Python cluster detection function
+                const numClustersParam = numClusters !== null ? numClusters : 'None';
+                const result = await window.pyodide.runPythonAsync(`
+                    from networkx_loader import detect_clusters
+                    detect_clusters('${algorithm}', ${numClustersParam})
+                `);
+                
+                const clusterData = JSON.parse(result);
+                
+                if (clusterData.error) {
+                    throw new Error(clusterData.error);
+                }
+                
+                currentClusters = clusterData;
+                clusterColors = generateClusterColors(clusterData.statistics.num_clusters);
+                
+                // Visualize clusters
+                visualizeClusters(clusterData);
+                
+                // Update UI
+                displayClusterInfo(clusterData);
+                clearBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error detecting clusters:', error);
+                alert('Error detecting clusters: ' + error.message);
+            } finally {
+                detectBtn.disabled = false;
+                detectBtn.innerHTML = '<i class="fa fa-search"></i> Detect Clusters';
+            }
+        }
+        
+        // Function to update cluster hulls dynamically
+        function updateClusterHulls() {
+            if (!currentClusters) return;
+            
+            const container = d3.select('#graph svg g'); // Get the transformed container
+            
+            // Remove existing hulls and labels
+            container.selectAll('.cluster-hull').remove();
+            container.selectAll('.cluster-label').remove();
+            
+            // Recreate hulls with current node positions
+            currentClusters.clusters.forEach((cluster, index) => {
+                // Only show hull if cluster is selected or no clusters are selected
+                const showHull = selectedClusters.size === 0 || selectedClusters.has(index);
+                if (!showHull) return;
+                
+                const clusterNodes = cluster.nodes.map(nodeId => {
+                    const node = nodes.find(n => n.id === nodeId);
+                    return node ? [node.x, node.y] : null;
+                }).filter(pos => pos !== null);
+                
+                if (clusterNodes.length > 2) {
+                    // Calculate convex hull
+                    const hull = d3.polygonHull(clusterNodes);
+                    
+                    if (hull && hull.length > 2) {
+                        // Add padding to hull
+                        const centroid = d3.polygonCentroid(hull);
+                        const paddedHull = hull.map(point => {
+                            const dx = point[0] - centroid[0];
+                            const dy = point[1] - centroid[1];
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+                            const padding = 25; // Padding in pixels
+                            const factor = (distance + padding) / distance;
+                            return [
+                                centroid[0] + dx * factor,
+                                centroid[1] + dy * factor
+                            ];
+                        });
+                        
+                        // Draw hull in the transformed container
+                        container.append('path')
+                            .datum(paddedHull)
+                            .attr('class', 'cluster-hull')
+                            .attr('d', d3.line().curve(d3.curveCardinalClosed.tension(0.1)))
+                            .style('fill', clusterColors[index])
+                            .style('fill-opacity', 0.1)
+                            .style('stroke', clusterColors[index])
+                            .style('stroke-width', 2)
+                            .style('stroke-dasharray', '5,5')
+                            .style('pointer-events', 'none');
+                        
+                        // Add cluster label in the transformed container
+                        container.append('text')
+                            .attr('class', 'cluster-label')
+                            .attr('x', centroid[0])
+                            .attr('y', centroid[1] - 10)
+                            .attr('text-anchor', 'middle')
+                            .style('font-size', '12px')
+                            .style('font-weight', 'bold')
+                            .style('fill', clusterColors[index])
+                            .style('text-shadow', '1px 1px 2px rgba(255,255,255,0.8)')
+                            .style('pointer-events', 'none')
+                            .text(`Cluster ${index + 1}`);
+                    }
+                }
+            });
+        }
+        
+        // Visualize clusters on the network
+        function visualizeClusters(clusterData) {
+            const svg = d3.select('#graph svg');
+            
+            // Color nodes by cluster
+            svg.selectAll('.node circle')
+                .style('fill', d => {
+                    const clusterId = clusterData.node_to_cluster[d.id];
+                    return clusterId !== undefined ? clusterColors[clusterId] : '#999999';
+                })
+                .style('stroke', d => {
+                    const clusterId = clusterData.node_to_cluster[d.id];
+                    return clusterId !== undefined ? d3.rgb(clusterColors[clusterId]).darker(0.5) : '#666666';
+                });
+            
+            // Initial hull creation
+            updateClusterHulls();
+        }
+        
+        // Display cluster information
+        function displayClusterInfo(clusterData) {
+            const clusterInfo = document.getElementById('cluster-info');
+            const clusterStats = document.getElementById('cluster-stats');
+            const clusterLegend = document.getElementById('cluster-legend');
+            
+            // Show cluster statistics
+            clusterStats.innerHTML = `
+                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+                    <div><strong>${clusterData.statistics.num_clusters}</strong> clusters found</div>
+                    <div>Average size: <strong>${clusterData.statistics.avg_cluster_size}</strong> nodes</div>
+                    <div>Modularity: <strong>${clusterData.statistics.modularity}</strong></div>
+                    <div style="font-size: 10px; color: #666; margin-top: 4px;">Algorithm: ${clusterData.algorithm}</div>
+                </div>
+            `;
+            
+            // Show detailed cluster information with node listings
+            const clusterDetails = clusterData.clusters.map((cluster, index) => {
+                const color = clusterColors[index];
+                const isSelected = selectedClusters.has(index);
+                
+                // Get node names for this cluster
+                const nodeNames = cluster.nodes.map(nodeId => {
+                    const factor = factors.find(f => f.id === nodeId);
+                    return factor ? factor.name : nodeId;
+                }).sort(); // Sort alphabetically for better readability
+                
+                const nodeList = nodeNames.map(name => 
+                    `<div style="font-size: 9px; color: #555; margin-left: 18px; padding: 1px 0;">• ${name}</div>`
+                ).join('');
+                
+                return `
+                    <div class="cluster-box" data-cluster-id="${index}" style="margin-bottom: 8px; border: 2px solid ${isSelected ? color : '#e0e0e0'}; border-radius: 4px; padding: 6px; background: ${isSelected ? d3.rgb(color).brighter(2.5) : '#fafafa'}; cursor: pointer; transition: all 0.2s ease;" 
+                         onmouseover="this.style.borderColor='${color}'; this.style.background='${d3.rgb(color).brighter(2.2)}'" 
+                         onmouseout="this.style.borderColor='${isSelected ? color : '#e0e0e0'}'; this.style.background='${isSelected ? d3.rgb(color).brighter(2.5) : '#fafafa'}'" 
+                         onclick="toggleClusterSelection(${index})">
+                        <div style="display: flex; align-items: center; margin-bottom: 4px; font-size: 10px; font-weight: bold;">
+                            <div style="width: 12px; height: 12px; background: ${color}; border-radius: 2px; margin-right: 6px; border: 1px solid ${d3.rgb(color).darker(0.5)};"></div>
+                            <span>Cluster ${index + 1} (${cluster.size} nodes) ${isSelected ? '✓' : ''}</span>
+                        </div>
+                        ${nodeList}
+                    </div>
+                `;
+            }).join('');
+            
+            clusterLegend.innerHTML = `
+                <div style="font-size: 11px; font-weight: bold; margin-bottom: 6px;">Cluster Details:</div>
+                ${clusterDetails}
+            `;
+            
+            clusterInfo.style.display = 'block';
+        }
+        
+        // Toggle cluster selection for filtering
+        function toggleClusterSelection(clusterIndex) {
+            if (selectedClusters.has(clusterIndex)) {
+                selectedClusters.delete(clusterIndex);
+            } else {
+                selectedClusters.add(clusterIndex);
+            }
+            
+            // Update visual feedback
+            displayClusterInfo(currentClusters);
+            
+            // Apply cluster filtering
+            applyClusterFilter();
+        }
+        
+        // Apply cluster filtering to nodes and links
+        function applyClusterFilter() {
+            if (!currentClusters) return;
+            
+            const svg = d3.select('#graph svg');
+            
+            if (selectedClusters.size === 0) {
+                // No clusters selected - show all nodes
+                svg.selectAll('.node')
+                    .style('opacity', 1)
+                    .style('display', 'block');
+                svg.selectAll('.link')
+                    .style('opacity', 1)
+                    .style('display', 'block');
+                return;
+            }
+            
+            // Get all node IDs from selected clusters
+            const selectedNodeIds = new Set();
+            selectedClusters.forEach(clusterIndex => {
+                if (currentClusters.clusters[clusterIndex]) {
+                    currentClusters.clusters[clusterIndex].nodes.forEach(nodeId => {
+                        selectedNodeIds.add(nodeId);
+                    });
+                }
+            });
+            
+            // Filter nodes
+            svg.selectAll('.node')
+                .style('opacity', d => selectedNodeIds.has(d.id) ? 1 : 0.1)
+                .style('display', d => selectedNodeIds.has(d.id) ? 'block' : 'none');
+            
+            // Filter links - only show links between selected nodes
+            svg.selectAll('.link')
+                .style('opacity', d => {
+                    const sourceSelected = selectedNodeIds.has(d.source.id);
+                    const targetSelected = selectedNodeIds.has(d.target.id);
+                    return (sourceSelected && targetSelected) ? 1 : 0.1;
+                })
+                .style('display', d => {
+                    const sourceSelected = selectedNodeIds.has(d.source.id);
+                    const targetSelected = selectedNodeIds.has(d.target.id);
+                    return (sourceSelected && targetSelected) ? 'block' : 'none';
+                });
+            
+            // Update cluster hulls to only show selected clusters
+            updateClusterHulls();
+        }
+        
+        // Clear cluster visualization
+        function clearClusters() {
+            const svg = d3.select('#graph svg');
+            
+            // Remove cluster visualization
+            svg.selectAll('.cluster-hull').remove();
+            svg.selectAll('.cluster-label').remove();
+            
+            // Reset node colors to original domain colors
+            svg.selectAll('.node circle')
+                .style('fill', d => getDomainColor(d.domain))
+                .style('stroke', d => d3.rgb(getDomainColor(d.domain)).darker(0.5));
+            
+            // Reset node and link visibility
+            svg.selectAll('.node')
+                .style('opacity', 1)
+                .style('display', 'block');
+            svg.selectAll('.link')
+                .style('opacity', 1)
+                .style('display', 'block');
+            
+            // Hide cluster info
+            document.getElementById('cluster-info').style.display = 'none';
+            
+            // Reset cluster data and selections
+            currentClusters = null;
+            clusterColors = [];
+            selectedClusters.clear();
+            
+            // Enable detect button, disable clear button
+            document.getElementById('detect-clusters-btn').disabled = false;
+            document.getElementById('clear-clusters-btn').disabled = true;
+        }
+        
         // In the HTML, update each centrality button to include a data-metric attribute and remove any disabled attribute:
         // <button class="centrality-button" data-metric="degree">Degree</button>
         // <button class="centrality-button" data-metric="betweenness">Betweenness</button>
