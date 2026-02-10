@@ -1,0 +1,16 @@
+{
+  "id": "sessf",
+  "name": "SESSF Fishery",
+  "title": "SESSF Fishery Systems Map - Interactive Visualization",
+  "description": "Southern and Eastern Scalefish and Shark Fishery systems map covering biological, economic, environmental, management, and social domains.",
+  "spreadsheets": {
+    "main": "1w9kl6vpPDiVVfjDEIowZVO9zj9REHr5TwUeD515ZuuU",
+    "draft": "1mysczycBt9RnHbfdDNVcZdnI2p6OD1VIfwz9_r_DU0A"
+  },
+  "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
+  "images": {
+    "systemImage": { "src": "system-image.png", "alt": "Blue Grenadier" },
+    "logo": null,
+    "thumbnail": { "src": "system-image.png", "alt": "SESSF Fishery" }
+  }
+}

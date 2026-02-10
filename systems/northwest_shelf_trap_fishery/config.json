@@ -1,0 +1,21 @@
+{
+  "id": "northwest_shelf_trap_fishery",
+  "name": "Northwest Shelf Trap Fishery",
+  "title": "Northwest Shelf Trap Fishery Systems Map - Interactive Visualization",
+  "description": "",
+  "spreadsheets": {
+    "main": "1VBFZjqjqxqtcOJwF3ghJlDTsc6Z_RBckD3uQQNulljY",
+    "draft": "1VBFZjqjqxqtcOJwF3ghJlDTsc6Z_RBckD3uQQNulljY"
+  },
+  "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
+  "images": {
+    "systemImage": {
+      "src": "system-image.png",
+      "alt": "Northwest Shelf Trap Fishery"
+    },
+    "thumbnail": {
+      "src": "thumbnail.png",
+      "alt": "Northwest Shelf Trap Fishery"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "id": "northern_prawn_fishery",
+  "name": "Northern Prawn Fishery",
+  "title": "Northern Prawn Fishery Systems Map - Interactive Visualization",
+  "description": "The Northern Prawn Fishery (NPF) is a multi-species trawl fishery operating in the Gulf of Carpentaria",
+  "spreadsheets": {
+    "main": "1lxG-9n-kTJm9xSZonAxHHMdJJkBMhJ8sm4HOfNyDIoE",
+    "draft": "1lxG-9n-kTJm9xSZonAxHHMdJJkBMhJ8sm4HOfNyDIoE"
+  },
+  "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
+  "images": {
+    "systemImage": {
+      "src": "system-image.png",
+      "alt": "Northern Prawn Fishery"
+    },
+    "thumbnail": {
+      "src": "thumbnail.png",
+      "alt": "Northern Prawn Fishery"
+    }
+  }
+}
