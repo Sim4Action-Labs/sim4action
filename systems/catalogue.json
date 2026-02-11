@@ -10,7 +10,7 @@
       "description": "Southern and Eastern Scalefish and Shark Fishery systems map covering biological, economic, environmental, management, and social domains.",
       "thumbnail": "sessf/system-image.png",
       "category": "Fisheries",
-      "source_type": "workshop"
+      "source_type": "gen_ai"
     },
     {
       "id": "coastal_basins",
