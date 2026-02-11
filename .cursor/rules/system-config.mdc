@@ -1,0 +1,144 @@
+---
+description: Rules for system map configuration files and the catalogue registry.
+globs:
+  - systems/**/*.json
+  - systems/catalogue.json
+---
+
+# System Configuration Rules
+
+## Catalogue Schema (`systems/catalogue.json`)
+The catalogue is the master registry of all system maps:
+```json
+{
+  "categories": ["Category A", "Category B"],
+  "systems": [
+    {
+      "id": "my_system",
+      "name": "My System Map",
+      "description": "A socio-environmental systems map covering...",
+      "thumbnail": "my_system/system-image.png",
+      "category": "Category A"
+    }
+  ]
+}
+```
+
+### Catalogue Fields
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `categories` | `string[]` | Yes | Sorted list of all categories |
+| `systems` | `object[]` | Yes | Array of system entries |
+| `systems[].id` | `string` | Yes | URL-safe ID (lowercase, underscores) |
+| `systems[].name` | `string` | Yes | Display name |
+| `systems[].description` | `string` | Yes | Short description for catalogue cards |
+| `systems[].thumbnail` | `string\|null` | No | Relative path from `systems/` to thumbnail |
+| `systems[].category` | `string` | Yes | Must exist in `categories` array |
+
+### Rules
+1. **IDs must be unique** across all systems
+2. **Categories array** must contain all categories referenced by systems
+3. **Thumbnail paths** are relative to the `systems/` directory
+4. **Keep categories sorted** alphabetically
+5. **Clean up categories** — remove categories with no remaining systems
+
+## System Config Schema (`systems/{id}/config.json`)
+```json
+{
+  "id": "my_system",
+  "name": "My System",
+  "title": "My System Systems Map - Interactive Visualization",
+  "description": "A socio-environmental systems map for...",
+  "spreadsheets": {
+    "main": "GOOGLE_SHEETS_SPREADSHEET_ID",
+    "draft": "GOOGLE_SHEETS_SPREADSHEET_ID"
+  },
+  "apiKey": "GOOGLE_SHEETS_API_KEY",
+  "images": {
+    "systemImage": { "src": "system-image.png", "alt": "My System" },
+    "thumbnail": { "src": "thumbnail.png", "alt": "My System" }
+  }
+}
+```
+
+### Config Fields
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `id` | `string` | Yes | Must match the directory name |
+| `name` | `string` | Yes | Display name |
+| `title` | `string` | Yes | Full page title (format: `{Name} Systems Map - Interactive Visualization`) |
+| `description` | `string` | Yes | Description (same as catalogue entry) |
+| `spreadsheets.main` | `string` | Yes | Google Sheets ID for the main data source |
+| `spreadsheets.draft` | `string` | No | Google Sheets ID for draft version (can be same as main) |
+| `apiKey` | `string` | Yes | Google Sheets API key |
+| `images.systemImage` | `object` | No | `{src, alt}` for the main system image |
+| `images.thumbnail` | `object` | No | `{src, alt}` for the thumbnail |
+| `images.logo` | `object\|null` | No | Optional logo image |
+
+### Google Sheets ID
+The spreadsheet ID is extracted from Google Sheets URLs:
+```
+https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit...
+                                       ^^^^^^^^^^^^^^^^
+```
+Only store the ID, not the full URL.
+
+## Adding a New System
+
+### Via API (preferred)
+POST to `/api/systems` with:
+```json
+{
+  "id": "my_system",
+  "name": "My System",
+  "description": "...",
+  "category": "My Category",
+  "spreadsheets": { "main": "SHEET_ID" },
+  "apiKey": "API_KEY",
+  "systemImage_base64": "data:image/png;base64,..."
+}
+```
+
+### Manually
+1. Create `systems/my_system/` directory
+2. Create `config.json` following the schema above
+3. Add `system-image.png` and/or `thumbnail.png` (optional)
+4. Update `systems/catalogue.json`:
+   - Add system to `systems` array
+   - Add category to `categories` if new
+
+## Google Sheets Structure
+Each system's spreadsheet MUST have two tabs:
+
+### FACTORS Tab (Columns A–E)
+| Col | Header | Required | Format |
+|-----|--------|----------|--------|
+| A | `factor_id` | Yes | `V1`, `V2`, ... |
+| B | `name` | Yes | Display name |
+| C | `domain_name` | Yes | Domain category |
+| D | `intervenable` | No | `Yes` / `No` |
+| E | `definition` | No | Description |
+
+### RELATIONSHIPS Tab (Columns A–I)
+| Col | Header | Required | Format |
+|-----|--------|----------|--------|
+| A | `relationship_id` | No | `R1`, `R2`, ... |
+| B | `from` | No | Source name (informational) |
+| C | `to` | No | Target name (informational) |
+| D | `from_factor_id` | Yes | Must match FACTORS col A |
+| E | `to_factor_id` | Yes | Must match FACTORS col A |
+| F | `polarity` | No | `same` / `opposite` |
+| G | `strength` | No | `strong` / `medium` / `weak` |
+| H | `delay` | No | `days` / `months` / `years` |
+| I | `definition` | No | Link description |
+
+## Existing Systems
+The platform currently hosts several system maps. Check `systems/catalogue.json` for the up-to-date list. Systems can span any domain (e.g., fisheries, water resources, urban planning, climate adaptation). The platform is domain-agnostic — categories and systems are user-defined.
+
+## Important Constraints
+1. **Never modify system configs without updating the catalogue** (and vice versa)
+2. **System IDs must be filesystem-safe**: `[a-z0-9_-]` only
+3. **Spreadsheets must be publicly shared** (Anyone with link → Viewer)
+4. **Image paths in config are relative** to the system's own directory
+5. **Thumbnail paths in catalogue are relative** to the `systems/` directory
+6. **The API key is shared** across all systems (consider this for security)

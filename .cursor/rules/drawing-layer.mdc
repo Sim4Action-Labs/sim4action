@@ -1,0 +1,152 @@
+---
+description: Rules for the SVG drawing and annotation layer.
+globs:
+  - platform/drawing-layer.js
+  - platform/drawing-integration.js
+  - platform/drawing-controls.css
+---
+
+# Drawing Layer Rules
+
+## Architecture
+The drawing system has three files:
+1. **`drawing-layer.js`** — Core `DrawingLayer` class (SVG annotation engine)
+2. **`drawing-integration.js`** — Toolbar UI, event wiring, auto-save
+3. **`drawing-controls.css`** — Toolbar and drawing layer styles
+
+## DrawingLayer Class (`drawing-layer.js`)
+
+### Constructor
+```javascript
+const drawingLayer = new DrawingLayer(svgElement);
+// svgElement = D3 selection of the main SVG
+```
+
+### SVG Group Structure
+```
+<g class="drawing-layer">        ← Master group (pointer-events toggled)
+  <g class="drawing-paths">      ← Freehand pen strokes
+  <g class="drawing-shapes">     ← Circles and rectangles
+  <g class="drawing-text">       ← Text annotations
+</g>
+```
+
+### Available Tools
+| Tool | Element | Interaction |
+|------|---------|-------------|
+| `pen` | `<path>` | Click-drag to draw freehand |
+| `circle` | `<circle>` | Click-drag to set center and radius |
+| `rectangle` | `<rect>` | Click-drag to define corners |
+| `text` | `<text>` | Click to place, prompt for text input |
+
+### Key Properties
+```javascript
+this.drawingMode     // boolean: is drawing enabled?
+this.currentTool     // 'pen' | 'circle' | 'rectangle' | 'text'
+this.currentColor    // hex color string (default: '#ff0000')
+this.currentStrokeWidth  // number (default: 2)
+this.annotations     // array of annotation objects
+this.history         // array of serialized states (max 50)
+this.historyIndex    // current position in history
+```
+
+### Key Methods
+```javascript
+enableDrawing()          // Enable drawing mode, attach event listeners
+disableDrawing()         // Disable drawing mode, remove listeners
+setTool(tool)            // Change current drawing tool
+setColor(color)          // Change current stroke/fill color
+setStrokeWidth(width)    // Change current stroke width
+undo()                   // Step back in history
+redo()                   // Step forward in history
+clearAll(saveToHistory)  // Remove all annotations
+exportAnnotations()      // Returns JSON string of all annotations
+importAnnotations(json)  // Load annotations from JSON string
+saveToLocalStorage(key)  // Persist to localStorage
+loadFromLocalStorage(key) // Restore from localStorage
+```
+
+### Annotation Object Format
+```javascript
+{
+    type: 'path' | 'circle' | 'rectangle' | 'text',
+    element: d3Selection,   // D3 selection (not serialized)
+    data: 'M10,20L30,40',  // SVG path data (paths only)
+    text: 'My note',       // Text content (text only)
+    x: 100, y: 200,        // Position (text only)
+    color: '#ff0000',
+    strokeWidth: 2
+}
+```
+
+### History System
+- Max 50 history entries
+- `saveToHistory()` serializes current annotations (strips D3 elements)
+- `restoreFromHistory()` clears and recreates annotations from serialized data
+- Undo/redo manipulate `historyIndex`
+
+## Drawing Integration (`drawing-integration.js`)
+
+### Initialization
+```javascript
+// Auto-initializes on DOMContentLoaded (2s delay) and window.load (1s delay)
+// Waits for SVG element to be available
+function initializeDrawingLayer() {
+    const svg = window.svgElement || d3.select("#graph svg");
+    drawingLayer = new DrawingLayer(svg);
+    addDrawingToolbar();
+    addToolbarToggle();
+    drawingLayer.loadFromLocalStorage('sim4action-annotations');
+}
+```
+
+### Auto-Save
+Annotations are auto-saved every 30 seconds to localStorage.
+
+### Global Functions (attached to window)
+All toolbar functions are global for inline `onclick` handlers:
+- `toggleDrawingMode()`, `toggleToolbarVisibility()`
+- `selectTool(tool)`, `changeColor(color)`, `changeStrokeWidth(width)`
+- `undoDrawing()`, `redoDrawing()`
+- `saveAnnotations()`, `loadAnnotations()`, `clearAllDrawings()`
+- `exportAnnotations()`, `importAnnotations()`
+
+### LocalStorage Key
+Currently hardcoded to `'sandbox-fishery-annotations'` (legacy naming). When making the drawing layer system-aware, change this to include the system ID:
+```javascript
+const storageKey = `sim4action-annotations-${systemId}`;
+```
+
+## CSS Structure (`drawing-controls.css`)
+
+### Toolbar Positioning
+```css
+.drawing-toolbar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+.toolbar-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 240px;
+    z-index: 1001;
+}
+```
+
+### Responsive
+At `max-width: 768px`:
+- Toolbar goes full-width
+- Tool buttons become 4-column grid
+- Action buttons become 3-column grid
+
+## Development Guidelines
+1. **Drawing layer must be on top** of the D3 visualization but below UI modals
+2. **Toggle pointer-events** to switch between drawing and graph interaction
+3. **D3 event namespaces** are used (`.drawing`) to avoid conflicts: `svg.on('mousedown.drawing', ...)`
+4. **Cursor changes** to `crosshair` when drawing is enabled
+5. **Don't break zoom/pan** — drawing mode should fully capture mouse events when active
+6. **Export/import uses JSON** — annotations can be shared between sessions
+7. **History limit is 50** — prevents memory issues with many annotations
+8. **Text uses `prompt()`** — consider replacing with an inline text input for better UX

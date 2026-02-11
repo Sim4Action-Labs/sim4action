@@ -7,10 +7,24 @@
     "main": "1nCxETwLSg8HOCHobVsE_C_YJ29Dqs9jer4ZDLGYOZvA",
     "draft": "1CCf41rrYvp_0dXzTRcWnFcR9t58YcdlJ64mF_h8lEo8"
   },
+  "source_type": "workshop",
   "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
   "images": {
-    "systemImage": { "src": "system-image.png", "alt": "Coastal Basin" },
+    "systemImage": {
+      "src": "system-image.png",
+      "alt": "Coastal Basin"
+    },
     "logo": null,
-    "thumbnail": { "src": "system-image.png", "alt": "Coastal Basins" }
-  }
+    "thumbnail": {
+      "src": "system-image.png",
+      "alt": "Coastal Basins"
+    }
+  },
+  "location": {
+    "lat": -32.286697,
+    "lng": -71.130981,
+    "name": "Coastal Basins",
+    "zoom": 5
+  },
+  "gdrive_md_folder": null
 }

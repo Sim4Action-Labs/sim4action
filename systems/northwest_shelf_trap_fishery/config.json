@@ -7,6 +7,7 @@
     "main": "1VBFZjqjqxqtcOJwF3ghJlDTsc6Z_RBckD3uQQNulljY",
     "draft": "1VBFZjqjqxqtcOJwF3ghJlDTsc6Z_RBckD3uQQNulljY"
   },
+  "source_type": "gen_ai",
   "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
   "images": {
     "systemImage": {
@@ -17,5 +18,12 @@
       "src": "thumbnail.png",
       "alt": "Northwest Shelf Trap Fishery"
     }
-  }
+  },
+  "location": {
+    "lat": -20.877418,
+    "lng": 114.23584,
+    "name": "Northwest Shelf Trap Fishery",
+    "zoom": 5
+  },
+  "gdrive_md_folder": null
 }

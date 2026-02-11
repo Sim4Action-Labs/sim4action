@@ -2037,6 +2037,800 @@
             border-color: #007bff;
             box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
         }
+
+        /* ==============================================
+           DARK THEME — matching landing/overview pages
+           ============================================== */
+
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d1f3c 100%);
+            color: #e0e6ed;
+        }
+
+        /* Graph area */
+        #graph {
+            background-color: #0d1b2a;
+            background: linear-gradient(180deg, #0a1628 0%, #0d1b2a 40%, #0f2035 100%);
+        }
+
+        /* Top header bar */
+        #lab-selector-buttons {
+            background-color: rgba(10, 22, 40, 0.95);
+            border-bottom: 1px solid rgba(100, 181, 246, 0.15);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+        }
+
+        #lab-selector-buttons button {
+            background-color: rgba(26, 42, 74, 0.8);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #b0c4de;
+        }
+
+        #lab-selector-buttons button:hover {
+            background-color: rgba(100, 181, 246, 0.15);
+            color: #e0e6ed;
+        }
+
+        .lab-selector-button.active {
+            background-color: #1e88e5 !important;
+            color: white !important;
+            border-color: #1565c0 !important;
+        }
+
+        /* Sidebar / Filters panel */
+        #filters {
+            background-color: rgba(13, 27, 42, 0.95);
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            box-shadow: 2px 0 16px rgba(0,0,0,0.4);
+        }
+
+        .filter-section {
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .filter-section-header {
+            background-color: rgba(26, 42, 74, 0.7);
+            color: #e0e6ed;
+        }
+
+        .filter-section-header h4 {
+            color: #e0e6ed;
+        }
+
+        .filter-button {
+            background-color: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.12);
+            color: #b0c4de;
+        }
+
+        .filter-button:hover {
+            background-color: rgba(100, 181, 246, 0.12);
+            color: #e0e6ed;
+        }
+
+        .filter-button.active {
+            background-color: #1e88e5;
+            color: white;
+            border-color: #1565c0;
+        }
+
+        .filter-button:disabled {
+            background-color: rgba(26, 42, 74, 0.3);
+            color: rgba(176, 196, 222, 0.4);
+        }
+
+        .section-label {
+            color: #8ab4d8;
+        }
+
+        select {
+            background-color: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        /* Node labels on dark background */
+        .node text {
+            fill: #e0e6ed;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5);
+        }
+
+        .node.focal text {
+            fill: #ffffff;
+        }
+
+        .node.dimmed text {
+            opacity: 0.15;
+        }
+
+        .node circle {
+            stroke: rgba(255,255,255,0.3);
+        }
+
+        .node.focal circle {
+            stroke: rgba(255,255,255,0.6);
+        }
+
+        .node.highlighted circle {
+            stroke: #64b5f6;
+        }
+
+        /* Tooltip */
+        #tooltip {
+            background-color: rgba(13, 27, 42, 0.95);
+            border-color: rgba(100, 181, 246, 0.25);
+            color: #e0e6ed;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        /* Legend */
+        #legend {
+            background-color: rgba(13, 27, 42, 0.9);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            color: #b0c4de;
+        }
+
+        /* Controls panel */
+        #controls {
+            background-color: rgba(13, 27, 42, 0.9);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        #controls button {
+            background-color: rgba(26, 42, 74, 0.7);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #b0c4de;
+        }
+
+        #controls button:hover {
+            background-color: rgba(100, 181, 246, 0.15);
+            color: #e0e6ed;
+        }
+
+        /* Mode container */
+        .mode-container {
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        /* Toggle switch */
+        .slider {
+            background-color: rgba(100, 181, 246, 0.2);
+        }
+
+        /* Info icon */
+        .info-icon {
+            background-color: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #8ab4d8;
+        }
+
+        .info-icon:hover {
+            background-color: rgba(100, 181, 246, 0.15);
+            color: #64b5f6;
+            border-color: #1e88e5;
+        }
+
+        /* Tooltip content (info popups) */
+        .tooltip-content {
+            background: rgba(13, 27, 42, 0.95);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #b0c4de;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        /* Centrality explanation */
+        .centrality-explanation {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .centrality-explanation h4 {
+            color: #64b5f6;
+        }
+
+        .centrality-explanation p {
+            color: #a0b4c8;
+        }
+
+        /* Centrality buttons */
+        .centrality-button {
+            background-color: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.15);
+            color: #b0c4de;
+        }
+
+        .centrality-button:hover {
+            background-color: rgba(100, 181, 246, 0.1);
+            border-color: #1e88e5;
+            color: #e0e6ed;
+        }
+
+        .centrality-button.active {
+            background-color: #1e88e5;
+            color: white;
+            border-color: #1565c0;
+        }
+
+        /* Results panel */
+        .results-panel {
+            background: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.15);
+            color: #b0c4de;
+        }
+
+        /* Centrality popup */
+        #centrality-popup {
+            background-color: rgba(13, 27, 42, 0.98);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+
+        #centrality-popup-header {
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        #centrality-popup-header h2 {
+            color: #e0e6ed;
+        }
+
+        #centrality-popup-close {
+            color: #8ab4d8;
+        }
+
+        #centrality-popup-close:hover {
+            color: #e0e6ed;
+        }
+
+        .centrality-section {
+            background-color: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .centrality-section h3 {
+            color: #64b5f6;
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .centrality-section p {
+            color: #a0b4c8;
+        }
+
+        /* Centrality table */
+        .centrality-table th {
+            background-color: rgba(26, 42, 74, 0.7);
+            color: #8ab4d8;
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .centrality-table td {
+            color: #b0c4de;
+            border-color: rgba(100, 181, 246, 0.08);
+        }
+
+        .centrality-table tr:nth-child(even) {
+            background-color: rgba(26, 42, 74, 0.3);
+        }
+
+        .centrality-table tr:hover {
+            background-color: rgba(100, 181, 246, 0.08);
+        }
+
+        .highlight-cell {
+            color: #64b5f6;
+        }
+
+        /* Radar chart items */
+        .radar-chart-item {
+            background-color: rgba(26, 42, 74, 0.6);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .radar-chart-title {
+            color: #b0c4de;
+        }
+
+        /* Feedback loop items */
+        .feedback-loop-item {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.12);
+            color: #b0c4de;
+        }
+
+        .feedback-loop-item:hover {
+            background: rgba(100, 181, 246, 0.08);
+            border-color: #1e88e5;
+        }
+
+        .feedback-loop-item.selected {
+            background: rgba(30, 136, 229, 0.15);
+            border-color: #1e88e5;
+        }
+
+        #feedback-loop-list {
+            border-color: rgba(100, 181, 246, 0.1);
+        }
+
+        .loop-nodes {
+            color: #a0b4c8;
+        }
+
+        /* Token diffusion controls */
+        .diffusion-controls {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .diffusion-button.secondary {
+            background: linear-gradient(135deg, rgba(26, 42, 74, 0.7) 0%, rgba(13, 27, 42, 0.8) 100%);
+            color: #b0c4de;
+            border-color: rgba(100, 181, 246, 0.2);
+        }
+
+        .diffusion-button.secondary:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(100, 181, 246, 0.15) 0%, rgba(100, 181, 246, 0.1) 100%);
+            border-color: rgba(100, 181, 246, 0.3);
+        }
+
+        .diffusion-button.secondary:disabled {
+            background: rgba(26, 42, 74, 0.3);
+            color: rgba(176, 196, 222, 0.3);
+            border-color: rgba(100, 181, 246, 0.08);
+        }
+
+        /* Speed buttons */
+        .speed-button {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.15);
+            color: #8ab4d8;
+        }
+
+        .speed-button:hover:not(:disabled) {
+            background: rgba(100, 181, 246, 0.12);
+            border-color: rgba(100, 181, 246, 0.3);
+        }
+
+        .speed-button:disabled {
+            background: rgba(26, 42, 74, 0.2);
+            color: rgba(176, 196, 222, 0.25);
+            border-color: rgba(100, 181, 246, 0.05);
+        }
+
+        /* Viz toggle buttons */
+        .viz-toggle-button {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.15);
+            color: #8ab4d8;
+        }
+
+        .viz-toggle-button:hover:not(:disabled) {
+            background: rgba(100, 181, 246, 0.12);
+            border-color: rgba(100, 181, 246, 0.3);
+        }
+
+        .viz-toggle-button:disabled {
+            background: rgba(26, 42, 74, 0.2);
+            color: rgba(176, 196, 222, 0.25);
+            border-color: rgba(100, 181, 246, 0.05);
+        }
+
+        /* Dashboard */
+        .diffusion-dashboard {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .stat-card {
+            background: rgba(13, 27, 42, 0.7);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .stat-card.positive {
+            border-left-color: #4ecdc4;
+            background: linear-gradient(135deg, rgba(13, 27, 42, 0.8) 0%, rgba(78, 205, 196, 0.08) 100%);
+        }
+
+        .stat-card.negative {
+            border-left-color: #ff6b6b;
+            background: linear-gradient(135deg, rgba(13, 27, 42, 0.8) 0%, rgba(255, 107, 107, 0.08) 100%);
+        }
+
+        .stat-label {
+            color: #7a8fa5;
+        }
+
+        .stat-value {
+            color: #e0e6ed;
+        }
+
+        .dashboard-section {
+            border-color: rgba(100, 181, 246, 0.1);
+        }
+
+        .node-activity {
+            color: #b0c4de;
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.1);
+        }
+
+        .health-label {
+            color: #7a8fa5;
+        }
+
+        .progress-bar {
+            background: rgba(26, 42, 74, 0.6);
+        }
+
+        /* Token modal */
+        .token-modal-content {
+            background-color: rgba(13, 27, 42, 0.98);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+            color: #e0e6ed;
+        }
+
+        .token-modal-header {
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .token-modal-close {
+            color: #8ab4d8;
+        }
+
+        .token-modal-close:hover {
+            color: #e0e6ed;
+        }
+
+        .token-input-group label {
+            color: #b0c4de;
+        }
+
+        .token-input-group input {
+            background-color: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        .node-selection-list {
+            background: rgba(26, 42, 74, 0.3);
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .node-item:hover {
+            background-color: rgba(100, 181, 246, 0.08);
+        }
+
+        .node-item.selected {
+            background-color: rgba(30, 136, 229, 0.15);
+            border-color: #1e88e5;
+        }
+
+        .node-name {
+            color: #e0e6ed;
+        }
+
+        .node-domain {
+            color: #7a8fa5;
+        }
+
+        .node-token-input {
+            background-color: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        .charge-button {
+            border-color: rgba(100, 181, 246, 0.2);
+        }
+
+        .charge-label {
+            color: #8ab4d8;
+        }
+
+        /* Floating results window */
+        .results-window {
+            background: rgba(13, 27, 42, 0.98);
+            border-color: #1e88e5;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+        }
+
+        .results-content {
+            color: #e0e6ed;
+        }
+
+        .results-button {
+            background: rgba(26, 42, 74, 0.6);
+            border-color: #1e88e5;
+            color: #64b5f6;
+        }
+
+        .results-button:hover {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .results-button.active {
+            background: #1e88e5;
+            color: white;
+        }
+
+        .results-summary {
+            background: rgba(26, 42, 74, 0.5);
+            color: #b0c4de;
+        }
+
+        .summary-label {
+            color: #8ab4d8;
+        }
+
+        .summary-value {
+            color: #64b5f6;
+        }
+
+        /* Node status section */
+        .node-status-section {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .status-title {
+            color: #e0e6ed;
+        }
+
+        .status-column {
+            background: rgba(13, 27, 42, 0.5);
+            border-color: rgba(100, 181, 246, 0.1);
+        }
+
+        .column-title.increasing {
+            background: rgba(40, 167, 69, 0.15);
+        }
+
+        .column-title.decreasing {
+            background: rgba(220, 53, 69, 0.15);
+        }
+
+        /* Node selector container */
+        .node-selector-container {
+            background: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .node-selector-container label {
+            color: #8ab4d8;
+        }
+
+        .node-selector {
+            background: rgba(26, 42, 74, 0.6);
+            border-color: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        /* Chart containers */
+        .chart-container {
+            border-color: rgba(100, 181, 246, 0.15);
+            background: rgba(13, 27, 42, 0.5);
+        }
+
+        .individual-charts-container {
+            background: rgba(26, 42, 74, 0.3);
+            border-color: rgba(100, 181, 246, 0.12);
+        }
+
+        .individual-chart-item {
+            background: rgba(26, 42, 74, 0.5);
+            border-color: rgba(100, 181, 246, 0.1);
+        }
+
+        .individual-chart-title {
+            color: #b0c4de;
+        }
+
+        .individual-chart-svg {
+            border-color: rgba(100, 181, 246, 0.08);
+        }
+
+        /* View toggle container */
+        .view-toggle-container {
+            background: linear-gradient(135deg, rgba(26, 42, 74, 0.7) 0%, rgba(13, 27, 42, 0.8) 100%);
+            border-color: rgba(100, 181, 246, 0.15);
+        }
+
+        .toggle-label {
+            color: #b0c4de;
+        }
+
+        .toggle-label-text {
+            color: #64b5f6;
+        }
+
+        #view-mode-description {
+            color: #7a8fa5;
+        }
+
+        /* No data */
+        .no-data {
+            background: rgba(26, 42, 74, 0.4);
+            border-color: rgba(100, 181, 246, 0.15);
+            color: #7a8fa5;
+        }
+
+        /* Metric badges */
+        .metric-badge {
+            background-color: rgba(100, 181, 246, 0.1);
+            color: #b0c4de;
+        }
+
+        .metric-badge[data-metric="degree"] {
+            background-color: rgba(30, 136, 229, 0.15);
+            color: #64b5f6;
+        }
+
+        .metric-badge[data-metric="betweenness"] {
+            background-color: rgba(40, 167, 69, 0.15);
+            color: #66bb6a;
+        }
+
+        .metric-badge[data-metric="closeness"] {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #ffca28;
+        }
+
+        .metric-badge[data-metric="eigenvector"] {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: #ef5350;
+        }
+
+        .metric-badge[data-metric="katz"] {
+            background-color: rgba(100, 181, 246, 0.12);
+            color: #8ab4d8;
+        }
+
+        /* Strength & delay indicators */
+        .strength-indicator {
+            background-color: #8ab4d8;
+        }
+
+        .strength-indicator.uncertain {
+            border-top-color: #8ab4d8;
+        }
+
+        .arrow-indicator::after {
+            border-left-color: inherit;
+        }
+
+        /* System info */
+        #system-info p {
+            color: #e0e6ed;
+            background-color: rgba(13, 27, 42, 0.7);
+        }
+
+        /* Token count text */
+        .token-count {
+            fill: #e0e6ed;
+        }
+
+        .token-count-bg {
+            fill: rgba(13, 27, 42, 0.9);
+            stroke: rgba(100, 181, 246, 0.2);
+        }
+
+        .token-counter {
+            fill: #e0e6ed;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Simulation status (keep colored backgrounds but adjust) */
+        .status-ready {
+            background: rgba(40, 167, 69, 0.15);
+            color: #66bb6a;
+            border-color: rgba(40, 167, 69, 0.3);
+        }
+
+        .status-running {
+            background: rgba(255, 193, 7, 0.15);
+            color: #ffca28;
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+
+        .status-paused {
+            background: rgba(220, 53, 69, 0.15);
+            color: #ef5350;
+            border-color: rgba(220, 53, 69, 0.3);
+        }
+
+        /* Delay indicators in dark theme */
+        .filter-button[data-delay="show_all"] .delay-indicator,
+        .filter-button[data-delay="days"] .delay-indicator {
+            border-top-color: #8ab4d8;
+        }
+
+        .filter-button[data-delay="months"] .delay-indicator,
+        .filter-button[data-delay="years"] .delay-indicator,
+        .filter-button[data-delay="decade"] .delay-indicator {
+            background-image: repeating-linear-gradient(
+                to right,
+                #8ab4d8 0,
+                #8ab4d8 8px,
+                transparent 8px,
+                transparent 12px
+            );
+        }
+
+        /* Invert logo from black to white for dark theme */
+        #logo {
+            filter: invert(1) brightness(2);
+        }
+
+        /* Loop graph background */
+        #loop-graph {
+            background: #0d1b2a !important;
+        }
+
+        /* Override inline styles in dynamically generated filter content */
+        #filters .lab-intro div[style] {
+            background: rgba(26, 42, 74, 0.5) !important;
+            border-left-color: #1e88e5 !important;
+            color: #b0c4de !important;
+        }
+
+        #filters .lab-intro p {
+            color: #b0c4de !important;
+        }
+
+        #filters .filter-section-content div[style*="background: #f8f9fa"],
+        #filters .filter-section-content div[style*="background:#f8f9fa"] {
+            background: rgba(26, 42, 74, 0.4) !important;
+        }
+
+        #filters .filter-section-content div[style*="color: #666"],
+        #filters .filter-section-content div[style*="color:#666"] {
+            color: #7a8fa5 !important;
+        }
+
+        #filters .filter-section-content div[style*="border-bottom: 1px solid #dee2e6"],
+        #filters .filter-section-content div[style*="border-bottom:1px solid #dee2e6"] {
+            border-bottom-color: rgba(100, 181, 246, 0.1) !important;
+            color: #b0c4de;
+        }
+
+        #filters .filter-section-content strong {
+            color: #8ab4d8;
+        }
+
+        /* Scrollbar styling for dark theme */
+        #filters::-webkit-scrollbar,
+        .filter-section-content::-webkit-scrollbar,
+        .node-selection-list::-webkit-scrollbar,
+        .results-content::-webkit-scrollbar,
+        #centrality-popup::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #filters::-webkit-scrollbar-track,
+        .filter-section-content::-webkit-scrollbar-track,
+        .node-selection-list::-webkit-scrollbar-track,
+        .results-content::-webkit-scrollbar-track,
+        #centrality-popup::-webkit-scrollbar-track {
+            background: rgba(10, 22, 40, 0.5);
+        }
+
+        #filters::-webkit-scrollbar-thumb,
+        .filter-section-content::-webkit-scrollbar-thumb,
+        .node-selection-list::-webkit-scrollbar-thumb,
+        .results-content::-webkit-scrollbar-thumb,
+        #centrality-popup::-webkit-scrollbar-thumb {
+            background: rgba(100, 181, 246, 0.2);
+            border-radius: 3px;
+        }
+
+        #filters::-webkit-scrollbar-thumb:hover,
+        .filter-section-content::-webkit-scrollbar-thumb:hover,
+        .node-selection-list::-webkit-scrollbar-thumb:hover,
+        .results-content::-webkit-scrollbar-thumb:hover,
+        #centrality-popup::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 181, 246, 0.35);
+        }
     </style>
 </head>
 <body>
@@ -2065,7 +2859,7 @@
         <button onclick="resetView()">Reset View</button>
         <button onclick="resetFilters()">Reset Filters</button>
         <button id="viewDataBtn" onclick="openDataSource()">View Data Source</button>
-        <button onclick="reloadData()" style="background-color: #4CAF50; color: white;">Reload Data</button>
+        <button onclick="reloadData()" style="background-color: #2e7d32; color: white; border-color: #1b5e20;">Reload Data</button>
     </div>
     </div>
     <img id="logo" src="assets/sim4action-logo.png" alt="SIM4Action">
@@ -2078,7 +2872,7 @@
         <img src="" alt="System Image" style="width: 200px; height: auto; filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));">
     </div>
     
-    <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#f8f9fa;"></div>
+    <div id="loop-graph" style="display:none; width:100%; height:100%; position:relative; background:#0d1b2a;"></div>
     <div id="tooltip"></div>
     
     <!-- Floating Results Window -->
@@ -2184,9 +2978,9 @@
         </div>
     </div>
     
-    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 1000; width: 400px; max-width: 90vw;">
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(13, 27, 42, 0.97); border: 1px solid rgba(100, 181, 246, 0.2); padding: 30px; border-radius: 8px; box-shadow: 0 4px 30px rgba(0,0,0,0.5); z-index: 1000; width: 400px; max-width: 90vw;">
         <div style="text-align: center;">
-            <h2 id="loading-title" style="margin-top: 0; margin-bottom: 20px; color: #007bff; font-size: 20px;">Loading Systems Map</h2>
+            <h2 id="loading-title" style="margin-top: 0; margin-bottom: 20px; color: #64b5f6; font-size: 20px;">Loading Systems Map</h2>
             
             <!-- Logo animation -->
             <div style="margin-bottom: 20px;">
@@ -2194,15 +2988,15 @@
             </div>
             
             <!-- Progress bar -->
-            <div style="background-color: #f3f3f3; border-radius: 10px; height: 20px; margin-bottom: 15px; overflow: hidden;">
-                <div id="progress-bar" style="background-color: #007bff; height: 100%; width: 10%; transition: width 0.5s ease;"></div>
+            <div style="background-color: rgba(26, 42, 74, 0.6); border-radius: 10px; height: 20px; margin-bottom: 15px; overflow: hidden;">
+                <div id="progress-bar" style="background-color: #1e88e5; height: 100%; width: 10%; transition: width 0.5s ease;"></div>
             </div>
             
             <!-- Stage indicator -->
-            <div id="loading-stage" style="font-size: 14px; color: #666; margin-bottom: 5px;">Connecting to Google Sheets API...</div>
+            <div id="loading-stage" style="font-size: 14px; color: #b0c4de; margin-bottom: 5px;">Connecting to Google Sheets API...</div>
             
             <!-- Estimated time -->
-            <div id="loading-time" style="font-size: 12px; color: #888;">Estimated time: 15-30 seconds</div>
+            <div id="loading-time" style="font-size: 12px; color: #7a8fa5;">Estimated time: 15-30 seconds</div>
         </div>
     </div>
     
@@ -2944,9 +3738,9 @@
             const diagnosticsIntro = document.createElement('div');
             diagnosticsIntro.className = 'lab-intro';
             diagnosticsIntro.innerHTML = `
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #007bff;">
-                    <p style="margin: 0 0 5px 0;"><strong>Diagnostics Lab</strong> helps you explore and understand your system.</p>
-                    <p style="margin: 0; font-size: 12px;">Use the filters below to highlight different aspects of the system network.</p>
+                <div style="background: rgba(26, 42, 74, 0.5); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #1e88e5; color: #b0c4de;">
+                    <p style="margin: 0 0 5px 0; color: #e0e6ed;"><strong>Diagnostics Lab</strong> helps you explore and understand your system.</p>
+                    <p style="margin: 0; font-size: 12px; color: #8ab4d8;">Use the filters below to highlight different aspects of the system network.</p>
                 </div>
             `;
             diagnosticsDiv.appendChild(diagnosticsIntro);
@@ -2954,43 +3748,43 @@
             // System Statistics Section
             const systemStatsSection = createBasicSection("System Statistics");
             systemStatsSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Comprehensive statistics about this system map
                 </div>
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; font-size: 12px; max-height: 300px; overflow-y: auto;">
+                <div style="background: rgba(26, 42, 74, 0.4); padding: 10px; border-radius: 5px; font-size: 12px; max-height: 300px; overflow-y: auto; color: #b0c4de;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Total Nodes:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-total-nodes">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Total Nodes:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-total-nodes">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Total Relationships:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-total-relationships">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Total Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-total-relationships">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Same Direction:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-same-direction">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Same Direction:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-same-direction">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Opposite Direction:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-opposite-direction">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Opposite Direction:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-opposite-direction">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Strong Relationships:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-strong-relationships">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Strong Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-strong-relationships">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Medium Relationships:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-medium-relationships">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Medium Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-medium-relationships">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Weak Relationships:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-weak-relationships">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Weak Relationships:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-weak-relationships">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Network Density:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-network-density">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Network Density:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-network-density">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Avg. Connections Per Node:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-avg-connections">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Avg. Connections Per Node:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-avg-connections">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Reinforcing Loops:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-reinforcing-loops">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Reinforcing Loops:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-reinforcing-loops">-</div>
                         
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Balancing Loops:</strong></div>
-                        <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-balancing-loops">-</div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0;"><strong style="color: #8ab4d8;">Balancing Loops:</strong></div>
+                        <div style="border-bottom: 1px solid rgba(100, 181, 246, 0.1); padding: 4px 0; text-align: right;" id="stat-balancing-loops">-</div>
                         
                         <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0;"><strong>Most Connected Node:</strong></div>
                         <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-most-connected-node">-</div>
@@ -3022,7 +3816,7 @@
             }).join('\n                    ');
             
             variableCategoriesSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Filter to show connections between specific domains in the system
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
@@ -3034,7 +3828,7 @@
             // Relationship Types
             const relationshipTypesSection = createBasicSection("Relationship Types");
             relationshipTypesSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Filter by how variables affect each other
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
@@ -3051,7 +3845,7 @@
             // Relationship Strength
             const strengthSection = createBasicSection("Relationship Strength");
             strengthSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Filter connections by strength of influence
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px;">
@@ -3071,7 +3865,7 @@
             // Temporal Scale
             const temporalSection = createBasicSection("Temporal Scale");
             temporalSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Filter by how quickly effects occur between variables
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
@@ -3097,7 +3891,7 @@
             // Feedback Loops
             const feedbackSection = createBasicSection("Feedback Loops");
             feedbackSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 11px; margin-bottom: 5px; color: #666;">
+                <div style="font-size: 11px; margin-bottom: 5px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Explore circular influence patterns in the system
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px;">
@@ -3108,7 +3902,7 @@
                         <i class="fa fa-times" style="margin-right: 3px;"></i>Clear Loops
                     </button>
                 </div>
-                <div style="font-size: 11px; margin-top: 5px; color: #666;">
+                <div style="font-size: 11px; margin-top: 5px; color: #7a8fa5;">
                     Filter by loop type:
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin-top: 2px;">
@@ -3147,7 +3941,7 @@
             }).join('');
             
             storylineSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Quick access to common views of the system
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
@@ -3161,18 +3955,18 @@
             // Cluster Detection
             const clusterSection = createBasicSection("Cluster Detection");
             clusterSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Detect and visualize network clusters
                 </div>
                 <div style="margin-bottom: 10px;">
-                    <label style="font-size: 11px; color: #666; display: block; margin-bottom: 4px;">Algorithm:</label>
+                    <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 4px;">Algorithm:</label>
                     <select id="cluster-algorithm" class="filter-button" style="width: 100%; padding: 4px; font-size: 11px;" onchange="handleClusterAlgorithmChange(this.value)">
                         <option value="louvain">Louvain (Auto-detect)</option>
                         <option value="girvan_newman">Girvan-Newman (User-controlled)</option>
                     </select>
                 </div>
                 <div id="cluster-count-control" style="margin-bottom: 10px; display: none;">
-                    <label style="font-size: 11px; color: #666; display: block; margin-bottom: 4px;">Number of Clusters:</label>
+                    <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 4px;">Number of Clusters:</label>
                     <input type="range" id="cluster-count-slider" min="2" max="10" value="3" style="width: 100%; margin-bottom: 4px;" oninput="updateClusterCount(this.value)">
                     <div style="font-size: 10px; color: #888; text-align: center;">
                         <span id="cluster-count-display">3</span> clusters
@@ -3186,7 +3980,7 @@
                         <i class="fa fa-times"></i> Clear
                     </button>
                 </div>
-                <div id="cluster-info" style="font-size: 11px; color: #666; margin-top: 8px; display: none;">
+                <div id="cluster-info" style="font-size: 11px; color: #7a8fa5; margin-top: 8px; display: none;">
                     <div id="cluster-stats"></div>
                     <div id="cluster-legend" style="margin-top: 8px;"></div>
                 </div>
@@ -3196,7 +3990,7 @@
             // Node Selector
             const nodeSelectorSection = createBasicSection("Node Selector");
             nodeSelectorSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Select a specific variable to focus on
                 </div>
                 <select id="node-selector" class="filter-button" style="width: 100%; padding: 6px; margin-bottom: 0;" onchange="handleNodeSelection(this.value)" title="Select a variable to highlight and see its connections">
@@ -3209,7 +4003,7 @@
             // Relationship Selector
             const relationshipSelectorSection = createBasicSection("Relationship Selector");
             relationshipSelectorSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> Select a specific connection between variables
                 </div>
                 <select id="relationship-selector" class="filter-button" style="width: 100%; padding: 6px; margin-bottom: 0;" onchange="handleRelationshipSelection(this.value)" title="Select a relationship to highlight">
@@ -3230,9 +4024,9 @@
             const interventionIntro = document.createElement('div');
             interventionIntro.className = 'lab-intro';
             interventionIntro.innerHTML = `
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #ffc107;">
-                    <p style="margin: 0 0 5px 0;"><strong>Intervention Lab</strong> helps you simulate changes to variables and predict system responses.</p>
-                    <p style="margin: 0; font-size: 12px;">Use these tools to test intervention strategies and see how they might affect your system.</p>
+                <div style="background: rgba(26, 42, 74, 0.5); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #ffc107; color: #b0c4de;">
+                    <p style="margin: 0 0 5px 0; color: #e0e6ed;"><strong>Intervention Lab</strong> helps you simulate changes to variables and predict system responses.</p>
+                    <p style="margin: 0; font-size: 12px; color: #8ab4d8;">Use these tools to test intervention strategies and see how they might affect your system.</p>
                 </div>
             `;
             interventionDiv.appendChild(interventionIntro);
@@ -3242,7 +4036,7 @@
             // TOKEN DIFFUSION SECTION
             const diffusionSection = createBasicSection("Token Diffusion (Scenario)");
             diffusionSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Scenario):</strong> Run a single token diffusion scenario to visualize how effects propagate through the causal network. The visual tokens are for illustration only - the actual calculations and results are shown in the Results Window.
                 </div>
                 
@@ -3283,7 +4077,7 @@
                     
                     <!-- Speed Control -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Simulation Speed:</label>
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Simulation Speed:</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;">
                             <button id="speed-slow" class="speed-button" onclick="setSimulationSpeed('slow')" disabled>🐌 Slow</button>
                             <button id="speed-medium" class="speed-button active" onclick="setSimulationSpeed('medium')" disabled>🚶 Medium</button>
@@ -3293,7 +4087,7 @@
                     
                     <!-- Visualization Controls -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Visual Representation:</label>
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Visual Representation:</label>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
                             <button id="toggle-charge-viz" class="viz-toggle-button" onclick="toggleChargeVisualization()" disabled>
                                 🎨 Show Charge
@@ -3306,7 +4100,7 @@
                     
                     <!-- Computational Results -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Computational Results:</label>
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Computational Results:</label>
                         <button id="show-results-window" class="diffusion-button secondary results-button-highlight" onclick="toggleResultsWindow()" disabled style="width: 100%; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; font-weight: 600; border: 2px solid #20c997; box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);">
                             📊 Show Results Window
                         </button>
@@ -3377,7 +4171,7 @@
             // TOKEN DIFFUSION ENSEMBLE SECTION
             const ensembleSection = createBasicSection("Token Diffusion (Ensemble)");
             ensembleSection.querySelector('.filter-section-content').innerHTML = `
-                <div style="font-size: 12px; margin-bottom: 8px; color: #666;">
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
                     <i class="fa fa-info-circle"></i> <strong>Token Diffusion (Ensemble):</strong> Run multiple token diffusion scenarios to analyze statistical distributions of effects across the causal network. Shows max, min, and mean cumulative net token counts for each node.
                 </div>
                 
@@ -3394,7 +4188,7 @@
                     
                     <!-- Ensemble Parameters -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Ensemble Parameters:</label>
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Ensemble Parameters:</label>
                         <div style="display: flex; gap: 10px; align-items: center;">
                             <div style="flex: 1;">
                                 <label style="font-size: 10px; color: #666;">Number of Runs:</label>
@@ -3426,7 +4220,7 @@
                     
                     <!-- Ensemble Results -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #666; display: block; margin-bottom: 3px;">Ensemble Results:</label>
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Ensemble Results:</label>
                         <button id="show-ensemble-results-window" class="diffusion-button secondary results-button-highlight" onclick="toggleEnsembleResultsWindow()" disabled style="width: 100%; background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); color: white; font-weight: 600; border: 2px solid #8e44ad; box-shadow: 0 2px 4px rgba(111, 66, 193, 0.3);">
                             📈 Show Ensemble Results
                         </button>
@@ -3506,9 +4300,9 @@
             const monitoringIntro = document.createElement('div');
             monitoringIntro.className = 'lab-intro';
             monitoringIntro.innerHTML = `
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #17a2b8;">
-                    <p style="margin: 0 0 5px 0;"><strong>Monitoring Lab</strong> helps you identify key influential variables in your system.</p>
-                    <p style="margin: 0; font-size: 12px;">Use these tools to analyze network structure and find potential leverage points for management.</p>
+                <div style="background: rgba(26, 42, 74, 0.5); padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 13px; border-left: 3px solid #17a2b8; color: #b0c4de;">
+                    <p style="margin: 0 0 5px 0; color: #e0e6ed;"><strong>Monitoring Lab</strong> helps you identify key influential variables in your system.</p>
+                    <p style="margin: 0; font-size: 12px; color: #8ab4d8;">Use these tools to analyze network structure and find potential leverage points for management.</p>
                 </div>
             `;
             monitoringDiv.appendChild(monitoringIntro);
@@ -3517,9 +4311,9 @@
             const centralitySection = createBasicSection("Centrality Analysis");
             centralitySection.classList.add('centrality-section-container');
             centralitySection.querySelector('.filter-section-content').innerHTML = `
-                <div class="info-box" style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 13px;">
-                    <p style="margin: 0 0 5px 0;"><strong>Centrality analysis</strong> helps identify the most influential variables in your system.</p>
-                    <p style="margin: 0;">Choose a specific metric below or run a comprehensive analysis for deeper insights.</p>
+                <div class="info-box" style="background: rgba(26, 42, 74, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 10px; font-size: 13px; color: #b0c4de;">
+                    <p style="margin: 0 0 5px 0; color: #e0e6ed;"><strong>Centrality analysis</strong> helps identify the most influential variables in your system.</p>
+                    <p style="margin: 0; color: #8ab4d8;">Choose a specific metric below or run a comprehensive analysis for deeper insights.</p>
                 </div>
                 
                 <div class="section-label" style="font-weight: bold; margin-bottom: 5px; display: flex; align-items: center;">
@@ -3747,9 +4541,9 @@
                 .style("max-width", "500px")  // Increase max-width to allow more space for badges
                 .html(`
                     <div style="font-weight: bold; margin-bottom: 8px;">${d.name}</div>
-                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">ID: ${d.id} | Category: ${d.domain}</div>
-                    ${d.definition ? `<div style="font-size: 0.9em; margin-bottom: 8px; color: #333;">${d.definition}</div>` : ''}
-                    <div style="font-size: 0.9em; color: #666; margin-bottom: 8px;">Relationships:</div>
+                    <div style="font-size: 0.9em; color: #8ab4d8; margin-bottom: 8px;">ID: ${d.id} | Category: ${d.domain}</div>
+                    ${d.definition ? `<div style="font-size: 0.9em; margin-bottom: 8px; color: #b0c4de;">${d.definition}</div>` : ''}
+                    <div style="font-size: 0.9em; color: #8ab4d8; margin-bottom: 8px;">Relationships:</div>
                 `);
             
             // Get outgoing and incoming relationships
@@ -3782,7 +4576,7 @@
                     const listItem = affectsList.append("li")
                         .style("font-weight", "normal")
                         .style("opacity", isHighlighted ? "1.0" : "0.5")
-                        .style("color", "black")
+                        .style("color", "#e0e6ed")
                         .style("margin-bottom", "12px");
                     
                     // Add node name, relationship type, and attribute badges on the same line
@@ -3824,7 +4618,7 @@
                     const listItem = affectedByList.append("li")
                         .style("font-weight", "normal")
                         .style("opacity", isHighlighted ? "1.0" : "0.5")
-                        .style("color", "black")
+                        .style("color", "#e0e6ed")
                         .style("margin-bottom", "12px");
                     
                     // Add node name, relationship type, and attribute badges on the same line
@@ -3879,10 +4673,10 @@
                     ${strengthOptions.map(strength => {
                         const isActive = d.strength === strength;
                         return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
-                                      background-color: ${isActive ? '#6c757d' : '#f0f0f0'}; 
-                                      color: ${isActive ? 'white' : '#666'};
+                                      background-color: ${isActive ? '#6c757d' : 'rgba(100,181,246,0.1)'}; 
+                                      color: ${isActive ? 'white' : '#8ab4d8'};
                                       font-weight: ${isActive ? 'bold' : 'normal'};
-                                      border: 1px solid ${isActive ? '#6c757d' : '#ddd'};">
+                                      border: 1px solid ${isActive ? '#6c757d' : 'rgba(100,181,246,0.2)'};">
                                  ${strength.charAt(0).toUpperCase() + strength.slice(1)}
                                </div>`;
                     }).join('')}
@@ -3899,10 +4693,10 @@
                     ${temporalityOptions.map(temp => {
                         const isActive = delay.includes(temp);
                         return `<div style="padding: 3px 8px; border-radius: 4px; font-size: 11px; 
-                                      background-color: ${isActive ? '#17a2b8' : '#f0f0f0'}; 
-                                      color: ${isActive ? 'white' : '#666'};
+                                      background-color: ${isActive ? '#17a2b8' : 'rgba(100,181,246,0.1)'}; 
+                                      color: ${isActive ? 'white' : '#8ab4d8'};
                                       font-weight: ${isActive ? 'bold' : 'normal'};
-                                      border: 1px solid ${isActive ? '#17a2b8' : '#ddd'};">
+                                      border: 1px solid ${isActive ? '#17a2b8' : 'rgba(100,181,246,0.2)'};">
                                  ${temp.charAt(0).toUpperCase() + temp.slice(1)}
                                </div>`;
                     }).join('')}
@@ -3911,9 +4705,9 @@
 
             // Add definition section if available
             const definitionHTML = d.definition ? `
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
-                    <div style="font-weight: 500; margin-bottom: 6px;">Definition:</div>
-                    <div style="font-style: italic; color: #666;">${d.definition}</div>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(100,181,246,0.15);">
+                    <div style="font-weight: 500; margin-bottom: 6px; color: #b0c4de;">Definition:</div>
+                    <div style="font-style: italic; color: #8ab4d8;">${d.definition}</div>
                 </div>
             ` : '';
             
@@ -10532,11 +11326,11 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
             
             // Show cluster statistics
             clusterStats.innerHTML = `
-                <div style="background: #f8f9fa; padding: 8px; border-radius: 4px; margin-bottom: 8px;">
-                    <div><strong>${clusterData.statistics.num_clusters}</strong> clusters found</div>
-                    <div>Average size: <strong>${clusterData.statistics.avg_cluster_size}</strong> nodes</div>
-                    <div>Modularity: <strong>${clusterData.statistics.modularity}</strong></div>
-                    <div style="font-size: 10px; color: #666; margin-top: 4px;">Algorithm: ${clusterData.algorithm}</div>
+                <div style="background: rgba(26, 42, 74, 0.5); padding: 8px; border-radius: 4px; margin-bottom: 8px; color: #b0c4de;">
+                    <div><strong style="color: #e0e6ed;">${clusterData.statistics.num_clusters}</strong> clusters found</div>
+                    <div>Average size: <strong style="color: #e0e6ed;">${clusterData.statistics.avg_cluster_size}</strong> nodes</div>
+                    <div>Modularity: <strong style="color: #e0e6ed;">${clusterData.statistics.modularity}</strong></div>
+                    <div style="font-size: 10px; color: #7a8fa5; margin-top: 4px;">Algorithm: ${clusterData.algorithm}</div>
                 </div>
             `;
             
@@ -10552,13 +11346,13 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
                 }).sort(); // Sort alphabetically for better readability
                 
                 const nodeList = nodeNames.map(name => 
-                    `<div style="font-size: 9px; color: #555; margin-left: 18px; padding: 1px 0;">• ${name}</div>`
+                    `<div style="font-size: 9px; color: #8ab4d8; margin-left: 18px; padding: 1px 0;">• ${name}</div>`
                 ).join('');
                 
                 return `
-                    <div class="cluster-box" data-cluster-id="${index}" style="margin-bottom: 8px; border: 2px solid ${isSelected ? color : '#e0e0e0'}; border-radius: 4px; padding: 6px; background: ${isSelected ? d3.rgb(color).brighter(2.5) : '#fafafa'}; cursor: pointer; transition: all 0.2s ease;" 
-                         onmouseover="this.style.borderColor='${color}'; this.style.background='${d3.rgb(color).brighter(2.2)}'" 
-                         onmouseout="this.style.borderColor='${isSelected ? color : '#e0e0e0'}'; this.style.background='${isSelected ? d3.rgb(color).brighter(2.5) : '#fafafa'}'" 
+                    <div class="cluster-box" data-cluster-id="${index}" style="margin-bottom: 8px; border: 2px solid ${isSelected ? color : 'rgba(100,181,246,0.15)'}; border-radius: 4px; padding: 6px; background: ${isSelected ? d3.rgb(color).darker(2) : 'rgba(26,42,74,0.5)'}; cursor: pointer; transition: all 0.2s ease; color: #e0e6ed;" 
+                         onmouseover="this.style.borderColor='${color}'; this.style.background='${d3.rgb(color).darker(1.5)}'" 
+                         onmouseout="this.style.borderColor='${isSelected ? color : 'rgba(100,181,246,0.15)'}'; this.style.background='${isSelected ? d3.rgb(color).darker(2) : 'rgba(26,42,74,0.5)'}'" 
                          onclick="toggleClusterSelection(${index})">
                         <div style="display: flex; align-items: center; margin-bottom: 4px; font-size: 10px; font-weight: bold;">
                             <div style="width: 12px; height: 12px; background: ${color}; border-radius: 2px; margin-right: 6px; border: 1px solid ${d3.rgb(color).darker(0.5)};"></div>
@@ -11045,11 +11839,11 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
                 .append("svg")
                 .attr("width", width)
                 .attr("height", height);
-            // Add a visible background for debugging
+            // Add a visible background
             svg.append("rect")
                 .attr("width", width)
                 .attr("height", height)
-                .attr("fill", "#f8f9fa");
+                .attr("fill", "#0d1b2a");
             // Define markers (identical to main map, no r10/r12 distinction)
             const defs = svg.append("defs");
             ["same", "opposite"].forEach(type => {
@@ -11090,13 +11884,15 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
             node.append("circle")
                 .attr("r", d => d.domain === 'FOCAL FACTORS' ? 12 : 10)
                 .style("fill", d => d.color)
-                .style("stroke", "#fff")
+                .style("stroke", "rgba(255,255,255,0.3)")
                 .style("stroke-width", 2);
             node.append("text")
                 .attr("dx", 12)
                 .attr("dy", ".35em")
                 .style("font-size", d => d.domain === 'FOCAL FACTORS' ? '14.4px' : '12px')
                 .style("font-weight", d => d.domain === 'FOCAL FACTORS' ? 'bold' : 'normal')
+                .style("fill", "#e0e6ed")
+                .style("text-shadow", "0 1px 4px rgba(0,0,0,0.8), 0 0 8px rgba(0,0,0,0.5)")
                 .text(d => d.name);
             node.on("mouseover", showTooltip)
                 .on("mouseout", hideTooltip);
@@ -11480,16 +12276,16 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
             
             // Create controls for adjusting display
             let controlsHTML = `
-                <div class="radar-controls" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div class="radar-controls" style="background: rgba(26, 42, 74, 0.5); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; color: #b0c4de; border: 1px solid rgba(100, 181, 246, 0.12);">
                     <div style="flex: 1; min-width: 300px;">
-                        <h4 style="margin: 0 0 10px 0;">Display Controls</h4>
+                        <h4 style="margin: 0 0 10px 0; color: #e0e6ed;">Display Controls</h4>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <label for="metric-count-slider">Minimum metrics per node: <span id="metric-count-display">${minMetricsRequired}</span></label>
+                            <label for="metric-count-slider" style="color: #8ab4d8;">Minimum metrics per node: <span id="metric-count-display">${minMetricsRequired}</span></label>
                             <input type="range" id="metric-count-slider" min="1" max="5" value="${minMetricsRequired}" style="flex: 1; max-width: 200px;">
                         </div>
                     </div>
                     <div style="margin-left: 20px; text-align: right;">
-                        <span style="font-size: 13px; color: #6c757d;">Displaying ${displayNodes.length} of ${allNodes.length} total nodes</span>
+                        <span style="font-size: 13px; color: #7a8fa5;">Displaying ${displayNodes.length} of ${allNodes.length} total nodes</span>
                     </div>
                 </div>
             `;

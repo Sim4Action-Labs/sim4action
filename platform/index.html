@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIM4Action - Social-Environmental Systems Mapping Platform</title>
+    <!-- Leaflet CSS for location picker maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
     <style>
         * {
             margin: 0;
@@ -99,6 +103,8 @@
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .system-card:hover {
@@ -132,6 +138,9 @@
 
         .card-body {
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
         }
 
         .card-body h3 {
@@ -155,6 +164,7 @@
         .card-actions {
             display: flex;
             gap: 10px;
+            margin-top: auto;
         }
 
         .btn-launch {
@@ -1249,6 +1259,156 @@
             border: 1px solid rgba(100, 181, 246, 0.12);
             z-index: 4;
         }
+
+        /* ============================
+           SOURCE TYPE BADGES
+           ============================ */
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .source-badge--workshop {
+            background: rgba(30, 136, 229, 0.2);
+            color: #64b5f6;
+            border: 1px solid rgba(30, 136, 229, 0.35);
+        }
+
+        .source-badge--expert-elicitation {
+            background: rgba(0, 150, 136, 0.2);
+            color: #4db6ac;
+            border: 1px solid rgba(0, 150, 136, 0.35);
+        }
+
+        .source-badge--literature-review {
+            background: rgba(255, 167, 38, 0.2);
+            color: #ffb74d;
+            border: 1px solid rgba(255, 167, 38, 0.35);
+        }
+
+        .source-badge--gen-ai {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.3), rgba(103, 58, 183, 0.3));
+            color: #ce93d8;
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.25);
+            padding: 3px 12px;
+        }
+
+        .source-badge--gen-ai .ai-sparkle {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        .card-badges-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        /* Select styling for forms */
+        .form-select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            border-radius: 8px;
+            color: #e0e6ed;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: rgba(100, 181, 246, 0.5);
+        }
+
+        /* Advanced fields collapsible */
+        .advanced-fields summary {
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #8eacc5;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+
+        .advanced-fields summary:hover {
+            color: #b0cfe0;
+        }
+
+        .advanced-fields .fields-content {
+            margin-top: 12px;
+        }
+
+        .inline-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Modal location map */
+        .modal-map {
+            height: 220px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            margin-bottom: 8px;
+        }
+
+        .map-coords-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .map-coords {
+            font-size: 0.82em;
+            color: #5a7a96;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .btn-map-clear {
+            padding: 4px 10px;
+            background: rgba(239, 83, 80, 0.1);
+            border: 1px solid rgba(239, 83, 80, 0.2);
+            border-radius: 6px;
+            color: #ef5350;
+            font-size: 0.82em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .btn-map-clear:hover {
+            background: rgba(239, 83, 80, 0.2);
+        }
+
+        /* Leaflet dark overrides for modals */
+        .modal .leaflet-control-zoom a {
+            background: rgba(26, 42, 74, 0.9) !important;
+            color: #8eacc5 !important;
+            border-color: rgba(100, 181, 246, 0.2) !important;
+        }
+        .modal .leaflet-control-attribution {
+            background: rgba(10, 22, 40, 0.7) !important;
+            color: #5a7a96 !important;
+            font-size: 0.65em !important;
+        }
+        .modal .leaflet-control-attribution a {
+            color: #64b5f6 !important;
+        }
     </style>
 </head>
 <body>
@@ -1310,7 +1470,7 @@
 
 <!-- Edit System Modal -->
 <div class="modal-overlay" id="edit-modal" onclick="if(event.target===this)closeEditModal()">
-    <div class="modal" style="max-width:520px;">
+    <div class="modal" style="max-width:680px;">
         <button class="modal-close" onclick="closeEditModal()">&times;</button>
         <h2>Edit System Map</h2>
         <p class="modal-subtitle" id="edit-modal-subtitle">Update the details for this system map.</p>
@@ -1332,6 +1492,36 @@
                 </select>
                 <button type="button" onclick="promptNewCategoryForEdit()" style="padding:10px 14px; background:rgba(100,181,246,0.1); border:1px solid rgba(100,181,246,0.2); border-radius:8px; color:#b0cfe0; cursor:pointer; font-size:0.85em; white-space:nowrap;" title="Add a new category">+ New</button>
             </div>
+        </div>
+
+        <div class="form-group">
+            <label>Source Type</label>
+            <select id="edit-source-type" class="form-select">
+                <option value="">-- Not specified --</option>
+                <option value="workshop">Workshop</option>
+                <option value="expert_elicitation">Expert Elicitation</option>
+                <option value="literature_review">Literature Review</option>
+                <option value="gen_ai">Gen AI (Agentic Workflow)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Location</label>
+            <p class="hint" style="margin-bottom:8px;">Click on the map to set or update the system's geographic location.</p>
+            <div id="edit-location-map" class="modal-map"></div>
+            <div class="map-coords-row">
+                <input type="text" id="edit-location-name" placeholder="Location name (e.g., Southeast Australia)" style="flex:1; padding:8px 12px; background:rgba(10,22,40,0.6); border:1px solid rgba(100,181,246,0.15); border-radius:6px; color:#e0e6ed; font-size:0.88em; font-family:inherit;">
+                <span class="map-coords" id="edit-location-coords">No location set</span>
+                <button type="button" class="btn-map-clear" onclick="clearLocationPin('edit')">Clear</button>
+            </div>
+            <input type="hidden" id="edit-location-lat">
+            <input type="hidden" id="edit-location-lng">
+        </div>
+
+        <div class="form-group">
+            <label>Google Drive Documents Folder</label>
+            <input type="url" id="edit-gdrive-folder" placeholder="https://drive.google.com/drive/folders/..." style="width:100%; padding:10px 14px; background:rgba(10,22,40,0.6); border:1px solid rgba(100,181,246,0.15); border-radius:8px; color:#e0e6ed; font-size:0.95em; font-family:inherit;">
+            <p class="hint">Optional. Public Google Drive folder with Markdown (.md) documentation files.</p>
         </div>
 
         <input type="hidden" id="edit-system-id">
@@ -1384,6 +1574,18 @@
             </div>
 
             <div class="form-group">
+                <label>Source Type</label>
+                <select id="system-source-type" class="form-select">
+                    <option value="">-- Not specified --</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="expert_elicitation">Expert Elicitation</option>
+                    <option value="literature_review">Literature Review</option>
+                    <option value="gen_ai">Gen AI (Agentic Workflow)</option>
+                </select>
+                <p class="hint">How was this systems map developed?</p>
+            </div>
+
+            <div class="form-group">
                 <label>Google Sheets URL (Main) <span class="required">*</span></label>
                 <input type="url" id="sheet-url-main" placeholder="https://docs.google.com/spreadsheets/d/...">
                 <p class="hint">Paste the full Google Sheets URL. The spreadsheet ID will be extracted automatically.</p>
@@ -1405,6 +1607,30 @@
                 </div>
                 <p class="hint">Optional image used in the map view and catalogue card. A transparent PNG works best.</p>
             </div>
+
+            <details class="advanced-fields">
+                <summary>Advanced Settings (Location, Documents Folder)</summary>
+                <div class="fields-content">
+                    <div class="form-group">
+                        <label>Google Drive Documents Folder</label>
+                        <input type="url" id="system-gdrive-folder" placeholder="https://drive.google.com/drive/folders/...">
+                        <p class="hint">Optional. Link to a public Google Drive folder containing Markdown (.md) files for the system overview page.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location</label>
+                        <p class="hint" style="margin-bottom:8px;">Click on the map to set the system's geographic location.</p>
+                        <div id="add-location-map" class="modal-map"></div>
+                        <div class="map-coords-row">
+                            <input type="text" id="system-location-name" placeholder="Location name (e.g., Southeast Australia)" style="flex:1; padding:8px 12px; background:rgba(10,22,40,0.6); border:1px solid rgba(100,181,246,0.15); border-radius:6px; color:#e0e6ed; font-size:0.88em; font-family:inherit;">
+                            <span class="map-coords" id="add-location-coords">No location set</span>
+                            <button type="button" class="btn-map-clear" onclick="clearLocationPin('add')">Clear</button>
+                        </div>
+                        <input type="hidden" id="system-location-lat">
+                        <input type="hidden" id="system-location-lng">
+                    </div>
+                </div>
+            </details>
 
             <!-- Validation -->
             <button class="btn-validate" id="validate-btn" onclick="validateSpreadsheet()">
@@ -1462,6 +1688,11 @@
     </div>
 </div>
 
+<!-- Leaflet JS for location picker maps -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
 <script>
     // ============================================
     // CONSTANTS & STATE
@@ -1473,9 +1704,111 @@
     let activeCategory = null;        // null = all, or category string
     let pendingDeleteId = null;       // system id awaiting delete confirm
 
+    // Location map state for modals
+    let addLocationMap = null;
+    let addLocationMarker = null;
+    let editLocationMap = null;
+    let editLocationMarker = null;
+
+    const SATELLITE_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    const SATELLITE_ATTR = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, GIS User Community';
+
     // SVG snippets for delete icon (reused)
     const TRASH_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
     const EDIT_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`;
+
+    // Source type badge labels and helper
+    const SOURCE_TYPE_LABELS = {
+        'workshop': 'Workshop',
+        'expert_elicitation': 'Expert Elicitation',
+        'literature_review': 'Literature Review',
+        'gen_ai': 'Gen AI'
+    };
+
+    function getSourceBadgeHtml(sourceType) {
+        if (!sourceType || !SOURCE_TYPE_LABELS[sourceType]) return '';
+        const label = SOURCE_TYPE_LABELS[sourceType];
+        const cssClass = sourceType.replace(/_/g, '-');
+        const isGenAI = sourceType === 'gen_ai';
+        const sparkle = isGenAI ? '<svg class="ai-sparkle" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41Z"/></svg> ' : '';
+        return `<span class="source-badge source-badge--${cssClass}">${sparkle}${label}</span>`;
+    }
+
+    // ============================================
+    // LOCATION MAP HELPERS
+    // ============================================
+    function initModalMap(prefix) {
+        const mapId = `${prefix}-location-map`;
+        const mapEl = document.getElementById(mapId);
+        if (!mapEl) return null;
+
+        // Destroy existing map instance if any
+        if (prefix === 'add' && addLocationMap) {
+            addLocationMap.remove();
+            addLocationMap = null;
+            addLocationMarker = null;
+        }
+        if (prefix === 'edit' && editLocationMap) {
+            editLocationMap.remove();
+            editLocationMap = null;
+            editLocationMarker = null;
+        }
+
+        const map = L.map(mapId, { scrollWheelZoom: true }).setView([20, 0], 2);
+        L.tileLayer(SATELLITE_TILES, {
+            attribution: SATELLITE_ATTR,
+            maxZoom: 18
+        }).addTo(map);
+
+        map.on('click', function(e) {
+            setLocationPin(prefix, e.latlng.lat, e.latlng.lng);
+        });
+
+        setTimeout(() => map.invalidateSize(), 200);
+        return map;
+    }
+
+    function setLocationPin(prefix, lat, lng) {
+        const isAdd = prefix === 'add';
+        const map = isAdd ? addLocationMap : editLocationMap;
+        let marker = isAdd ? addLocationMarker : editLocationMarker;
+
+        if (marker) {
+            marker.setLatLng([lat, lng]);
+        } else {
+            marker = L.marker([lat, lng]).addTo(map);
+            if (isAdd) addLocationMarker = marker;
+            else editLocationMarker = marker;
+        }
+
+        const latId = isAdd ? 'system-location-lat' : 'edit-location-lat';
+        const lngId = isAdd ? 'system-location-lng' : 'edit-location-lng';
+        const coordsId = `${prefix}-location-coords`;
+
+        document.getElementById(latId).value = lat.toFixed(6);
+        document.getElementById(lngId).value = lng.toFixed(6);
+        document.getElementById(coordsId).textContent = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+    }
+
+    function clearLocationPin(prefix) {
+        const isAdd = prefix === 'add';
+        const map = isAdd ? addLocationMap : editLocationMap;
+        let marker = isAdd ? addLocationMarker : editLocationMarker;
+
+        if (marker && map) {
+            map.removeLayer(marker);
+            if (isAdd) addLocationMarker = null;
+            else editLocationMarker = null;
+        }
+
+        const latId = isAdd ? 'system-location-lat' : 'edit-location-lat';
+        const lngId = isAdd ? 'system-location-lng' : 'edit-location-lng';
+        const coordsId = `${prefix}-location-coords`;
+
+        document.getElementById(latId).value = '';
+        document.getElementById(lngId).value = '';
+        document.getElementById(coordsId).textContent = 'No location set';
+    }
 
     // ============================================
     // CATALOGUE LOADING
@@ -1617,6 +1950,7 @@
 
             const thumbnailSrc = system.thumbnail ? `../systems/${system.thumbnail}` : null;
             const catBadge = system.category ? `<span class="card-category-badge">${system.category}</span>` : '';
+            const sourceBadge = getSourceBadgeHtml(system.source_type);
 
             card.innerHTML = `
                 <div class="card-actions-overlay">
@@ -1632,9 +1966,10 @@
                 </div>
                 <div class="card-body">
                     <h3>${system.name}</h3>
+                    ${sourceBadge ? `<div class="card-badges-row">${sourceBadge}</div>` : ''}
                     <p class="description">${system.description || 'No description available.'}</p>
                     <div class="card-actions">
-                        <a class="btn-launch" href="app.html?system=${system.id}" onclick="event.stopPropagation();">Launch</a>
+                        <a class="btn-launch" href="overview.html?system=${system.id}" onclick="event.stopPropagation();">View Details</a>
                     </div>
                 </div>
             `;
@@ -1657,6 +1992,7 @@
             item.onclick = () => launchSystem(system.id);
 
             const thumbnailSrc = system.thumbnail ? `../systems/${system.thumbnail}` : null;
+            const sourceBadge = getSourceBadgeHtml(system.source_type);
 
             item.innerHTML = `
                 <div class="list-thumb">
@@ -1666,12 +2002,12 @@
                     }
                 </div>
                 <div class="list-body">
-                    <h3>${system.name}</h3>
+                    <h3>${system.name} ${sourceBadge}</h3>
                     <p class="description">${system.description || 'No description available.'}</p>
                     ${system.category ? `<span class="cat-label">${system.category}</span>` : ''}
                 </div>
                 <div class="list-actions">
-                    <a class="btn-launch" href="app.html?system=${system.id}" onclick="event.stopPropagation();">Launch</a>
+                    <a class="btn-launch" href="overview.html?system=${system.id}" onclick="event.stopPropagation();">View Details</a>
                     <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system">${EDIT_SVG}</button>
                     <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system">${TRASH_SVG}</button>
                 </div>
@@ -1695,6 +2031,7 @@
             item.onclick = () => launchSystem(system.id);
 
             const thumbnailSrc = system.thumbnail ? `../systems/${system.thumbnail}` : null;
+            const sourceBadge = getSourceBadgeHtml(system.source_type);
 
             item.innerHTML = `
                 <div class="compact-thumb">
@@ -1704,10 +2041,10 @@
                     }
                 </div>
                 <div class="compact-body">
-                    <h3>${system.name}</h3>
+                    <h3>${system.name} ${sourceBadge}</h3>
                 </div>
                 <div class="compact-actions">
-                    <a class="btn-launch" href="app.html?system=${system.id}" onclick="event.stopPropagation();" style="padding:5px 12px; font-size:0.78em;">Launch</a>
+                    <a class="btn-launch" href="overview.html?system=${system.id}" onclick="event.stopPropagation();" style="padding:5px 12px; font-size:0.78em;">View</a>
                     <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system" style="width:28px;height:28px;">${EDIT_SVG}</button>
                     <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system" style="width:28px;height:28px;">${TRASH_SVG}</button>
                 </div>
@@ -1757,7 +2094,7 @@
     }
 
     function launchSystem(systemId) {
-        window.location.href = `app.html?system=${systemId}`;
+        window.location.href = `overview.html?system=${systemId}`;
     }
 
     // ============================================
@@ -1805,18 +2142,51 @@
     // ============================================
     // EDIT SYSTEM MODAL
     // ============================================
-    function openEditModal(systemId) {
+    async function openEditModal(systemId) {
         const system = (currentCatalogue.systems || []).find(s => s.id === systemId);
         if (!system) return;
 
         document.getElementById('edit-system-id').value = system.id;
         document.getElementById('edit-name').value = system.name || '';
         document.getElementById('edit-description').value = system.description || '';
+        document.getElementById('edit-source-type').value = system.source_type || '';
         document.getElementById('edit-modal-subtitle').textContent = `Update the details for "${system.name}".`;
 
         populateEditCategoryDropdown(system.category);
 
+        // Fetch full config for location and gdrive data
+        let config = {};
+        try {
+            const res = await fetch(`../systems/${systemId}/config.json?_=${Date.now()}`);
+            if (res.ok) config = await res.json();
+        } catch(e) { console.error('Failed to load config for edit:', e); }
+
+        // Populate location and gdrive fields
+        document.getElementById('edit-location-name').value = (config.location && config.location.name) || '';
+        document.getElementById('edit-location-lat').value = (config.location && config.location.lat) || '';
+        document.getElementById('edit-location-lng').value = (config.location && config.location.lng) || '';
+        document.getElementById('edit-gdrive-folder').value = config.gdrive_md_folder || '';
+
+        // Update coords display
+        if (config.location && config.location.lat && config.location.lng) {
+            document.getElementById('edit-location-coords').textContent =
+                `${config.location.lat.toFixed(4)}, ${config.location.lng.toFixed(4)}`;
+        } else {
+            document.getElementById('edit-location-coords').textContent = 'No location set';
+        }
+
         document.getElementById('edit-modal').classList.add('active');
+
+        // Initialize map after modal is visible
+        setTimeout(() => {
+            editLocationMap = initModalMap('edit');
+
+            // Set existing pin if location exists
+            if (config.location && config.location.lat && config.location.lng) {
+                setLocationPin('edit', config.location.lat, config.location.lng);
+                editLocationMap.setView([config.location.lat, config.location.lng], config.location.zoom || 5);
+            }
+        }, 300);
     }
 
     function closeEditModal() {
@@ -1856,6 +2226,7 @@
         const name = document.getElementById('edit-name').value.trim();
         const description = document.getElementById('edit-description').value.trim();
         const category = document.getElementById('edit-category').value.trim();
+        const sourceType = document.getElementById('edit-source-type').value;
 
         if (!name) {
             alert('System name is required.');
@@ -1871,10 +2242,33 @@
         btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
 
         try {
+            const payload = { name, description, category };
+            if (sourceType) payload.source_type = sourceType;
+            else payload.source_type = null;
+
+            // Location
+            const editLat = document.getElementById('edit-location-lat').value.trim();
+            const editLng = document.getElementById('edit-location-lng').value.trim();
+            const editLocName = document.getElementById('edit-location-name').value.trim();
+            if (editLat && editLng) {
+                payload.location = {
+                    lat: parseFloat(editLat),
+                    lng: parseFloat(editLng),
+                    name: editLocName || name,
+                    zoom: 5
+                };
+            } else {
+                payload.location = null;
+            }
+
+            // Google Drive folder
+            const editGdrive = document.getElementById('edit-gdrive-folder').value.trim();
+            payload.gdrive_md_folder = editGdrive || null;
+
             const response = await fetch(`/api/systems/${systemId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, description, category })
+                body: JSON.stringify(payload)
             });
             const result = await response.json();
 
@@ -1902,6 +2296,11 @@
         document.getElementById('success-view').style.display = 'none';
         resetForm();
         populateCategoryDropdown();
+
+        // Initialize location map after modal is visible
+        setTimeout(() => {
+            addLocationMap = initModalMap('add');
+        }, 300);
     }
 
     function closeAddModal() {
@@ -1952,13 +2351,23 @@
         document.getElementById('system-name').value = '';
         document.getElementById('system-id').value = '';
         document.getElementById('system-description').value = '';
+        document.getElementById('system-source-type').value = '';
         document.getElementById('sheet-url-main').value = '';
         document.getElementById('sheet-url-draft').value = '';
         document.getElementById('system-image-file').value = '';
         document.getElementById('system-image-filename').textContent = 'No file chosen';
+        document.getElementById('system-gdrive-folder').value = '';
+        document.getElementById('system-location-name').value = '';
+        document.getElementById('system-location-lat').value = '';
+        document.getElementById('system-location-lng').value = '';
         document.getElementById('validation-panel').style.display = 'none';
         document.getElementById('submit-btn').disabled = true;
         validationPassed = false;
+
+        // Clear map marker
+        clearLocationPin('add');
+        const addCoords = document.getElementById('add-location-coords');
+        if (addCoords) addCoords.textContent = 'No location set';
 
         // Clear validation states
         document.querySelectorAll('.form-group').forEach(g => {
@@ -2092,8 +2501,13 @@
         const id = document.getElementById('system-id').value.trim();
         const description = document.getElementById('system-description').value.trim();
         const category = document.getElementById('system-category').value.trim();
+        const sourceType = document.getElementById('system-source-type').value;
         const mainUrl = document.getElementById('sheet-url-main').value;
         const draftUrl = document.getElementById('sheet-url-draft').value;
+        const gdriveFolder = document.getElementById('system-gdrive-folder').value.trim();
+        const locationName = document.getElementById('system-location-name').value.trim();
+        const locationLat = document.getElementById('system-location-lat').value.trim();
+        const locationLng = document.getElementById('system-location-lng').value.trim();
 
         if (!name || !id || !mainUrl) {
             alert('Please fill in the required fields (Name and Main Spreadsheet URL).');
@@ -2132,6 +2546,22 @@
                 images: {}
             };
 
+            // Add optional source type
+            if (sourceType) systemData.source_type = sourceType;
+
+            // Add optional Google Drive folder
+            if (gdriveFolder) systemData.gdrive_md_folder = gdriveFolder;
+
+            // Add optional location
+            if (locationLat && locationLng) {
+                systemData.location = {
+                    lat: parseFloat(locationLat),
+                    lng: parseFloat(locationLng),
+                    name: locationName || name,
+                    zoom: 5
+                };
+            }
+
             const systemImageFile = document.getElementById('system-image-file').files[0];
 
             if (systemImageFile) {
@@ -2154,7 +2584,7 @@
                 document.getElementById('form-view').style.display = 'none';
                 document.getElementById('success-view').style.display = 'block';
                 document.getElementById('success-text').textContent = `"${name}" has been registered successfully.`;
-                document.getElementById('launch-new-btn').href = `app.html?system=${id}`;
+                document.getElementById('launch-new-btn').href = `overview.html?system=${id}`;
             } else {
                 throw new Error(result.error || 'Unknown error');
             }

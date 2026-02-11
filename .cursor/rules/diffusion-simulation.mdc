@@ -1,0 +1,156 @@
+---
+description: Rules for the token diffusion simulation system (JavaScript and Python implementations).
+globs:
+  - platform/diffusion.js
+  - platform/diffusion.py
+---
+
+# Token Diffusion Simulation Rules
+
+## Overview
+The platform has TWO implementations of token diffusion:
+1. **`diffusion.js`** — JavaScript, runs in-browser, used by the Intervention Lab in `app.html`
+2. **`diffusion.py`** — Python, uses Streamlit/matplotlib/plotly, LEGACY (not used by the web platform)
+
+**When developing new diffusion features, use `diffusion.js`** unless explicitly asked to work on the Python version.
+
+## Core Concepts
+
+### Token Diffusion Model
+- Tokens are placed at initial nodes and propagate through the causal network
+- Movement decisions are probabilistic, weighted by edge strength
+- Edge polarity (same/opposite) flips token charge during transit
+- Edge delay determines how many steps a token takes to traverse an edge
+- Tokens at dead-end nodes become inactive
+
+### Enums / Constants
+
+#### JavaScript (`diffusion.js`)
+```javascript
+const Polarity = { SAME: 1, OPPOSITE: -1 };
+const Strength = { WEAK: 0.3, MEDIUM: 0.6, HIGH: 1.0 };
+const Delay = { FAST: 5, MEDIUM: 10, SLOW: 20 };  // in simulation steps
+const TokenState = { IN_TRANSIT: "in_transit", READY: "ready", ACCUMULATED: "accumulated" };
+const NodeType = { PASS_THROUGH: "pass_through", CONSUME: "consume", ACCUMULATE: "accumulate" };
+```
+
+#### Python (`diffusion.py`)
+```python
+class Polarity(Enum): SAME = 1; OPPOSITE = -1
+class Strength(Enum): WEAK = 0.3; MEDIUM = 0.6; HIGH = 1.0
+class Delay(Enum): FAST = 1; MEDIUM = 3; SLOW = 10
+class TokenState(Enum): IN_TRANSIT = "in_transit"; READY = "ready"; ACCUMULATED = "accumulated"
+class NodeType(Enum): PASS_THROUGH = "pass_through"; CONSUME = "consume"; ACCUMULATE = "accumulate"
+```
+
+**Note:** Delay values differ between JS and Python. JS uses more steps for smoother animation.
+
+## JavaScript Implementation (`diffusion.js`)
+
+### Key Classes
+
+#### `Graph`
+Simplified NetworkX-like graph for JavaScript:
+```javascript
+class Graph {
+    nodes = {};           // { nodeId: { label, type, domain, ... } }
+    edges = {};           // { "source,target": { polarity, strength, delay } }
+    _adjacency = {};      // { nodeId: [neighbor1, neighbor2, ...] }
+}
+```
+
+#### `TokenAgent`
+Represents a single token diffusing through the network:
+- `currentNode` — where the token currently is
+- `targetNode` — where it's heading (if in transit)
+- `charge` — +1 or -1 (flipped by OPPOSITE polarity edges)
+- `state` — READY, IN_TRANSIT, or ACCUMULATED
+- `active` — false when token reaches a dead end
+
+#### `CausalTokenModel`
+Manages the simulation:
+- `agents[]` — all tokens
+- `nodeFlowsOverTime[]` — snapshot of node→token_count per step
+- `edgeFlowsOverTime[]` — snapshot of edge→token_count per step
+- `step()` — advance one simulation step
+- `run(numSteps)` — run N steps
+
+### Data Flow
+1. `createCausalDiagram(factorsData, relationshipsData)` → builds `Graph`
+2. `new CausalTokenModel(G, numTokens, initialAllocation)` → creates model
+3. `model.run(numSteps)` → runs simulation
+4. Results in `model.nodeFlowsOverTime` and `model.edgeFlowsOverTime`
+
+### Edge Data Mapping
+When creating the graph from spreadsheet data:
+```javascript
+polarity: rel.polarity === "opposite" ? Polarity.OPPOSITE : Polarity.SAME
+strength: rel.strength?.toUpperCase() === "HIGH" ? Strength.HIGH :
+          rel.strength?.toUpperCase() === "WEAK" ? Strength.WEAK : Strength.MEDIUM
+delay: rel.delay?.toUpperCase() === "MEDIUM" ? 2 :
+       rel.delay?.toUpperCase() === "SLOW" ? 3 : 1
+```
+
+### Node Flows Format (JS)
+```javascript
+// Signed: positive charge adds, negative charge subtracts
+{ "V1": 3, "V2": -1, "V5": 0 }
+```
+
+### ES6 Module Exports
+```javascript
+export {
+    Polarity, Strength, Delay, TokenState, NodeType,
+    TokenAgent, CausalTokenModel, Graph,
+    runSimulation, createCausalDiagram
+};
+```
+
+## Python Implementation (`diffusion.py`) — LEGACY
+
+### Dependencies
+```python
+import networkx as nx
+import matplotlib.pyplot as plt
+import streamlit as st
+import pandas as pd
+import plotly.graph_objects as go
+import numpy as np
+```
+**WARNING**: This file imports `streamlit` — it is NOT compatible with Pyodide. It's a legacy file from a previous Streamlit-based UI.
+
+### Ensemble Simulation
+The Python version supports ensemble simulation:
+```python
+def NEW_pulse_diffusion_network_model(G, initial_tokens, edited_df, n_simulations=100):
+    # Runs n_simulations and computes statistics (mean, min, max)
+```
+
+### Node Flows Format (Python)
+```python
+# Separate positive/negative/accumulated counts
+{ 'V1': {'positive': 3, 'negative': 1, 'accumulated': 0} }
+```
+
+## Development Guidelines
+
+### For JavaScript (`diffusion.js`)
+1. **Use the `Graph` class** — don't assume NetworkX API in JS
+2. **Edge keys are strings**: `"source,target"` format
+3. **Adjacency is an array**: `_adjacency[node]` returns `[neighbor, ...]`
+4. **Token charge is critical**: Always track charge sign through polarity flips
+5. **Dead-end handling**: Tokens at nodes with no outgoing edges become inactive
+6. **Debug logging**: Use `debug()` helper (wraps `console.log`) — disable in production
+7. **Weighted random choice**: Use the `weightedRandomChoice()` method on TokenAgent
+
+### For Python (`diffusion.py`)
+1. **This is legacy code** — only modify if explicitly asked
+2. **It uses Streamlit** — not part of the web platform's runtime
+3. **Ensemble mode** runs multiple simulations and shows confidence intervals
+4. **Matplotlib figures** are displayed via `st.pyplot(fig)`
+5. **Plotly gauges** are used for the controllability metric
+
+### Common Pitfalls
+- **Polarity "same" vs "positive"**: The Python version uses "positive"/"opposite", the spreadsheet uses "same"/"opposite", and the JS version maps both correctly. Be consistent.
+- **Strength mapping**: Python has `Strength.LOW`, JS has `Strength.WEAK` — they represent the same concept (0.3)
+- **Graph edge key format**: JS uses `"V1,V2"`, Python uses tuple `(V1, V2)`

@@ -1,0 +1,96 @@
+---
+description: Rules for developing the Python HTTP server and REST API.
+globs:
+  - platform/server.py
+---
+
+# Server & API Development Rules
+
+## Server Architecture
+- The server is a single-file Python HTTP server (`platform/server.py`) using `http.server.SimpleHTTPRequestHandler`
+- It serves both static files and REST API endpoints
+- The handler class is `SIM4ActionHandler`
+- The server auto-detects the project root by looking for the `platform/` directory
+
+## Key Globals
+```python
+PROJECT_ROOT = find_project_root()  # Parent of platform/
+PLATFORM_DIR = PROJECT_ROOT / 'platform'
+SYSTEMS_DIR = PROJECT_ROOT / 'systems'
+CATALOGUE_FILE = SYSTEMS_DIR / 'catalogue.json'
+```
+
+## URL Routing Logic (translate_path)
+The `translate_path` method maps URLs to filesystem paths in this priority:
+1. Root (`/`) → `platform/index.html`
+2. `platform/*` prefix → project root + path
+3. `systems/*` prefix → project root + path
+4. Known platform files (hardcoded list) → `platform/` directory
+5. `assets/*` → `platform/assets/`
+6. Fallback: try `platform/` first, then project root
+
+### When Adding New Platform Files
+If you add a new `.js`, `.py`, `.html`, or `.css` file to `platform/`, you MUST add it to the `platform_files` list in `translate_path`:
+```python
+platform_files = [
+    'app.html', 'diffusion.js', 'drawing-layer.js',
+    'drawing-integration.js', 'drawing-controls.css',
+    'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
+    'networkx_loader.py', 'diffusion_demo.html',
+    # ADD NEW FILES HERE
+]
+```
+
+## REST API Patterns
+
+### Response Format
+All API responses use JSON:
+```python
+# Success
+self.send_json_response({'success': True, 'id': system_id, ...})
+
+# Error
+self.send_error_response(status_code, 'Error message')
+```
+
+### Request Body Parsing
+```python
+content_length = int(self.headers['Content-Length'])
+post_data = self.rfile.read(content_length)
+data = json.loads(post_data.decode('utf-8'))
+```
+
+### System ID Sanitization
+Always sanitize system IDs before filesystem operations:
+```python
+system_id = re.sub(r'[^a-z0-9_-]', '_', system_id.lower())
+```
+
+### Creating New Endpoints
+Follow this pattern:
+1. Add URL matching in the appropriate `do_*` method (GET, POST, PUT, DELETE)
+2. Create a `handle_*` method for the business logic
+3. Use try/except with JSON error responses
+4. Always include CORS headers (handled by `end_headers` override)
+
+### Catalogue Operations
+- Always use `load_catalogue()` and `save_catalogue()` helper functions
+- After modifying systems, clean up empty categories:
+```python
+remaining_cats = set(s.get('category') for s in catalogue['systems'] if s.get('category'))
+catalogue['categories'] = [c for c in catalogue['categories'] if c in remaining_cats]
+```
+
+## Image Handling
+- System images are stored as files in `systems/{id}/`
+- Images can be uploaded as base64-encoded data in JSON POST body
+- The base64 format expected: `data:image/{ext};base64,{data}`
+- Image filenames are derived from the key: `systemImage` → `system-image.{ext}`
+
+## Important Constraints
+1. **No external dependencies** — the server uses only Python standard library
+2. **CORS is open** (`*`) — acceptable for local/development use
+3. **No authentication** — the server is meant for local development and trusted networks
+4. **Filesystem-based storage** — no database; everything is JSON files
+5. **shutil.rmtree** is used for system deletion — be careful with path sanitization
+6. **The server must be started from the project root** or it auto-detects via `find_project_root()`

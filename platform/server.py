@@ -88,7 +88,7 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
         # Platform engine files (served from platform/)
         platform_files = [
-            'app.html', 'diffusion.js', 'drawing-layer.js',
+            'app.html', 'overview.html', 'diffusion.js', 'drawing-layer.js',
             'drawing-integration.js', 'drawing-controls.css',
             'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
             'networkx_loader.py', 'diffusion_demo.html'
@@ -222,6 +222,14 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                 'images': data.get('images', {})
             }
 
+            # Optional new fields
+            if data.get('source_type'):
+                config['source_type'] = data['source_type']
+            if data.get('location'):
+                config['location'] = data['location']
+            if data.get('gdrive_md_folder'):
+                config['gdrive_md_folder'] = data['gdrive_md_folder']
+
             # Write config.json
             with open(system_dir / 'config.json', 'w') as f:
                 json.dump(config, f, indent=2)
@@ -260,13 +268,17 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
             # Determine category
             category = data.get('category', 'Uncategorized')
 
-            catalogue['systems'].append({
+            catalogue_entry = {
                 'id': system_id,
                 'name': config['name'],
                 'description': config['description'],
                 'thumbnail': f'{system_id}/thumbnail.png' if (system_dir / 'thumbnail.png').exists() else None,
                 'category': category
-            })
+            }
+            if data.get('source_type'):
+                catalogue_entry['source_type'] = data['source_type']
+
+            catalogue['systems'].append(catalogue_entry)
 
             # Ensure category list is up to date
             if 'categories' not in catalogue:
@@ -346,6 +358,12 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                     config['title'] = f"{data['name']} Systems Map - Interactive Visualization"
                 if 'description' in data:
                     config['description'] = data['description']
+                if 'source_type' in data:
+                    config['source_type'] = data['source_type']
+                if 'location' in data:
+                    config['location'] = data['location']
+                if 'gdrive_md_folder' in data:
+                    config['gdrive_md_folder'] = data['gdrive_md_folder']
                 with open(config_path, 'w') as f:
                     json.dump(config, f, indent=2)
 
@@ -360,6 +378,8 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                         system['description'] = data['description']
                     if 'category' in data:
                         system['category'] = data['category']
+                    if 'source_type' in data:
+                        system['source_type'] = data['source_type']
                     updated = True
                     break
 

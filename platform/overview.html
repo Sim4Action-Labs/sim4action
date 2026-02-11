@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Overview - SIM4Action</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 50%, #0d1f3c 100%);
+            min-height: 100vh;
+            color: #e0e6ed;
+        }
+
+        /* ============================
+           TOP NAVIGATION BAR
+           ============================ */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            background: rgba(10, 22, 40, 0.6);
+            border-bottom: 1px solid rgba(100, 181, 246, 0.1);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: rgba(100, 181, 246, 0.1);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            border-radius: 8px;
+            color: #8eacc5;
+            text-decoration: none;
+            font-size: 0.88em;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        .btn-back svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-launch-map {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-launch-map:hover {
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            box-shadow: 0 4px 16px rgba(30, 136, 229, 0.35);
+            transform: translateY(-1px);
+        }
+
+        .btn-launch-map svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ============================
+           HERO SECTION
+           ============================ */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        .hero-header {
+            margin-bottom: 28px;
+        }
+
+        .hero-header h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #64b5f6, #42a5f5, #1e88e5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.82em;
+            font-weight: 500;
+        }
+
+        .badge-category {
+            background: rgba(100, 181, 246, 0.12);
+            color: #8eacc5;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+        }
+
+        /* Source type badges */
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.82em;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .source-badge--workshop {
+            background: rgba(30, 136, 229, 0.18);
+            color: #64b5f6;
+            border: 1px solid rgba(30, 136, 229, 0.3);
+        }
+
+        .source-badge--expert-elicitation {
+            background: rgba(0, 150, 136, 0.18);
+            color: #4db6ac;
+            border: 1px solid rgba(0, 150, 136, 0.3);
+        }
+
+        .source-badge--literature-review {
+            background: rgba(255, 167, 38, 0.18);
+            color: #ffb74d;
+            border: 1px solid rgba(255, 167, 38, 0.3);
+        }
+
+        .source-badge--gen-ai {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.25), rgba(103, 58, 183, 0.25));
+            color: #ce93d8;
+            border: 1px solid rgba(156, 39, 176, 0.4);
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.2);
+        }
+
+        .source-badge--gen-ai .ai-sparkle {
+            width: 14px;
+            height: 14px;
+        }
+
+        .hero-description {
+            font-size: 1.05em;
+            color: #8eacc5;
+            line-height: 1.7;
+            margin-top: 12px;
+            max-width: 800px;
+        }
+
+        /* ============================
+           TWO-COLUMN HERO CONTENT
+           ============================ */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .map-card, .info-card {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.8), rgba(13, 31, 60, 0.9));
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .card-title {
+            padding: 16px 20px 12px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #b0cfe0;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.08);
+        }
+
+        /* Map */
+        #map-container {
+            height: 320px;
+            background: linear-gradient(135deg, #0d1f3c, #1a2a4a);
+        }
+
+        .map-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 320px;
+            color: #5a7a96;
+            gap: 12px;
+        }
+
+        .map-placeholder svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.4;
+        }
+
+        /* System image card */
+        .system-image-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            min-height: 200px;
+        }
+
+        .system-image-container img {
+            max-width: 90%;
+            max-height: 200px;
+            object-fit: contain;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+        }
+
+        .system-image-placeholder {
+            font-size: 5em;
+            opacity: 0.15;
+        }
+
+        .quick-facts {
+            padding: 0 20px 20px;
+        }
+
+        .quick-facts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .fact-item {
+            background: rgba(10, 22, 40, 0.5);
+            border: 1px solid rgba(100, 181, 246, 0.08);
+            border-radius: 10px;
+            padding: 12px 14px;
+            text-align: center;
+        }
+
+        .fact-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #64b5f6;
+            margin-bottom: 2px;
+        }
+
+        .fact-label {
+            font-size: 0.78em;
+            color: #5a7a96;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ============================
+           TABS
+           ============================ */
+        .tabs-container {
+            margin-bottom: 32px;
+        }
+
+        .tab-nav {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.12);
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #5a7a96;
+            font-size: 0.95em;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: #8eacc5;
+        }
+
+        .tab-btn.active {
+            color: #64b5f6;
+            border-bottom-color: #64b5f6;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ============================
+           OVERVIEW TAB
+           ============================ */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .metric-card .metric-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #64b5f6;
+            margin-bottom: 4px;
+        }
+
+        .metric-card .metric-label {
+            font-size: 0.85em;
+            color: #7a9ab5;
+        }
+
+        .domains-section {
+            margin-bottom: 28px;
+        }
+
+        .domains-section h3 {
+            font-size: 1.15em;
+            color: #b0cfe0;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .domain-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .domain-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            color: #8eacc5;
+        }
+
+        .domain-chip .swatch {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .status-section h3 {
+            font-size: 1.15em;
+            color: #b0cfe0;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .status-card {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.6), rgba(13, 31, 60, 0.7));
+            border: 1px solid rgba(100, 181, 246, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .status-card h4 {
+            color: #8eacc5;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .status-card p {
+            color: #5a7a96;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+
+        /* ============================
+           DOCUMENTS TAB
+           ============================ */
+        .docs-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 20px;
+            min-height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .docs-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .docs-sidebar {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .docs-sidebar-title {
+            padding: 14px 16px;
+            font-size: 0.88em;
+            font-weight: 600;
+            color: #b0cfe0;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.1);
+        }
+
+        .docs-file-list {
+            list-style: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .docs-file-list li {
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 0.88em;
+            color: #7a9ab5;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .docs-file-list li:hover {
+            background: rgba(100, 181, 246, 0.08);
+            color: #b0cfe0;
+        }
+
+        .docs-file-list li.active {
+            background: rgba(100, 181, 246, 0.15);
+            color: #64b5f6;
+            border-left: 3px solid #64b5f6;
+        }
+
+        .docs-file-list li svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            opacity: 0.5;
+        }
+
+        .docs-content {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 12px;
+            padding: 28px 32px;
+            overflow-x: auto;
+        }
+
+        .docs-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            color: #5a7a96;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .docs-placeholder svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.3;
+        }
+
+        .docs-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            color: #5a7a96;
+            gap: 10px;
+        }
+
+        /* Markdown rendered content */
+        .md-content h1 { font-size: 1.8em; color: #e0e6ed; margin: 24px 0 12px; font-weight: 700; border-bottom: 1px solid rgba(100,181,246,0.12); padding-bottom: 8px; }
+        .md-content h2 { font-size: 1.4em; color: #b0cfe0; margin: 20px 0 10px; font-weight: 600; }
+        .md-content h3 { font-size: 1.15em; color: #8eacc5; margin: 16px 0 8px; font-weight: 600; }
+        .md-content h4 { font-size: 1em; color: #8eacc5; margin: 14px 0 6px; font-weight: 600; }
+        .md-content p { color: #8eacc5; line-height: 1.7; margin-bottom: 12px; }
+        .md-content a { color: #64b5f6; text-decoration: underline; }
+        .md-content a:hover { color: #90caf9; }
+        .md-content ul, .md-content ol { color: #8eacc5; margin: 8px 0 12px 24px; line-height: 1.7; }
+        .md-content li { margin-bottom: 4px; }
+        .md-content blockquote {
+            border-left: 3px solid rgba(100, 181, 246, 0.3);
+            padding: 8px 16px;
+            margin: 12px 0;
+            background: rgba(100, 181, 246, 0.05);
+            color: #7a9ab5;
+            border-radius: 0 8px 8px 0;
+        }
+        .md-content code {
+            background: rgba(100, 181, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #64b5f6;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+        }
+        .md-content pre {
+            background: rgba(10, 22, 40, 0.7);
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        .md-content pre code {
+            background: none;
+            padding: 0;
+            color: #b0cfe0;
+        }
+        .md-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        .md-content th {
+            text-align: left;
+            padding: 8px 12px;
+            background: rgba(100, 181, 246, 0.08);
+            color: #b0cfe0;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.15);
+            font-size: 0.9em;
+        }
+        .md-content td {
+            text-align: left;
+            padding: 7px 12px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.06);
+            color: #8eacc5;
+            font-size: 0.9em;
+        }
+        .md-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        .md-content hr {
+            border: none;
+            border-top: 1px solid rgba(100, 181, 246, 0.1);
+            margin: 20px 0;
+        }
+        .md-content strong { color: #b0cfe0; }
+        .md-content em { font-style: italic; }
+
+        /* ============================
+           NETWORK PREVIEW TAB
+           ============================ */
+        .network-preview-container {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .network-preview-container svg {
+            display: block;
+            width: 100%;
+        }
+
+        .network-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.08);
+        }
+
+        .network-preview-header h3 {
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #b0cfe0;
+        }
+
+        .network-preview-header .preview-hint {
+            font-size: 0.8em;
+            color: #5a7a96;
+        }
+
+        .network-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 12px 20px;
+            border-top: 1px solid rgba(100, 181, 246, 0.08);
+            font-size: 0.8em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #7a9ab5;
+        }
+
+        .legend-line {
+            width: 24px;
+            height: 2px;
+            border-radius: 1px;
+        }
+
+        /* ============================
+           DATA SOURCES TAB
+           ============================ */
+        .data-sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .data-source-card {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .data-source-card h4 {
+            color: #b0cfe0;
+            font-size: 0.95em;
+            margin-bottom: 8px;
+        }
+
+        .data-source-card p {
+            color: #5a7a96;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+        }
+
+        .data-source-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64b5f6;
+            text-decoration: none;
+            font-size: 0.88em;
+            transition: color 0.2s ease;
+        }
+
+        .data-source-card a:hover {
+            color: #90caf9;
+        }
+
+        .data-source-card a svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ============================
+           FOOTER
+           ============================ */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #3a5a76;
+            font-size: 0.85em;
+        }
+
+        /* ============================
+           LOADING & SPINNERS
+           ============================ */
+        .loading-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(100, 181, 246, 0.2);
+            border-top-color: #64b5f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .page-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 16px;
+            color: #5a7a96;
+        }
+
+        .page-loading .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border-width: 3px;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #ef5350;
+        }
+
+        .error-message h2 {
+            margin-bottom: 12px;
+        }
+
+        .error-message p {
+            color: #7a9ab5;
+            margin-bottom: 20px;
+        }
+
+        .error-message a {
+            color: #64b5f6;
+        }
+
+        /* Leaflet dark theme overrides */
+        .leaflet-control-zoom a {
+            background: rgba(26, 42, 74, 0.9) !important;
+            color: #8eacc5 !important;
+            border-color: rgba(100, 181, 246, 0.2) !important;
+        }
+
+        .leaflet-control-zoom a:hover {
+            background: rgba(26, 42, 74, 1) !important;
+            color: #e0e6ed !important;
+        }
+
+        .leaflet-control-attribution {
+            background: rgba(10, 22, 40, 0.7) !important;
+            color: #5a7a96 !important;
+            font-size: 0.7em !important;
+        }
+
+        .leaflet-control-attribution a {
+            color: #64b5f6 !important;
+        }
+
+        .leaflet-popup-content-wrapper {
+            background: rgba(26, 42, 74, 0.95) !important;
+            color: #e0e6ed !important;
+            border: 1px solid rgba(100, 181, 246, 0.2) !important;
+            border-radius: 10px !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3) !important;
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(26, 42, 74, 0.95) !important;
+        }
+
+        .leaflet-popup-close-button {
+            color: #8eacc5 !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<div class="top-bar">
+    <div class="top-bar-left">
+        <a href="index.html" class="btn-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            All Systems
+        </a>
+        <span id="top-bar-name" style="font-size:1.05em; font-weight:600; color:#b0cfe0;"></span>
+    </div>
+    <a id="launch-btn-top" href="#" class="btn-launch-map">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Launch Systems Map
+    </a>
+</div>
+
+<!-- Main Content -->
+<div class="container" id="main-content">
+    <div class="page-loading" id="page-loading">
+        <div class="loading-spinner"></div>
+        <p>Loading system overview...</p>
+    </div>
+</div>
+
+<div class="footer">
+    SIM4Action Platform &middot; Social-Environmental Interactive Mapping Platform for Action
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<!-- D3.js for network preview -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<!-- marked.js for Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<!-- DOMPurify for safe HTML -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+
+<script>
+    // ============================================
+    // STATE
+    // ============================================
+    let CONFIG = null;
+    let catalogueEntry = null;  // system entry from catalogue.json (has category, source_type)
+    let systemId = null;
+    let sheetsData = { factors: [], relationships: [], domains: [] };
+    let driveFiles = [];
+    let currentDocFile = null;
+
+    // ============================================
+    // SOURCE TYPE HELPERS
+    // ============================================
+    const SOURCE_TYPE_LABELS = {
+        'workshop': 'Workshop',
+        'expert_elicitation': 'Expert Elicitation',
+        'literature_review': 'Literature Review',
+        'gen_ai': 'Gen AI'
+    };
+
+    function getSourceBadgeHtml(sourceType) {
+        if (!sourceType || !SOURCE_TYPE_LABELS[sourceType]) return '';
+        const label = SOURCE_TYPE_LABELS[sourceType];
+        const cssClass = sourceType.replace(/_/g, '-');
+        const isGenAI = sourceType === 'gen_ai';
+        const sparkle = isGenAI ? '<svg class="ai-sparkle" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41Z"/></svg> ' : '';
+        return `<span class="source-badge source-badge--${cssClass}">${sparkle}${label}</span>`;
+    }
+
+    // Domain color mapping (same as app.html)
+    const DOMAIN_COLORS = {
+        'FOCAL FACTORS': '#FF3366',
+        'Focal Factors': '#FF3366',
+        'Focal': '#FF3366',
+        'Environmental': '#228B22',
+        'Environmental-Ecosystem': '#228B22',
+        'Ecosystem': '#228B22',
+        'Biology': '#9966CC',
+        'Climate': '#87CEEB',
+        'Sustainability': '#98FB98',
+        'Resources': '#F0E68C',
+        'Economics': '#1E90FF',
+        'Economics-Markets': '#1E90FF',
+        'Markets': '#1E90FF',
+        'Management': '#FF8C00',
+        'Policy': '#FF8C00',
+        'Governance': '#FF8C00',
+        'Social': '#CC99FF',
+        'Community': '#CC99FF',
+        'Indigenous': '#FFD700',
+        'Cultural': '#FFD700',
+        'Health / Safety': '#FA8072',
+        'Technical': '#20B2AA',
+        'Technology': '#20B2AA',
+        'Stock': '#DC143C',
+    };
+
+    const AUTO_COLORS = ['#E91E63', '#00BCD4', '#8BC34A', '#FF5722', '#607D8B', '#9C27B0', '#009688', '#795548'];
+    let autoColorIdx = 0;
+
+    function getDomainColor(domain) {
+        if (DOMAIN_COLORS[domain]) return DOMAIN_COLORS[domain];
+        const color = AUTO_COLORS[autoColorIdx % AUTO_COLORS.length];
+        DOMAIN_COLORS[domain] = color;
+        autoColorIdx++;
+        return color;
+    }
+
+    // ============================================
+    // INITIALIZATION
+    // ============================================
+    document.addEventListener('DOMContentLoaded', async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        systemId = urlParams.get('system');
+
+        if (!systemId) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            // Load config and catalogue in parallel
+            const [configResponse, catalogueResponse] = await Promise.all([
+                fetch(`../systems/${systemId}/config.json?_=${Date.now()}`),
+                fetch(`../systems/catalogue.json?_=${Date.now()}`)
+            ]);
+            if (!configResponse.ok) throw new Error(`System "${systemId}" not found`);
+            CONFIG = await configResponse.json();
+
+            // Get catalogue entry for category and source_type
+            if (catalogueResponse.ok) {
+                const catalogue = await catalogueResponse.json();
+                catalogueEntry = (catalogue.systems || []).find(s => s.id === systemId) || {};
+            } else {
+                catalogueEntry = {};
+            }
+
+            // Merge source_type from catalogue if not in config
+            if (!CONFIG.source_type && catalogueEntry.source_type) {
+                CONFIG.source_type = catalogueEntry.source_type;
+            }
+
+            document.title = `${CONFIG.name} - SIM4Action Overview`;
+            renderPage();
+            loadSheetsData();
+        } catch (e) {
+            console.error('Failed to load config:', e);
+            showError(e.message);
+        }
+    });
+
+    function showError(message) {
+        document.getElementById('main-content').innerHTML = `
+            <div class="error-message">
+                <h2>System Not Found</h2>
+                <p>${message}</p>
+                <a href="index.html">Back to catalogue</a>
+            </div>
+        `;
+    }
+
+    // ============================================
+    // RENDER PAGE
+    // ============================================
+    function renderPage() {
+        // Update top bar
+        document.getElementById('top-bar-name').textContent = CONFIG.name;
+        document.getElementById('launch-btn-top').href = `app.html?system=${systemId}`;
+
+        const container = document.getElementById('main-content');
+        const imageSrc = CONFIG.images && CONFIG.images.systemImage
+            ? `../systems/${systemId}/${CONFIG.images.systemImage.src}`
+            : null;
+        const imageAlt = CONFIG.images && CONFIG.images.systemImage
+            ? CONFIG.images.systemImage.alt
+            : CONFIG.name;
+
+        const sourceBadge = getSourceBadgeHtml(CONFIG.source_type);
+        const category = catalogueEntry.category || CONFIG.category || 'Uncategorized';
+        const catBadge = `<span class="badge badge-category">${category}</span>`;
+
+        // Check if Documents tab should show
+        const hasDocuments = !!CONFIG.gdrive_md_folder;
+        const documentsTabBtn = hasDocuments
+            ? '<button class="tab-btn" data-tab="documents" onclick="switchTab(\'documents\')">Documents</button>'
+            : '';
+
+        container.innerHTML = `
+            <!-- Hero Header -->
+            <div class="hero-header">
+                <h1>${CONFIG.name}</h1>
+                <div class="hero-meta">
+                    ${catBadge}
+                    ${sourceBadge}
+                </div>
+                <p class="hero-description">${CONFIG.description || 'No description available.'}</p>
+            </div>
+
+            <!-- Hero Grid: Map + System Info -->
+            <div class="hero-grid">
+                <div class="map-card">
+                    <div class="card-title">Location</div>
+                    <div id="map-container"></div>
+                </div>
+                <div class="info-card">
+                    <div class="card-title">System Image</div>
+                    <div class="system-image-container">
+                        ${imageSrc
+                            ? `<img src="${imageSrc}" alt="${imageAlt}" onerror="this.outerHTML='<div class=\\'system-image-placeholder\\'>&#127758;</div>'">`
+                            : '<div class="system-image-placeholder">&#127758;</div>'
+                        }
+                    </div>
+                    <div class="quick-facts">
+                        <div class="quick-facts-grid" id="quick-facts">
+                            <div class="fact-item">
+                                <div class="fact-value" id="fact-factors">--</div>
+                                <div class="fact-label">Factors</div>
+                            </div>
+                            <div class="fact-item">
+                                <div class="fact-value" id="fact-relationships">--</div>
+                                <div class="fact-label">Relationships</div>
+                            </div>
+                            <div class="fact-item">
+                                <div class="fact-value" id="fact-domains">--</div>
+                                <div class="fact-label">Domains</div>
+                            </div>
+                            <div class="fact-item">
+                                <div class="fact-value" id="fact-density">--</div>
+                                <div class="fact-label">Density</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="overview" onclick="switchTab('overview')">Overview</button>
+                    <button class="tab-btn" data-tab="network" onclick="switchTab('network')">Network Preview</button>
+                    ${documentsTabBtn}
+                    <button class="tab-btn" data-tab="data-sources" onclick="switchTab('data-sources')">Data Sources</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-panel active" id="tab-overview">
+                    <div class="metrics-grid" id="metrics-grid">
+                        <!-- Populated by loadSheetsData -->
+                    </div>
+                    <div class="domains-section" id="domains-section">
+                        <h3>Domains</h3>
+                        <div class="domain-chips" id="domain-chips">
+                            <span style="color:#5a7a96; font-size:0.9em;">Loading domains...</span>
+                        </div>
+                    </div>
+                    <div class="status-section">
+                        <h3>System Status</h3>
+                        <div class="status-cards">
+                            <div class="status-card">
+                                <h4>Data Source</h4>
+                                <p>Connected to Google Sheets. Data is loaded in real-time when launching the systems map.</p>
+                            </div>
+                            <div class="status-card">
+                                <h4>Analysis Tools</h4>
+                                <p>Diagnostics Lab, Intervention Lab (Token Diffusion), and Monitoring Lab (Centrality Metrics) are available.</p>
+                            </div>
+                            <div class="status-card">
+                                <h4>Visualization</h4>
+                                <p>Interactive D3.js force-directed network graph with zoom, pan, and domain filtering.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Preview Tab -->
+                <div class="tab-panel" id="tab-network">
+                    <div class="network-preview-container">
+                        <div class="network-preview-header">
+                            <h3>Systems Map Preview</h3>
+                            <span class="preview-hint">Drag to rearrange &middot; Scroll to zoom &middot; Launch for full interactive analysis</span>
+                        </div>
+                        <div id="network-preview-svg" style="min-height:500px; display:flex; align-items:center; justify-content:center; color:#5a7a96;">
+                            <span class="loading-spinner" style="margin-right:8px;"></span> Building network preview...
+                        </div>
+                        <div class="network-legend" id="network-legend"></div>
+                    </div>
+                </div>
+
+                <!-- Documents Tab -->
+                ${hasDocuments ? `
+                <div class="tab-panel" id="tab-documents">
+                    <div class="docs-container">
+                        <div class="docs-sidebar">
+                            <div class="docs-sidebar-title">Documents</div>
+                            <ul class="docs-file-list" id="docs-file-list">
+                                <li style="justify-content:center; color:#5a7a96;">
+                                    <span class="loading-spinner"></span>
+                                    Loading files...
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="docs-content" id="docs-content">
+                            <div class="docs-placeholder">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                                <p>Select a document from the sidebar to view its contents.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Data Sources Tab -->
+                <div class="tab-panel" id="tab-data-sources">
+                    <div class="data-sources-grid">
+                        <div class="data-source-card">
+                            <h4>Main Spreadsheet</h4>
+                            <p>Primary data source with FACTORS and RELATIONSHIPS tabs.</p>
+                            ${CONFIG.spreadsheets && CONFIG.spreadsheets.main
+                                ? `<a href="https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheets.main}" target="_blank" rel="noopener">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    Open in Google Sheets
+                                </a>`
+                                : '<span style="color:#5a7a96; font-size:0.85em;">Not configured</span>'
+                            }
+                        </div>
+                        ${CONFIG.spreadsheets && CONFIG.spreadsheets.draft && CONFIG.spreadsheets.draft !== CONFIG.spreadsheets.main
+                            ? `<div class="data-source-card">
+                                <h4>Draft Spreadsheet</h4>
+                                <p>Alternative or draft version of the system data.</p>
+                                <a href="https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheets.draft}" target="_blank" rel="noopener">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    Open in Google Sheets
+                                </a>
+                            </div>`
+                            : ''
+                        }
+                        ${CONFIG.gdrive_md_folder
+                            ? `<div class="data-source-card">
+                                <h4>Documents Folder</h4>
+                                <p>Google Drive folder containing analysis and documentation files.</p>
+                                <a href="${CONFIG.gdrive_md_folder}" target="_blank" rel="noopener">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                    Open in Google Drive
+                                </a>
+                            </div>`
+                            : ''
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Initialize map
+        initMap();
+
+        // Load documents if configured
+        if (hasDocuments) {
+            loadDriveFiles();
+        }
+    }
+
+    // ============================================
+    // TABS
+    // ============================================
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.tab === tabId);
+        });
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.toggle('active', panel.id === `tab-${tabId}`);
+        });
+    }
+
+    // ============================================
+    // INTERACTIVE MAP (Leaflet)
+    // ============================================
+    function initMap() {
+        const mapEl = document.getElementById('map-container');
+        if (!mapEl) return;
+
+        if (!CONFIG.location || !CONFIG.location.lat || !CONFIG.location.lng) {
+            mapEl.innerHTML = `
+                <div class="map-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <p>Location not specified for this system.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const { lat, lng, name, zoom } = CONFIG.location;
+
+        // Use a dark tile layer
+        const map = L.map(mapEl, {
+            scrollWheelZoom: false,
+            attributionControl: true
+        }).setView([lat, lng], zoom || 5);
+
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, GIS User Community',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Custom marker
+        const markerIcon = L.divIcon({
+            className: '',
+            html: `<div style="width:24px;height:24px;background:linear-gradient(135deg,#1e88e5,#1565c0);border-radius:50%;border:3px solid #64b5f6;box-shadow:0 2px 8px rgba(30,136,229,0.5);"></div>`,
+            iconSize: [24, 24],
+            iconAnchor: [12, 12]
+        });
+
+        const marker = L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+        marker.bindPopup(`<strong style="color:#e0e6ed;">${name || CONFIG.name}</strong>`);
+
+        // Fix map rendering after container is visible
+        setTimeout(() => map.invalidateSize(), 100);
+    }
+
+    // ============================================
+    // GOOGLE SHEETS DATA (for metrics)
+    // ============================================
+    async function loadSheetsData() {
+        if (!CONFIG.spreadsheets || !CONFIG.spreadsheets.main || !CONFIG.apiKey) {
+            updateMetrics(0, 0, []);
+            renderNetworkPreview();
+            return;
+        }
+
+        try {
+            const sheetId = CONFIG.spreadsheets.main;
+            const apiKey = CONFIG.apiKey;
+
+            // Fetch factors
+            const factorsRes = await fetch(
+                `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/FACTORS!A:E?key=${apiKey}`
+            );
+            const factorsJson = await factorsRes.json();
+            const factorsRows = (factorsJson.values || []).slice(1); // skip header
+
+            // Fetch relationships
+            const relRes = await fetch(
+                `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/RELATIONSHIPS!A:I?key=${apiKey}`
+            );
+            const relJson = await relRes.json();
+            const relRows = (relJson.values || []).slice(1);
+
+            // Extract domains
+            const domains = [...new Set(factorsRows.map(r => r[2]).filter(Boolean))].sort();
+
+            sheetsData = {
+                factors: factorsRows,
+                relationships: relRows,
+                domains: domains
+            };
+
+            updateMetrics(factorsRows.length, relRows.length, domains);
+            renderNetworkPreview();
+        } catch (e) {
+            console.error('Failed to load sheets data:', e);
+            updateMetrics(0, 0, []);
+            renderNetworkPreview();
+        }
+    }
+
+    function updateMetrics(factorCount, relCount, domains) {
+        // Quick facts
+        document.getElementById('fact-factors').textContent = factorCount || '--';
+        document.getElementById('fact-relationships').textContent = relCount || '--';
+        document.getElementById('fact-domains').textContent = domains.length || '--';
+
+        // Compute density: edges / (nodes * (nodes - 1))
+        if (factorCount > 1 && relCount > 0) {
+            const density = (relCount / (factorCount * (factorCount - 1))).toFixed(3);
+            document.getElementById('fact-density').textContent = density;
+        } else {
+            document.getElementById('fact-density').textContent = '--';
+        }
+
+        // Domain chips
+        const chipsEl = document.getElementById('domain-chips');
+        if (chipsEl) {
+            if (domains.length === 0) {
+                chipsEl.innerHTML = '<span style="color:#5a7a96; font-size:0.9em;">No domain data available. Launch the systems map to explore.</span>';
+            } else {
+                chipsEl.innerHTML = domains.map(d => {
+                    const color = getDomainColor(d);
+                    const count = sheetsData.factors.filter(r => r[2] === d).length;
+                    return `<span class="domain-chip"><span class="swatch" style="background:${color}"></span>${d} (${count})</span>`;
+                }).join('');
+            }
+        }
+
+        // Overview metrics grid
+        const metricsGrid = document.getElementById('metrics-grid');
+        if (metricsGrid && factorCount > 0) {
+            // Count intervenable factors
+            const intervenable = sheetsData.factors.filter(r => r[3] && r[3].toLowerCase() === 'yes').length;
+
+            // Count relationship polarities
+            const sameCount = sheetsData.relationships.filter(r => r[5] && r[5].toLowerCase() === 'same').length;
+            const oppositeCount = sheetsData.relationships.filter(r => r[5] && r[5].toLowerCase() === 'opposite').length;
+
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-value">${factorCount}</div>
+                    <div class="metric-label">Total Factors</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${relCount}</div>
+                    <div class="metric-label">Total Relationships</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${domains.length}</div>
+                    <div class="metric-label">Domains</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${intervenable}</div>
+                    <div class="metric-label">Intervenable Factors</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${sameCount}</div>
+                    <div class="metric-label">Same Polarity Links</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${oppositeCount}</div>
+                    <div class="metric-label">Opposite Polarity Links</div>
+                </div>
+            `;
+        } else if (metricsGrid) {
+            metricsGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding:20px; color:#5a7a96;">
+                    <p>Metrics will be available once the Google Sheets data source is accessible.</p>
+                </div>
+            `;
+        }
+    }
+
+    // ============================================
+    // GOOGLE DRIVE MARKDOWN VIEWER
+    // ============================================
+    function extractFolderId(url) {
+        if (!url) return null;
+        // Handle /folders/ID format
+        const match = url.match(/\/folders\/([a-zA-Z0-9_-]+)/);
+        return match ? match[1] : null;
+    }
+
+    async function loadDriveFiles() {
+        const folderId = extractFolderId(CONFIG.gdrive_md_folder);
+        if (!folderId) {
+            renderDocsList([]);
+            return;
+        }
+
+        const fileListEl = document.getElementById('docs-file-list');
+        if (!fileListEl) return;
+
+        try {
+            // List files in the folder
+            // We search for both text/markdown and text/plain (some .md files are served as text/plain)
+            const apiKey = CONFIG.apiKey;
+            const query = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
+            const fields = encodeURIComponent('files(id,name,mimeType,modifiedTime)');
+            const url = `https://www.googleapis.com/drive/v3/files?q=${query}&key=${apiKey}&fields=${fields}&orderBy=name&pageSize=100`;
+
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Drive API error: ${response.status}`);
+            }
+            const data = await response.json();
+
+            // Filter for .md files
+            driveFiles = (data.files || []).filter(f =>
+                f.name.toLowerCase().endsWith('.md') ||
+                f.mimeType === 'text/markdown'
+            );
+
+            renderDocsList(driveFiles);
+
+            // Auto-select first file
+            if (driveFiles.length > 0) {
+                loadDocFile(driveFiles[0].id);
+            }
+        } catch (e) {
+            console.error('Failed to load Drive files:', e);
+            fileListEl.innerHTML = `
+                <li style="color:#ef5350; font-size:0.85em; flex-direction:column; align-items:flex-start; gap:4px;">
+                    <span>Failed to load documents.</span>
+                    <span style="color:#7a5a5a; font-size:0.85em;">${e.message}</span>
+                    <span style="color:#5a7a96; font-size:0.8em; margin-top:4px;">Ensure the Google Drive folder is shared publicly and the Drive API is enabled for the API key.</span>
+                </li>
+            `;
+        }
+    }
+
+    function renderDocsList(files) {
+        const fileListEl = document.getElementById('docs-file-list');
+        if (!fileListEl) return;
+
+        if (files.length === 0) {
+            fileListEl.innerHTML = `
+                <li style="color:#5a7a96; justify-content:center;">No markdown files found.</li>
+            `;
+            return;
+        }
+
+        const fileIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+
+        fileListEl.innerHTML = files.map(f => {
+            const displayName = f.name.replace(/\.md$/i, '');
+            return `<li onclick="loadDocFile('${f.id}')" data-file-id="${f.id}">${fileIcon}<span>${displayName}</span></li>`;
+        }).join('');
+    }
+
+    // ============================================
+    // NETWORK PREVIEW (D3 Force-Directed Graph)
+    // ============================================
+    function renderNetworkPreview() {
+        const container = document.getElementById('network-preview-svg');
+        const legendEl = document.getElementById('network-legend');
+        if (!container) return;
+
+        if (sheetsData.factors.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding:40px; color:#5a7a96;">No data available for network preview. Check that the Google Sheets data source is accessible.</div>';
+            return;
+        }
+
+        // Build nodes and links (mirroring main app)
+        const isFocal = (d) => d === 'FOCAL FACTORS' || d === 'Focal Factors' || d === 'Focal';
+
+        const nodes = sheetsData.factors.map(f => ({
+            id: f[0],
+            name: f[1],
+            domain: f[2],
+            color: getDomainColor(f[2])
+        }));
+
+        const nodeIds = new Set(nodes.map(n => n.id));
+
+        const links = sheetsData.relationships
+            .filter(r => r[3] && r[4] && nodeIds.has(r[3]) && nodeIds.has(r[4]))
+            .map(r => ({
+                source: r[3],
+                target: r[4],
+                polarity: (r[5] || '').toLowerCase(),
+                strength: (r[6] || '').toLowerCase()
+            }));
+
+        // Clear container
+        container.innerHTML = '';
+        container.style.display = 'block';
+
+        const width = container.clientWidth || 800;
+        const height = 500;
+
+        const svg = d3.select(container)
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .attr('viewBox', [0, 0, width, height]);
+
+        // Add zoom & pan
+        const g = svg.append('g');
+        svg.call(d3.zoom()
+            .scaleExtent([0.15, 5])
+            .on('zoom', (event) => g.attr('transform', event.transform)));
+
+        // Arrow markers (per polarity+strength, matching main app)
+        const defs = svg.append('defs');
+        ['same', 'opposite', 'default'].forEach(type => {
+            ['strong', 'medium', 'weak', ''].forEach(strength => {
+                const suffix = strength ? `-${strength}` : '';
+                defs.append('marker')
+                    .attr('id', `preview-arrow-${type}${suffix}`)
+                    .attr('viewBox', '0 -5 10 10')
+                    .attr('refX', 20)
+                    .attr('refY', 0)
+                    .attr('markerWidth', 6)
+                    .attr('markerHeight', 6)
+                    .attr('orient', 'auto')
+                    .append('path')
+                    .attr('d', 'M0,-5L10,0L0,5')
+                    .attr('fill', type === 'same' ? '#28a745' : type === 'opposite' ? '#dc3545' : '#607D8B');
+            });
+        });
+
+        // Force simulation (matching main app parameters)
+        const simulation = d3.forceSimulation(nodes)
+            .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+            .force('charge', d3.forceManyBody().strength(-300))
+            .force('center', d3.forceCenter(width / 2, height / 2))
+            .force('collision', d3.forceCollide().radius(30));
+
+        // Draw links as curved paths (matching main app arc style)
+        const link = g.append('g')
+            .attr('fill', 'none')
+            .selectAll('path')
+            .data(links)
+            .join('path')
+            .attr('stroke', d => d.polarity === 'same' ? '#28a745' : d.polarity === 'opposite' ? '#dc3545' : '#607D8B')
+            .attr('stroke-opacity', 0.5)
+            .attr('stroke-width', d => d.strength === 'strong' ? 2.5 : d.strength === 'weak' ? 0.8 : 1.5)
+            .attr('marker-end', d => {
+                const type = d.polarity || 'default';
+                const suffix = d.strength ? `-${d.strength}` : '';
+                return `url(#preview-arrow-${type}${suffix})`;
+            });
+
+        // Draw node groups (circle + label, matching main app)
+        const node = g.append('g')
+            .selectAll('.preview-node')
+            .data(nodes)
+            .join('g')
+            .attr('class', 'preview-node')
+            .style('cursor', 'grab')
+            .call(d3.drag()
+                .on('start', (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0.3).restart();
+                    d.fx = d.x; d.fy = d.y;
+                })
+                .on('drag', (event, d) => {
+                    d.fx = event.x; d.fy = event.y;
+                })
+                .on('end', (event, d) => {
+                    if (!event.active) simulation.alphaTarget(0);
+                    d.fx = null; d.fy = null;
+                })
+            );
+
+        // Node circles (matching main app sizes: 12 for FOCAL, 10 for others)
+        node.append('circle')
+            .attr('r', d => isFocal(d.domain) ? 12 : 10)
+            .attr('fill', d => d.color)
+            .attr('stroke', 'rgba(255,255,255,0.3)')
+            .attr('stroke-width', 1.5);
+
+        // Tooltips
+        node.append('title').text(d => `${d.name}\nDomain: ${d.domain}`);
+
+        // Labels — ALWAYS shown for every node (matching main app)
+        node.append('text')
+            .text(d => d.name)
+            .attr('dx', 14)
+            .attr('dy', '.35em')
+            .attr('font-size', d => isFocal(d.domain) ? '12px' : '10px')
+            .attr('font-weight', d => isFocal(d.domain) ? 'bold' : 'normal')
+            .attr('fill', '#e0e6ed')
+            .attr('opacity', 0.85)
+            .style('pointer-events', 'none')
+            .style('text-shadow', '0 1px 3px rgba(0,0,0,0.8), 0 0px 6px rgba(0,0,0,0.5)');
+
+        // Tick — update curved paths + node positions
+        simulation.on('tick', () => {
+            // Curved arc links (same formula as main app)
+            link.attr('d', d => {
+                const dx = d.target.x - d.source.x;
+                const dy = d.target.y - d.source.y;
+                const dr = Math.sqrt(dx * dx + dy * dy);
+                return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            });
+
+            node.attr('transform', d => `translate(${d.x},${d.y})`);
+        });
+
+        // Build legend
+        if (legendEl) {
+            const domains = [...new Set(nodes.map(n => n.domain))].sort();
+            let legendHtml = domains.map(d => {
+                const color = getDomainColor(d);
+                return `<span class="legend-item"><span style="width:10px;height:10px;border-radius:50%;background:${color};display:inline-block;"></span>${d}</span>`;
+            }).join('');
+            legendHtml += `<span class="legend-item"><span class="legend-line" style="background:#28a745;"></span>Same polarity</span>`;
+            legendHtml += `<span class="legend-item"><span class="legend-line" style="background:#dc3545;"></span>Opposite polarity</span>`;
+            legendEl.innerHTML = legendHtml;
+        }
+    }
+
+    async function loadDocFile(fileId) {
+        const contentEl = document.getElementById('docs-content');
+        if (!contentEl) return;
+
+        // Update active state in sidebar
+        document.querySelectorAll('.docs-file-list li').forEach(li => {
+            li.classList.toggle('active', li.dataset.fileId === fileId);
+        });
+
+        contentEl.innerHTML = `
+            <div class="docs-loading">
+                <span class="loading-spinner"></span>
+                <span>Loading document...</span>
+            </div>
+        `;
+
+        try {
+            const apiKey = CONFIG.apiKey;
+            const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`;
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch file: ${response.status}`);
+            }
+
+            const markdown = await response.text();
+
+            // Render markdown
+            const rawHtml = marked.parse(markdown);
+            const cleanHtml = DOMPurify.sanitize(rawHtml);
+
+            contentEl.innerHTML = `<div class="md-content">${cleanHtml}</div>`;
+            currentDocFile = fileId;
+        } catch (e) {
+            console.error('Failed to load document:', e);
+            contentEl.innerHTML = `
+                <div class="docs-placeholder" style="color:#ef5350;">
+                    <p>Failed to load document: ${e.message}</p>
+                </div>
+            `;
+        }
+    }
+</script>
+
+</body>
+</html>
