@@ -1732,28 +1732,28 @@
         /* Documentation Tabs */
         .doc-tabs {
             display: flex;
+            flex-wrap: wrap;
             border-bottom: 1px solid rgba(100, 181, 246, 0.12);
             background: rgba(10, 22, 40, 0.4);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
         }
 
         .doc-tab {
-            flex: 1;
-            min-width: 160px;
-            padding: 14px 16px;
+            flex: 1 1 auto;
+            min-width: 0;
+            padding: 11px 14px;
             background: none;
             border: none;
             border-bottom: 3px solid transparent;
             color: #6a8fa8;
-            font-size: 0.85em;
+            font-size: 0.82em;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
             white-space: nowrap;
             font-family: inherit;
         }
@@ -1792,6 +1792,16 @@
         .doc-tab.active .tab-step {
             background: #1e88e5;
             color: #fff;
+        }
+
+        /* Row 1: first 4 tabs — ~25% each */
+        .doc-tab:nth-child(-n+4) {
+            flex-basis: 22%;
+        }
+        /* Row 2: last 3 tabs — ~33% each */
+        .doc-tab:nth-child(n+5) {
+            flex-basis: 28%;
+            border-top: 1px solid rgba(100, 181, 246, 0.06);
         }
 
         /* Tab Panels */
@@ -1922,7 +1932,7 @@
         }
 
         .doc-collapsible.open .doc-collapsible-body {
-            max-height: 2000px;
+            max-height: 8000px;
             padding: 0 18px 18px;
         }
 
@@ -1966,10 +1976,23 @@
         }
 
         .doc-diagram .mermaid svg {
-            width: 100% !important;
             max-width: 100% !important;
             height: auto !important;
             min-height: 120px;
+        }
+
+        .doc-diagram-compact .mermaid svg {
+            max-width: 420px !important;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .cycle-diagram {
+            width: 100%;
+            max-width: 680px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
 
         .doc-diagram .diagram-caption {
@@ -1978,6 +2001,141 @@
             margin-top: 14px;
             font-style: italic;
             line-height: 1.55;
+        }
+
+        /* Results: Accumulation tables */
+        .accum-tables-wrapper {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0 4px;
+        }
+        @media (max-width: 700px) {
+            .accum-tables-wrapper { flex-direction: column; }
+        }
+        .accum-table {
+            flex: 1;
+            border-collapse: collapse;
+            font-size: 0.82em;
+        }
+        .accum-table th, .accum-table td {
+            padding: 6px 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(100,181,246,0.08);
+        }
+        .accum-table thead tr:last-child th {
+            font-size: 0.85em;
+            color: #5a7a96;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(100,181,246,0.15);
+        }
+        .accum-table td:nth-child(2) {
+            text-align: left;
+        }
+        .accum-header {
+            font-size: 0.95em !important;
+            font-weight: 700 !important;
+            padding: 8px 10px !important;
+            text-transform: none !important;
+            letter-spacing: 0 !important;
+            border-bottom: none !important;
+        }
+        .accum-header-pos {
+            color: #66bb6a !important;
+        }
+        .accum-header-neg {
+            color: #ef5350 !important;
+        }
+        .accum-table .token-pos {
+            color: #66bb6a;
+            font-weight: 700;
+        }
+        .accum-table .token-neg {
+            color: #ef5350;
+            font-weight: 700;
+        }
+        .accum-table .token-zero {
+            color: #556;
+        }
+        .accum-row-muted td {
+            color: #445 !important;
+            font-style: italic;
+        }
+        .accum-table tbody tr:hover {
+            background: rgba(100,181,246,0.04);
+        }
+
+        /* Results: Line plots */
+        .lineplot-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #8ab4d6;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .lineplot-svg {
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* Results: Controllability gauge */
+        .controllability-gauge {
+            padding: 10px 0;
+        }
+        .gauge-title {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #8ab4d6;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        .gauge-bar-container {
+            background: rgba(30, 58, 95, 0.4);
+            border: 1px solid rgba(100,181,246,0.15);
+            border-radius: 8px;
+            height: 36px;
+            overflow: hidden;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .gauge-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1b5e20, #43a047, #66bb6a);
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.6s ease;
+        }
+        .gauge-bar-text {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .gauge-detail {
+            max-width: 500px;
+            margin: 12px auto 0;
+            font-size: 0.8em;
+            color: #8ab4d6;
+            line-height: 1.6;
+        }
+        .gauge-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+        .gauge-dot-reached { background: #66bb6a; }
+        .gauge-dot-unreached { background: #555; }
+        .gauge-reached, .gauge-unreached {
+            margin: 4px 0;
         }
 
         /* Step-by-step example tables */
@@ -2230,12 +2388,18 @@
         /* Responsive */
         @media (max-width: 768px) {
             .doc-tabs {
-                flex-wrap: nowrap;
+                flex-wrap: wrap;
             }
             .doc-tab {
-                min-width: 120px;
-                padding: 10px 12px;
-                font-size: 0.78em;
+                min-width: 0;
+                padding: 9px 10px;
+                font-size: 0.74em;
+            }
+            .doc-tab:nth-child(-n+4) {
+                flex-basis: 20%;
+            }
+            .doc-tab:nth-child(n+5) {
+                flex-basis: 26%;
             }
             .doc-panel {
                 padding: 20px 18px 24px;
@@ -2303,6 +2467,14 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                 From Knowledge to Action
             </button>
+            <button class="doc-tab" data-tab="building" onclick="switchDocTab('building')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                Building the Map
+            </button>
+            <button class="doc-tab" data-tab="references" onclick="switchDocTab('references')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                References
+            </button>
         </div>
 
         <!-- =========================================== -->
@@ -2339,8 +2511,59 @@
                 <p><strong>Why does this matter?</strong> Traditional approaches address problems one at a time. But in complex systems, solving one problem can create or worsen others. Systems thinking provides the tools to see the whole picture, identify leverage points, and design interventions that account for side effects and feedback.</p>
             </div>
 
+            <!-- Collapsible: What Is a Causal System Map? -->
+            <div class="doc-collapsible open" id="coll-what-is-map">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-what-is-map')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="3"/><path d="M12 1v4"/><path d="M12 19v4"/><path d="M4.22 4.22l2.83 2.83"/><path d="M16.95 16.95l2.83 2.83"/><path d="M1 12h4"/><path d="M19 12h4"/><path d="M4.22 19.78l2.83-2.83"/><path d="M16.95 7.05l2.83-2.83"/></svg>
+                        What Is a Causal System Map?
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>A <strong>causal system map</strong> (also called a causal loop diagram) is a visual representation of how things influence each other within a system. It captures the cause-and-effect relationships that drive system behaviour, making hidden connections visible and explicit.</p>
+
+                    <p>The map has two core building blocks:</p>
+                    <ul>
+                        <li><strong>Variables</strong> (nodes) &mdash; the factors, conditions, or quantities that can change over time. These are the things you can observe, measure, or perceive in the system.</li>
+                        <li><strong>Causal relationships</strong> (edges) &mdash; directed arrows connecting one variable to another, meaning &ldquo;a change in A causes a change in B.&rdquo; Each relationship has properties:
+                            <ul>
+                                <li><strong>Direction</strong> &mdash; the arrow shows which variable influences which.</li>
+                                <li><strong>Polarity</strong> &mdash; <span style="color: var(--s4a-accent-green);">same direction (+)</span>: both increase or both decrease together. <span style="color: var(--s4a-accent-red);">Opposite direction (&minus;)</span>: when one increases, the other decreases.</li>
+                                <li><strong>Strength</strong> &mdash; how strong the influence is (strong, medium, or weak).</li>
+                                <li><strong>Time delay</strong> &mdash; how long it takes for the effect to materialise (days, months, or years).</li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <p>Here is a minimal example &mdash; a generic system with just four variables and the relationships between them:</p>
+
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    A["Population Size"] -->|"same"| B["Resource Demand"]
+    B -->|"opposite"| C["Resource Availability"]
+    C -->|"same"| A
+    D["Management Policy"] -->|"opposite"| B
+                        </div>
+                        <p class="diagram-caption">A minimal causal system map. <strong>Population Size</strong> drives <strong>Resource Demand</strong> (same direction: more people, more demand). Higher demand <em>reduces</em> <strong>Resource Availability</strong> (opposite direction). Availability feeds back to support <strong>Population Size</strong> (same direction), completing a <strong>balancing loop</strong>. <strong>Management Policy</strong> acts as an external lever that can reduce demand.</p>
+                    </div>
+
+                    <p>Even this simple map reveals important dynamics:</p>
+                    <ul>
+                        <li><strong>A balancing feedback loop</strong> (Population &rarr; Demand &rarr; Availability &rarr; Population): as the population grows, it consumes resources, which eventually constrains further growth. The system self-regulates.</li>
+                        <li><strong>A leverage point</strong> (Management Policy): by adjusting policy, you can reduce demand <em>without</em> waiting for resource depletion to do it naturally &mdash; a proactive intervention.</li>
+                        <li><strong>Non-obvious dependencies</strong>: improving resource availability alone won&rsquo;t help if population growth continues to outpace supply. The map shows you need to address demand as well.</li>
+                    </ul>
+
+                    <div class="doc-highlight" style="margin-top: 16px;">
+                        <p><strong>From simple to complex.</strong> Real-world system maps typically contain dozens or even hundreds of variables and relationships spanning ecological, economic, social, and governance dimensions. SIM4Action provides the computational tools to analyse these complex maps &mdash; the same principles shown here (variables, relationships, feedback loops, leverage points) apply at any scale.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Collapsible: Causal Complexity Explained -->
-            <div class="doc-collapsible open" id="coll-causal">
+            <div class="doc-collapsible" id="coll-causal">
                 <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-causal')">
                     <h4>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -2465,8 +2688,8 @@ graph TD
     MP -->|"same / medium"| FE["Fishing Effort"]
     FE -->|"opposite / strong"| FS
     HQ["Harvest Quota"] -->|"opposite / strong"| FE
-    MPA["Marine Protected Area"] -->|"same / medium"| FS
-    MPA -->|"same / weak"| WQ
+    SP["Spatial Protection"] -->|"same / medium"| FS
+    SP -->|"same / weak"| WQ
     CV -->|"same / medium"| CW["Community Wellbeing"]
     MP -->|"same / medium"| CW
 
@@ -2476,21 +2699,21 @@ graph TD
     style MP fill:#142a4a,stroke:#1E90FF,color:#e0e6ed
     style CV fill:#142a4a,stroke:#1E90FF,color:#e0e6ed
     style HQ fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
-    style MPA fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style SP fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
     style FE fill:#2a1a3a,stroke:#CC99FF,color:#e0e6ed
     style CW fill:#2a1a3a,stroke:#CC99FF,color:#e0e6ed
 
-    linkStyle 0 stroke:#ef5350
-    linkStyle 5 stroke:#ef5350
-    linkStyle 6 stroke:#ef5350
-    linkStyle 1 stroke:#66bb6a,stroke-width:3px
-    linkStyle 2 stroke:#66bb6a,stroke-width:3px
-    linkStyle 3 stroke:#66bb6a,stroke-width:3px
-    linkStyle 4 stroke:#66bb6a,stroke-width:2px
-    linkStyle 7 stroke:#66bb6a,stroke-width:2px
-    linkStyle 8 stroke:#66bb6a,stroke-width:1px
-    linkStyle 9 stroke:#66bb6a,stroke-width:2px
-    linkStyle 10 stroke:#66bb6a,stroke-width:2px
+    linkStyle 0 stroke:#ef5350,stroke-width:3px
+    linkStyle 5 stroke:#ef5350,stroke-width:6px
+    linkStyle 6 stroke:#ef5350,stroke-width:6px
+    linkStyle 1 stroke:#66bb6a,stroke-width:6px
+    linkStyle 2 stroke:#66bb6a,stroke-width:6px
+    linkStyle 3 stroke:#66bb6a,stroke-width:6px
+    linkStyle 4 stroke:#66bb6a,stroke-width:3px
+    linkStyle 7 stroke:#66bb6a,stroke-width:3px
+    linkStyle 8 stroke:#66bb6a,stroke-width:1.5px
+    linkStyle 9 stroke:#66bb6a,stroke-width:3px
+    linkStyle 10 stroke:#66bb6a,stroke-width:3px
                         </div>
                         <p class="diagram-caption">A synthetic coastal fishery system with 9 factors across 4 domains. <strong>Node colours</strong> indicate domain: green = Environmental, blue = Economics, orange = Management, purple = Social. <strong>Edge colours</strong> indicate polarity: green = same-direction (+), red = opposite-direction (&minus;). <strong>Edge thickness</strong> reflects strength: thick = strong, medium = medium, thin = weak. Edge labels show polarity and strength explicitly.</p>
                     </div>
@@ -2587,7 +2810,7 @@ graph LR
         MP2["Market Price"]
         CW2["Community Wellbeing"]
         HQ2["Harvest Quota"]
-        MPA2["Marine Protected Area"]
+        SP2["Spatial Protection"]
     end
 
     SST2 --> FS2
@@ -2599,8 +2822,8 @@ graph LR
     MP2 --> CW2
     CV2 --> CW2
     HQ2 --> FE2
-    MPA2 --> FS2
-    MPA2 --> WQ2
+    SP2 --> FS2
+    SP2 --> WQ2
 
     style SST2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
     style WQ2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
@@ -2610,7 +2833,7 @@ graph LR
     style MP2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
     style CW2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
     style HQ2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
-    style MPA2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
+    style SP2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
 
     linkStyle 4 stroke:#ffa726,stroke-width:3px
     linkStyle 5 stroke:#ffa726,stroke-width:3px
@@ -2660,26 +2883,31 @@ graph LR
                         <li>Respects <strong>temporal delays</strong> &mdash; slow relationships take more simulation steps to traverse</li>
                         <li><strong>Accumulates</strong> at dead ends (nodes with no outgoing edges)</li>
                     </ul>
-                    <div class="doc-diagram">
+                    <div class="doc-diagram doc-diagram-compact">
                         <div class="mermaid">
-graph LR
-    A["Harvest Quota<br/>INJECT +5 tokens"] -->|"opposite / strong"| B["Fishing Effort"]
-    B -->|"opposite / strong"| C["Fish Stock"]
-    C -->|"same / strong"| E["Catch Volume"]
-    E -->|"same / strong"| F["Market Price"]
-    F -->|"same / medium"| B
-    E -->|"same / medium"| G["Community Wellbeing"]
-    F -->|"same / medium"| G
+graph TD
+    HQ["Harvest Quota<br/>INJECT +5"] -->|"opposite / strong"| FE["Fishing Effort<br/>receives &minus;5"]
+    FE -->|"opposite / strong"| FS["Fish Stock<br/>receives +5"]
+    FS -->|"same / strong"| CV["Catch Volume<br/>receives +5"]
+    CV -->|"same / strong &middot; 60%"| MP["Market Price<br/>receives ~+3"]
+    CV -->|"same / medium &middot; 40%"| CW["Community Wellbeing<br/>receives ~+2"]
+    MP -->|"same / medium"| CW
 
-    linkStyle 0 stroke:#ef5350,stroke-width:3px
-    linkStyle 1 stroke:#ef5350,stroke-width:3px
-    linkStyle 2 stroke:#66bb6a,stroke-width:3px
-    linkStyle 3 stroke:#66bb6a,stroke-width:3px
-    linkStyle 4 stroke:#66bb6a,stroke-width:2px
-    linkStyle 5 stroke:#66bb6a,stroke-width:2px
-    linkStyle 6 stroke:#66bb6a,stroke-width:2px
+    style HQ fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style FE fill:#3a1a1a,stroke:#ef5350,color:#e0e6ed
+    style FS fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CV fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style MP fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CW fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+
+    linkStyle 0 stroke:#ef5350,stroke-width:6px
+    linkStyle 1 stroke:#ef5350,stroke-width:6px
+    linkStyle 2 stroke:#66bb6a,stroke-width:6px
+    linkStyle 3 stroke:#66bb6a,stroke-width:6px
+    linkStyle 4 stroke:#66bb6a,stroke-width:3px
+    linkStyle 5 stroke:#66bb6a,stroke-width:3px
                         </div>
-                        <p class="diagram-caption"><strong>Token diffusion example.</strong> 5 positive tokens (+) are injected at Harvest Quota, simulating a quota increase. <strong>Step 1:</strong> Tokens travel along the <span style="color:#ef5350">red opposite-direction edge</span> to Fishing Effort &mdash; charge <em>flips</em> from +5 to &minus;5 (quota up &rarr; effort down). <strong>Step 2:</strong> Tokens continue along the second <span style="color:#ef5350">red opposite edge</span> to Fish Stock &mdash; charge flips again to +5 (less effort &rarr; stock recovers). <strong>Step 3:</strong> Tokens propagate along <span style="color:#66bb6a">green same-direction edges</span> to Catch Volume, Market Price, and Community Wellbeing, <em>preserving</em> the positive charge (more fish &rarr; more catch &rarr; higher prices &rarr; greater wellbeing). <strong>Edge thickness</strong> reflects strength: thick = strong, thin = medium/weak.</p>
+                        <p class="diagram-caption"><strong>Token diffusion illustrated.</strong> This diagram traces the propagation path only. 5 positive tokens are injected at Harvest Quota. On <span style="color:#ef5350">red opposite-direction edges</span> the charge <strong>flips</strong>: +5 &rarr; &minus;5 at Fishing Effort, then &minus;5 &rarr; +5 at Fish Stock (the &ldquo;double flip&rdquo;). On <span style="color:#66bb6a">green same-direction edges</span> the charge is <strong>preserved</strong>. At Catch Volume, tokens <strong>split</strong> probabilistically: 60% to Market Price (strong, wt&nbsp;=&nbsp;3) and 40% to Community Wellbeing (medium, wt&nbsp;=&nbsp;2). Node colours reflect the token charge: <span style="color:#ef5350">red border = negative</span>, <span style="color:#66bb6a">green border = positive</span>, <span style="color:#FF8C00">orange border = injection point</span>.</p>
                     </div>
                 </div>
             </div>
@@ -2703,28 +2931,46 @@ graph LR
                         <li><strong>Arrives</strong> at the target node, with charge potentially flipped if the edge has opposite polarity</li>
                     </ul>
 
-                    <p><strong>Step-by-step walkthrough:</strong> Let&rsquo;s trace what happens when we inject <strong>10 positive tokens</strong> at Harvest Quota (simulating a quota increase) using the same fishery network from the Token Diffusion Metaphor above:</p>
+                    <p><strong>Step-by-step walkthrough:</strong> Let&rsquo;s trace what happens when we inject <strong>10 positive tokens</strong> at Harvest Quota (simulating a quota increase) using the same synthetic coastal fishery system. The diagram below highlights the <strong>propagation path</strong> (bright nodes with step numbers) against the full network (dimmed nodes):</p>
 
                     <div class="doc-diagram">
                         <div class="mermaid">
-graph LR
-    HQ["Harvest Quota<br/>INJECT +10"] -->|"opposite / strong"| FE["Fishing Effort"]
-    FE -->|"opposite / strong"| FS["Fish Stock"]
-    FS -->|"same / strong"| CV["Catch Volume"]
-    CV -->|"same / strong"| MP["Market Price"]
-    MP -->|"same / medium"| FE
-    CV -->|"same / medium"| CW["Community Wellbeing"]
-    MP -->|"same / medium"| CW
+graph TD
+    SST2["Sea Surface Temp."] -->|"opposite / medium"| FS2
+    WQ2["Water Quality"] -->|"same / strong"| FS2
+    SP2["Spatial Protection"] -->|"same / medium"| FS2
+    SP2 -->|"same / weak"| WQ2
+    HQ2["Step 0 &middot; Harvest Quota<br/>INJECT +10"] -->|"opposite / strong"| FE2["Step 1 &middot; Fishing Effort<br/>receives &minus;10"]
+    FE2 -->|"opposite / strong"| FS2["Step 2 &middot; Fish Stock<br/>receives +10"]
+    FS2 -->|"same / strong"| CV2["Step 3 &middot; Catch Volume<br/>receives +10"]
+    CV2 -->|"same / strong &middot; 60%"| MP2["Step 4a &middot; Market Price<br/>receives ~+6"]
+    MP2 -->|"same / medium"| FE2
+    CV2 -->|"same / medium &middot; 40%"| CW2["Step 4b &middot; Community Wellbeing<br/>receives ~+4"]
+    MP2 -->|"same / medium"| CW2
 
-    linkStyle 0 stroke:#ef5350,stroke-width:3px
-    linkStyle 1 stroke:#ef5350,stroke-width:3px
-    linkStyle 2 stroke:#66bb6a,stroke-width:3px
-    linkStyle 3 stroke:#66bb6a,stroke-width:3px
-    linkStyle 4 stroke:#66bb6a,stroke-width:2px
-    linkStyle 5 stroke:#66bb6a,stroke-width:2px
-    linkStyle 6 stroke:#66bb6a,stroke-width:2px
+    style SST2 fill:#1a2a3a,stroke:#555,color:#778
+    style WQ2 fill:#1a2a3a,stroke:#555,color:#778
+    style SP2 fill:#1a2a3a,stroke:#555,color:#778
+    style HQ2 fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style FE2 fill:#3a1a1a,stroke:#ef5350,color:#e0e6ed
+    style FS2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CV2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style MP2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CW2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+
+    linkStyle 0 stroke:#555,stroke-width:1.5px
+    linkStyle 1 stroke:#555,stroke-width:1.5px
+    linkStyle 2 stroke:#555,stroke-width:1.5px
+    linkStyle 3 stroke:#555,stroke-width:1.5px
+    linkStyle 4 stroke:#ef5350,stroke-width:6px
+    linkStyle 5 stroke:#ef5350,stroke-width:6px
+    linkStyle 6 stroke:#66bb6a,stroke-width:6px
+    linkStyle 7 stroke:#66bb6a,stroke-width:6px
+    linkStyle 8 stroke:#555,stroke-width:1.5px,stroke-dasharray:5
+    linkStyle 9 stroke:#66bb6a,stroke-width:3px
+    linkStyle 10 stroke:#66bb6a,stroke-width:3px
                         </div>
-                        <p class="diagram-caption"><strong>Token routing from Harvest Quota through the fishery network.</strong> Nodes represent system factors. <span style="color:#ef5350">Red edges</span> = opposite-direction (charge flips on traversal). <span style="color:#66bb6a">Green edges</span> = same-direction (charge preserved). Edge thickness = strength. Tokens propagate along the single outgoing edge at each step; at nodes with multiple outgoing edges (e.g., Market Price &rarr; Fishing Effort and Market Price &rarr; Community Wellbeing), tokens split probabilistically based on edge strength weights.</p>
+                        <p class="diagram-caption"><strong>Token propagation through the full fishery network.</strong> <strong>Bright nodes</strong> with step numbers show the propagation path from Harvest Quota; <strong>dimmed nodes</strong> (Sea Surface Temp., Water Quality, Spatial Protection) are part of the system but not on this intervention path. <span style="color:#ef5350">Red thick edges</span> = opposite-direction path (charge flips). <span style="color:#66bb6a">Green thick edges</span> = same-direction path (charge preserved). <span style="color:#555">Grey thin edges</span> = non-path connections. The <span style="color:#555">dashed grey edge</span> (Market Price &rarr; Fishing Effort) is the feedback loop that would carry tokens in subsequent rounds. The table below details each step.</p>
                     </div>
 
                     <table class="step-example-table">
@@ -2735,7 +2981,7 @@ graph LR
                             <tr><td>0</td><td>Harvest Quota</td><td class="token-pos">+10</td><td>10 positive tokens injected (simulating a quota increase). Only one outgoing edge: Harvest Quota &rarr; Fishing Effort (opposite / strong).</td></tr>
                             <tr><td>1&ndash;5</td><td><em>In transit</em></td><td class="token-pos">+10 in transit</td><td>Tokens travel along the edge. Delay = &ldquo;days&rdquo; = 5 simulation steps.</td></tr>
                             <tr><td>6</td><td>Fishing Effort</td><td class="token-neg">&minus;10</td><td>Tokens arrive. Edge is <strong>opposite</strong>, so charge <strong>flips</strong>: +10 &rarr; &minus;10. Interpretation: quota increase &rarr; effort <em>decreases</em>.</td></tr>
-                            <tr><td>6</td><td>Fishing Effort</td><td class="token-neg">&minus;10 routing</td><td>Fishing Effort has one outgoing edge in this path: Fish Stock (opposite / strong). All 10 tokens route to Fish Stock.</td></tr>
+                            <tr><td>6</td><td>Fishing Effort</td><td class="token-neg">&minus;10 routing</td><td>Fishing Effort has one outgoing edge: Fish Stock (opposite / strong). All 10 tokens route to Fish Stock. (Market Price &rarr; Fishing Effort is an <em>incoming</em> edge, not outgoing.)</td></tr>
                             <tr><td>7&ndash;16</td><td><em>In transit</em></td><td class="token-neg">&minus;10 in transit</td><td>Tokens travel Fishing Effort &rarr; Fish Stock. Delay = &ldquo;months&rdquo; = 10 steps.</td></tr>
                             <tr><td>17</td><td>Fish Stock</td><td class="token-pos">+10</td><td>Tokens arrive. Edge is <strong>opposite</strong>, so charge flips again: &minus;10 &rarr; +10. The &ldquo;double flip&rdquo;: less effort &rarr; stock <em>recovers</em>.</td></tr>
                             <tr><td>17</td><td>Fish Stock</td><td class="token-pos">+10 routing</td><td>Fish Stock has one outgoing edge: Catch Volume (same / strong). All 10 tokens route to Catch Volume.</td></tr>
@@ -2795,6 +3041,178 @@ graph LR
                         <li><strong>Edge flow visualisation:</strong> Show which causal pathways carry the most token traffic.</li>
                         <li><strong>Controllability gauge:</strong> Measures how much of the system can be influenced from the chosen intervention point.</li>
                     </ul>
+
+                    <p><strong>Illustrative examples</strong> from the Harvest Quota +10 token simulation:</p>
+
+                    <!-- 1. Token accumulation table -->
+                    <div class="accum-tables-wrapper">
+                        <table class="accum-table accum-table-pos">
+                            <thead>
+                                <tr><th colspan="4" class="accum-header accum-header-pos">Top Positive Accumulations</th></tr>
+                                <tr><th>Rank</th><th>Variable</th><th>Net Tokens</th><th>Arrival Step</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Fish Stock</td><td class="token-pos">+10</td><td>17</td></tr>
+                                <tr><td>2</td><td>Catch Volume</td><td class="token-pos">+10</td><td>28</td></tr>
+                                <tr><td>3</td><td>Market Price</td><td class="token-pos">+6</td><td>29+</td></tr>
+                                <tr><td>4</td><td>Community Wellbeing</td><td class="token-pos">+6</td><td>29+</td></tr>
+                                <tr class="accum-row-muted"><td>&mdash;</td><td>Sea Surface Temp.</td><td class="token-zero">0</td><td>&mdash;</td></tr>
+                                <tr class="accum-row-muted"><td>&mdash;</td><td>Water Quality</td><td class="token-zero">0</td><td>&mdash;</td></tr>
+                                <tr class="accum-row-muted"><td>&mdash;</td><td>Spatial Protection</td><td class="token-zero">0</td><td>&mdash;</td></tr>
+                            </tbody>
+                        </table>
+                        <table class="accum-table accum-table-neg">
+                            <thead>
+                                <tr><th colspan="4" class="accum-header accum-header-neg">Top Negative Accumulations</th></tr>
+                                <tr><th>Rank</th><th>Variable</th><th>Net Tokens</th><th>Arrival Step</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1</td><td>Fishing Effort</td><td class="token-neg">&minus;10</td><td>6</td></tr>
+                                <tr class="accum-row-muted"><td>&mdash;</td><td colspan="3" style="text-align:center;color:#556;">No other nodes received negative tokens in this simulation</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="diagram-caption" style="margin-top:10px;"><strong>Token accumulation summary.</strong> The tables rank all nodes by net accumulated tokens after the Harvest Quota +10 simulation. <strong>Positive accumulations</strong> (left): Fish Stock and Catch Volume receive the strongest benefit (+10 each). Market Price and Community Wellbeing receive +6 each after token splitting. Three environmental/management nodes are unreached. <strong>Negative accumulations</strong> (right): only Fishing Effort receives a negative effect (&minus;10 at step 6), caused by the opposite-direction edge from Harvest Quota. The <strong>arrival step</strong> column shows temporal ordering &mdash; upstream nodes are affected first.</p>
+
+                    <!-- 2. Node flow map (line plot) -->
+                    <div class="doc-diagram">
+                        <div class="lineplot-title">Node Flow: Accumulated Tokens Over Simulation Steps</div>
+                        <svg class="lineplot-svg" viewBox="0 0 520 260" preserveAspectRatio="xMidYMid meet">
+                            <!-- Grid -->
+                            <line x1="55" y1="20" x2="55" y2="220" stroke="rgba(100,181,246,0.15)" stroke-width="1"/>
+                            <line x1="55" y1="220" x2="505" y2="220" stroke="rgba(100,181,246,0.15)" stroke-width="1"/>
+                            <!-- Y gridlines -->
+                            <line x1="55" y1="20" x2="505" y2="20" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <line x1="55" y1="70" x2="505" y2="70" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <line x1="55" y1="120" x2="505" y2="120" stroke="rgba(100,181,246,0.12)" stroke-width="0.5" stroke-dasharray="4"/>
+                            <line x1="55" y1="170" x2="505" y2="170" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <!-- Y labels -->
+                            <text x="50" y="24" fill="#5a7a96" font-size="9" text-anchor="end">+10</text>
+                            <text x="50" y="74" fill="#5a7a96" font-size="9" text-anchor="end">+5</text>
+                            <text x="50" y="124" fill="#5a7a96" font-size="9" text-anchor="end">0</text>
+                            <text x="50" y="174" fill="#5a7a96" font-size="9" text-anchor="end">&minus;5</text>
+                            <text x="50" y="224" fill="#5a7a96" font-size="9" text-anchor="end">&minus;10</text>
+                            <!-- X labels -->
+                            <text x="55" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">0</text>
+                            <text x="120" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">5</text>
+                            <text x="175" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">10</text>
+                            <text x="240" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">15</text>
+                            <text x="300" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">20</text>
+                            <text x="365" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">25</text>
+                            <text x="430" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">30</text>
+                            <text x="490" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">35</text>
+                            <text x="280" y="255" fill="#5a7a96" font-size="10" text-anchor="middle">Simulation Step</text>
+                            <!-- Fishing Effort: 0 until step 6, then -10 -->
+                            <polyline points="55,120 120,120 135,220 505,220" fill="none" stroke="#ef5350" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="135" cy="220" r="3.5" fill="#ef5350"/>
+                            <!-- Fish Stock: 0 until step 17, then +10 -->
+                            <polyline points="55,120 240,120 260,20 505,20" fill="none" stroke="#66bb6a" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="260" cy="20" r="3.5" fill="#66bb6a"/>
+                            <!-- Catch Volume: 0 until step 28, then +10 -->
+                            <polyline points="55,120 420,120 435,20 505,20" fill="none" stroke="#42a5f5" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="435" cy="20" r="3.5" fill="#42a5f5"/>
+                            <!-- Market Price: 0 until step 29, then +6 -->
+                            <polyline points="55,120 435,120 450,60 505,60" fill="none" stroke="#ffa726" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3"/>
+                            <circle cx="450" cy="60" r="3" fill="#ffa726"/>
+                            <!-- Community Wellbeing: 0 until step 29, then +6 -->
+                            <polyline points="55,120 435,120 455,60 505,60" fill="none" stroke="#ce93d8" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3"/>
+                            <circle cx="455" cy="60" r="3" fill="#ce93d8"/>
+                            <!-- Legend -->
+                            <line x1="62" y1="8" x2="78" y2="8" stroke="#ef5350" stroke-width="2.5"/>
+                            <text x="82" y="11" fill="#ef5350" font-size="8">Fishing Effort</text>
+                            <line x1="155" y1="8" x2="171" y2="8" stroke="#66bb6a" stroke-width="2.5"/>
+                            <text x="175" y="11" fill="#66bb6a" font-size="8">Fish Stock</text>
+                            <line x1="235" y1="8" x2="251" y2="8" stroke="#42a5f5" stroke-width="2.5"/>
+                            <text x="255" y="11" fill="#42a5f5" font-size="8">Catch Volume</text>
+                            <line x1="325" y1="8" x2="341" y2="8" stroke="#ffa726" stroke-width="2" stroke-dasharray="6 3"/>
+                            <text x="345" y="11" fill="#ffa726" font-size="8">Market Price</text>
+                            <line x1="415" y1="8" x2="431" y2="8" stroke="#ce93d8" stroke-width="2" stroke-dasharray="6 3"/>
+                            <text x="435" y="11" fill="#ce93d8" font-size="8">Wellbeing</text>
+                        </svg>
+                        <p class="diagram-caption"><strong>Node flow chart.</strong> Each line tracks the net accumulated token charge at a node over simulation steps. <span style="color:#ef5350">Fishing Effort</span> drops to &minus;10 at step 6 (opposite-direction edge flips charge). <span style="color:#66bb6a">Fish Stock</span> rises to +10 at step 17 (double flip). <span style="color:#42a5f5">Catch Volume</span> follows at step 28. <span style="color:#ffa726">Market Price</span> and <span style="color:#ce93d8">Community Wellbeing</span> (dashed) arrive at step 29+ with +6 each. The staircase pattern reveals <strong>temporal ordering</strong>: upstream nodes are affected first, downstream nodes later.</p>
+                    </div>
+
+                    <!-- 3. Edge flow visualisation (line plot) -->
+                    <div class="doc-diagram">
+                        <div class="lineplot-title">Edge Flow: Token Traffic Per Edge Over Simulation Steps</div>
+                        <svg class="lineplot-svg" viewBox="0 0 520 260" preserveAspectRatio="xMidYMid meet">
+                            <!-- Grid -->
+                            <line x1="55" y1="20" x2="55" y2="220" stroke="rgba(100,181,246,0.15)" stroke-width="1"/>
+                            <line x1="55" y1="220" x2="505" y2="220" stroke="rgba(100,181,246,0.15)" stroke-width="1"/>
+                            <!-- Y gridlines -->
+                            <line x1="55" y1="20" x2="505" y2="20" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <line x1="55" y1="70" x2="505" y2="70" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <line x1="55" y1="120" x2="505" y2="120" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <line x1="55" y1="170" x2="505" y2="170" stroke="rgba(100,181,246,0.06)" stroke-width="0.5"/>
+                            <!-- Y labels -->
+                            <text x="50" y="24" fill="#5a7a96" font-size="9" text-anchor="end">10</text>
+                            <text x="50" y="74" fill="#5a7a96" font-size="9" text-anchor="end">8</text>
+                            <text x="50" y="124" fill="#5a7a96" font-size="9" text-anchor="end">5</text>
+                            <text x="50" y="174" fill="#5a7a96" font-size="9" text-anchor="end">3</text>
+                            <text x="50" y="224" fill="#5a7a96" font-size="9" text-anchor="end">0</text>
+                            <!-- X labels -->
+                            <text x="55" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">0</text>
+                            <text x="120" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">5</text>
+                            <text x="175" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">10</text>
+                            <text x="240" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">15</text>
+                            <text x="300" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">20</text>
+                            <text x="365" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">25</text>
+                            <text x="430" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">30</text>
+                            <text x="490" y="238" fill="#5a7a96" font-size="9" text-anchor="middle">35</text>
+                            <text x="280" y="255" fill="#5a7a96" font-size="10" text-anchor="middle">Simulation Step</text>
+                            <!-- HQ→FE: 10 tokens in transit steps 1-5, arrives step 6, then 0 -->
+                            <polyline points="55,220 68,20 120,20 135,220 505,220" fill="none" stroke="#ef5350" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="68" cy="20" r="3" fill="#ef5350"/>
+                            <!-- FE→FS: 10 tokens in transit steps 7-16, arrives step 17, then 0 -->
+                            <polyline points="55,220 135,220 145,20 240,20 260,220 505,220" fill="none" stroke="#66bb6a" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="145" cy="20" r="3" fill="#66bb6a"/>
+                            <!-- FS→CV: 10 tokens in transit steps 18-27, arrives step 28, then 0 -->
+                            <polyline points="55,220 260,220 270,20 420,20 435,220 505,220" fill="none" stroke="#42a5f5" stroke-width="2.5" stroke-linecap="round"/>
+                            <circle cx="270" cy="20" r="3" fill="#42a5f5"/>
+                            <!-- CV→MP: ~6 tokens in transit step 28+, brief pulse -->
+                            <polyline points="55,220 435,220 440,100 460,100 470,220 505,220" fill="none" stroke="#ffa726" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3"/>
+                            <circle cx="440" cy="100" r="2.5" fill="#ffa726"/>
+                            <!-- CV→CW: ~4 tokens in transit step 28+, brief pulse -->
+                            <polyline points="55,220 435,220 442,140 462,140 472,220 505,220" fill="none" stroke="#ce93d8" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 3"/>
+                            <circle cx="442" cy="140" r="2.5" fill="#ce93d8"/>
+                            <!-- Legend -->
+                            <line x1="62" y1="8" x2="78" y2="8" stroke="#ef5350" stroke-width="2.5"/>
+                            <text x="82" y="11" fill="#ef5350" font-size="7.5">HQ &rarr; FE</text>
+                            <line x1="130" y1="8" x2="146" y2="8" stroke="#66bb6a" stroke-width="2.5"/>
+                            <text x="150" y="11" fill="#66bb6a" font-size="7.5">FE &rarr; FS</text>
+                            <line x1="198" y1="8" x2="214" y2="8" stroke="#42a5f5" stroke-width="2.5"/>
+                            <text x="218" y="11" fill="#42a5f5" font-size="7.5">FS &rarr; CV</text>
+                            <line x1="266" y1="8" x2="282" y2="8" stroke="#ffa726" stroke-width="2" stroke-dasharray="6 3"/>
+                            <text x="286" y="11" fill="#ffa726" font-size="7.5">CV &rarr; MP</text>
+                            <line x1="338" y1="8" x2="354" y2="8" stroke="#ce93d8" stroke-width="2" stroke-dasharray="6 3"/>
+                            <text x="358" y="11" fill="#ce93d8" font-size="7.5">CV &rarr; CW</text>
+                        </svg>
+                        <p class="diagram-caption"><strong>Edge flow chart.</strong> Each line shows the number of tokens <em>in transit</em> on a given edge at each simulation step. <span style="color:#ef5350">HQ &rarr; FE</span> carries all 10 tokens first (steps 1&ndash;5), then <span style="color:#66bb6a">FE &rarr; FS</span> (steps 7&ndash;16), then <span style="color:#42a5f5">FS &rarr; CV</span> (steps 18&ndash;27). After step 28, tokens split: <span style="color:#ffa726">CV &rarr; MP</span> (~6 tokens) and <span style="color:#ce93d8">CV &rarr; CW</span> (~4 tokens). The pulse pattern shows tokens moving as a &ldquo;wave front&rdquo; through the network &mdash; each edge is active only during its transit window, then returns to zero as tokens arrive and move on.</p>
+                    </div>
+
+                    <!-- 4. Controllability gauge -->
+                    <div class="doc-diagram">
+                        <div class="controllability-gauge">
+                            <div class="gauge-title">Controllability from Harvest Quota</div>
+                            <div class="gauge-bar-container">
+                                <div class="gauge-bar-fill" style="width:67%">
+                                    <span class="gauge-bar-text">67%</span>
+                                </div>
+                            </div>
+                            <div class="gauge-detail">
+                                <div class="gauge-reached">
+                                    <span class="gauge-dot gauge-dot-reached"></span>
+                                    <strong>6 of 9</strong> nodes reached: Fishing Effort, Fish Stock, Catch Volume, Market Price, Community Wellbeing, Harvest Quota (self)
+                                </div>
+                                <div class="gauge-unreached">
+                                    <span class="gauge-dot gauge-dot-unreached"></span>
+                                    <strong>3 of 9</strong> not reached: Sea Surface Temp., Water Quality, Spatial Protection
+                                </div>
+                            </div>
+                        </div>
+                        <p class="diagram-caption"><strong>Controllability gauge.</strong> Measures what fraction of the system can be influenced from the chosen intervention point. Injecting tokens at Harvest Quota reaches 6 out of 9 nodes (67%). The three unreached nodes (environmental drivers and spatial protection) have no incoming path from Harvest Quota &mdash; they influence the system but cannot be controlled through quota adjustments. A higher controllability score means the intervention has broader system reach.</p>
+                    </div>
+
                     <p>These results help stakeholders compare intervention strategies, identify unintended side effects, and build consensus around preferred approaches.</p>
                 </div>
             </div>
@@ -2877,8 +3295,8 @@ graph LR
 graph LR
     SST3["SST<br/>Deg: 1"] --> FS3["FISH STOCK<br/>Deg: 5"]
     WQ3["Water Q.<br/>Deg: 2"] --> FS3
-    MPA3["MPA<br/>Deg: 2"] --> FS3
-    MPA3 --> WQ3
+    SP3["Spatial Prot.<br/>Deg: 2"] --> FS3
+    SP3 --> WQ3
     FS3 --> CV3["Catch Vol.<br/>Deg: 3"]
     FE3["EFFORT<br/>Deg: 4"] --> FS3
     CV3 --> MP3["Mkt Price<br/>Deg: 3"]
@@ -2935,7 +3353,7 @@ graph LR
                                 <td>0.38</td>
                             </tr>
                             <tr>
-                                <td>Marine Protected Area</td>
+                                <td>Spatial Protection</td>
                                 <td>2</td>
                                 <td>0.14</td>
                                 <td>0.31</td>
@@ -3092,17 +3510,77 @@ graph TD
                     </div>
 
                     <div class="doc-diagram">
-                        <div class="mermaid">
-graph LR
-    A["Stakeholder<br/>Workshop"] -->|"co-create map"| B["System Model<br/>in SIM4Action"]
-    B -->|"Diagnostics Lab"| C["Understand<br/>Structure"]
-    C -->|"Intervention Lab"| D["Test<br/>Interventions"]
-    D -->|"Monitoring Lab"| E["Design<br/>Monitoring"]
-    E -->|"implement in<br/>real world"| F["Management<br/>Action"]
-    F -->|"collect<br/>monitoring data"| G["New Evidence"]
-    G -->|"update the<br/>system map"| B
-                        </div>
-                        <p class="diagram-caption">The SIM4Action adaptive management cycle. Starting with a participatory workshop, stakeholders build a system map, analyse it, test interventions, design monitoring, implement actions, collect data, and update the model. Each cycle deepens understanding and improves management outcomes.</p>
+                        <svg class="cycle-diagram" viewBox="0 0 600 440" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#64b5f6"/></marker>
+                                <marker id="arr-fb" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#FF8C00"/></marker>
+                            </defs>
+                            <!--
+                                Layout: wide rectangle with nodes at 7 positions around an ellipse.
+                                Ellipse centre (300,220), rx=245, ry=165.
+                                Positions clockwise from top:
+                                  0  top-centre  (300, 55)   Stakeholder Workshop
+                                  1  top-right   (490, 95)   System Model
+                                  2  right        (530,220)   Understand Structure
+                                  3  bottom-right (490,345)   Test Interventions
+                                  4  bottom-left  (110,345)   Design Monitoring
+                                  5  left         (70,220)    Management Action
+                                  6  top-left     (110, 95)   New Evidence
+                                Box size: 130x46, centred on each position.
+                            -->
+                            <!-- Arrows: quadratic curves between box edges -->
+                            <!-- 1→2: bottom of box1 to top of box2 -->
+                            <path d="M 510,118 Q 535,160 530,197" fill="none" stroke="#64b5f6" stroke-width="2" marker-end="url(#arr)"/>
+                            <!-- 2→3: bottom of box2 to top of box3 -->
+                            <path d="M 530,243 Q 535,285 510,322" fill="none" stroke="#64b5f6" stroke-width="2" marker-end="url(#arr)"/>
+                            <!-- 3→4: left of box3 to right of box4 -->
+                            <path d="M 425,368 Q 300,410 175,368" fill="none" stroke="#64b5f6" stroke-width="2" marker-end="url(#arr)"/>
+                            <!-- 4→5: left of box4 to bottom of box5 -->
+                            <path d="M 80,322 Q 55,285 60,243" fill="none" stroke="#64b5f6" stroke-width="2" marker-end="url(#arr)"/>
+                            <!-- 5→6: top of box5 to bottom of box6 -->
+                            <path d="M 60,197 Q 55,160 80,118" fill="none" stroke="#64b5f6" stroke-width="2" marker-end="url(#arr)"/>
+                            <!-- 6→1 (feedback): right of box6 to left of box1 -->
+                            <path d="M 175,78 Q 300,20 425,78" fill="none" stroke="#FF8C00" stroke-width="2.5" stroke-dasharray="8 4" marker-end="url(#arr-fb)"/>
+
+                            <!-- Node boxes (130x46, centred on positions) -->
+                            <!-- 0: Stakeholder Workshop -->
+                            <rect x="235" y="32" width="130" height="46" rx="6" fill="#2a1a3a" stroke="#CC99FF" stroke-width="2"/>
+                            <text x="300" y="51" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">Stakeholder</text>
+                            <text x="300" y="66" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">Workshop</text>
+                            <!-- 1: System Model -->
+                            <rect x="425" y="72" width="130" height="46" rx="6" fill="#3a2a0a" stroke="#FF8C00" stroke-width="2"/>
+                            <text x="490" y="91" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">System Model</text>
+                            <text x="490" y="106" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">in SIM4Action</text>
+                            <!-- 2: Understand Structure -->
+                            <rect x="465" y="197" width="130" height="46" rx="6" fill="#1a4a2a" stroke="#228B22" stroke-width="2"/>
+                            <text x="530" y="216" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">Understand</text>
+                            <text x="530" y="231" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">Structure</text>
+                            <!-- 3: Test Interventions -->
+                            <rect x="425" y="322" width="130" height="46" rx="6" fill="#142a4a" stroke="#1E90FF" stroke-width="2"/>
+                            <text x="490" y="341" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">Test</text>
+                            <text x="490" y="356" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">Interventions</text>
+                            <!-- 4: Design Monitoring -->
+                            <rect x="45" y="322" width="130" height="46" rx="6" fill="#1a4a2a" stroke="#228B22" stroke-width="2"/>
+                            <text x="110" y="341" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">Design</text>
+                            <text x="110" y="356" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">Monitoring</text>
+                            <!-- 5: Management Action -->
+                            <rect x="5" y="197" width="130" height="46" rx="6" fill="#2a1a3a" stroke="#CC99FF" stroke-width="2"/>
+                            <text x="70" y="216" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">Management</text>
+                            <text x="70" y="231" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">Action</text>
+                            <!-- 6: New Evidence -->
+                            <rect x="45" y="72" width="130" height="46" rx="6" fill="#142a4a" stroke="#1E90FF" stroke-width="2"/>
+                            <text x="110" y="91" fill="#e0e6ed" font-size="11" font-weight="600" text-anchor="middle" font-family="sans-serif">New Evidence</text>
+                            <text x="110" y="106" fill="#d0d6dd" font-size="10" text-anchor="middle" font-family="sans-serif">(collect data)</text>
+
+                            <!-- Edge labels along curves -->
+                            <text x="545" y="160" fill="#5a7a96" font-size="9" text-anchor="middle" font-family="sans-serif">Diagnostics</text>
+                            <text x="548" y="285" fill="#5a7a96" font-size="9" text-anchor="middle" font-family="sans-serif">Intervention</text>
+                            <text x="300" y="405" fill="#5a7a96" font-size="9" text-anchor="middle" font-family="sans-serif">Monitoring Lab</text>
+                            <text x="48" y="285" fill="#5a7a96" font-size="9" text-anchor="middle" font-family="sans-serif">implement</text>
+                            <text x="45" y="160" fill="#5a7a96" font-size="9" text-anchor="middle" font-family="sans-serif">collect data</text>
+                            <text x="300" y="15" fill="#FF8C00" font-size="9" font-weight="600" text-anchor="middle" font-family="sans-serif">update map</text>
+                        </svg>
+                        <p class="diagram-caption">The SIM4Action adaptive management cycle. The flow runs clockwise: stakeholders build a system map, analyse its structure (Diagnostics Lab), test interventions (Intervention Lab), design monitoring (Monitoring Lab), implement actions, and collect new evidence. The <span style="color:#FF8C00">dashed orange feedback arrow</span> (top) closes the learning loop &mdash; new evidence updates the system map for the next iteration.</p>
                     </div>
                 </div>
             </div>
@@ -3199,6 +3677,401 @@ graph LR
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 6: BUILDING THE MAP                     -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-building">
+            <h3>Building Causal System Maps</h3>
+            <p class="panel-subtitle">Causal system maps can be constructed through a spectrum of methods &mdash; from purely empirical literature synthesis to fully participatory co-design. SIM4Action introduces a new approach: agentic AI extraction, which can generate a comprehensive, evidence-based causal map in under an hour. This section explains the landscape of map-building methods and provides a detailed overview of the SIM4Action agentic workflow.</p>
+
+            <!-- Collapsible: The Spectrum of Approaches -->
+            <div class="doc-collapsible open" id="coll-spectrum">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-spectrum')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                        The Spectrum of Map-Building Approaches
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>There is no single &ldquo;correct&rdquo; way to build a causal system map. Methods vary along a spectrum from <strong>fully empirical</strong> (researcher-driven, evidence-extracted) to <strong>fully participatory</strong> (stakeholder-driven, experience-based). Each approach has trade-offs in cost, time, richness, and legitimacy:</p>
+
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>Method</th><th>Description</th><th>Strengths</th><th>Limitations</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Literature Review</strong></td>
+                                <td>Researchers extract variables and causal relationships from published scientific papers, reports, and meta-analyses.</td>
+                                <td>Strong evidence base; reproducible; peer-reviewed sources</td>
+                                <td>Slow (weeks to months); limited to what is published; may miss local knowledge and emerging dynamics</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Expert Interviews</strong></td>
+                                <td>Semi-structured interviews with domain experts (scientists, managers, practitioners) to elicit causal relationships.</td>
+                                <td>Captures nuance and tacit knowledge; can probe mechanisms</td>
+                                <td>Time-intensive; subject to individual bias; small sample sizes</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Surveys &amp; Questionnaires</strong></td>
+                                <td>Structured instruments distributed to a broader set of stakeholders to identify perceived causal links and priorities.</td>
+                                <td>Scalable; can quantify consensus and disagreement</td>
+                                <td>Shallow depth per response; requires careful design; low response rates common</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Participatory Workshops</strong></td>
+                                <td>Facilitated sessions where diverse stakeholders co-create the causal map in real time using sticky notes, whiteboards, or digital tools.</td>
+                                <td>Integrates diverse knowledge; builds ownership and consensus; captures cross-domain connections</td>
+                                <td>Expensive to organise; influenced by group dynamics; requires skilled facilitation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Co-Design &amp; Iterative Refinement</strong></td>
+                                <td>Multiple rounds of mapping, review, and revision with stakeholder groups over weeks or months.</td>
+                                <td>Highest legitimacy; deeply validated; captures evolving understanding</td>
+                                <td>Most time and resource intensive; risk of participation fatigue</td>
+                            </tr>
+                            <tr style="background: rgba(100, 181, 246, 0.06);">
+                                <td><strong style="color: #64b5f6;">Generative AI Extraction</strong></td>
+                                <td>An agentic AI workflow researches the system, extracts variables and relationships from the evidence base, and produces a quality-checked causal map automatically.</td>
+                                <td>Fast (&lt;1 hour); comprehensive evidence base; consistent methodology; fully traceable</td>
+                                <td>Lacks lived experience and local knowledge; should be validated by domain experts and/or stakeholders</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-highlight" style="margin-top: 16px;">
+                        <p><strong>These methods are complementary, not competing.</strong> The most robust system maps combine multiple approaches. A generative AI extraction can provide a rapid, evidence-based <strong>starting point</strong> that is then enriched, validated, and refined through expert review and participatory workshops. This hybrid strategy achieves both rigour (from the literature) and relevance (from stakeholder knowledge) in a fraction of the time required by purely manual approaches.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: The Agentic Extraction Approach -->
+            <div class="doc-collapsible" id="coll-agentic-overview">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-agentic-overview')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        The Agentic Extraction Approach: Overview
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>SIM4Action includes an automated <strong>agentic deep research workflow</strong> that transforms a plain-language system description into a comprehensive causal system map. Rather than relying on a single AI prompt, the workflow orchestrates a team of specialised AI agents &mdash; each with a defined role &mdash; through a multi-phase pipeline of research, extraction, review, and quality control.</p>
+
+                    <p>The approach mirrors how a human research team would work:</p>
+                    <ul>
+                        <li><strong>A Research Leader</strong> (Claude Sonnet) &mdash; plans the research, coordinates the team, synthesises findings, reviews outputs, and writes reports. Handles tasks requiring good judgement and clear communication.</li>
+                        <li><strong>Deep Analysts</strong> (Claude Opus) &mdash; perform the intellectually demanding work: extracting variables and relationships with strict quality rules, and conducting the final quality control check.</li>
+                        <li><strong>Field Researchers</strong> (Perplexity Sonar) &mdash; search the web for scientific papers, government reports, and current information, returning structured findings with citations.</li>
+                    </ul>
+
+                    <p>This separation of roles follows the same principles as academic peer review: the agent that extracts variables is not the same agent that reviews them, ensuring independent quality checks at every stage.</p>
+
+                    <div class="doc-highlight">
+                        <p><strong>Input &amp; output.</strong> You provide a natural-language description of the system (e.g., &ldquo;The Northern Territory mud crab fishery in Australia&rdquo;). The workflow returns an Excel workbook containing a complete <strong>FACTORS</strong> sheet (40&ndash;120 variables with IDs, names, domains, definitions) and a <strong>RELATIONSHIPS</strong> sheet (60&ndash;200 causal links with polarity, strength, delay, and mechanistic explanations) &mdash; ready for direct import into the SIM4Action platform. A typical run takes 30&ndash;60 minutes and costs approximately $25&ndash;55 in API usage.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: The Five-Phase Pipeline -->
+            <div class="doc-collapsible" id="coll-pipeline">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-pipeline')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        The Five-Phase Pipeline
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The workflow follows a structured pipeline of five phases. Each phase produces auditable intermediate reports, and quality gates ensure that problems are caught and corrected before propagating downstream.</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 20px;">Phase 1: Deep Research</h5>
+                    <p>The Research Leader analyses the system description and creates a tailored <strong>research plan</strong> that divides the system into 6&ndash;8 thematic domains (e.g., Environmental-Ecosystem, Fish Stocks, Economics-Markets, Management, Social Impacts, Indigenous Knowledge). For each domain, it generates 3&ndash;5 targeted, search-optimised research questions.</p>
+                    <p>The Field Researchers then investigate each domain in parallel, conducting deep web searches and producing a <strong>Domain Research Brief</strong> for each &mdash; containing key findings, spotted variables, observed relationships, important dynamics, knowledge gaps, and source citations. The Research Leader synthesises all briefs into a comprehensive <strong>System Overview Report</strong> and checks for research gaps. If significant gaps are found, targeted follow-up research is conducted (up to 2 gap-fill iterations).</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 20px;">Phase 2: Variable Identification</h5>
+                    <p>A Deep Analyst extracts all system variables from the research corpus, applying strict quality rules:</p>
+                    <ul>
+                        <li><strong>Directional neutrality</strong> &mdash; variable names must be neutral (e.g., &ldquo;Ocean Temperature&rdquo; not &ldquo;Ocean Warming&rdquo;) so they can increase or decrease.</li>
+                        <li><strong>Measurability</strong> &mdash; every variable must be quantifiable or assessable (e.g., &ldquo;Dissolved Oxygen Concentration&rdquo; not &ldquo;Water Quality&rdquo;).</li>
+                        <li><strong>Appropriate granularity</strong> &mdash; neither too specific (&ldquo;January Rainfall in Zone 3&rdquo;) nor too broad (&ldquo;Climate&rdquo;).</li>
+                        <li><strong>Domain completeness</strong> &mdash; at least 3 variables per domain, ensuring no dimension of the system is neglected.</li>
+                        <li><strong>Intervenability</strong> &mdash; variables directly controllable by management or policy are flagged.</li>
+                    </ul>
+                    <p>The Research Leader reviews the variable list against an 8-point checklist. If the review fails, specific feedback is sent back to the Deep Analyst for revision. This <strong>review&ndash;revise loop repeats up to 3 times</strong>, mirroring academic peer review.</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 20px;">Phase 3: Relationship Extraction</h5>
+                    <p>With a validated variable list, a Deep Analyst identifies all causal relationships. For each relationship, the analyst determines:</p>
+                    <ul>
+                        <li><strong>Source and target</strong> variables (using the established IDs)</li>
+                        <li><strong>Polarity</strong> &mdash; &ldquo;same&rdquo; (both increase or both decrease together) or &ldquo;opposite&rdquo; (one increases, the other decreases)</li>
+                        <li><strong>Strength</strong> &mdash; strong (primary driver), medium (significant factor), or weak (minor influence)</li>
+                        <li><strong>Time delay</strong> &mdash; how long before the effect materialises (days, months, years, or decades)</li>
+                        <li><strong>Mechanistic definition</strong> &mdash; a detailed explanation of <em>why and how</em> the causal link works, not just that it exists</li>
+                    </ul>
+                    <p>Relationships are extracted systematically: first those involving focal variables, then within-domain, then cross-domain connections. The Research Leader reviews against a 10-point checklist, and the review&ndash;revise loop repeats up to 3 times.</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 20px;">Phase 4: Feedback Loops &amp; Gap Analysis</h5>
+                    <p>The Research Leader traces all <strong>feedback loops</strong> in the completed map &mdash; circular chains where a change in one variable eventually comes back to affect itself. Each loop is classified as:</p>
+                    <ul>
+                        <li><strong>Reinforcing</strong> &mdash; amplifies change (even number of &ldquo;opposite&rdquo; edges in the cycle)</li>
+                        <li><strong>Balancing</strong> &mdash; counteracts change and tends toward equilibrium (odd number of &ldquo;opposite&rdquo; edges)</li>
+                    </ul>
+                    <p>The map is also analysed for <strong>structural gaps</strong> (orphan variables, under-connected domains, missing cross-domain links) and <strong>thematic gaps</strong> (are climate impacts represented? are management actions connected to what they manage? is Indigenous knowledge integrated?). If significant gaps are found, targeted research fills them (up to 2 iterations).</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 20px;">Phase 5: Integration &amp; Output</h5>
+                    <p>A Deep Analyst performs a comprehensive <strong>7-point final quality control</strong> check covering structural integrity, logical coherence, naming quality, domain balance, statistical distributions, definition quality, and evidence grounding. The validated data is then assembled into the final Excel workbook, and the Research Leader writes a human-readable summary report with system description, map statistics, key findings, methodology notes, and a complete source bibliography.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Quality Assurance -->
+            <div class="doc-collapsible" id="coll-quality">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-quality')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Quality Assurance &amp; Iteration
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>A single pass through an AI model &mdash; no matter how capable &mdash; is not sufficient for a task of this complexity. The workflow incorporates multiple layers of quality assurance that mirror the rigour of academic research:</p>
+
+                    <div class="concept-grid" style="grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin: 16px 0;">
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(76, 175, 80, 0.15);">&#x1f504;</div>
+                            <h4>Peer Review Loops</h4>
+                            <p>Variables and relationships are extracted by one model (Claude Opus) and reviewed by a different model (Claude Sonnet) with fresh eyes and a structured checklist. Failed reviews trigger revision with specific feedback, up to 3 iterations per phase.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(30, 136, 229, 0.15);">&#x1f50d;</div>
+                            <h4>Gap Analysis</h4>
+                            <p>Dedicated gap-checking steps ensure the map is comprehensive. Research gaps trigger follow-up searches. Structural gaps (orphan variables, sparse domains) and thematic gaps (missing climate, governance, or Indigenous dimensions) are systematically identified and addressed.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(255, 167, 38, 0.15);">&#x1f4ca;</div>
+                            <h4>Statistical Benchmarks</h4>
+                            <p>The final QC checks that output distributions match empirically derived targets: 55&ndash;85% same-polarity relationships, 10&ndash;30% strong / 50&ndash;80% medium / 5&ndash;20% weak strength, and realistic delay distributions. Deviations trigger warnings.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(171, 71, 188, 0.15);">&#x1f4dd;</div>
+                            <h4>Full Audit Trail</h4>
+                            <p>Every intermediate step produces a saved report: research plan, domain briefs, system overview, variable list, relationship list, feedback loop analysis, quality control report, and final summary. The entire chain of evidence is traceable and reviewable.</p>
+                        </div>
+                    </div>
+
+                    <p>This multi-agent, multi-pass approach produces a significantly more thorough and reliable causal map than any single prompt or single-pass extraction could achieve.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Domains and Coverage -->
+            <div class="doc-collapsible" id="coll-domains">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-domains')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        System Domains &amp; Coverage
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The Research Leader tailors the research domains to each specific system, but follows a standard framework designed to ensure comprehensive coverage of all dimensions of a socio-environmental system:</p>
+
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>Domain</th><th>What It Covers</th><th>Example Variables</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Focal Factors</strong></td>
+                                <td>The 1&ndash;3 most central variables the entire system revolves around</td>
+                                <td>Fish Stock Biomass, Prawn Recruitment</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Environmental-Ecosystem</strong></td>
+                                <td>Physical and biological conditions: climate, oceanography, habitat, biodiversity</td>
+                                <td>Sea Surface Temperature, Dissolved Oxygen, Coral Cover</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stock</strong></td>
+                                <td>Population dynamics, recruitment, growth, mortality, species interactions</td>
+                                <td>Spawning Stock Biomass, Natural Mortality Rate, Bycatch Volume</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Technical</strong></td>
+                                <td>Harvesting technology, gear types, vessel capacity, innovation</td>
+                                <td>Fleet Size, Gear Selectivity, Fuel Consumption</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Economics-Markets</strong></td>
+                                <td>Prices, costs, profitability, trade, supply chains, investment</td>
+                                <td>Ex-Vessel Price, Operating Costs, Import Competition</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Management</strong></td>
+                                <td>Regulations, governance, compliance, research, decision-making</td>
+                                <td>Total Allowable Catch, MPA Coverage, Compliance Rate</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Social</strong></td>
+                                <td>Community wellbeing, employment, food security, demographics, equity</td>
+                                <td>Fisher Employment, Community Dependence, Recreational Participation</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Indigenous</strong></td>
+                                <td>Traditional ecological knowledge, cultural practices, rights, co-management</td>
+                                <td>Traditional Harvest Access, Cultural Site Condition, Indigenous Co-Management Involvement</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p style="margin-top: 12px;">For non-fishery systems, the domains adapt accordingly. A freshwater system might replace &ldquo;Stock&rdquo; with &ldquo;Hydrology&rdquo;; an urban system might replace &ldquo;Environmental-Ecosystem&rdquo; with &ldquo;Built Environment&rdquo; and &ldquo;Public Health.&rdquo; The Research Leader customises these based on the system description.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: The Output -->
+            <div class="doc-collapsible" id="coll-output">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-output')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                        The Output: What You Get
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>A successful run produces the following deliverables:</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 16px;">Excel Workbook (SIM4Action-ready)</h5>
+                    <p>The primary output is an Excel workbook with two sheets:</p>
+                    <ul>
+                        <li><strong>FACTORS sheet</strong> &mdash; every system variable with: <code>factor_id</code> (V1, V2, &hellip;), <code>name</code>, <code>domain_name</code>, <code>intervenable</code> (true/false), and a <code>definition</code> explaining what the variable represents and how it could be measured.</li>
+                        <li><strong>RELATIONSHIPS sheet</strong> &mdash; every causal link with: <code>relationship_id</code>, <code>from</code> / <code>to</code> variable names and IDs, <code>polarity</code> (same/opposite), <code>strength</code> (strong/medium/weak), <code>delay</code> (days/months/years/decade), and a <code>definition</code> explaining the causal mechanism with evidence citations.</li>
+                    </ul>
+                    <p>This workbook can be directly imported into the SIM4Action platform for immediate analysis using the Diagnostics, Intervention, and Monitoring labs.</p>
+
+                    <h5 style="color: #64b5f6; margin-top: 16px;">Audit Trail Reports</h5>
+                    <p>Seven intermediate reports provide full transparency over the map-building process:</p>
+                    <ol>
+                        <li><strong>Research Plan</strong> &mdash; system scope, domains, and research questions</li>
+                        <li><strong>Domain Research Briefs</strong> &mdash; individual findings for each domain with sources</li>
+                        <li><strong>System Overview</strong> &mdash; synthesised narrative of the entire system</li>
+                        <li><strong>Variable List Report</strong> &mdash; all extracted variables with review history</li>
+                        <li><strong>Relationship List Report</strong> &mdash; all extracted relationships with review history</li>
+                        <li><strong>Feedback Loops &amp; Gap Analysis</strong> &mdash; identified loops, structural and thematic gaps</li>
+                        <li><strong>Final Summary Report</strong> &mdash; human-readable overview with statistics and bibliography</li>
+                    </ol>
+
+                    <h5 style="color: #64b5f6; margin-top: 16px;">Typical Scale</h5>
+                    <table class="step-example-table" style="margin-top: 8px;">
+                        <thead>
+                            <tr><th>Metric</th><th>Typical Range</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Variables</td><td>40&ndash;120</td></tr>
+                            <tr><td>Relationships</td><td>60&ndash;200</td></tr>
+                            <tr><td>Domains covered</td><td>6&ndash;8</td></tr>
+                            <tr><td>Feedback loops identified</td><td>10&ndash;50+</td></tr>
+                            <tr><td>Execution time</td><td>30&ndash;60 minutes</td></tr>
+                            <tr><td>Cost per run</td><td>$25&ndash;55 (API usage)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Collapsible: Combining AI with Participatory Approaches -->
+            <div class="doc-collapsible" id="coll-hybrid">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-hybrid')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Combining AI Extraction with Participatory Approaches
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The agentic extraction workflow is designed to complement, not replace, participatory mapping. The recommended hybrid approach uses AI-generated maps as a foundation that stakeholders then refine:</p>
+
+                    <ol style="margin-top: 12px;">
+                        <li style="margin-bottom: 12px;"><strong>Generate a baseline map</strong> &mdash; run the agentic workflow to produce a comprehensive, evidence-based starting point. This takes &lt;1 hour and ensures that the published literature and available data are represented.</li>
+                        <li style="margin-bottom: 12px;"><strong>Load into SIM4Action</strong> &mdash; import the Excel workbook into the platform. Use the Diagnostics Lab to explore the map structure, identify feedback loops, and understand the system as characterised by the published evidence.</li>
+                        <li style="margin-bottom: 12px;"><strong>Workshop review &amp; enrichment</strong> &mdash; bring stakeholders together (or conduct expert interviews) to review the AI-generated map. Stakeholders add local knowledge, lived experience, and cultural context that the literature does not capture. They can add missing variables, remove irrelevant ones, adjust relationship strengths, and flag where the AI got it wrong.</li>
+                        <li style="margin-bottom: 12px;"><strong>Iterate</strong> &mdash; update the spreadsheet with workshop outputs, re-import into SIM4Action, and re-analyse. The platform&rsquo;s adaptive management cycle (Understand &rarr; Intervene &rarr; Monitor &rarr; Learn) applies to the map itself.</li>
+                    </ol>
+
+                    <div class="doc-highlight" style="margin-top: 16px;">
+                        <p><strong>Why this works.</strong> Starting with an AI-generated map means that workshops spend less time listing obvious variables and more time on the nuanced, contested, and locally specific dynamics that only human participants can provide. The AI handles the &ldquo;homework&rdquo; of reviewing hundreds of papers; the humans contribute the wisdom that no paper captures. The result is a map that is both evidence-rich and stakeholder-owned.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Design Principles -->
+            <div class="doc-collapsible" id="coll-design-principles">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-design-principles')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Design Principles
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Seven principles guide the design of the agentic extraction workflow:</p>
+                    <ol>
+                        <li style="margin-bottom: 10px;"><strong>Research-first.</strong> Every variable and relationship must be grounded in evidence from the research phase. No invented or assumed connections.</li>
+                        <li style="margin-bottom: 10px;"><strong>Iterative refinement.</strong> Multiple review&ndash;revise cycles catch errors that a single pass would miss. Quality improves with each iteration.</li>
+                        <li style="margin-bottom: 10px;"><strong>Fit-for-purpose model selection.</strong> Different AI models are chosen for different tasks based on their strengths: deep reasoning for extraction (Opus), coordination for review (Sonnet), web search for research (Perplexity).</li>
+                        <li style="margin-bottom: 10px;"><strong>Structured artefacts.</strong> All outputs follow strict JSON schemas, ensuring consistency and enabling downstream processing.</li>
+                        <li style="margin-bottom: 10px;"><strong>Directional neutrality.</strong> Variable names must be phrased so they can increase <em>or</em> decrease, preventing built-in bias.</li>
+                        <li style="margin-bottom: 10px;"><strong>Domain completeness.</strong> Every dimension of the socio-environmental system must be represented, from ecology to economics to governance to Indigenous knowledge.</li>
+                        <li style="margin-bottom: 10px;"><strong>Traceable provenance.</strong> Every claim is linked to a source. Every decision is documented in the audit trail. The map can be interrogated from output back to evidence.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 7: REFERENCES                           -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-references">
+            <h3>References</h3>
+            <p class="panel-subtitle">Sources cited throughout this primer. Arranged alphabetically by first author.</p>
+
+            <ol style="list-style: none; padding-left: 0; margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Allen, C.R. &amp; Gunderson, L.H. (2011). Pathology and failure in the design and implementation of adaptive management. <em>Journal of Environmental Management</em>, 92(5), 1379&ndash;1384. <a href="https://doi.org/10.1016/j.jenvman.2010.10.063" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1016/j.jenvman.2010.10.063</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Coll, M., Cury, P., Azzurro, E., Bariche, M., Bayadas, G., Bellido, J.M., &hellip; &amp; Tudela, S. (2013). The scientific strategy needed to promote a regional ecosystem-based approach to fisheries in the Mediterranean and Black Seas. <em>Reviews in Fish Biology and Fisheries</em>, 23(4), 415&ndash;434. <a href="https://doi.org/10.1007/s11160-013-9305-y" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1007/s11160-013-9305-y</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Cury, P.M., Shannon, L.J., Roux, J.-P., Chuenpagdee, R., Gretchina, A., Penney, A., &hellip; &amp; Shin, Y.-J. (2005). Trophodynamic indicators for an ecosystem approach to fisheries. <em>ICES Journal of Marine Science</em>, 62(3), 430&ndash;442. <a href="https://doi.org/10.1016/j.icesjms.2004.12.006" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1016/j.icesjms.2004.12.006</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Holling, C.S. (Ed.) (1978). <em>Adaptive Environmental Assessment and Management</em>. John Wiley &amp; Sons, Chichester.
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Hughes, T.P., Kerry, J.T., &Aacute;lvarez-Noriega, M., &Aacute;lvarez-Romero, J.G., Anderson, K.D., Baird, A.H., &hellip; &amp; Wilson, S.K. (2017). Global warming and recurrent mass bleaching of corals. <em>Nature</em>, 543(7645), 373&ndash;377. <a href="https://doi.org/10.1038/nature21707" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1038/nature21707</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Meadows, D.H. (1999). Leverage points: Places to intervene in a system. <em>Sustainability Institute</em>, Hartland, VT. <a href="https://donellameadows.org/archives/leverage-points-places-to-intervene-in-a-system/" target="_blank" rel="noopener" style="color: #64b5f6;">donellameadows.org</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Niklitschek, E.J., Soto, D., Lafon, A., Molinet, C. &amp; Toledo, P. (2013). Southward expansion of the Chilean salmon industry in the Patagonian Fjords: Main environmental challenges. <em>Reviews in Aquaculture</em>, 5(3), 172&ndash;195. <a href="https://doi.org/10.1111/raq.12012" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1111/raq.12012</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Reed, M.S., Stringer, L.C., Fazey, I., Evely, A.C. &amp; Kruijsen, J.H.J. (2014). Five principles for the practice of knowledge exchange in environmental management. <em>Journal of Environmental Management</em>, 146, 337&ndash;345. <a href="https://doi.org/10.1016/j.jenvman.2014.07.021" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1016/j.jenvman.2014.07.021</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Reid, R.S., Nkedianye, D., Said, M.Y., Kaelo, D., Neselle, M., Makui, O., &hellip; &amp; Clark, W.C. (2016). Evolution of models to support community and policy action with science: Balancing pastoral livelihoods and wildlife conservation in savannas of East Africa. <em>Proceedings of the National Academy of Sciences</em>, 113(17), 4579&ndash;4584. <a href="https://doi.org/10.1073/pnas.0900313106" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1073/pnas.0900313106</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Sterman, J.D. (2000). <em>Business Dynamics: Systems Thinking and Modeling for a Complex World</em>. McGraw-Hill, Boston.
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Sterling, E.J., Betley, E., Sigouin, A., Gomez, A., Toomey, A., Cullman, G., &hellip; &amp; Filardi, C. (2017). Assessing the evidence for stakeholder engagement in biodiversity conservation. <em>Biological Conservation</em>, 209, 159&ndash;171. <a href="https://doi.org/10.1016/j.biocon.2017.02.008" target="_blank" rel="noopener" style="color: #64b5f6;">doi:10.1016/j.biocon.2017.02.008</a>
+                </li>
+                <li style="padding-left: 2em; text-indent: -2em; line-height: 1.55; font-size: 0.92em; color: #8eacc5;">
+                    Walters, C.J. (1986). <em>Adaptive Management of Renewable Resources</em>. Macmillan, New York.
+                </li>
+            </ol>
         </div>
 
     </div><!-- end doc-content -->

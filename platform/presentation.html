@@ -254,6 +254,13 @@
         .mermaid {
             font-size: 0.85em;
         }
+        .mermaid pre {
+            margin: 0;
+            padding: 0;
+            background: none;
+            border: none;
+            box-shadow: none;
+        }
 
         .diagram-caption {
             font-size: 0.6em;
@@ -457,7 +464,7 @@
     <!-- 1.4 Causal Complexity Example -->
     <section data-transition="fade">
         <h2>Causal Complexity: A Fishery Example</h2>
-        <div class="mermaid">
+        <div class="mermaid"><pre>
 graph LR
     A["Fish Stock"] -->|"same"| B["Catch Volume"]
     B -->|"same"| C["Market Revenue"]
@@ -468,7 +475,7 @@ graph LR
     C -->|"same"| F["Fleet Investment"]
     F -->|"same"| D
     G["Harvest Quota"] -->|"opposite"| D
-        </div>
+        </pre></div>
         <p class="diagram-caption">A simplified fishery causal loop diagram showing reinforcing and balancing feedback loops, multiple causal pathways, and intervention points.</p>
     </section>
 
@@ -514,14 +521,14 @@ graph LR
     <!-- 2.2 From Mental Models to Shared Maps -->
     <section data-transition="fade">
         <h2>From Mental Models to Shared Maps</h2>
-        <div class="mermaid">
+        <div class="mermaid"><pre>
 graph LR
-    A["Individual<br>Mental Models"] -->|"workshop"| B["Shared<br>Causal Map"]
-    B -->|"digitise"| C["Network<br>Graph"]
+    A["Mental Models"] -->|"workshop"| B["Shared Causal Map"]
+    B -->|"digitise"| C["Network Graph"]
     C -->|"analyse"| D["Diagnostics"]
     C -->|"simulate"| E["Interventions"]
     C -->|"metrics"| F["Monitoring"]
-        </div>
+        </pre></div>
         <p class="diagram-caption">The journey from individual knowledge to actionable system intelligence, supported by the SIM4Action platform at each stage.</p>
     </section>
 
@@ -549,12 +556,12 @@ graph LR
             </div>
         </div>
         <div class="fragment fade-up" style="margin-top:20px;">
-            <div class="mermaid" style="font-size:0.8em;">
+            <div class="mermaid" style="font-size:0.8em;"><pre>
 graph LR
     U["1. Understand"] --> I["2. Intervene"]
     I --> M["3. Monitor"]
-    M -.->|"iterate"| U
-            </div>
+    M -.->|"learn and adapt"| U
+            </pre></div>
         </div>
     </section>
 
@@ -705,23 +712,51 @@ graph LR
     <!-- 4.2 How Tokens Propagate -->
     <section data-transition="fade">
         <h2>How Tokens Propagate</h2>
-        <div class="mermaid">
-graph LR
-    A["Harvest Quota<br>Tokens: +5"] -->|"opposite / strong"| B["Fishing Effort"]
-    B -->|"opposite / strong"| C["Fish Stock"]
-    C -->|"same / medium"| D["Ecosystem Health"]
-    D -->|"same / weak"| C
-    B -->|"same / medium"| E["Catch Volume"]
-    E -->|"same / strong"| F["Market Revenue"]
-        </div>
+        <div class="mermaid"><pre>
+graph TD
+    SST2["Sea Surface Temp."] -->|"opposite / medium"| FS2
+    WQ2["Water Quality"] -->|"same / strong"| FS2
+    SP2["Spatial Protection"] -->|"same / medium"| FS2
+    SP2 -->|"same / weak"| WQ2
+    HQ2["Harvest Quota · INJECT +10"] -->|"opposite / strong"| FE2["Fishing Effort · receives −10"]
+    FE2 -->|"opposite / strong"| FS2["Fish Stock · receives +10"]
+    FS2 -->|"same / strong"| CV2["Catch Volume · receives +10"]
+    CV2 -->|"same / strong · 60%"| MP2["Market Price · receives ~+6"]
+    MP2 -->|"same / medium"| FE2
+    CV2 -->|"same / medium · 40%"| CW2["Community Wellbeing · receives ~+4"]
+    MP2 -->|"same / medium"| CW2
+
+    style SST2 fill:#1a2a3a,stroke:#555,color:#778
+    style WQ2 fill:#1a2a3a,stroke:#555,color:#778
+    style SP2 fill:#1a2a3a,stroke:#555,color:#778
+    style HQ2 fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style FE2 fill:#3a1a1a,stroke:#ef5350,color:#e0e6ed
+    style FS2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CV2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style MP2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+    style CW2 fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+
+    linkStyle 0 stroke:#555,stroke-width:1.5px
+    linkStyle 1 stroke:#555,stroke-width:1.5px
+    linkStyle 2 stroke:#555,stroke-width:1.5px
+    linkStyle 3 stroke:#555,stroke-width:1.5px
+    linkStyle 4 stroke:#ef5350,stroke-width:6px
+    linkStyle 5 stroke:#ef5350,stroke-width:6px
+    linkStyle 6 stroke:#66bb6a,stroke-width:6px
+    linkStyle 7 stroke:#66bb6a,stroke-width:6px
+    linkStyle 8 stroke:#555,stroke-width:1.5px,stroke-dasharray:5
+    linkStyle 9 stroke:#66bb6a,stroke-width:3px
+    linkStyle 10 stroke:#66bb6a,stroke-width:3px
+        </pre></div>
         <div style="margin-top: 16px;" class="fragment fade-up">
             <p style="font-size: 0.7em; text-align: left;">
-                <span class="token-plus">+5 tokens</span> at Harvest Quota (quota increase) →
-                <strong>opposite edge</strong> → tokens flip to <span class="token-minus">−5</span> at Fishing Effort (less effort) →
-                <strong>opposite edge</strong> → tokens flip to <span class="token-plus">+5</span> at Fish Stock (recovery).
+                <span class="token-plus">+10 tokens</span> at Harvest Quota (quota increase) →
+                <strong>opposite edge</strong> → tokens flip to <span class="token-minus">−10</span> at Fishing Effort →
+                <strong>opposite edge</strong> → tokens flip to <span class="token-plus">+10</span> at Fish Stock (recovery) →
+                tokens <strong>split</strong> at Catch Volume: 60% to Market Price, 40% to Community Wellbeing.
             </p>
         </div>
-        <p class="diagram-caption fragment fade-up">Polarity flipping is the key mechanism: two opposite-direction edges in sequence produce a net positive effect.</p>
+        <p class="diagram-caption fragment fade-up">Polarity flipping is the key mechanism: two opposite-direction edges in sequence produce a net positive effect. Dimmed nodes are part of the network but not on the primary propagation path.</p>
     </section>
 
     <!-- 4.3 Routing & Delays -->
@@ -790,7 +825,7 @@ graph LR
         <div class="callout fragment fade-up">
             <p><strong>Practical implication:</strong> Rather than monitoring everything (expensive, often infeasible), centrality analysis identifies the minimum set of <em>"sentinel" variables</em> that give you the best picture of overall system health.</p>
         </div>
-        <div class="mermaid fragment fade-up" style="margin-top: 16px;">
+        <div class="mermaid fragment fade-up" style="margin-top: 16px;"><pre>
 graph TD
     A["All System Variables"] --> B["Centrality Analysis"]
     B --> C["High Degree: Hubs"]
@@ -801,7 +836,7 @@ graph TD
     D --> G
     E --> G
     F --> G
-        </div>
+        </pre></div>
     </section>
 
     <!-- 5.2 Five Centrality Metrics -->
@@ -955,39 +990,26 @@ graph TD
 <!-- Reveal.js -->
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.2.1/dist/reveal.js"></script>
 
-<!-- Mermaid.js for diagrams -->
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-
-<!-- Reveal.js Mermaid Plugin -->
-<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin/plugin/mermaid/mermaid.js"></script>
+<!-- Reveal.js Mermaid Plugin (bundles Mermaid internally) -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js-mermaid-plugin@11.6.0/plugin/mermaid/mermaid.js"></script>
 
 <script>
-    // Initialize Reveal.js with configuration
     Reveal.initialize({
-        // Navigation
         hash: true,
         history: true,
         navigationMode: 'default',
         slideNumber: 'c/t',
-
-        // Display
         controls: true,
         controlsTutorial: true,
         progress: true,
         center: true,
-
-        // Transitions
         transition: 'slide',
         transitionSpeed: 'default',
         backgroundTransition: 'fade',
-
-        // Fragments
         fragments: true,
 
-        // Plugins
         plugins: [RevealMermaid],
 
-        // Mermaid configuration
         mermaid: {
             theme: 'dark',
             themeVariables: {
@@ -998,11 +1020,19 @@ graph TD
                 secondaryColor: '#0d2137',
                 tertiaryColor: '#1a2a4a',
                 edgeLabelBackground: 'rgba(10, 22, 40, 0.8)',
-                fontSize: '14px'
+                clusterBkg: 'rgba(26, 42, 74, 0.5)',
+                clusterBorder: '#3a6a9f',
+                fontSize: '15px',
+                nodeTextSize: '14px'
             },
             flowchart: {
                 htmlLabels: true,
-                curve: 'basis'
+                curve: 'basis',
+                nodeSpacing: 60,
+                rankSpacing: 70,
+                padding: 20,
+                useMaxWidth: true,
+                wrappingWidth: 200
             }
         }
     });
