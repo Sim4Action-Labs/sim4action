@@ -1034,6 +1034,211 @@
         }
 
         /* ============================
+           VIEW: MAP
+           ============================ */
+        #global-map-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        #global-map-container .leaflet-container {
+            background: #0a1628;
+        }
+
+        /* Override Leaflet popup styles for dark theme */
+        .map-popup-card {
+            width: 280px;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        .map-popup-card .popup-thumb {
+            width: 100%;
+            height: 140px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0d1f3c, #1a2a4a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .map-popup-card .popup-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .map-popup-card .popup-thumb .placeholder-icon {
+            font-size: 2.5em;
+            opacity: 0.25;
+        }
+
+        .map-popup-card .popup-name {
+            font-size: 1.05em;
+            font-weight: 700;
+            color: #e0e6ed;
+            margin: 0 0 6px 0;
+        }
+
+        .map-popup-card .popup-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .map-popup-card .popup-desc {
+            font-size: 0.82em;
+            color: #8eacc5;
+            line-height: 1.4;
+            margin: 0 0 10px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .map-popup-card .popup-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .map-popup-card .popup-btn {
+            flex: 1;
+            padding: 7px 12px;
+            border-radius: 8px;
+            font-size: 0.82em;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .map-popup-card .popup-btn-primary {
+            background: linear-gradient(135deg, #1565C0, #1E88E5);
+            color: #fff;
+        }
+
+        .map-popup-card .popup-btn-primary:hover {
+            background: linear-gradient(135deg, #1E88E5, #42A5F5);
+        }
+
+        .map-popup-card .popup-btn-secondary {
+            background: rgba(100, 181, 246, 0.1);
+            color: #8eacc5;
+            border: 1px solid rgba(100, 181, 246, 0.15);
+        }
+
+        .map-popup-card .popup-btn-secondary:hover {
+            background: rgba(100, 181, 246, 0.2);
+            color: #e0e6ed;
+        }
+
+        /* Dark-theme Leaflet popup overrides */
+        .leaflet-popup-content-wrapper {
+            background: linear-gradient(145deg, rgba(20, 36, 66, 0.97), rgba(13, 27, 52, 0.98)) !important;
+            border: 1px solid rgba(100, 181, 246, 0.2) !important;
+            border-radius: 14px !important;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+            padding: 0 !important;
+        }
+
+        .leaflet-popup-content {
+            margin: 14px !important;
+            color: #e0e6ed !important;
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(20, 36, 66, 0.97) !important;
+            border: 1px solid rgba(100, 181, 246, 0.2) !important;
+            box-shadow: none !important;
+        }
+
+        .leaflet-popup-close-button {
+            color: #8eacc5 !important;
+            font-size: 20px !important;
+            top: 6px !important;
+            right: 8px !important;
+        }
+
+        .leaflet-popup-close-button:hover {
+            color: #e0e6ed !important;
+        }
+
+        /* Map attribution dark override */
+        #global-map-container .leaflet-control-attribution {
+            background: rgba(10, 22, 40, 0.7) !important;
+            color: #5a7a96 !important;
+            font-size: 10px !important;
+        }
+
+        #global-map-container .leaflet-control-attribution a {
+            color: #6a9abf !important;
+        }
+
+        #global-map-container .leaflet-control-zoom a {
+            background: rgba(20, 36, 66, 0.9) !important;
+            color: #8eacc5 !important;
+            border-color: rgba(100, 181, 246, 0.15) !important;
+        }
+
+        #global-map-container .leaflet-control-zoom a:hover {
+            background: rgba(30, 50, 85, 0.95) !important;
+            color: #e0e6ed !important;
+        }
+
+        /* Marker label (system name) */
+        .map-marker-label {
+            background: rgba(20, 36, 66, 0.92) !important;
+            border: 1px solid rgba(100, 181, 246, 0.3) !important;
+            border-radius: 6px !important;
+            color: #e0e6ed !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            padding: 3px 8px !important;
+            white-space: nowrap !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+            font-family: 'Inter', -apple-system, sans-serif !important;
+        }
+
+        /* Pulse animation for marker dots */
+        @keyframes marker-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(66, 165, 245, 0.5); }
+            70%  { box-shadow: 0 0 0 10px rgba(66, 165, 245, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(66, 165, 245, 0); }
+        }
+
+        .map-marker-dot {
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle, #42A5F5, #1565C0);
+            border: 2px solid #e0e6ed;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .map-marker-dot:hover {
+            transform: scale(1.3);
+        }
+
+        .map-marker-dot.gen-ai {
+            background: radial-gradient(circle, #ab47bc, #7b1fa2);
+            border-color: #f3e5f5;
+        }
+
+        /* ============================
            ACTION BUTTONS (edit + delete)
            ============================ */
         .btn-icon {
@@ -1409,6 +1614,642 @@
         .modal .leaflet-control-attribution a {
             color: #64b5f6 !important;
         }
+
+        /* ==============================================
+           DOCUMENTATION SECTION
+           ============================================== */
+
+        .doc-wrapper {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 0 20px;
+        }
+
+        .doc-toggle-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0;
+            cursor: pointer;
+            user-select: none;
+            padding: 14px 20px;
+            background: rgba(26, 42, 74, 0.5);
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            border-radius: 12px 12px 0 0;
+            transition: background 0.2s ease;
+        }
+
+        .doc-toggle-bar:hover {
+            background: rgba(26, 42, 74, 0.7);
+        }
+
+        .doc-toggle-bar.collapsed {
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .doc-toggle-bar h2 {
+            font-size: 1.25em;
+            color: #b0cfe0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doc-toggle-bar h2 svg {
+            width: 22px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .doc-toggle-chevron {
+            width: 20px;
+            height: 20px;
+            color: #5a7a96;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .doc-toggle-bar.collapsed .doc-toggle-chevron {
+            transform: rotate(-90deg);
+        }
+
+        .doc-toggle-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-presentation {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.82em;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .btn-presentation:hover {
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.3);
+        }
+
+        .btn-presentation svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .doc-content {
+            background: rgba(16, 28, 52, 0.6);
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+        }
+
+        .doc-content.overflow-visible {
+            overflow: visible;
+        }
+
+        .doc-content.hidden {
+            max-height: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+            border: none;
+        }
+
+        /* Documentation Tabs */
+        .doc-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.12);
+            background: rgba(10, 22, 40, 0.4);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .doc-tab {
+            flex: 1;
+            min-width: 160px;
+            padding: 14px 16px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #6a8fa8;
+            font-size: 0.85em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-family: inherit;
+        }
+
+        .doc-tab:hover {
+            color: #b0cfe0;
+            background: rgba(100, 181, 246, 0.05);
+        }
+
+        .doc-tab.active {
+            color: #64b5f6;
+            border-bottom-color: #64b5f6;
+            background: rgba(100, 181, 246, 0.08);
+        }
+
+        .doc-tab svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .doc-tab .tab-step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(100, 181, 246, 0.15);
+            color: #64b5f6;
+            font-size: 0.75em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .doc-tab.active .tab-step {
+            background: #1e88e5;
+            color: #fff;
+        }
+
+        /* Tab Panels */
+        .doc-panel {
+            display: none;
+            padding: 30px 32px 36px;
+            animation: docFadeIn 0.3s ease;
+        }
+
+        .doc-panel.active {
+            display: block;
+        }
+
+        @keyframes docFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .doc-panel h3 {
+            font-size: 1.4em;
+            color: #e0e6ed;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .doc-panel .panel-subtitle {
+            font-size: 0.95em;
+            color: #7a9ab5;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        /* Concept Cards */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .concept-card {
+            background: rgba(26, 42, 74, 0.5);
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .concept-card:hover {
+            border-color: rgba(100, 181, 246, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .concept-card .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 1.3em;
+        }
+
+        .concept-card h4 {
+            font-size: 1em;
+            color: #e0e6ed;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .concept-card p {
+            font-size: 0.85em;
+            color: #8eacc5;
+            line-height: 1.55;
+        }
+
+        /* Collapsible Sections */
+        .doc-collapsible {
+            margin-bottom: 12px;
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(26, 42, 74, 0.3);
+        }
+
+        .doc-collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .doc-collapsible-header:hover {
+            background: rgba(100, 181, 246, 0.05);
+        }
+
+        .doc-collapsible-header h4 {
+            font-size: 0.95em;
+            color: #b0cfe0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .doc-collapsible-header .collapse-icon {
+            width: 16px;
+            height: 16px;
+            color: #5a7a96;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .doc-collapsible.open .doc-collapsible-header .collapse-icon {
+            transform: rotate(90deg);
+        }
+
+        .doc-collapsible-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            padding: 0 18px;
+        }
+
+        .doc-collapsible.open .doc-collapsible-body {
+            max-height: 2000px;
+            padding: 0 18px 18px;
+        }
+
+        .doc-collapsible-body p {
+            font-size: 0.88em;
+            color: #8eacc5;
+            line-height: 1.65;
+            margin-bottom: 10px;
+        }
+
+        .doc-collapsible-body ul {
+            padding-left: 20px;
+            margin-bottom: 12px;
+        }
+
+        .doc-collapsible-body li {
+            font-size: 0.86em;
+            color: #8eacc5;
+            line-height: 1.6;
+            margin-bottom: 4px;
+        }
+
+        .doc-collapsible-body li strong {
+            color: #b0cfe0;
+        }
+
+        /* Diagram Container */
+        .doc-diagram {
+            background: rgba(10, 22, 40, 0.5);
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 10px;
+            padding: 28px 20px;
+            margin: 20px 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .doc-diagram .mermaid {
+            width: 100%;
+            min-height: 80px;
+        }
+
+        .doc-diagram .mermaid svg {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            min-height: 120px;
+        }
+
+        .doc-diagram .diagram-caption {
+            font-size: 0.82em;
+            color: #5a7a96;
+            margin-top: 14px;
+            font-style: italic;
+            line-height: 1.55;
+        }
+
+        /* Step-by-step example tables */
+        .step-example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.84em;
+        }
+
+        .step-example-table th {
+            background: rgba(30, 136, 229, 0.12);
+            color: #64b5f6;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.15);
+        }
+
+        .step-example-table td {
+            padding: 9px 14px;
+            color: #8eacc5;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.06);
+        }
+
+        .step-example-table tr:hover td {
+            background: rgba(100, 181, 246, 0.04);
+        }
+
+        .step-example-table .token-pos { color: #66bb6a; font-weight: 600; }
+        .step-example-table .token-neg { color: #ef5350; font-weight: 600; }
+        .step-example-table .token-zero { color: #5a7a96; }
+
+        /* Centrality example table */
+        .centrality-example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 0.84em;
+        }
+
+        .centrality-example-table th {
+            background: rgba(30, 136, 229, 0.12);
+            color: #64b5f6;
+            padding: 9px 12px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.15);
+            font-size: 0.9em;
+        }
+
+        .centrality-example-table th:first-child {
+            text-align: left;
+        }
+
+        .centrality-example-table td {
+            padding: 8px 12px;
+            color: #8eacc5;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.06);
+            text-align: center;
+        }
+
+        .centrality-example-table td:first-child {
+            text-align: left;
+            color: #b0cfe0;
+            font-weight: 500;
+        }
+
+        .centrality-example-table tr:hover td {
+            background: rgba(100, 181, 246, 0.04);
+        }
+
+        .centrality-example-table .rank-1 { color: #ffa726; font-weight: 700; }
+        .centrality-example-table .rank-2 { color: #b0cfe0; font-weight: 600; }
+        .centrality-example-table .rank-3 { color: #8eacc5; font-weight: 500; }
+
+        /* Cluster legend */
+        .cluster-legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .cluster-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.84em;
+            color: #8eacc5;
+        }
+
+        .cluster-swatch {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        /* Highlight boxes */
+        .doc-highlight {
+            background: rgba(30, 136, 229, 0.08);
+            border-left: 3px solid #1e88e5;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+
+        .doc-highlight p {
+            font-size: 0.88em;
+            color: #b0cfe0;
+            line-height: 1.6;
+        }
+
+        .doc-highlight strong {
+            color: #64b5f6;
+        }
+
+        /* Key term badges */
+        .doc-term {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(100, 181, 246, 0.12);
+            border-radius: 4px;
+            color: #64b5f6;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        /* Step indicator */
+        .doc-step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: rgba(26, 42, 74, 0.4);
+            border-radius: 10px;
+            border: 1px solid rgba(100, 181, 246, 0.08);
+        }
+
+        .doc-step-number {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .doc-step-number.step-1 { background: rgba(76, 175, 80, 0.2); color: #66bb6a; }
+        .doc-step-number.step-2 { background: rgba(255, 167, 38, 0.2); color: #ffa726; }
+        .doc-step-number.step-3 { background: rgba(171, 71, 188, 0.2); color: #ba68c8; }
+
+        .doc-step-info h3 {
+            font-size: 1.1em;
+            color: #e0e6ed;
+            margin-bottom: 2px;
+        }
+
+        .doc-step-info p {
+            font-size: 0.85em;
+            color: #7a9ab5;
+        }
+
+        /* Metric cards for centrality */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .metric-card {
+            background: rgba(26, 42, 74, 0.5);
+            border: 1px solid rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            border-color: rgba(100, 181, 246, 0.25);
+        }
+
+        .metric-card h5 {
+            font-size: 0.9em;
+            color: #64b5f6;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .metric-card p {
+            font-size: 0.82em;
+            color: #8eacc5;
+            line-height: 1.5;
+        }
+
+        .metric-card .metric-question {
+            font-size: 0.78em;
+            color: #5a7a96;
+            font-style: italic;
+            margin-top: 6px;
+        }
+
+        /* Polarity example row */
+        .polarity-example {
+            display: flex;
+            gap: 16px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .polarity-box {
+            flex: 1;
+            min-width: 200px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            border: 1px solid;
+        }
+
+        .polarity-box.same {
+            background: rgba(40, 167, 69, 0.08);
+            border-color: rgba(40, 167, 69, 0.25);
+        }
+
+        .polarity-box.opposite {
+            background: rgba(220, 53, 69, 0.08);
+            border-color: rgba(220, 53, 69, 0.25);
+        }
+
+        .polarity-box h5 {
+            font-size: 0.88em;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .polarity-box.same h5 { color: #66bb6a; }
+        .polarity-box.opposite h5 { color: #ef5350; }
+
+        .polarity-box p {
+            font-size: 0.82em;
+            color: #8eacc5;
+            line-height: 1.5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .doc-tabs {
+                flex-wrap: nowrap;
+            }
+            .doc-tab {
+                min-width: 120px;
+                padding: 10px 12px;
+                font-size: 0.78em;
+            }
+            .doc-panel {
+                padding: 20px 18px 24px;
+            }
+            .concept-grid {
+                grid-template-columns: 1fr;
+            }
+            .metric-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .doc-toggle-bar h2 {
+                font-size: 1.05em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1418,6 +2259,950 @@
     <p class="subtitle">Interactive platform for social-environmental systems mapping and causal analysis</p>
     <p class="tagline">Explore, intervene, and monitor complex system dynamics</p>
 </div>
+
+<!-- ============================================ -->
+<!-- DOCUMENTATION SECTION                        -->
+<!-- ============================================ -->
+<div class="doc-wrapper">
+    <!-- Toggle bar -->
+    <div class="doc-toggle-bar" id="doc-toggle-bar" onclick="toggleDocumentation(event)">
+        <h2>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Platform Guide &amp; Systems Thinking Primer
+        </h2>
+        <div class="doc-toggle-actions">
+            <a href="presentation.html" target="_blank" class="btn-presentation" onclick="event.stopPropagation()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                Presentation
+            </a>
+            <svg class="doc-toggle-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+    </div>
+
+    <!-- Documentation Content -->
+    <div class="doc-content" id="doc-content">
+        <!-- Tab Navigation -->
+        <div class="doc-tabs">
+            <button class="doc-tab active" data-tab="why" onclick="switchDocTab('why')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Why Systems Thinking?
+            </button>
+            <button class="doc-tab" data-tab="understand" onclick="switchDocTab('understand')">
+                <span class="tab-step">1</span>
+                Understand the System
+            </button>
+            <button class="doc-tab" data-tab="intervene" onclick="switchDocTab('intervene')">
+                <span class="tab-step">2</span>
+                Design Interventions
+            </button>
+            <button class="doc-tab" data-tab="monitor" onclick="switchDocTab('monitor')">
+                <span class="tab-step">3</span>
+                Monitor &amp; Evaluate
+            </button>
+            <button class="doc-tab" data-tab="action" onclick="switchDocTab('action')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                From Knowledge to Action
+            </button>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 1: WHY SYSTEMS THINKING?                -->
+        <!-- =========================================== -->
+        <div class="doc-panel active" id="panel-why">
+            <h3>The Complexity of Socio-Environmental Systems</h3>
+            <p class="panel-subtitle">Real-world systems are not simple chains of cause and effect. They are webs of interconnected factors where actions ripple in unexpected ways. Understanding this complexity is the first step toward effective management and intervention.</p>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <div class="card-icon" style="background: rgba(30, 136, 229, 0.15);">&#x1f310;</div>
+                    <h4>Interconnectedness</h4>
+                    <p>Socio-environmental systems span ecological, economic, social, and governance dimensions. A change in one area cascades through many others in ways that are hard to predict.</p>
+                </div>
+                <div class="concept-card">
+                    <div class="card-icon" style="background: rgba(76, 175, 80, 0.15);">&#x1f504;</div>
+                    <h4>Feedback Loops</h4>
+                    <p>Effects can circle back to amplify the original cause (<strong>reinforcing loops</strong>) or counteract it (<strong>balancing loops</strong>). These loops are the engines of system behaviour.</p>
+                </div>
+                <div class="concept-card">
+                    <div class="card-icon" style="background: rgba(255, 167, 38, 0.15);">&#x23f3;</div>
+                    <h4>Time Delays</h4>
+                    <p>Causes and effects are often separated by days, months, or even years. These delays make it difficult to connect actions with their consequences and can lead to over- or under-reaction.</p>
+                </div>
+                <div class="concept-card">
+                    <div class="card-icon" style="background: rgba(171, 71, 188, 0.15);">&#x1f4a1;</div>
+                    <h4>Emergence</h4>
+                    <p>System-level behaviours (collapses, regime shifts, resilience) emerge from the interactions among components. They cannot be understood by studying each part in isolation.</p>
+                </div>
+            </div>
+
+            <div class="doc-highlight">
+                <p><strong>Why does this matter?</strong> Traditional approaches address problems one at a time. But in complex systems, solving one problem can create or worsen others. Systems thinking provides the tools to see the whole picture, identify leverage points, and design interventions that account for side effects and feedback.</p>
+            </div>
+
+            <!-- Collapsible: Causal Complexity Explained -->
+            <div class="doc-collapsible open" id="coll-causal">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-causal')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Causal Complexity: An Illustrated Example
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Consider a simplified fishery system. It is tempting to think of it as a simple chain: fewer regulations lead to more fishing, which leads to less fish stock. But the reality is far more complex:</p>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    A["Fish Stock"] -->|"same"| B["Catch Volume"]
+    B -->|"same"| C["Market Revenue"]
+    C -->|"same"| D["Fishing Effort"]
+    D -->|"opposite"| A
+    A -->|"same"| E["Ecosystem Health"]
+    E -->|"same"| A
+    C -->|"same"| F["Fleet Investment"]
+    F -->|"same"| D
+    G["Harvest Quota"] -->|"opposite"| D
+                        </div>
+                        <p class="diagram-caption">A simplified fishery causal loop diagram. Green arrows represent same-direction relationships; the red arrow from Fishing Effort to Fish Stock represents an opposite-direction relationship. Notice the reinforcing loop (Fish Stock &rarr; Ecosystem Health &rarr; Fish Stock) and the balancing loop (Fish Stock &rarr; Catch &rarr; Revenue &rarr; Effort &rarr; Fish Stock).</p>
+                    </div>
+                    <p>In this diagram, <strong>reducing the Harvest Quota</strong> doesn't just reduce catch &mdash; it affects market revenue, fleet investment, fishing effort, and ultimately fish stock recovery, which feeds back into ecosystem health. A systems approach reveals these cascading effects <em>before</em> interventions are implemented.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Participatory Mapping -->
+            <div class="doc-collapsible" id="coll-participatory">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-participatory')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Participatory Systems Mapping
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Participatory systems mapping brings diverse stakeholders together &mdash; scientists, policymakers, community members, indigenous groups &mdash; to co-create a shared model of how their system works.</p>
+                    <ul>
+                        <li><strong>Identify factors:</strong> Participants name the key variables (ecological, economic, social, governance) that drive system behaviour.</li>
+                        <li><strong>Define relationships:</strong> For each pair of factors, participants describe whether and how they are causally linked, including the direction (same or opposite), strength, and time delay.</li>
+                        <li><strong>Build the map:</strong> The resulting network of factors and relationships becomes a shared &ldquo;mental model&rdquo; that integrates diverse perspectives.</li>
+                        <li><strong>Analyse and act:</strong> The platform provides computational tools to explore the map, test interventions, and design monitoring programs.</li>
+                    </ul>
+                    <p>This approach ensures that local knowledge, scientific evidence, and governance realities are all represented in the same model &mdash; giving every voice a place in the system map.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Three Steps -->
+            <div class="doc-collapsible" id="coll-three-steps">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-three-steps')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        The SIM4Action Workflow: Three Steps
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>SIM4Action guides you through three analytical stages, each supported by a dedicated lab in the platform. This workflow is inherently <strong>iterative</strong>, mirroring the principles of <strong>adaptive management</strong>:</p>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    U["1. Understand<br/>Diagnostics Lab"] --> I["2. Intervene<br/>Intervention Lab"]
+    I --> M["3. Monitor<br/>Monitoring Lab"]
+    M -.->|"learn &amp; adapt"| U
+                        </div>
+                        <p class="diagram-caption">The SIM4Action analytical cycle aligns with adaptive management: understand the system, design and test interventions, monitor outcomes, and use what you learn to refine your understanding. Each iteration deepens insight and improves management decisions.</p>
+                    </div>
+                    <ul>
+                        <li><strong>Step 1 &mdash; Diagnostics Lab:</strong> Explore the system structure. Identify feedback loops, clusters, and key structural features.</li>
+                        <li><strong>Step 2 &mdash; Intervention Lab:</strong> Simulate changes using token diffusion. Trace how interventions propagate through causal chains.</li>
+                        <li><strong>Step 3 &mdash; Monitoring Lab:</strong> Use centrality analysis to identify the most influential variables and design monitoring programs.</li>
+                    </ul>
+                    <div class="doc-highlight">
+                        <p><strong>Alignment with Adaptive Management:</strong> Adaptive management recognises that our understanding of complex socio-environmental systems is always incomplete. Rather than designing a single &ldquo;optimal&rdquo; plan, it prescribes a structured cycle of <em>plan &rarr; act &rarr; monitor &rarr; learn &rarr; adjust</em>. SIM4Action operationalises this cycle: the Diagnostics Lab builds understanding (plan), the Intervention Lab tests management strategies (act), and the Monitoring Lab designs the feedback mechanisms (monitor) that close the learning loop. Each time you return to Step 1 with new monitoring data, the system map can be updated, interventions re-evaluated, and monitoring priorities refined &mdash; creating a continuous improvement process grounded in evidence and stakeholder knowledge.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 2: UNDERSTAND THE SYSTEM (DIAGNOSTICS)  -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-understand">
+            <div class="doc-step-indicator">
+                <div class="doc-step-number step-1">1</div>
+                <div class="doc-step-info">
+                    <h3>Understand the System</h3>
+                    <p>Diagnostics Lab &mdash; Explore network structure, feedback loops, and system properties</p>
+                </div>
+            </div>
+
+            <p class="panel-subtitle">The Diagnostics Lab provides tools to explore and understand the structure of a causal systems map. By visualizing the network and its properties, you can identify key structural features that drive system behaviour.</p>
+
+            <!-- Collapsible: Network Visualization -->
+            <div class="doc-collapsible open" id="coll-network">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-network')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="2"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><line x1="7.5" y1="7.5" x2="10.5" y2="10.5"/><line x1="16.5" y1="7.5" x2="13.5" y2="10.5"/><line x1="7.5" y1="16.5" x2="10.5" y2="13.5"/><line x1="16.5" y1="16.5" x2="13.5" y2="13.5"/></svg>
+                        Network Visualization
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The system map is visualized as a <strong>directed network graph</strong> using D3.js force-directed layout. Each element encodes information:</p>
+                    <ul>
+                        <li><strong>Nodes (circles)</strong> represent system factors (variables). They are colour-coded by domain (e.g., Environmental, Economics, Management).</li>
+                        <li><strong>Edges (arrows)</strong> represent causal relationships between factors. Arrow direction shows the direction of causal influence.</li>
+                        <li><strong>Edge colour</strong> indicates polarity: <span style="color:#66bb6a">green</span> for same-direction, <span style="color:#ef5350">red</span> for opposite-direction relationships.</li>
+                        <li><strong>Edge thickness</strong> indicates strength: thick lines for strong relationships, thin for weak.</li>
+                    </ul>
+
+                    <p><strong>Illustrative example:</strong> Below is a synthetic coastal fishery system with 9 factors across 4 domains. Notice how factors from different domains are interconnected through causal relationships:</p>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph TD
+    SST["Sea Surface Temperature"] -->|"opposite / medium"| FS["Fish Stock"]
+    WQ["Water Quality"] -->|"same / strong"| FS
+    FS -->|"same / strong"| CV["Catch Volume"]
+    CV -->|"same / strong"| MP["Market Price"]
+    MP -->|"same / medium"| FE["Fishing Effort"]
+    FE -->|"opposite / strong"| FS
+    HQ["Harvest Quota"] -->|"opposite / strong"| FE
+    MPA["Marine Protected Area"] -->|"same / medium"| FS
+    MPA -->|"same / weak"| WQ
+    CV -->|"same / medium"| CW["Community Wellbeing"]
+    MP -->|"same / medium"| CW
+
+    style SST fill:#1a4a2a,stroke:#228B22,color:#e0e6ed
+    style WQ fill:#1a4a2a,stroke:#228B22,color:#e0e6ed
+    style FS fill:#1a4a2a,stroke:#228B22,color:#e0e6ed
+    style MP fill:#142a4a,stroke:#1E90FF,color:#e0e6ed
+    style CV fill:#142a4a,stroke:#1E90FF,color:#e0e6ed
+    style HQ fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style MPA fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style FE fill:#2a1a3a,stroke:#CC99FF,color:#e0e6ed
+    style CW fill:#2a1a3a,stroke:#CC99FF,color:#e0e6ed
+
+    linkStyle 0 stroke:#ef5350
+    linkStyle 5 stroke:#ef5350
+    linkStyle 6 stroke:#ef5350
+    linkStyle 1 stroke:#66bb6a,stroke-width:3px
+    linkStyle 2 stroke:#66bb6a,stroke-width:3px
+    linkStyle 3 stroke:#66bb6a,stroke-width:3px
+    linkStyle 4 stroke:#66bb6a,stroke-width:2px
+    linkStyle 7 stroke:#66bb6a,stroke-width:2px
+    linkStyle 8 stroke:#66bb6a,stroke-width:1px
+    linkStyle 9 stroke:#66bb6a,stroke-width:2px
+    linkStyle 10 stroke:#66bb6a,stroke-width:2px
+                        </div>
+                        <p class="diagram-caption">A synthetic coastal fishery system with 9 factors across 4 domains. <strong>Node colours</strong> indicate domain: green = Environmental, blue = Economics, orange = Management, purple = Social. <strong>Edge colours</strong> indicate polarity: green = same-direction (+), red = opposite-direction (&minus;). <strong>Edge thickness</strong> reflects strength: thick = strong, medium = medium, thin = weak. Edge labels show polarity and strength explicitly.</p>
+                    </div>
+                    <div class="cluster-legend">
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:#228B22"></div> Environmental</div>
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:#1E90FF"></div> Economics</div>
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:#FF8C00"></div> Management</div>
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:#CC99FF"></div> Social</div>
+                    </div>
+                    <p>You can filter the network by domain, relationship type, strength, and temporal scale to focus on specific aspects of the system.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Relationship Properties -->
+            <div class="doc-collapsible" id="coll-relationships">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-relationships')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        Relationship Properties: Polarity, Strength &amp; Delay
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Each causal relationship in the map has three key properties:</p>
+                    <p><strong>Polarity</strong> describes how the source factor affects the target:</p>
+                    <div class="polarity-example">
+                        <div class="polarity-box same">
+                            <h5>Same Direction (+)</h5>
+                            <p>When the source increases, the target also increases (and vice versa). Example: more fishing effort &rarr; more catch.</p>
+                        </div>
+                        <div class="polarity-box opposite">
+                            <h5>Opposite Direction (&minus;)</h5>
+                            <p>When the source increases, the target decreases. Example: more fishing effort &rarr; less fish stock.</p>
+                        </div>
+                    </div>
+                    <p><strong>Strength</strong> (strong, medium, weak) indicates the magnitude of the causal influence. In simulations, stronger relationships attract more token flow.</p>
+                    <p><strong>Temporal delay</strong> (days, months, years) captures how long it takes for the effect to materialise. A policy change may take years to affect fish populations, but days to affect market prices.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Feedback Loops -->
+            <div class="doc-collapsible" id="coll-feedback">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-feedback')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        Feedback Loops: Reinforcing &amp; Balancing
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Feedback loops are closed causal chains where the effect of a factor eventually circles back to influence itself. The platform detects all feedback loops using depth-first search and classifies them by polarity:</p>
+                    <div class="polarity-example">
+                        <div class="polarity-box same">
+                            <h5>Reinforcing Loops (R)</h5>
+                            <p>The product of all edge polarities is positive. These loops amplify change &mdash; they drive exponential growth or decline. Example: More fish &rarr; more catch &rarr; more revenue &rarr; more fleet investment &rarr; more effort &rarr; fewer fish (a vicious cycle when stock declines).</p>
+                        </div>
+                        <div class="polarity-box opposite">
+                            <h5>Balancing Loops (B)</h5>
+                            <p>The product of all edge polarities is negative. These loops resist change and drive the system toward equilibrium. Example: Fewer fish &rarr; less catch &rarr; lower revenue &rarr; less effort &rarr; fish recovery.</p>
+                        </div>
+                    </div>
+                    <p>The <strong>Diagnostics Lab</strong> lets you find all loops, filter by type (reinforcing/balancing), and visualize each loop on the network.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Cluster Detection -->
+            <div class="doc-collapsible" id="coll-clusters">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-clusters')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="9" cy="9" r="5"/><circle cx="17" cy="17" r="5"/></svg>
+                        Cluster Detection
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The platform uses community detection algorithms (Louvain and Girvan-Newman) to identify clusters of tightly connected factors. These clusters often correspond to subsystems or thematic groups:</p>
+                    <ul>
+                        <li><strong>Louvain algorithm:</strong> Optimises modularity to find groups of nodes with dense internal connections and sparse connections between groups.</li>
+                        <li><strong>Girvan-Newman algorithm:</strong> Iteratively removes the most &ldquo;between&rdquo; edges to reveal natural community boundaries.</li>
+                    </ul>
+
+                    <p><strong>Illustrative example:</strong> Using our synthetic fishery system, a community detection algorithm might identify two clusters:</p>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    subgraph clusterA [Cluster A: Ecological-Harvest]
+        SST2["Sea Surface Temp."]
+        WQ2["Water Quality"]
+        FS2["Fish Stock"]
+        CV2["Catch Volume"]
+        FE2["Fishing Effort"]
+    end
+    subgraph clusterB [Cluster B: Socio-Economic]
+        MP2["Market Price"]
+        CW2["Community Wellbeing"]
+        HQ2["Harvest Quota"]
+        MPA2["Marine Protected Area"]
+    end
+
+    SST2 --> FS2
+    WQ2 --> FS2
+    FS2 --> CV2
+    FE2 --> FS2
+    CV2 -->|"bridge"| MP2
+    MP2 -->|"bridge"| FE2
+    MP2 --> CW2
+    CV2 --> CW2
+    HQ2 --> FE2
+    MPA2 --> FS2
+    MPA2 --> WQ2
+
+    style SST2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
+    style WQ2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
+    style FS2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
+    style CV2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
+    style FE2 fill:#1a4a2a,stroke:#4CAF50,color:#e0e6ed
+    style MP2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
+    style CW2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
+    style HQ2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
+    style MPA2 fill:#0d2a4a,stroke:#1E88E5,color:#e0e6ed
+
+    linkStyle 4 stroke:#ffa726,stroke-width:3px
+    linkStyle 5 stroke:#ffa726,stroke-width:3px
+                        </div>
+                        <p class="diagram-caption">Cluster detection reveals two tightly coupled subsystems. <strong>Cluster A</strong> (green) groups ecological and harvest variables with dense internal connections. <strong>Cluster B</strong> (blue) groups socio-economic and management variables. The <strong>bridge edges</strong> (orange, thick) &mdash; Catch Volume &rarr; Market Price and Market Price &rarr; Fishing Effort &mdash; are the critical inter-cluster links through which changes propagate between subsystems.</p>
+                    </div>
+                    <div class="cluster-legend">
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:rgba(76,175,80,0.5)"></div> Cluster A: Ecological-Harvest</div>
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:rgba(30,136,229,0.5)"></div> Cluster B: Socio-Economic</div>
+                        <div class="cluster-legend-item"><div class="cluster-swatch" style="background:rgba(255,167,38,0.7)"></div> Bridge edges</div>
+                    </div>
+                    <p>Cluster detection helps identify which parts of the system are most tightly coupled and where natural boundaries exist between subsystems. The <strong>bridge edges</strong> between clusters are especially important &mdash; they are the pathways through which changes propagate from one subsystem to another.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 3: DESIGN INTERVENTIONS (INTERVENTION)  -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-intervene">
+            <div class="doc-step-indicator">
+                <div class="doc-step-number step-2">2</div>
+                <div class="doc-step-info">
+                    <h3>Design Interventions</h3>
+                    <p>Intervention Lab &mdash; Simulate how changes propagate through the causal network</p>
+                </div>
+            </div>
+
+            <p class="panel-subtitle">The Intervention Lab uses a token-based diffusion simulation to model how interventions spread through the causal network. Tokens represent units of causal influence that propagate along the edges of the system map, respecting polarity, strength, and temporal delays.</p>
+
+            <!-- Collapsible: Token Diffusion Concept -->
+            <div class="doc-collapsible open" id="coll-token-concept">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-token-concept')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        The Token Diffusion Metaphor
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Imagine dropping a pebble into a pond. The ripples spread outward, interacting with obstacles and reflecting back. Token diffusion works similarly: you introduce a change (tokens) at one or more nodes, and watch how the effect ripples through the network.</p>
+                    <p>Each <strong>token</strong> is an autonomous agent that:</p>
+                    <ul>
+                        <li>Carries a <strong>charge</strong> (+1 for positive change, &minus;1 for negative change)</li>
+                        <li>Travels along outgoing edges, choosing its path based on <strong>edge strength</strong> (stronger edges attract more tokens)</li>
+                        <li><strong>Flips its charge</strong> when traversing an opposite-direction edge (a positive increase becoming a decrease)</li>
+                        <li>Respects <strong>temporal delays</strong> &mdash; slow relationships take more simulation steps to traverse</li>
+                        <li><strong>Accumulates</strong> at dead ends (nodes with no outgoing edges)</li>
+                    </ul>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    A["Harvest Quota<br/>INJECT +5 tokens"] -->|"opposite / strong"| B["Fishing Effort"]
+    B -->|"opposite / strong"| C["Fish Stock"]
+    C -->|"same / strong"| E["Catch Volume"]
+    E -->|"same / strong"| F["Market Price"]
+    F -->|"same / medium"| B
+    E -->|"same / medium"| G["Community Wellbeing"]
+    F -->|"same / medium"| G
+
+    linkStyle 0 stroke:#ef5350,stroke-width:3px
+    linkStyle 1 stroke:#ef5350,stroke-width:3px
+    linkStyle 2 stroke:#66bb6a,stroke-width:3px
+    linkStyle 3 stroke:#66bb6a,stroke-width:3px
+    linkStyle 4 stroke:#66bb6a,stroke-width:2px
+    linkStyle 5 stroke:#66bb6a,stroke-width:2px
+    linkStyle 6 stroke:#66bb6a,stroke-width:2px
+                        </div>
+                        <p class="diagram-caption"><strong>Token diffusion example.</strong> 5 positive tokens (+) are injected at Harvest Quota, simulating a quota increase. <strong>Step 1:</strong> Tokens travel along the <span style="color:#ef5350">red opposite-direction edge</span> to Fishing Effort &mdash; charge <em>flips</em> from +5 to &minus;5 (quota up &rarr; effort down). <strong>Step 2:</strong> Tokens continue along the second <span style="color:#ef5350">red opposite edge</span> to Fish Stock &mdash; charge flips again to +5 (less effort &rarr; stock recovers). <strong>Step 3:</strong> Tokens propagate along <span style="color:#66bb6a">green same-direction edges</span> to Catch Volume, Market Price, and Community Wellbeing, <em>preserving</em> the positive charge (more fish &rarr; more catch &rarr; higher prices &rarr; greater wellbeing). <strong>Edge thickness</strong> reflects strength: thick = strong, thin = medium/weak.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: How Propagation Works -->
+            <div class="doc-collapsible" id="coll-propagation">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-propagation')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        How Propagation Works
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>At each simulation step, every active token:</p>
+                    <ul>
+                        <li><strong>Evaluates outgoing edges</strong> from its current node</li>
+                        <li><strong>Calculates routing probabilities</strong> based on normalised edge strength (strong = 3, medium = 2, weak = 1)</li>
+                        <li><strong>Chooses one edge</strong> via weighted random selection</li>
+                        <li><strong>Enters transit</strong> for a number of steps determined by the edge's delay (days = 5, months = 10, years = 20 steps)</li>
+                        <li><strong>Arrives</strong> at the target node, with charge potentially flipped if the edge has opposite polarity</li>
+                    </ul>
+
+                    <p><strong>Step-by-step walkthrough:</strong> Let&rsquo;s trace what happens when we inject <strong>10 positive tokens</strong> at Harvest Quota (simulating a quota increase) using the same fishery network from the Token Diffusion Metaphor above:</p>
+
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    HQ["Harvest Quota<br/>INJECT +10"] -->|"opposite / strong"| FE["Fishing Effort"]
+    FE -->|"opposite / strong"| FS["Fish Stock"]
+    FS -->|"same / strong"| CV["Catch Volume"]
+    CV -->|"same / strong"| MP["Market Price"]
+    MP -->|"same / medium"| FE
+    CV -->|"same / medium"| CW["Community Wellbeing"]
+    MP -->|"same / medium"| CW
+
+    linkStyle 0 stroke:#ef5350,stroke-width:3px
+    linkStyle 1 stroke:#ef5350,stroke-width:3px
+    linkStyle 2 stroke:#66bb6a,stroke-width:3px
+    linkStyle 3 stroke:#66bb6a,stroke-width:3px
+    linkStyle 4 stroke:#66bb6a,stroke-width:2px
+    linkStyle 5 stroke:#66bb6a,stroke-width:2px
+    linkStyle 6 stroke:#66bb6a,stroke-width:2px
+                        </div>
+                        <p class="diagram-caption"><strong>Token routing from Harvest Quota through the fishery network.</strong> Nodes represent system factors. <span style="color:#ef5350">Red edges</span> = opposite-direction (charge flips on traversal). <span style="color:#66bb6a">Green edges</span> = same-direction (charge preserved). Edge thickness = strength. Tokens propagate along the single outgoing edge at each step; at nodes with multiple outgoing edges (e.g., Market Price &rarr; Fishing Effort and Market Price &rarr; Community Wellbeing), tokens split probabilistically based on edge strength weights.</p>
+                    </div>
+
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>Step</th><th>Location</th><th>Charge</th><th>Event</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>0</td><td>Harvest Quota</td><td class="token-pos">+10</td><td>10 positive tokens injected (simulating a quota increase). Only one outgoing edge: Harvest Quota &rarr; Fishing Effort (opposite / strong).</td></tr>
+                            <tr><td>1&ndash;5</td><td><em>In transit</em></td><td class="token-pos">+10 in transit</td><td>Tokens travel along the edge. Delay = &ldquo;days&rdquo; = 5 simulation steps.</td></tr>
+                            <tr><td>6</td><td>Fishing Effort</td><td class="token-neg">&minus;10</td><td>Tokens arrive. Edge is <strong>opposite</strong>, so charge <strong>flips</strong>: +10 &rarr; &minus;10. Interpretation: quota increase &rarr; effort <em>decreases</em>.</td></tr>
+                            <tr><td>6</td><td>Fishing Effort</td><td class="token-neg">&minus;10 routing</td><td>Fishing Effort has one outgoing edge in this path: Fish Stock (opposite / strong). All 10 tokens route to Fish Stock.</td></tr>
+                            <tr><td>7&ndash;16</td><td><em>In transit</em></td><td class="token-neg">&minus;10 in transit</td><td>Tokens travel Fishing Effort &rarr; Fish Stock. Delay = &ldquo;months&rdquo; = 10 steps.</td></tr>
+                            <tr><td>17</td><td>Fish Stock</td><td class="token-pos">+10</td><td>Tokens arrive. Edge is <strong>opposite</strong>, so charge flips again: &minus;10 &rarr; +10. The &ldquo;double flip&rdquo;: less effort &rarr; stock <em>recovers</em>.</td></tr>
+                            <tr><td>17</td><td>Fish Stock</td><td class="token-pos">+10 routing</td><td>Fish Stock has one outgoing edge: Catch Volume (same / strong). All 10 tokens route to Catch Volume.</td></tr>
+                            <tr><td>18&ndash;27</td><td><em>In transit</em></td><td class="token-pos">+10 in transit</td><td>Tokens travel Fish Stock &rarr; Catch Volume (same / strong, months delay).</td></tr>
+                            <tr><td>28</td><td>Catch Volume</td><td class="token-pos">+10</td><td>Tokens arrive. Edge is <strong>same</strong>, charge preserved: +10. More fish &rarr; more catch.</td></tr>
+                            <tr><td>28</td><td>Catch Volume</td><td class="token-pos">+10 routing</td><td>Catch Volume has 2 outgoing edges: Market Price (strong, wt=3, 60%) and Community Wellbeing (medium, wt=2, 40%). ~6 tokens &rarr; Market Price, ~4 &rarr; Wellbeing.</td></tr>
+                            <tr><td>29+</td><td>Market Price / Wellbeing</td><td class="token-pos">+6 / +4</td><td>Both edges are <strong>same</strong>: charge preserved. More catch &rarr; higher prices, greater wellbeing. Market Price tokens may continue to Fishing Effort via the feedback loop.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-highlight">
+                        <p><strong>Key insight:</strong> Two consecutive opposite-direction edges produce a <em>net positive</em> effect (the &ldquo;double flip&rdquo;). Increasing the harvest quota (a restrictive management action) ultimately leads to fish stock recovery because the causal chain passes through two &ldquo;opposite&rdquo; relationships. The simulation also reveals <em>temporal dynamics</em>: the effect on Fish Stock takes ~17 steps (months), while downstream effects on Catch Volume and Market Price take even longer &mdash; making trade-offs across time visible to decision-makers.</p>
+                    </div>
+
+                    <p>The simulation tracks <strong>node flows</strong> (accumulated positive and negative tokens at each node) and <strong>edge flows</strong> (tokens currently traversing each edge) at every time step, producing time-series data you can chart and analyse.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Scenario vs Ensemble -->
+            <div class="doc-collapsible" id="coll-scenario">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-scenario')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        Scenario Mode vs. Ensemble Mode
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The Intervention Lab offers two modes of analysis:</p>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>Scenario Mode</h4>
+                            <p>Run a single simulation with step-by-step control. Watch tokens propagate in real time. Ideal for <strong>exploring and understanding</strong> how a specific intervention ripples through the system. Includes play/pause, step-by-step advancement, and speed control.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>Ensemble Mode</h4>
+                            <p>Run 10&ndash;1000 simulations with different random seeds to produce <strong>statistical distributions</strong> of outcomes. This accounts for the stochastic nature of token routing and provides confidence intervals for predictions. Ideal for <strong>robust decision-making</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Interpreting Results -->
+            <div class="doc-collapsible" id="coll-results">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-results')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Interpreting Results
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Simulation results include:</p>
+                    <ul>
+                        <li><strong>Time-series charts:</strong> Show how token accumulation at each node changes over time, revealing which factors are most affected and when.</li>
+                        <li><strong>Node flow maps:</strong> Colour-code the network by accumulated positive/negative tokens, showing the spatial pattern of effects.</li>
+                        <li><strong>Edge flow visualisation:</strong> Show which causal pathways carry the most token traffic.</li>
+                        <li><strong>Controllability gauge:</strong> Measures how much of the system can be influenced from the chosen intervention point.</li>
+                    </ul>
+                    <p>These results help stakeholders compare intervention strategies, identify unintended side effects, and build consensus around preferred approaches.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================================== -->
+        <!-- TAB 4: MONITOR & EVALUATE (MONITORING)      -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-monitor">
+            <div class="doc-step-indicator">
+                <div class="doc-step-number step-3">3</div>
+                <div class="doc-step-info">
+                    <h3>Monitor &amp; Evaluate</h3>
+                    <p>Monitoring Lab &mdash; Identify key indicators and design monitoring programs</p>
+                </div>
+            </div>
+
+            <p class="panel-subtitle">The Monitoring Lab uses network centrality analysis to identify the most influential, strategically positioned, and informative variables in the system. These variables are prime candidates for monitoring and evaluation programs.</p>
+
+            <!-- Collapsible: Why Centrality? -->
+            <div class="doc-collapsible open" id="coll-centrality-why">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-centrality-why')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Why Centrality Matters for Monitoring
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Not all variables in a system are equally important. Some factors sit at critical junctures in the causal network &mdash; they influence many others, bridge different subsystems, or propagate changes widely. These are the variables you most want to monitor.</p>
+                    <p>Centrality metrics, borrowed from social network analysis (SNA) and graph theory, quantify the structural importance of each node in the network. By ranking variables by their centrality, you can prioritise monitoring resources for maximum insight.</p>
+                    <div class="doc-highlight">
+                        <p><strong>Practical implication:</strong> Rather than trying to monitor everything (which is expensive and often infeasible), centrality analysis identifies the minimum set of &ldquo;sentinel&rdquo; variables that, if monitored, give you the best picture of overall system health.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Five Metrics -->
+            <div class="doc-collapsible" id="coll-metrics">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-metrics')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Five Centrality Metrics Explained
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <h5>Degree Centrality</h5>
+                            <p>Counts the number of direct connections (in + out). High-degree nodes are the most connected factors.</p>
+                            <p class="metric-question">Q: Which variables have the most direct causal connections?</p>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Betweenness Centrality</h5>
+                            <p>Measures how often a node lies on the shortest path between other nodes. High-betweenness nodes are bridges between subsystems.</p>
+                            <p class="metric-question">Q: Which variables are bottlenecks or bridges in the system?</p>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Closeness Centrality</h5>
+                            <p>Measures how close a node is, on average, to all other nodes. High-closeness nodes can reach (or be reached by) the rest of the system quickly.</p>
+                            <p class="metric-question">Q: Which variables can influence the whole system most rapidly?</p>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Eigenvector Centrality</h5>
+                            <p>A node is important if it is connected to other important nodes. This captures influence that propagates through the network.</p>
+                            <p class="metric-question">Q: Which variables are connected to the most influential parts of the system?</p>
+                        </div>
+                        <div class="metric-card">
+                            <h5>Katz Centrality</h5>
+                            <p>Similar to eigenvector but gives every node a baseline importance. Accounts for both direct and indirect paths with attenuation over distance.</p>
+                            <p class="metric-question">Q: Which variables have the broadest total influence, direct and indirect?</p>
+                        </div>
+                    </div>
+
+                    <p style="margin-top:18px;"><strong>Worked example:</strong> Applying all five metrics to our synthetic fishery network reveals how different metrics highlight different variables. The diagram shows degree centrality (raw count of connections) for each node:</p>
+
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    SST3["SST<br/>Deg: 1"] --> FS3["FISH STOCK<br/>Deg: 5"]
+    WQ3["Water Q.<br/>Deg: 2"] --> FS3
+    MPA3["MPA<br/>Deg: 2"] --> FS3
+    MPA3 --> WQ3
+    FS3 --> CV3["Catch Vol.<br/>Deg: 3"]
+    FE3["EFFORT<br/>Deg: 4"] --> FS3
+    CV3 --> MP3["Mkt Price<br/>Deg: 3"]
+    MP3 --> FE3
+    HQ3["Quota<br/>Deg: 1"] --> FE3
+    CV3 --> CW3["Wellbeing<br/>Deg: 2"]
+    MP3 --> CW3
+                        </div>
+                        <p class="diagram-caption">The fishery network annotated with <strong>degree centrality</strong> (raw count of in + out connections). Fish Stock (degree: 5) and Fishing Effort (degree: 4) have the most connections. The table below compares all five raw centrality metrics.</p>
+                    </div>
+
+                    <table class="centrality-example-table">
+                        <thead>
+                            <tr>
+                                <th>Variable</th>
+                                <th>Degree</th>
+                                <th>Betweenness</th>
+                                <th>Closeness</th>
+                                <th>Eigenvector</th>
+                                <th>Katz</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fish Stock</td>
+                                <td class="rank-1">5</td>
+                                <td class="rank-1">0.43</td>
+                                <td class="rank-2">0.47</td>
+                                <td class="rank-1">0.52</td>
+                                <td class="rank-1">0.58</td>
+                            </tr>
+                            <tr>
+                                <td>Fishing Effort</td>
+                                <td class="rank-2">4</td>
+                                <td class="rank-2">0.32</td>
+                                <td class="rank-1">0.53</td>
+                                <td class="rank-2">0.44</td>
+                                <td class="rank-2">0.51</td>
+                            </tr>
+                            <tr>
+                                <td>Market Price</td>
+                                <td class="rank-3">3</td>
+                                <td class="rank-3">0.25</td>
+                                <td class="rank-3">0.40</td>
+                                <td class="rank-3">0.36</td>
+                                <td class="rank-3">0.42</td>
+                            </tr>
+                            <tr>
+                                <td>Catch Volume</td>
+                                <td class="rank-3">3</td>
+                                <td>0.18</td>
+                                <td>0.35</td>
+                                <td>0.33</td>
+                                <td>0.38</td>
+                            </tr>
+                            <tr>
+                                <td>Marine Protected Area</td>
+                                <td>2</td>
+                                <td>0.14</td>
+                                <td>0.31</td>
+                                <td>0.18</td>
+                                <td>0.25</td>
+                            </tr>
+                            <tr>
+                                <td>Water Quality</td>
+                                <td>2</td>
+                                <td>0.04</td>
+                                <td>0.27</td>
+                                <td>0.26</td>
+                                <td>0.24</td>
+                            </tr>
+                            <tr>
+                                <td>Community Wellbeing</td>
+                                <td>2</td>
+                                <td>0.00</td>
+                                <td>0.20</td>
+                                <td>0.21</td>
+                                <td>0.22</td>
+                            </tr>
+                            <tr>
+                                <td>Sea Surface Temp.</td>
+                                <td>1</td>
+                                <td>0.00</td>
+                                <td>0.25</td>
+                                <td>0.12</td>
+                                <td>0.15</td>
+                            </tr>
+                            <tr>
+                                <td>Harvest Quota</td>
+                                <td>1</td>
+                                <td>0.00</td>
+                                <td>0.29</td>
+                                <td>0.09</td>
+                                <td>0.13</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-highlight">
+                        <p><strong>Reading this table:</strong> Degree = raw count of connections. Betweenness, closeness, eigenvector, and Katz are computed as fractions (0 to 1). Higher values = greater structural importance. Notice how different metrics spotlight different variables:</p>
+                    </div>
+                    <ul>
+                        <li><strong>Fish Stock</strong> (degree: 5) ranks #1 on degree, betweenness, eigenvector, and Katz &mdash; it is the most connected and structurally central factor. It&rsquo;s a prime <strong>leverage point</strong> and <strong>sentinel indicator</strong>.</li>
+                        <li><strong>Fishing Effort</strong> (degree: 4) ranks #1 on closeness (0.53 &mdash; it can reach every other node quickly) and #2 on most other metrics &mdash; a key <strong>intervention target</strong>.</li>
+                        <li><strong>Market Price</strong> (degree: 3) ranks #3 across the board &mdash; a consistent <strong>bridge variable</strong> between ecological and social subsystems.</li>
+                        <li><strong>Harvest Quota</strong> (degree: 1) has the lowest degree but relatively high closeness (0.29) &mdash; it&rsquo;s a <strong>management lever</strong> that, despite few direct connections, can reach the system efficiently.</li>
+                        <li><strong>Community Wellbeing</strong> (degree: 2) has zero betweenness (it&rsquo;s a terminal node receiving influence but not passing it on) &mdash; it&rsquo;s an <strong>outcome variable</strong> worth monitoring but not a good intervention point.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Collapsible: Leverage Points -->
+            <div class="doc-collapsible" id="coll-leverage">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-leverage')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Leverage Points and Sentinel Indicators
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>By combining multiple centrality metrics, you can identify different types of strategically important variables:</p>
+                    <ul>
+                        <li><strong>Leverage points:</strong> Variables that score high on multiple metrics. Intervening on these factors has the greatest potential to shift system behaviour.</li>
+                        <li><strong>Sentinel indicators:</strong> Variables with high closeness or eigenvector centrality that, when monitored, serve as early warning signals of system-wide change.</li>
+                        <li><strong>Bridge variables:</strong> High-betweenness variables that connect different subsystems. Monitoring these reveals whether changes are spreading across system boundaries.</li>
+                        <li><strong>Hub variables:</strong> High-degree nodes that can be practical proxies for measuring overall activity in their subsystem.</li>
+                    </ul>
+                    <p>The <strong>Comprehensive Analysis</strong> mode in the Monitoring Lab calculates all five metrics simultaneously and presents them in a sortable table, making it easy to identify variables that score highly across multiple dimensions.</p>
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph TD
+    A["All System Variables"] --> B["Centrality Analysis"]
+    B --> C["High Degree<br/>Hub Variables"]
+    B --> D["High Betweenness<br/>Bridge Variables"]
+    B --> E["High Eigenvector<br/>Influence Propagators"]
+    B --> F["High Closeness<br/>Sentinel Indicators"]
+    C --> G["Priority Monitoring Set"]
+    D --> G
+    E --> G
+    F --> G
+                        </div>
+                        <p class="diagram-caption">From all system variables, centrality analysis filters the most strategically important ones into a priority monitoring set. Different metrics reveal different types of importance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- =========================================== -->
+        <!-- TAB 5: FROM KNOWLEDGE TO ACTION              -->
+        <!-- =========================================== -->
+        <div class="doc-panel" id="panel-action">
+            <div class="doc-step-indicator">
+                <div class="doc-step-number" style="background: linear-gradient(135deg, #ff6f00, #ff9100);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:18px;height:18px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="doc-step-info">
+                    <h3>From Knowledge to Action</h3>
+                    <p>Turning systems analysis into concrete decisions, policies, and real-world impact</p>
+                </div>
+            </div>
+
+            <p class="panel-subtitle">Understanding a system is only valuable if it leads to better decisions. This section bridges the gap between analysis and action &mdash; showing how the insights produced by SIM4Action translate into concrete, evidence-based management strategies in the real world.</p>
+
+            <!-- Collapsible: The Implementation Gap -->
+            <div class="doc-collapsible open" id="coll-implementation-gap">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-implementation-gap')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        The Implementation Gap: Why Systems Knowledge Rarely Becomes Action
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Decades of research in environmental management, public health, and development have documented a persistent <strong>implementation gap</strong>: the distance between what we know about a system and what we actually do about it. This gap exists because:</p>
+                    <ul>
+                        <li><strong>Complexity overwhelms decision-makers.</strong> A fishery manager facing 30+ interacting variables cannot mentally trace all the causal chains. They default to single-variable interventions (e.g., &ldquo;just reduce catch&rdquo;) that often produce unintended consequences.</li>
+                        <li><strong>Stakeholders disagree about priorities.</strong> Without a shared model, ecologists, economists, and fishing communities argue from incompatible mental models &mdash; each sees a different system.</li>
+                        <li><strong>Adaptive management is prescribed but rarely practised.</strong> The concept of iterative learn-act-monitor cycles is well-established in the literature (Holling, 1978; Walters, 1986), yet most management agencies lack the tools to operationalise it. Reviews of over 100 adaptive management programs found that fewer than 20% actually completed a full learning cycle (Allen &amp; Gunderson, 2011).</li>
+                    </ul>
+                    <div class="doc-highlight">
+                        <p><strong>SIM4Action addresses this gap directly.</strong> It gives stakeholders a shared, interactive, evidence-based model where causal assumptions are <em>explicit and testable</em>, not hidden in spreadsheets or expert intuition. Every factor, relationship, and intervention scenario is transparent, debatable, and modifiable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Operationalising Adaptive Management -->
+            <div class="doc-collapsible" id="coll-adaptive-mgmt">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-adaptive-mgmt')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        SIM4Action Operationalises Adaptive Management
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Adaptive management &mdash; the structured cycle of <em>plan, act, monitor, learn, adjust</em> &mdash; is widely endorsed by institutions from the IUCN to the World Bank. But it requires three capabilities that most management agencies lack:</p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <h4>1. A Shared System Model</h4>
+                            <p>Traditional adaptive management assumes everyone agrees on &ldquo;the system.&rdquo; SIM4Action makes the system model <strong>explicit, visual, and collaboratively built</strong> through participatory mapping. Stakeholders co-create the causal map, ensuring all perspectives are represented.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>2. Scenario Testing Before Acting</h4>
+                            <p>The Intervention Lab allows managers to <strong>test interventions computationally before implementing them</strong> in the real world. Token diffusion reveals cascading effects, trade-offs, and unintended consequences &mdash; at zero cost and zero risk.</p>
+                        </div>
+                        <div class="concept-card">
+                            <h4>3. Targeted Monitoring Design</h4>
+                            <p>The Monitoring Lab uses centrality analysis to <strong>identify exactly which variables to monitor</strong>. Rather than expensive blanket monitoring programs, managers can focus resources on the sentinel indicators most likely to detect system-wide change.</p>
+                        </div>
+                    </div>
+
+                    <div class="doc-diagram">
+                        <div class="mermaid">
+graph LR
+    A["Stakeholder<br/>Workshop"] -->|"co-create map"| B["System Model<br/>in SIM4Action"]
+    B -->|"Diagnostics Lab"| C["Understand<br/>Structure"]
+    C -->|"Intervention Lab"| D["Test<br/>Interventions"]
+    D -->|"Monitoring Lab"| E["Design<br/>Monitoring"]
+    E -->|"implement in<br/>real world"| F["Management<br/>Action"]
+    F -->|"collect<br/>monitoring data"| G["New Evidence"]
+    G -->|"update the<br/>system map"| B
+                        </div>
+                        <p class="diagram-caption">The SIM4Action adaptive management cycle. Starting with a participatory workshop, stakeholders build a system map, analyse it, test interventions, design monitoring, implement actions, collect data, and update the model. Each cycle deepens understanding and improves management outcomes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Concrete Decision Pathways -->
+            <div class="doc-collapsible" id="coll-decision-pathways">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-decision-pathways')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        Concrete Decision Pathways: From Analysis to Policy
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Each SIM4Action lab produces outputs that directly inform specific types of real-world decisions:</p>
+
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>SIM4Action Output</th><th>Decision It Informs</th><th>Real-World Example</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Feedback loops</strong><br/>(Diagnostics Lab)</td>
+                                <td>Identify self-reinforcing dynamics that could amplify or resist interventions</td>
+                                <td>In the Great Barrier Reef, identifying a reinforcing loop between coral bleaching, algal overgrowth, and fish habitat loss led to prioritising water quality interventions over coral transplanting (Hughes et al., 2017).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cluster detection</strong><br/>(Diagnostics Lab)</td>
+                                <td>Define which agencies or departments need to coordinate on cross-cutting issues</td>
+                                <td>In Mediterranean fisheries, identifying that ecological and socio-economic variables form separate clusters connected by &ldquo;market price&rdquo; led to joint meetings between fisheries biologists and economists (Coll et al., 2013).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Token diffusion results</strong><br/>(Intervention Lab)</td>
+                                <td>Compare intervention strategies, quantify trade-offs, identify unintended side effects</td>
+                                <td>In Chilean salmon aquaculture, diffusion modelling showed that regulating stocking density had stronger downstream effects on disease and water quality than regulating feed inputs &mdash; reversing the expected priority order (Niklitschek et al., 2013).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Centrality rankings</strong><br/>(Monitoring Lab)</td>
+                                <td>Prioritise monitoring budgets toward the most informative variables</td>
+                                <td>In the North Sea, centrality analysis of a food web model identified that monitoring zooplankton biomass and herring recruitment provided 80% of the early-warning capacity at 30% of the cost of full ecosystem monitoring (Cury et al., 2005).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Leverage points</strong><br/>(Combined analysis)</td>
+                                <td>Focus limited resources on variables with the greatest system-wide influence</td>
+                                <td>In Kenyan dryland water systems, participatory mapping revealed that &ldquo;community water governance capacity&rdquo; was a leverage point connecting ecological, economic, and social subsystems &mdash; leading to investment in local governance rather than infrastructure alone (Reid et al., 2016).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Collapsible: Evidence-Based Principles -->
+            <div class="doc-collapsible" id="coll-evidence-principles">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-evidence-principles')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Evidence-Based Principles for Systems-Informed Decision-Making
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Research across multiple domains has established principles that SIM4Action embodies:</p>
+                    <ul>
+                        <li><strong>Intervene at leverage points, not everywhere.</strong> Meadows (1999) showed that small interventions at the right structural points can shift entire system trajectories. SIM4Action&rsquo;s centrality analysis identifies these points computationally.</li>
+                        <li><strong>Expect and plan for side effects.</strong> Any intervention in a connected system will produce cascading effects. The Intervention Lab makes these visible <em>before</em> implementation &mdash; reducing the risk of &ldquo;policy resistance&rdquo; (Sterman, 2000).</li>
+                        <li><strong>Monitor the bridges, not just the targets.</strong> High-betweenness variables act as transmission channels between subsystems. Monitoring them provides early warning of cross-system impacts that single-sector monitoring misses.</li>
+                        <li><strong>Treat the system map as a living document.</strong> As new monitoring data arrives, the map should be updated &mdash; relationships strengthened or weakened, new factors added, obsolete ones removed. This is the &ldquo;learning&rdquo; step in adaptive management.</li>
+                        <li><strong>Co-produce knowledge with stakeholders.</strong> Participatory mapping is not just a consultation exercise. Research shows that stakeholders who co-create system models have greater ownership of resulting management plans and higher compliance rates (Reed et al., 2014; Sterling et al., 2017).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Collapsible: What Makes SIM4Action Different -->
+            <div class="doc-collapsible" id="coll-differentiator">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-differentiator')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        What Makes SIM4Action Different
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Many tools exist for parts of the systems analysis pipeline. What makes SIM4Action distinctive is that it <strong>integrates the full adaptive management cycle into a single, accessible platform</strong>:</p>
+                    <ul>
+                        <li><strong>Participatory data input</strong> via Google Sheets &mdash; stakeholders can contribute factors and relationships without needing specialised software.</li>
+                        <li><strong>Interactive visualisation</strong> &mdash; the system map is not a static image but a live, filterable, explorable network.</li>
+                        <li><strong>Computational analysis</strong> &mdash; feedback loop detection, community detection, and centrality analysis run in the browser via Pyodide (Python in WebAssembly), requiring no server infrastructure.</li>
+                        <li><strong>Simulation before action</strong> &mdash; token diffusion lets stakeholders experiment with interventions computationally, building intuition and consensus before committing resources.</li>
+                        <li><strong>Evidence-based monitoring design</strong> &mdash; centrality metrics provide a rigorous, defensible basis for allocating monitoring budgets.</li>
+                        <li><strong>Iterative by design</strong> &mdash; the platform is built for repeated use. As new data arrives, the system map is updated, interventions are re-evaluated, and monitoring priorities are refined.</li>
+                    </ul>
+                    <div class="doc-highlight">
+                        <p><strong>The bottom line:</strong> SIM4Action transforms participatory systems mapping from a one-off workshop exercise into a <strong>continuous, evidence-driven decision-support process</strong>. It makes adaptive management not just an aspiration but a practical, implementable workflow &mdash; bridging the gap between understanding complexity and acting on it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end doc-content -->
+</div><!-- end doc-wrapper -->
 
 <div class="container">
     <div class="section-header">
@@ -1443,6 +3228,10 @@
             <button class="view-btn" data-view="compact" onclick="setView('compact')" title="Compact view">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="4" y1="14" x2="20" y2="14"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
                 Compact
+            </button>
+            <button class="view-btn" data-view="map" onclick="setView('map')" title="Map view">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+                Map
             </button>
         </div>
     </div>
@@ -1693,6 +3482,173 @@
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 
+<!-- Mermaid JS for documentation diagrams -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+<script>
+    // ============================================
+    // DOCUMENTATION SECTION - Interactivity
+    // ============================================
+
+    // Initialize Mermaid with dark theme — startOnLoad: false to avoid rendering hidden panels
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({
+                startOnLoad: false,
+                theme: 'dark',
+                themeVariables: {
+                    primaryColor: '#1e3a5f',
+                    primaryTextColor: '#e0e6ed',
+                    primaryBorderColor: '#3a6a9f',
+                    lineColor: '#5a8ab5',
+                    secondaryColor: '#0d2137',
+                    tertiaryColor: '#1a2a4a',
+                    edgeLabelBackground: 'rgba(10, 22, 40, 0.8)',
+                    clusterBkg: 'rgba(26, 42, 74, 0.5)',
+                    clusterBorder: '#3a6a9f',
+                    fontSize: '15px',
+                    nodeTextSize: '14px'
+                },
+                flowchart: {
+                    htmlLabels: true,
+                    curve: 'basis',
+                    nodeSpacing: 60,
+                    rankSpacing: 70,
+                    padding: 20,
+                    useMaxWidth: true,
+                    wrappingWidth: 200
+                }
+            });
+            // Only render diagrams in the currently active (visible) panel
+            var activePanel = document.querySelector('.doc-panel.active');
+            if (activePanel) {
+                var nodes = activePanel.querySelectorAll('.mermaid');
+                if (nodes.length > 0) {
+                    mermaid.run({ nodes: nodes });
+                }
+            }
+        }
+
+        // Restore documentation collapsed state from localStorage
+        var docCollapsed = localStorage.getItem('sim4action-doc-collapsed');
+        if (docCollapsed === 'true') {
+            var toggleBar = document.getElementById('doc-toggle-bar');
+            var content = document.getElementById('doc-content');
+            if (toggleBar && content) {
+                toggleBar.classList.add('collapsed');
+                content.classList.add('hidden');
+                content.style.maxHeight = '0';
+            }
+        } else {
+            // Set initial max-height for open state
+            var content = document.getElementById('doc-content');
+            if (content) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+    });
+
+    function toggleDocumentation(event) {
+        // Don't toggle if clicking the presentation button
+        if (event.target.closest('.btn-presentation')) return;
+
+        var toggleBar = document.getElementById('doc-toggle-bar');
+        var content = document.getElementById('doc-content');
+
+        if (toggleBar.classList.contains('collapsed')) {
+            toggleBar.classList.remove('collapsed');
+            content.classList.remove('hidden');
+            content.style.maxHeight = content.scrollHeight + 'px';
+            localStorage.setItem('sim4action-doc-collapsed', 'false');
+        } else {
+            toggleBar.classList.add('collapsed');
+            content.classList.remove('overflow-visible');
+            content.style.maxHeight = '0';
+            setTimeout(function() { content.classList.add('hidden'); }, 500);
+            localStorage.setItem('sim4action-doc-collapsed', 'true');
+        }
+    }
+
+    function switchDocTab(tabId) {
+        // Update tab buttons
+        document.querySelectorAll('.doc-tab').forEach(function(tab) {
+            tab.classList.toggle('active', tab.dataset.tab === tabId);
+        });
+        // Update panels
+        document.querySelectorAll('.doc-panel').forEach(function(panel) {
+            panel.classList.remove('active');
+        });
+        var activePanel = document.getElementById('panel-' + tabId);
+        if (activePanel) {
+            activePanel.classList.add('active');
+            // Re-render any un-rendered Mermaid diagrams in the newly visible panel
+            renderMermaidInPanel(activePanel);
+        }
+        // Update max-height of doc-content to accommodate new panel
+        updateDocContentHeight();
+    }
+
+    function renderMermaidInPanel(panel) {
+        if (typeof mermaid === 'undefined') return;
+        // Find mermaid divs that haven't been rendered yet (no SVG child)
+        var unrendered = [];
+        panel.querySelectorAll('.mermaid').forEach(function(el) {
+            if (!el.querySelector('svg') && !el.hasAttribute('data-processed')) {
+                unrendered.push(el);
+            }
+        });
+        if (unrendered.length === 0) return;
+        // Small delay to ensure the panel is fully visible before rendering
+        setTimeout(function() {
+            try {
+                mermaid.run({ nodes: unrendered });
+            } catch(e) {
+                console.warn('Mermaid re-render:', e);
+            }
+            // After mermaid renders, update the content max-height
+            updateDocContentHeight();
+        }, 50);
+    }
+
+    function toggleCollapsible(id) {
+        var el = document.getElementById(id);
+        if (el) {
+            el.classList.toggle('open');
+            // If opening, render any un-rendered Mermaid diagrams inside
+            if (el.classList.contains('open')) {
+                var body = el.querySelector('.doc-collapsible-body');
+                if (body) {
+                    renderMermaidInPanel(body);
+                }
+            }
+            updateDocContentHeight();
+        }
+    }
+
+    function updateDocContentHeight() {
+        var content = document.getElementById('doc-content');
+        if (content && !content.classList.contains('hidden')) {
+            // Remove overflow class during transition
+            content.classList.remove('overflow-visible');
+            // Multiple recalculations to catch Mermaid rendering and CSS transitions
+            [50, 200, 500, 1000, 1500, 2500].forEach(function(delay) {
+                setTimeout(function() {
+                    if (!content.classList.contains('hidden')) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                    }
+                }, delay);
+            });
+            // After transition completes, set overflow to visible to prevent clipping
+            setTimeout(function() {
+                if (!content.classList.contains('hidden')) {
+                    content.classList.add('overflow-visible');
+                    content.style.maxHeight = 'none';
+                }
+            }, 3000);
+        }
+    }
+</script>
+
 <script>
     // ============================================
     // CONSTANTS & STATE
@@ -1700,7 +3656,7 @@
     const API_KEY = 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA';
     let validationPassed = false;
     let currentCatalogue = null;      // full catalogue object
-    let currentView = 'cards';        // 'cards' | 'list' | 'compact'
+    let currentView = 'cards';        // 'cards' | 'list' | 'compact' | 'map'
     let activeCategory = null;        // null = all, or category string
     let pendingDeleteId = null;       // system id awaiting delete confirm
 
@@ -1856,6 +3812,12 @@
     // VIEW TOGGLE
     // ============================================
     function setView(view) {
+        // Clean up global map when switching away from map view
+        if (currentView === 'map' && view !== 'map' && globalMap) {
+            globalMap.remove();
+            globalMap = null;
+            globalMapMarkers = [];
+        }
         currentView = view;
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === view);
@@ -1895,6 +3857,12 @@
                 </div>
             `;
             appendAddButton(container);
+            return;
+        }
+
+        // Map view renders all systems on one map (no category grouping)
+        if (currentView === 'map') {
+            renderMapView(container, systems);
             return;
         }
 
@@ -2053,6 +4021,129 @@
         });
 
         parent.appendChild(grid);
+    }
+
+    // ============================================
+    // MAP VIEW
+    // ============================================
+    let globalMap = null;
+    let globalMapMarkers = [];
+
+    async function renderMapView(container, allSystems) {
+        // Clean up previous map instance
+        if (globalMap) {
+            globalMap.remove();
+            globalMap = null;
+            globalMapMarkers = [];
+        }
+
+        const mapWrapper = document.createElement('div');
+        mapWrapper.id = 'global-map-container';
+        container.appendChild(mapWrapper);
+
+        globalMap = L.map('global-map-container', {
+            scrollWheelZoom: true,
+            zoomControl: true
+        }).setView([10, 0], 2);
+
+        L.tileLayer(SATELLITE_TILES, {
+            attribution: SATELLITE_ATTR,
+            maxZoom: 18
+        }).addTo(globalMap);
+
+        // Fetch location data for all systems from their config files
+        const locationPromises = allSystems.map(async (system) => {
+            try {
+                const res = await fetch(`../systems/${system.id}/config.json?_=${Date.now()}`);
+                const config = await res.json();
+                return { system, location: config.location || null };
+            } catch (e) {
+                console.warn(`Could not load config for ${system.id}:`, e);
+                return { system, location: null };
+            }
+        });
+
+        const systemsWithLocations = await Promise.all(locationPromises);
+        const bounds = [];
+
+        systemsWithLocations.forEach(({ system, location }) => {
+            if (!location || !location.lat || !location.lng) return;
+
+            const latLng = [location.lat, location.lng];
+            bounds.push(latLng);
+
+            // Create custom dot marker
+            const isGenAI = system.source_type === 'gen_ai';
+            const markerIcon = L.divIcon({
+                className: '',
+                html: `<div class="map-marker-dot${isGenAI ? ' gen-ai' : ''}" style="animation: marker-pulse 2s infinite;"></div>`,
+                iconSize: [14, 14],
+                iconAnchor: [7, 7],
+                popupAnchor: [0, -10]
+            });
+
+            const marker = L.marker(latLng, { icon: markerIcon }).addTo(globalMap);
+
+            // Permanent tooltip with system name
+            marker.bindTooltip(system.name, {
+                permanent: true,
+                direction: 'top',
+                offset: [0, -12],
+                className: 'map-marker-label'
+            });
+
+            // Popup with card-like content
+            const thumbnailSrc = system.thumbnail ? `../systems/${system.thumbnail}` : null;
+            const catBadge = system.category ? `<span class="card-category-badge" style="font-size:0.72em; padding:2px 8px; display:inline-block;">${system.category}</span>` : '';
+            const sourceBadge = getSourceBadgeHtml(system.source_type);
+
+            const popupContent = `
+                <div class="map-popup-card">
+                    <div class="popup-thumb">
+                        ${thumbnailSrc
+                            ? `<img src="${thumbnailSrc}" alt="${system.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="placeholder-icon" style="display:none; width:100%; height:100%; align-items:center; justify-content:center;">&#127758;</div>`
+                            : '<div class="placeholder-icon">&#127758;</div>'
+                        }
+                    </div>
+                    <div class="popup-name">${system.name}</div>
+                    <div class="popup-badges">
+                        ${catBadge}
+                        ${sourceBadge}
+                    </div>
+                    ${location.name ? `<div style="font-size:0.78em; color:#6a9abf; margin-bottom:6px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px; height:12px; vertical-align:middle; margin-right:3px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${location.name}</div>` : ''}
+                    <div class="popup-desc">${system.description || 'No description available.'}</div>
+                    <div class="popup-actions">
+                        <a class="popup-btn popup-btn-primary" href="overview.html?system=${system.id}">View Details</a>
+                        <a class="popup-btn popup-btn-secondary" href="app.html?system=${system.id}">Launch Map</a>
+                    </div>
+                </div>
+            `;
+
+            marker.bindPopup(popupContent, {
+                maxWidth: 310,
+                minWidth: 280,
+                closeButton: true
+            });
+
+            // Open popup on hover, keep it open when interacting
+            marker.on('mouseover', function() {
+                this.openPopup();
+            });
+
+            globalMapMarkers.push(marker);
+        });
+
+        // Fit bounds to show all markers
+        if (bounds.length > 1) {
+            globalMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 6 });
+        } else if (bounds.length === 1) {
+            globalMap.setView(bounds[0], 5);
+        }
+
+        // Force map to recalculate size after render
+        setTimeout(() => {
+            if (globalMap) globalMap.invalidateSize();
+        }, 200);
     }
 
     // ============================================

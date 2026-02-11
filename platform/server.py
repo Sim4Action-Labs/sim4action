@@ -91,7 +91,7 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
             'app.html', 'overview.html', 'diffusion.js', 'drawing-layer.js',
             'drawing-integration.js', 'drawing-controls.css',
             'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
-            'networkx_loader.py', 'diffusion_demo.html'
+            'networkx_loader.py', 'diffusion_demo.html', 'presentation.html'
         ]
         
         # Check if it's a known platform file
