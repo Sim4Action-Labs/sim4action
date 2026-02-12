@@ -2878,7 +2878,7 @@
     <!-- Floating Results Window -->
     <div id="results-window" class="results-window">
         <div class="results-header">
-            <span>📊 Token Diffusion Results</span>
+            <span>📊 Token Diffusion Results <span id="results-mode-badge" style="font-size: 10px; background: rgba(100,181,246,0.2); padding: 2px 8px; border-radius: 10px; margin-left: 8px; color: #64b5f6;"></span></span>
             <button class="results-close" onclick="toggleResultsWindow()">&times;</button>
         </div>
         <div class="results-content">
@@ -2889,6 +2889,7 @@
                 <button class="results-button" onclick="showControlGauge()">Control</button>
 
                 <button class="results-button" onclick="showSingleNodeChart()">Single Node</button>
+                <button id="influence-ranking-btn" class="results-button" onclick="showInfluenceRanking()" style="display: none;">Influence Ranking</button>
                 <button class="results-button" onclick="exportResults()">Export Data</button>
                 <button class="results-button" onclick="clearResults()">Clear</button>
             </div>
@@ -4050,7 +4051,29 @@
                         </button>
                     </div>
                     
-
+                    <!-- Algorithm Settings -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Algorithm Settings:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Mode:</label>
+                                <select id="diffusion-mode-select" onchange="onDiffusionModeChange()" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 4px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                                    <option value="probabilistic">Probabilistic</option>
+                                    <option value="deterministic">Deterministic</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Direction:</label>
+                                <select id="diffusion-direction-select" onchange="onDiffusionDirectionChange()" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 4px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                                    <option value="forward">Forward</option>
+                                    <option value="backward">Backward</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="mode-description" style="font-size: 10px; color: #5a7a96; margin-top: 4px; font-style: italic;">
+                            Probabilistic: tokens randomly walk weighted by edge strength.
+                        </div>
+                    </div>
                     
                     <!-- Primary Controls -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-bottom: 10px;">
@@ -4186,6 +4209,29 @@
                         </button>
                     </div>
                     
+                    <!-- Ensemble Algorithm Settings -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Algorithm Settings:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Mode:</label>
+                                <select disabled title="Ensemble analysis uses probabilistic diffusion to capture stochastic variability" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.1); border-radius: 4px; background: rgba(10,22,40,0.3); color: #5a7a96; cursor: not-allowed;">
+                                    <option>Probabilistic (locked)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; color: #666; display: block; margin-bottom: 2px;">Direction:</label>
+                                <select id="ensemble-direction-select" onchange="onEnsembleDirectionChange()" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 4px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                                    <option value="forward">Forward</option>
+                                    <option value="backward">Backward</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="font-size: 10px; color: #5a7a96; margin-top: 4px; font-style: italic;">
+                            Ensemble always uses probabilistic diffusion for stochastic variability.
+                        </div>
+                    </div>
+                    
                     <!-- Ensemble Parameters -->
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Ensemble Parameters:</label>
@@ -4287,6 +4333,140 @@
             `;
             
             interventionDiv.appendChild(ensembleSection);
+            
+            // GA OPTIMIZATION SECTION
+            const gaSection = createBasicSection("Token Allocation Optimizer (GA)");
+            gaSection.querySelector('.filter-section-content').innerHTML = `
+                <div style="font-size: 12px; margin-bottom: 8px; color: #7a8fa5;">
+                    <i class="fa fa-info-circle"></i> <strong>GA Optimizer:</strong> Uses a genetic algorithm to find the optimal token allocation that maximizes the cumulative causal effect on a target variable. Runs in a background Web Worker.
+                </div>
+                
+                <div id="ga-container" class="diffusion-controls">
+                    <!-- Target & Goal -->
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Target Node:</label>
+                        <select id="ga-target-node" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 4px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            <option value="">-- Initialize diffusion first --</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Optimization Goal:</label>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <label style="font-size: 10px; color: #b0cfe0; display: flex; align-items: center; gap: 3px;">
+                                <input type="radio" name="ga-goal" value="maximize_positive" checked style="margin: 0;"> Max Positive
+                            </label>
+                            <label style="font-size: 10px; color: #b0cfe0; display: flex; align-items: center; gap: 3px;">
+                                <input type="radio" name="ga-goal" value="maximize_absolute" style="margin: 0;"> Max Absolute
+                            </label>
+                            <label style="font-size: 10px; color: #b0cfe0; display: flex; align-items: center; gap: 3px;">
+                                <input type="radio" name="ga-goal" value="minimize_negative" style="margin: 0;"> Min Negative
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Direction:</label>
+                        <select id="ga-direction" style="width: 100%; padding: 5px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 4px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            <option value="forward">Forward (maximize downstream effect)</option>
+                            <option value="backward">Backward (maximize upstream influence)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Budget & Core Params -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                        <div>
+                            <label style="font-size: 10px; color: #666;">Total Budget:</label>
+                            <input type="number" id="ga-budget" value="100" min="10" max="1000" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: #666;">Time Steps:</label>
+                            <input type="number" id="ga-timesteps" value="200" min="50" max="1000" style="width: 100%; padding: 4px; font-size: 11px; border: 1px solid rgba(100,181,246,0.2); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Settings (collapsible) -->
+                    <details style="margin-bottom: 10px;">
+                        <summary style="font-size: 11px; color: #8ab4d8; cursor: pointer; margin-bottom: 5px;">Advanced GA Settings</summary>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 5px; background: rgba(10,22,40,0.3); border-radius: 4px;">
+                            <div>
+                                <label style="font-size: 10px; color: #666;">Population:</label>
+                                <input type="number" id="ga-population" value="50" min="10" max="500" style="width: 100%; padding: 3px; font-size: 10px; border: 1px solid rgba(100,181,246,0.15); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; color: #666;">Generations:</label>
+                                <input type="number" id="ga-generations" value="100" min="10" max="1000" style="width: 100%; padding: 3px; font-size: 10px; border: 1px solid rgba(100,181,246,0.15); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; color: #666;">Mutation Rate:</label>
+                                <input type="number" id="ga-mutation" value="0.3" min="0.01" max="1" step="0.05" style="width: 100%; padding: 3px; font-size: 10px; border: 1px solid rgba(100,181,246,0.15); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            </div>
+                            <div>
+                                <label style="font-size: 10px; color: #666;">Crossover Rate:</label>
+                                <input type="number" id="ga-crossover" value="0.8" min="0.1" max="1" step="0.05" style="width: 100%; padding: 3px; font-size: 10px; border: 1px solid rgba(100,181,246,0.15); border-radius: 3px; background: rgba(10,22,40,0.6); color: #e0e6ed;">
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <!-- Eligible Nodes -->
+                    <details style="margin-bottom: 10px;">
+                        <summary style="font-size: 11px; color: #8ab4d8; cursor: pointer; margin-bottom: 5px;">Eligible Nodes (default: all intervenable)</summary>
+                        <div id="ga-eligible-nodes" style="max-height: 150px; overflow-y: auto; padding: 5px; background: rgba(10,22,40,0.3); border-radius: 4px; font-size: 10px;">
+                            <div style="color: #5a7a96; font-style: italic;">Initialize diffusion first to see nodes.</div>
+                        </div>
+                    </details>
+                    
+                    <!-- Run / Stop -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                        <button id="run-ga-btn" class="diffusion-button" onclick="startGAOptimization()" style="background: linear-gradient(135deg, #ff6f00 0%, #ff9800 100%); color: white; font-weight: 600; border: 2px solid #ff9800;">
+                            🧬 Run Optimization
+                        </button>
+                        <button id="stop-ga-btn" class="diffusion-button" onclick="stopGAOptimization()" disabled style="background: #6c757d; color: white;">
+                            ⏹ Stop
+                        </button>
+                    </div>
+                    
+                    <!-- Progress -->
+                    <div id="ga-progress" style="display: none; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 10px; color: #8ab4d8;">Generation: <span id="ga-gen-count">0</span> / <span id="ga-gen-total">100</span></span>
+                            <span style="font-size: 10px; color: #66bb6a;">Best Fitness: <span id="ga-best-fitness">--</span></span>
+                        </div>
+                        <div class="progress-bar" style="height: 6px; background: rgba(10,22,40,0.4); border-radius: 3px; overflow: hidden;">
+                            <div id="ga-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff6f00, #ff9800); transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Convergence Chart -->
+                    <div id="ga-convergence-container" style="display: none; margin-bottom: 10px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Convergence:</label>
+                        <svg id="ga-convergence-chart" width="100%" height="120" style="background: rgba(10,22,40,0.3); border-radius: 4px;"></svg>
+                    </div>
+                    
+                    <!-- Results -->
+                    <div id="ga-results" style="display: none;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Optimal Allocation:</label>
+                        <div id="ga-allocation-chart" style="margin-bottom: 10px;"></div>
+                        
+                        <div id="ga-result-stats" style="font-size: 10px; color: #b0cfe0; margin-bottom: 8px;"></div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <button id="ga-apply-scenario" class="diffusion-button" onclick="applyGAToScenario()" style="font-size: 10px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: 1px solid #20c997;">
+                                Apply to Scenario
+                            </button>
+                            <button id="ga-apply-ensemble" class="diffusion-button" onclick="applyGAToEnsemble()" style="font-size: 10px; background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); color: white; border: 1px solid #8e44ad;">
+                                Apply to Ensemble
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="ga-status" class="simulation-status status-ready" style="margin-top: 8px;">
+                        Status: Configure target node and run optimization
+                    </div>
+                </div>
+            `;
+            interventionDiv.appendChild(gaSection);
+            
             filtersDiv.appendChild(interventionDiv);
 
             // Set initial lab
@@ -5178,7 +5358,17 @@
         // ============================================
         
         // Import diffusion classes (will be available after module loads)
-        let TokenAgent, CausalTokenModel, Graph, Polarity, Strength, Delay;
+        let TokenAgent, CausalTokenModel, DeterministicDiffusionModel, Graph, Polarity, Strength, Delay, DiffusionMode, DiffusionDirection, computeAUC;
+        
+        // Current diffusion settings
+        let currentDiffusionMode = 'probabilistic';   // 'probabilistic' or 'deterministic'
+        let currentDiffusionDirection = 'forward';     // 'forward' or 'backward'
+        let currentEnsembleDirection = 'forward';      // ensemble direction
+        
+        // GA Optimization state
+        let gaWorker = null;
+        let gaRunning = false;
+        let gaGenerationHistory = [];
         
         // Initialize diffusion system after module loads
         async function initializeDiffusion() {
@@ -5192,18 +5382,25 @@
                 // Extract classes and constants
                 TokenAgent = diffusionModule.TokenAgent;
                 CausalTokenModel = diffusionModule.CausalTokenModel;
+                DeterministicDiffusionModel = diffusionModule.DeterministicDiffusionModel;
                 Graph = diffusionModule.Graph;
                 Polarity = diffusionModule.Polarity;
                 Strength = diffusionModule.Strength;
                 Delay = diffusionModule.Delay;
+                DiffusionMode = diffusionModule.DiffusionMode;
+                DiffusionDirection = diffusionModule.DiffusionDirection;
+                computeAUC = diffusionModule.computeAUC;
                 
                 console.log('🔄 Classes extracted:');
                 console.log('  - TokenAgent:', typeof TokenAgent);
                 console.log('  - CausalTokenModel:', typeof CausalTokenModel);
+                console.log('  - DeterministicDiffusionModel:', typeof DeterministicDiffusionModel);
                 console.log('  - Graph:', typeof Graph);
                 console.log('  - Polarity:', Polarity);
                 console.log('  - Strength:', Strength);
                 console.log('  - Delay:', Delay);
+                console.log('  - DiffusionMode:', DiffusionMode);
+                console.log('  - DiffusionDirection:', DiffusionDirection);
                 
                 console.log('✅ Diffusion module loaded successfully');
                 diffusionInitialized = true;
@@ -5386,6 +5583,9 @@
                     const nodeCount = Object.keys(diffusionGraph.nodes).length;
                     const edgeCount = Object.keys(diffusionGraph.edges).length;
                     statsDiv.innerHTML = `Graph: ${nodeCount} nodes, ${edgeCount} edges`;
+                    
+                    // Populate GA target node selector and eligible nodes
+                    populateGANodeSelectors();
                 } else {
                     throw new Error('Failed to create diffusion graph');
                 }
@@ -5395,6 +5595,34 @@
                 statusDiv.className = 'simulation-status status-paused';
                 console.error('Diffusion initialization error:', error);
             }
+        }
+        
+        // ===== DIFFUSION MODE / DIRECTION HANDLERS =====
+        
+        function onDiffusionModeChange() {
+            currentDiffusionMode = document.getElementById('diffusion-mode-select').value;
+            const desc = document.getElementById('mode-description');
+            if (currentDiffusionMode === 'probabilistic') {
+                desc.textContent = 'Probabilistic: tokens randomly walk weighted by edge strength.';
+            } else {
+                desc.textContent = 'Deterministic: flow splits proportionally across edges by strength.';
+            }
+            console.log('Diffusion mode changed to:', currentDiffusionMode);
+        }
+        
+        function onDiffusionDirectionChange() {
+            currentDiffusionDirection = document.getElementById('diffusion-direction-select').value;
+            // Update the setup button label
+            const setupBtn = document.getElementById('setup-tokens-btn');
+            if (setupBtn) {
+                setupBtn.textContent = currentDiffusionDirection === 'backward' ? 'Select Targets' : 'Setup Tokens';
+            }
+            console.log('Diffusion direction changed to:', currentDiffusionDirection);
+        }
+        
+        function onEnsembleDirectionChange() {
+            currentEnsembleDirection = document.getElementById('ensemble-direction-select').value;
+            console.log('Ensemble direction changed to:', currentEnsembleDirection);
         }
         
         function showTokenAllocationModal() {
@@ -5443,10 +5671,26 @@
                     applyButton.removeAttribute('data-mode');
                 }
                 
-                // Reset modal title to normal
+                // Update modal title based on direction and mode
                 const modalHeader = document.querySelector('.token-modal-header h3');
-                if (modalHeader) {
-                    modalHeader.textContent = '🎯 Token Allocation Setup';
+                const totalTokensLabel = document.querySelector('label[for="total-tokens"]');
+                const nodeSelectHeading = document.querySelector('#token-allocation-modal h4');
+                const nodeSelectDesc = document.querySelector('#token-allocation-modal h4 + p');
+                
+                if (currentDiffusionDirection === 'backward') {
+                    if (modalHeader) modalHeader.textContent = '🔍 Target Node Selection (Backward Diffusion)';
+                    if (nodeSelectHeading) nodeSelectHeading.textContent = 'Select Target Nodes to Trace Upstream Causes:';
+                    if (nodeSelectDesc) nodeSelectDesc.textContent = 'Select the nodes you want to trace causes for. Flow will propagate backward through incoming edges.';
+                } else {
+                    if (modalHeader) modalHeader.textContent = '🎯 Token Allocation Setup';
+                    if (nodeSelectHeading) nodeSelectHeading.textContent = 'Select Nodes for Token Allocation:';
+                    if (nodeSelectDesc) nodeSelectDesc.textContent = 'Click nodes to select them, then specify token amounts. Total must equal the number above.';
+                }
+                
+                if (currentDiffusionMode === 'deterministic') {
+                    if (totalTokensLabel) totalTokensLabel.textContent = 'Initial Flow Amount:';
+                } else {
+                    if (totalTokensLabel) totalTokensLabel.textContent = 'Total Tokens:';
                 }
                 
                 // Show the modal
@@ -5639,9 +5883,15 @@
                     visualTokenCharges.set(nodeId, charge);
                 });
                 
-                // Create the diffusion model with the custom allocation (token counts only)
-                diffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, allocation);
-                console.log('✅ Diffusion model created with custom allocation');
+                // Create the diffusion model based on selected mode and direction
+                const direction = currentDiffusionDirection;
+                if (currentDiffusionMode === 'deterministic') {
+                    diffusionModel = new DeterministicDiffusionModel(diffusionGraph, allocation, direction);
+                    console.log('✅ Deterministic diffusion model created (direction: ' + direction + ')');
+                } else {
+                    diffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, allocation, direction);
+                    console.log('✅ Probabilistic diffusion model created (direction: ' + direction + ')');
+                }
                 
                 // Enable simulation controls
                 document.getElementById('run-diffusion-btn').disabled = false;
@@ -6136,20 +6386,64 @@
                 return;
             }
             
-            // Capture token movements before stepping
-            captureAndAnimateTokenMovements();
-            
-            // Execute the diffusion step (COMPUTATIONAL ALGORITHM)
-            diffusionModel.step();
-            
-            // Update visualization after a brief delay to allow animations
-            setTimeout(() => {
-                updateTokenVisualization();
+            if (currentDiffusionMode === 'deterministic') {
+                // Deterministic mode: no token animation, use flow heatmap
+                diffusionModel.step();
+                updateFlowHeatmap();
                 updateDashboard();
-                
-                // Update computational results window if visible
                 updateResultsWindow();
-            }, 100);
+            } else {
+                // Probabilistic mode: animate tokens
+                captureAndAnimateTokenMovements();
+                diffusionModel.step();
+                setTimeout(() => {
+                    updateTokenVisualization();
+                    updateDashboard();
+                    updateResultsWindow();
+                }, 100);
+            }
+        }
+        
+        /**
+         * Update node colors based on current deterministic flow values.
+         * Green = positive flow, Red = negative flow, intensity proportional to magnitude.
+         */
+        function updateFlowHeatmap() {
+            if (!diffusionModel || !window.nodeSelection) return;
+            
+            const nodeFlows = diffusionModel.nodeFlowsOverTime[diffusionModel.nodeFlowsOverTime.length - 1] || {};
+            const maxFlow = Math.max(1, ...Object.values(nodeFlows).map(Math.abs));
+            
+            window.nodeSelection.each(function(d) {
+                const flow = nodeFlows[d.id] || 0;
+                const intensity = Math.min(1, Math.abs(flow) / maxFlow);
+                
+                if (Math.abs(flow) < 0.001) {
+                    // No flow — reset to original color
+                    d3.select(this).select('circle')
+                        .attr('stroke', 'none')
+                        .attr('stroke-width', 0);
+                } else {
+                    // Apply glow based on flow sign and intensity
+                    const color = flow > 0 ? d3.interpolateRgb('#1a2a4a', '#66bb6a')(intensity)
+                                           : d3.interpolateRgb('#1a2a4a', '#ef5350')(intensity);
+                    d3.select(this).select('circle')
+                        .attr('stroke', color)
+                        .attr('stroke-width', 2 + intensity * 4);
+                }
+            });
+        }
+        
+        /**
+         * Clear the flow heatmap from all nodes.
+         */
+        function clearFlowHeatmap() {
+            if (!window.nodeSelection) return;
+            window.nodeSelection.each(function() {
+                d3.select(this).select('circle')
+                    .attr('stroke', 'none')
+                    .attr('stroke-width', 0);
+            });
         }
         
         function getNodePosition(nodeId) {
@@ -6221,16 +6515,34 @@
             }
             
             try {
-                // Get current simulation state
-                const nodeFlows = diffusionModel.getNodeFlows();
+                // Get current simulation state — handle both model types
                 const stepCount = diffusionModel.stepCount || 0;
-                const transitTokens = diffusionModel.agents.filter(agent => agent.state === 'in_transit');
+                let nodeFlows, transitCount;
+                
+                if (diffusionModel.agents) {
+                    // Probabilistic model
+                    nodeFlows = diffusionModel.getNodeFlows();
+                    transitCount = diffusionModel.agents.filter(agent => agent.state === 'in_transit').length;
+                } else {
+                    // Deterministic model — use latest snapshot
+                    const snapshots = diffusionModel.nodeFlowsOverTime || [];
+                    nodeFlows = snapshots.length > 0 ? snapshots[snapshots.length - 1] : {};
+                    // Estimate transit count from edge pipelines
+                    transitCount = 0;
+                    if (diffusionModel.edgePipelines) {
+                        for (const key in diffusionModel.edgePipelines) {
+                            transitCount += diffusionModel.edgePipelines[key].reduce((a, b) => a + Math.abs(b), 0);
+                        }
+                        transitCount = Math.round(transitCount);
+                    }
+                }
+                
+                const transitTokens = diffusionModel.agents ? diffusionModel.agents.filter(agent => agent.state === 'in_transit') : [];
                 
                 // Calculate token metrics
                 const totalTokens = Object.values(nodeFlows).reduce((sum, count) => sum + Math.abs(count), 0);
                 const positiveTokens = Object.values(nodeFlows).reduce((sum, count) => sum + Math.max(0, count), 0);
                 const negativeTokens = Math.abs(Object.values(nodeFlows).reduce((sum, count) => sum + Math.min(0, count), 0));
-                const transitCount = transitTokens.length;
                 
                 // Calculate flow rate (tokens moved per second)
                 const currentTime = Date.now();
@@ -6384,8 +6696,10 @@
             
             diffusionSimulationRunning = true;
             
-            // Initialize visual tokens for illustration
-            initializeVisualTokens();
+            // Initialize visual tokens for illustration (probabilistic mode only)
+            if (currentDiffusionMode === 'probabilistic') {
+                initializeVisualTokens();
+            }
             
             // Update UI
             document.getElementById('run-diffusion-btn').disabled = true;
@@ -6449,7 +6763,12 @@
                 const initialAllocation = {};
                 initialAllocation[firstNodeId] = 10;
                 
-                diffusionModel = new CausalTokenModel(diffusionGraph, 10, initialAllocation);
+                const direction = currentDiffusionDirection;
+                if (currentDiffusionMode === 'deterministic') {
+                    diffusionModel = new DeterministicDiffusionModel(diffusionGraph, initialAllocation, direction);
+                } else {
+                    diffusionModel = new CausalTokenModel(diffusionGraph, 10, initialAllocation, direction);
+                }
             }
             
             // Update UI
@@ -6472,6 +6791,9 @@
                 window.tokenOverlay.selectAll('*').remove();
                 setTimeout(initializeTokenVisualization, 100);
             }
+            
+            // Clear flow heatmap if in deterministic mode
+            clearFlowHeatmap();
             
             // Reset independent visual token system
             stopVisualTokenAnimation();
@@ -6743,8 +7065,137 @@
             }
         }
         
+        function updateResultsModeBadge() {
+            const badge = document.getElementById('results-mode-badge');
+            if (!badge) return;
+            const modeLabel = currentDiffusionMode === 'deterministic' ? 'Deterministic' : 'Probabilistic';
+            const dirLabel = currentDiffusionDirection === 'backward' ? 'Backward' : 'Forward';
+            badge.textContent = modeLabel + ' | ' + dirLabel;
+            
+            // Show/hide influence ranking button based on direction
+            const rankBtn = document.getElementById('influence-ranking-btn');
+            if (rankBtn) {
+                rankBtn.style.display = currentDiffusionDirection === 'backward' ? '' : 'none';
+            }
+            
+            // Update node status labels for backward mode
+            const incTitle = document.querySelector('.column-title.increasing');
+            const decTitle = document.querySelector('.column-title.decreasing');
+            if (currentDiffusionDirection === 'backward') {
+                if (incTitle) incTitle.innerHTML = '📈 Positive Influence';
+                if (decTitle) decTitle.innerHTML = '📉 Negative Influence';
+            } else {
+                if (incTitle) incTitle.innerHTML = '📈 Increasing';
+                if (decTitle) decTitle.innerHTML = '📉 Decreasing';
+            }
+        }
+        
+        function showInfluenceRanking() {
+            currentResultsView = 'influenceranking';
+            // Deactivate all buttons, activate this one
+            document.querySelectorAll('.results-controls .results-button').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('influence-ranking-btn');
+            if (btn) btn.classList.add('active');
+            
+            // Hide node selector
+            document.getElementById('node-selector-container').style.display = 'none';
+            
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime || diffusionModel.nodeFlowsOverTime.length < 2) {
+                const container = document.getElementById('results-chart-container');
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #8eacc5;">Run backward diffusion to see influence ranking.</div>';
+                return;
+            }
+            
+            const nodeFlowsOverTime = diffusionModel.nodeFlowsOverTime;
+            const nodeIds = Object.keys(nodeFlowsOverTime[0] || {});
+            
+            // Compute AUC (cumulative absolute flow) for each node
+            const rankings = nodeIds.map(nodeId => {
+                let auc = 0;
+                for (let i = 1; i < nodeFlowsOverTime.length; i++) {
+                    const prev = nodeFlowsOverTime[i - 1][nodeId] || 0;
+                    const curr = nodeFlowsOverTime[i][nodeId] || 0;
+                    auc += (prev + curr) / 2;
+                }
+                return {
+                    nodeId,
+                    name: diffusionGraph.nodes[nodeId]?.label || nodeId,
+                    domain: diffusionGraph.nodes[nodeId]?.domain || '',
+                    auc: auc
+                };
+            }).filter(d => Math.abs(d.auc) > 0.001)
+              .sort((a, b) => Math.abs(b.auc) - Math.abs(a.auc))
+              .slice(0, 25); // Top 25
+            
+            // Render horizontal bar chart using D3
+            const container = document.getElementById('results-chart-container');
+            container.innerHTML = '';
+            
+            const width = 720, barHeight = 24, margin = {top: 30, right: 30, bottom: 20, left: 200};
+            const height = margin.top + margin.bottom + rankings.length * barHeight;
+            
+            const svg = d3.select(container).append('svg')
+                .attr('width', width)
+                .attr('height', height);
+            
+            const maxAbs = d3.max(rankings, d => Math.abs(d.auc)) || 1;
+            const xScale = d3.scaleLinear()
+                .domain([-maxAbs, maxAbs])
+                .range([margin.left, width - margin.right]);
+            
+            // Zero line
+            svg.append('line')
+                .attr('x1', xScale(0)).attr('x2', xScale(0))
+                .attr('y1', margin.top).attr('y2', height - margin.bottom)
+                .attr('stroke', '#5a7a96').attr('stroke-dasharray', '4,2');
+            
+            // Title
+            svg.append('text')
+                .attr('x', width / 2).attr('y', 18)
+                .attr('text-anchor', 'middle')
+                .attr('fill', '#e0e6ed').attr('font-size', '13px').attr('font-weight', 'bold')
+                .text('Upstream Influence Ranking (Cumulative AUC)');
+            
+            // Bars
+            const barGroup = svg.selectAll('.bar-group')
+                .data(rankings).enter().append('g')
+                .attr('transform', (d, i) => `translate(0, ${margin.top + i * barHeight})`);
+            
+            barGroup.append('rect')
+                .attr('x', d => d.auc >= 0 ? xScale(0) : xScale(d.auc))
+                .attr('width', d => Math.abs(xScale(d.auc) - xScale(0)))
+                .attr('y', 2)
+                .attr('height', barHeight - 4)
+                .attr('rx', 3)
+                .attr('fill', d => d.auc >= 0 ? '#66bb6a' : '#ef5350')
+                .attr('opacity', 0.8);
+            
+            // Labels (node name)
+            barGroup.append('text')
+                .attr('x', margin.left - 8)
+                .attr('y', barHeight / 2 + 1)
+                .attr('text-anchor', 'end')
+                .attr('fill', '#b0cfe0')
+                .attr('font-size', '10px')
+                .attr('dominant-baseline', 'middle')
+                .text(d => d.name.length > 30 ? d.name.substring(0, 30) + '...' : d.name);
+            
+            // Value labels
+            barGroup.append('text')
+                .attr('x', d => d.auc >= 0 ? xScale(d.auc) + 4 : xScale(d.auc) - 4)
+                .attr('y', barHeight / 2 + 1)
+                .attr('text-anchor', d => d.auc >= 0 ? 'start' : 'end')
+                .attr('fill', '#8eacc5')
+                .attr('font-size', '9px')
+                .attr('dominant-baseline', 'middle')
+                .text(d => d.auc.toFixed(1));
+        }
+        
         function updateResultsWindow() {
             if (!resultsWindowVisible || !diffusionModel) return;
+            
+            // Update mode badge
+            updateResultsModeBadge();
             
             // Update summary statistics
             updateResultsSummary();
@@ -6776,6 +7227,8 @@
                 renderControlGauge();
             } else if (currentResultsView === 'singletoken') {
                 renderSingleTokenJourney();
+            } else if (currentResultsView === 'influenceranking') {
+                showInfluenceRanking();
             }
         }
         
@@ -7995,8 +8448,8 @@
                     }
                 });
                 
-                ensembleDiffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, variedAllocation);
-                console.log('✅ Ensemble diffusion model created:', ensembleDiffusionModel);
+                ensembleDiffusionModel = new CausalTokenModel(diffusionGraph, totalTokens, variedAllocation, currentEnsembleDirection);
+                console.log('✅ Ensemble diffusion model created (direction: ' + currentEnsembleDirection + '):', ensembleDiffusionModel);
                 console.log('🔍 DEBUG: Initial agents:', ensembleDiffusionModel.agents.length);
                 
                 // Detailed agent analysis
@@ -8397,6 +8850,422 @@
             if (progressBar) progressBar.style.width = '0%';
             
             console.log('🔄 Ensemble simulation reset');
+        }
+        
+        // ===== GENETIC ALGORITHM OPTIMIZATION =====
+        
+        function populateGANodeSelectors() {
+            if (!diffusionGraph) return;
+            
+            const targetSelect = document.getElementById('ga-target-node');
+            const eligibleContainer = document.getElementById('ga-eligible-nodes');
+            
+            if (!targetSelect || !eligibleContainer) return;
+            
+            // Populate target node dropdown
+            targetSelect.innerHTML = '<option value="">-- Select target node --</option>';
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            
+            // Group by domain, highlight focal factors
+            const byDomain = {};
+            nodeIds.forEach(nodeId => {
+                const node = diffusionGraph.nodes[nodeId];
+                const domain = node.domain || 'Other';
+                if (!byDomain[domain]) byDomain[domain] = [];
+                byDomain[domain].push({ id: nodeId, label: node.label || nodeId });
+            });
+            
+            // Add focal factors first
+            const focalKey = Object.keys(byDomain).find(d => d.toLowerCase().includes('focal'));
+            if (focalKey) {
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = '★ ' + focalKey;
+                byDomain[focalKey].forEach(n => {
+                    const opt = document.createElement('option');
+                    opt.value = n.id;
+                    opt.textContent = n.label;
+                    optGroup.appendChild(opt);
+                });
+                targetSelect.appendChild(optGroup);
+            }
+            
+            // Add remaining domains
+            Object.keys(byDomain).sort().forEach(domain => {
+                if (domain === focalKey) return;
+                const optGroup = document.createElement('optgroup');
+                optGroup.label = domain;
+                byDomain[domain].forEach(n => {
+                    const opt = document.createElement('option');
+                    opt.value = n.id;
+                    opt.textContent = n.label;
+                    optGroup.appendChild(opt);
+                });
+                targetSelect.appendChild(optGroup);
+            });
+            
+            // Populate eligible nodes checkboxes
+            eligibleContainer.innerHTML = '';
+            nodeIds.forEach(nodeId => {
+                const node = diffusionGraph.nodes[nodeId];
+                const label = node.label || nodeId;
+                // Try to find original factor data to check if intervenable
+                const factor = factors.find(f => f.id === nodeId || f.id.toString() === nodeId);
+                const isIntervenable = factor ? (factor.intervenable === 'Yes' || factor.intervenable === 'yes') : true;
+                
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; align-items: center; gap: 4px; padding: 2px 0;';
+                div.innerHTML = `
+                    <input type="checkbox" class="ga-eligible-cb" value="${nodeId}" ${isIntervenable ? 'checked' : ''} style="margin: 0;">
+                    <span style="color: ${isIntervenable ? '#b0cfe0' : '#5a7a96'};">${label}</span>
+                `;
+                eligibleContainer.appendChild(div);
+            });
+        }
+        
+        function getSelectedEligibleNodes() {
+            const checkboxes = document.querySelectorAll('.ga-eligible-cb:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+        
+        function startGAOptimization() {
+            const targetNodeId = document.getElementById('ga-target-node').value;
+            if (!targetNodeId) {
+                alert('Please select a target node for optimization.');
+                return;
+            }
+            
+            if (!diffusionGraph) {
+                alert('Please initialize diffusion first.');
+                return;
+            }
+            
+            const eligibleNodes = getSelectedEligibleNodes();
+            if (eligibleNodes.length < 2) {
+                alert('At least 2 eligible nodes are required for optimization.');
+                return;
+            }
+            
+            const config = {
+                targetNodeId: targetNodeId,
+                totalBudget: parseInt(document.getElementById('ga-budget').value) || 100,
+                timeSteps: parseInt(document.getElementById('ga-timesteps').value) || 200,
+                populationSize: parseInt(document.getElementById('ga-population').value) || 50,
+                generations: parseInt(document.getElementById('ga-generations').value) || 100,
+                mutationRate: parseFloat(document.getElementById('ga-mutation').value) || 0.3,
+                crossoverRate: parseFloat(document.getElementById('ga-crossover').value) || 0.8,
+                optimizationGoal: document.querySelector('input[name="ga-goal"]:checked')?.value || 'maximize_positive',
+                direction: document.getElementById('ga-direction').value || 'forward',
+                eligibleNodes: eligibleNodes
+            };
+            
+            console.log('🧬 Starting GA optimization:', config);
+            
+            // Reset state
+            gaGenerationHistory = [];
+            gaRunning = true;
+            
+            // Update UI
+            document.getElementById('run-ga-btn').disabled = true;
+            document.getElementById('stop-ga-btn').disabled = false;
+            document.getElementById('ga-progress').style.display = 'block';
+            document.getElementById('ga-convergence-container').style.display = 'block';
+            document.getElementById('ga-results').style.display = 'none';
+            document.getElementById('ga-gen-total').textContent = config.generations;
+            document.getElementById('ga-gen-count').textContent = '0';
+            document.getElementById('ga-best-fitness').textContent = '--';
+            document.getElementById('ga-progress-bar').style.width = '0%';
+            
+            const statusDiv = document.getElementById('ga-status');
+            statusDiv.textContent = 'Status: Running optimization...';
+            statusDiv.className = 'simulation-status status-running';
+            
+            // Terminate existing worker if any
+            if (gaWorker) {
+                gaWorker.terminate();
+            }
+            
+            // Create Web Worker
+            gaWorker = new Worker('./ga-worker.js');
+            
+            gaWorker.onmessage = function(e) {
+                const msg = e.data;
+                
+                if (msg.type === 'progress') {
+                    handleGAProgress(msg);
+                } else if (msg.type === 'complete') {
+                    handleGAComplete(msg);
+                } else if (msg.type === 'error') {
+                    handleGAError(msg);
+                }
+            };
+            
+            gaWorker.onerror = function(error) {
+                console.error('GA Worker error:', error);
+                handleGAError({ message: error.message || 'Worker error' });
+            };
+            
+            // Send start message with serialized graph data
+            gaWorker.postMessage({
+                type: 'start',
+                graphData: diffusionGraph.serialize(),
+                config: config
+            });
+        }
+        
+        function stopGAOptimization() {
+            if (gaWorker) {
+                gaWorker.postMessage({ type: 'stop' });
+                // Give it a moment, then terminate
+                setTimeout(() => {
+                    if (gaWorker) {
+                        gaWorker.terminate();
+                        gaWorker = null;
+                    }
+                }, 500);
+            }
+            gaRunning = false;
+            
+            document.getElementById('run-ga-btn').disabled = false;
+            document.getElementById('stop-ga-btn').disabled = true;
+            
+            const statusDiv = document.getElementById('ga-status');
+            statusDiv.textContent = 'Status: Optimization stopped';
+            statusDiv.className = 'simulation-status status-paused';
+        }
+        
+        function handleGAProgress(msg) {
+            const totalGens = parseInt(document.getElementById('ga-generations').value) || 100;
+            const progress = ((msg.generation + 1) / totalGens * 100).toFixed(0);
+            
+            document.getElementById('ga-gen-count').textContent = msg.generation + 1;
+            document.getElementById('ga-best-fitness').textContent = msg.bestFitness.toFixed(2);
+            document.getElementById('ga-progress-bar').style.width = progress + '%';
+            
+            // Record for convergence chart
+            gaGenerationHistory.push({
+                generation: msg.generation,
+                bestFitness: msg.bestFitness,
+                meanFitness: msg.meanFitness || 0
+            });
+            
+            // Update convergence chart
+            renderGAConvergenceChart();
+        }
+        
+        function handleGAComplete(msg) {
+            gaRunning = false;
+            
+            console.log('🧬 GA Optimization complete:', msg);
+            
+            document.getElementById('run-ga-btn').disabled = false;
+            document.getElementById('stop-ga-btn').disabled = true;
+            document.getElementById('ga-results').style.display = 'block';
+            
+            const statusDiv = document.getElementById('ga-status');
+            statusDiv.textContent = `Status: Complete - ${msg.generations} generations in ${(msg.elapsedMs / 1000).toFixed(1)}s`;
+            statusDiv.className = 'simulation-status status-ready';
+            
+            // Show result stats
+            const statsDiv = document.getElementById('ga-result-stats');
+            const targetName = diffusionGraph.nodes[document.getElementById('ga-target-node').value]?.label || 'Target';
+            statsDiv.innerHTML = `
+                <div style="margin-bottom: 4px;">Target: <strong style="color: #64b5f6;">${targetName}</strong></div>
+                <div>Best AUC: <strong style="color: #66bb6a;">${msg.bestFitness.toFixed(2)}</strong> | Elapsed: ${(msg.elapsedMs / 1000).toFixed(1)}s</div>
+            `;
+            
+            // Render allocation bar chart
+            renderGAAllocationChart(msg.bestAllocation);
+            
+            // Store result for Apply buttons
+            window._gaResult = msg;
+            
+            if (gaWorker) {
+                gaWorker.terminate();
+                gaWorker = null;
+            }
+        }
+        
+        function handleGAError(msg) {
+            gaRunning = false;
+            
+            document.getElementById('run-ga-btn').disabled = false;
+            document.getElementById('stop-ga-btn').disabled = true;
+            
+            const statusDiv = document.getElementById('ga-status');
+            statusDiv.textContent = 'Status: Error - ' + (msg.message || 'Unknown error');
+            statusDiv.className = 'simulation-status status-paused';
+            
+            console.error('GA error:', msg);
+            
+            if (gaWorker) {
+                gaWorker.terminate();
+                gaWorker = null;
+            }
+        }
+        
+        function renderGAConvergenceChart() {
+            if (gaGenerationHistory.length < 2) return;
+            
+            const container = document.getElementById('ga-convergence-chart');
+            const width = container.clientWidth || 280;
+            const height = 120;
+            const margin = { top: 10, right: 10, bottom: 20, left: 50 };
+            
+            // Clear and redraw
+            d3.select(container).selectAll('*').remove();
+            const svg = d3.select(container)
+                .attr('width', width)
+                .attr('height', height);
+            
+            const xScale = d3.scaleLinear()
+                .domain([0, gaGenerationHistory.length - 1])
+                .range([margin.left, width - margin.right]);
+            
+            const yExtent = d3.extent(gaGenerationHistory, d => d.bestFitness);
+            const yPad = (yExtent[1] - yExtent[0]) * 0.1 || 1;
+            const yScale = d3.scaleLinear()
+                .domain([yExtent[0] - yPad, yExtent[1] + yPad])
+                .range([height - margin.bottom, margin.top]);
+            
+            // Best fitness line
+            const line = d3.line()
+                .x((d, i) => xScale(i))
+                .y(d => yScale(d.bestFitness))
+                .curve(d3.curveMonotoneX);
+            
+            svg.append('path')
+                .datum(gaGenerationHistory)
+                .attr('d', line)
+                .attr('fill', 'none')
+                .attr('stroke', '#ff9800')
+                .attr('stroke-width', 1.5);
+            
+            // Mean fitness line
+            const meanLine = d3.line()
+                .x((d, i) => xScale(i))
+                .y(d => yScale(d.meanFitness))
+                .curve(d3.curveMonotoneX);
+            
+            svg.append('path')
+                .datum(gaGenerationHistory)
+                .attr('d', meanLine)
+                .attr('fill', 'none')
+                .attr('stroke', '#64b5f6')
+                .attr('stroke-width', 1)
+                .attr('stroke-dasharray', '3,3');
+            
+            // X axis
+            svg.append('g')
+                .attr('transform', `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(xScale).ticks(5).tickFormat(d3.format('d')))
+                .selectAll('text').attr('fill', '#5a7a96').attr('font-size', '8px');
+            
+            // Y axis
+            svg.append('g')
+                .attr('transform', `translate(${margin.left},0)`)
+                .call(d3.axisLeft(yScale).ticks(4))
+                .selectAll('text').attr('fill', '#5a7a96').attr('font-size', '8px');
+            
+            // Style axis lines
+            svg.selectAll('.domain, .tick line').attr('stroke', '#2a3a5a');
+            
+            // Legend
+            svg.append('text').attr('x', margin.left + 5).attr('y', margin.top + 8)
+                .attr('fill', '#ff9800').attr('font-size', '8px').text('Best');
+            svg.append('text').attr('x', margin.left + 30).attr('y', margin.top + 8)
+                .attr('fill', '#64b5f6').attr('font-size', '8px').text('Mean');
+        }
+        
+        function renderGAAllocationChart(allocation) {
+            const container = document.getElementById('ga-allocation-chart');
+            container.innerHTML = '';
+            
+            // Sort by allocation amount
+            const entries = Object.entries(allocation)
+                .filter(([_, v]) => v > 0)
+                .map(([nodeId, amount]) => ({
+                    nodeId,
+                    name: diffusionGraph.nodes[nodeId]?.label || nodeId,
+                    amount
+                }))
+                .sort((a, b) => b.amount - a.amount);
+            
+            if (entries.length === 0) {
+                container.innerHTML = '<div style="color: #5a7a96; font-style: italic;">No allocation found.</div>';
+                return;
+            }
+            
+            const maxAmount = entries[0].amount || 1;
+            
+            entries.forEach(entry => {
+                const pct = (entry.amount / maxAmount * 100).toFixed(0);
+                const div = document.createElement('div');
+                div.style.cssText = 'display: flex; align-items: center; gap: 6px; margin-bottom: 3px; font-size: 10px;';
+                div.innerHTML = `
+                    <span style="flex: 0 0 130px; color: #b0cfe0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${entry.name}">${entry.name}</span>
+                    <div style="flex: 1; height: 10px; background: rgba(10,22,40,0.4); border-radius: 3px; overflow: hidden;">
+                        <div style="width: ${pct}%; height: 100%; background: linear-gradient(90deg, #ff6f00, #ff9800); border-radius: 3px;"></div>
+                    </div>
+                    <span style="flex: 0 0 30px; color: #ff9800; text-align: right;">${entry.amount}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+        
+        function applyGAToScenario() {
+            if (!window._gaResult || !window._gaResult.bestAllocation) {
+                alert('No GA result available.');
+                return;
+            }
+            
+            const alloc = window._gaResult.bestAllocation;
+            const totalTokens = Object.values(alloc).reduce((a, b) => a + b, 0);
+            
+            // Set mode to deterministic forward (since GA uses deterministic)
+            document.getElementById('diffusion-mode-select').value = 'deterministic';
+            currentDiffusionMode = 'deterministic';
+            onDiffusionModeChange();
+            
+            document.getElementById('diffusion-direction-select').value = document.getElementById('ga-direction').value;
+            currentDiffusionDirection = document.getElementById('ga-direction').value;
+            
+            // Create the model directly
+            diffusionModel = new DeterministicDiffusionModel(diffusionGraph, alloc, currentDiffusionDirection);
+            
+            // Enable simulation controls
+            document.getElementById('run-diffusion-btn').disabled = false;
+            document.getElementById('reset-diffusion-btn').disabled = false;
+            document.getElementById('show-results-window').disabled = false;
+            
+            const statusDiv = document.getElementById('diffusion-status');
+            statusDiv.textContent = `GA allocation applied (${Object.keys(alloc).filter(k => alloc[k] > 0).length} nodes, ${totalTokens} total) - ready to run`;
+            statusDiv.className = 'simulation-status status-ready';
+            
+            console.log('✅ GA result applied to scenario:', alloc);
+        }
+        
+        function applyGAToEnsemble() {
+            if (!window._gaResult || !window._gaResult.bestAllocation) {
+                alert('No GA result available.');
+                return;
+            }
+            
+            ensembleTokenAllocation = Object.assign({}, window._gaResult.bestAllocation);
+            
+            // Make sure ensemble is initialized
+            if (!ensembleModel || !ensembleModel.initialized) {
+                initializeEnsembleUI();
+            }
+            
+            // Enable run button
+            document.getElementById('run-ensemble-btn').disabled = false;
+            
+            const statusElement = document.getElementById('ensemble-status');
+            const nodeCount = Object.keys(ensembleTokenAllocation).filter(k => ensembleTokenAllocation[k] > 0).length;
+            statusElement.textContent = `Status: GA allocation applied (${nodeCount} nodes) - ready to run`;
+            statusElement.className = 'simulation-status status-ready';
+            
+            console.log('✅ GA result applied to ensemble:', ensembleTokenAllocation);
         }
         
         function toggleEnsembleResultsWindow() {

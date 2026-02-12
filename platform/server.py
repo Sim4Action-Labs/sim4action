@@ -88,7 +88,8 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
         # Platform engine files (served from platform/)
         platform_files = [
-            'app.html', 'overview.html', 'diffusion.js', 'drawing-layer.js',
+            'app.html', 'overview.html', 'diffusion.js', 'ga-worker.js',
+            'drawing-layer.js',
             'drawing-integration.js', 'drawing-controls.css',
             'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
             'networkx_loader.py', 'diffusion_demo.html', 'presentation.html'
