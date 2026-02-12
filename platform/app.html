@@ -1211,15 +1211,15 @@
         }
         
         .viz-toggle-button {
-            padding: 8px 10px;
-            font-size: 12px;
+            padding: 6px 6px;
+            font-size: 10px;
             border: 1px solid #ddd;
             background: #f8f9fa;
             color: #666;
             cursor: pointer;
             transition: all 0.2s ease;
             border-radius: 4px;
-            min-width: 100px;
+            min-width: 0;
         }
         
         .viz-toggle-button:hover:not(:disabled) {
@@ -3090,6 +3090,7 @@
         let visualTokenCharges = new Map(); // nodeId -> charge for visual representation
         
         // Visualization toggle states
+        let showTokenAnimation = true; // Token flow animation on canvas (on by default)
         let showChargeVisualization = false;
         let showStrengthVisualization = false;
         let visualTokenIdCounter = 0;
@@ -4110,13 +4111,16 @@
                     
                     <!-- Visualization Controls -->
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Visual Representation:</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                        <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Canvas Animation:</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                            <button id="toggle-token-anim" class="viz-toggle-button active" onclick="toggleTokenAnimation()" disabled>
+                                Token Flow
+                            </button>
                             <button id="toggle-charge-viz" class="viz-toggle-button" onclick="toggleChargeVisualization()" disabled>
-                                🎨 Show Charge
+                                Charge Color
                             </button>
                             <button id="toggle-strength-viz" class="viz-toggle-button" onclick="toggleStrengthVisualization()" disabled>
-                                📏 Show Strength
+                                Size by Str.
                             </button>
                         </div>
                     </div>
@@ -5998,12 +6002,12 @@
                             
                             if (Math.abs(tokenCount) > 0) {
                                 // Simple badge display
-                                badge.style('display', 'block')
-                                    .style('fill', '#666')
-                                    .style('stroke', '#333')
+                                badge.style('display', showTokenAnimation ? 'block' : 'none')
+                                    .style('fill', 'rgba(255,255,255,0.15)')
+                                    .style('stroke', 'rgba(255,255,255,0.4)')
                                     .attr('r', 8);
                                 
-                                text.style('display', 'block')
+                                text.style('display', showTokenAnimation ? 'block' : 'none')
                                     .text(Math.abs(tokenCount))
                                     .style('fill', '#fff')
                                     .attr('class', 'token-counter has-tokens');
@@ -6297,13 +6301,13 @@
                                 if (visualTokenCharges && visualTokenCharges.has(d.currentNode)) {
                                     visualCharge = visualTokenCharges.get(d.currentNode);
                                 }
-                                return visualCharge > 0 ? '#28a745' : '#dc3545';
+                                return visualCharge > 0 ? '#66bb6a' : '#ef5350';
                             }
                             
-                            // Default: simple black dots
-                            return '#000';
+                            // Default: white dots
+                            return '#ffffff';
                         })
-                        .style('stroke', '#fff')
+                        .style('stroke', 'rgba(255,255,255,0.3)')
                         .style('stroke-width', '1px');
                 }
                 
@@ -6321,18 +6325,20 @@
         let visualTokenAnimationInterval = null;
         
         function startVisualTokenAnimation() {
+            if (!showTokenAnimation) return; // Respect the toggle
+            
             if (visualTokenAnimationInterval) {
                 clearInterval(visualTokenAnimationInterval);
             }
             
             visualTokenAnimationInterval = setInterval(() => {
-                if (visualTokens.length > 0) {
+                if (showTokenAnimation && visualTokens.length > 0) {
                     updateVisualTokenStates();
                     updateTransitTokens();
                 }
             }, 100); // Update every 100ms for smooth animation
             
-            console.log('🎬 Started independent visual token animation loop');
+            console.log('Started independent visual token animation loop');
         }
         
         function stopVisualTokenAnimation() {
@@ -6387,17 +6393,17 @@
             }
             
             if (currentDiffusionMode === 'deterministic') {
-                // Deterministic mode: no token animation, use flow heatmap
+                // Deterministic mode: use flow heatmap on nodes
                 diffusionModel.step();
-                updateFlowHeatmap();
+                if (showTokenAnimation) updateFlowHeatmap();
                 updateDashboard();
                 updateResultsWindow();
             } else {
-                // Probabilistic mode: animate tokens
-                captureAndAnimateTokenMovements();
+                // Probabilistic mode: animate tokens if enabled
+                if (showTokenAnimation) captureAndAnimateTokenMovements();
                 diffusionModel.step();
                 setTimeout(() => {
-                    updateTokenVisualization();
+                    if (showTokenAnimation) updateTokenVisualization();
                     updateDashboard();
                     updateResultsWindow();
                 }, 100);
@@ -6466,14 +6472,14 @@
             
             if (!fromPos || !toPos) return;
             
-            // Create simple black dot token
+            // Create white dot token
             const animatedToken = window.tokenOverlay.append('circle')
                 .attr('class', 'token-circle in-transit')
                 .attr('r', 3)
                 .attr('cx', fromPos.x)
                 .attr('cy', fromPos.y)
-                .style('fill', '#333')
-                .style('stroke', '#000')
+                .style('fill', '#ffffff')
+                .style('stroke', 'rgba(255,255,255,0.4)')
                 .style('stroke-width', 1);
             
             // Simple straight-line movement
@@ -6909,6 +6915,30 @@
         }
         
         // Visualization toggle functions
+        function toggleTokenAnimation() {
+            showTokenAnimation = !showTokenAnimation;
+            
+            const button = document.getElementById('toggle-token-anim');
+            if (button) {
+                if (showTokenAnimation) {
+                    button.classList.add('active');
+                    // Restart the animation loop
+                    startVisualTokenAnimation();
+                } else {
+                    button.classList.remove('active');
+                    // Stop the animation loop and clear all token visuals from canvas
+                    stopVisualTokenAnimation();
+                    if (window.tokenOverlay) {
+                        window.tokenOverlay.selectAll('.transit-token').remove();
+                        window.tokenOverlay.selectAll('.token-circle').remove();
+                        window.tokenOverlay.selectAll('.token-counter-group').selectAll('*').style('display', 'none');
+                    }
+                }
+            }
+            
+            console.log(`Token animation: ${showTokenAnimation ? 'ON' : 'OFF'}`);
+        }
+        
         function toggleChargeVisualization() {
             showChargeVisualization = !showChargeVisualization;
             
@@ -6916,15 +6946,13 @@
             if (button) {
                 if (showChargeVisualization) {
                     button.classList.add('active');
-                    button.innerHTML = '🎨 Hide Charge';
                 } else {
                     button.classList.remove('active');
-                    button.innerHTML = '🎨 Show Charge';
                 }
             }
             
             // Immediately update token visualization
-            updateTransitTokens();
+            if (showTokenAnimation) updateTransitTokens();
             
             console.log(`Charge visualization: ${showChargeVisualization ? 'ON' : 'OFF'}`);
         }
@@ -6936,15 +6964,13 @@
             if (button) {
                 if (showStrengthVisualization) {
                     button.classList.add('active');
-                    button.innerHTML = '📏 Hide Strength';
                 } else {
                     button.classList.remove('active');
-                    button.innerHTML = '📏 Show Strength';
                 }
             }
             
             // Immediately update token visualization
-            updateTransitTokens();
+            if (showTokenAnimation) updateTransitTokens();
             
             console.log(`Strength visualization: ${showStrengthVisualization ? 'ON' : 'OFF'}`);
         }
@@ -6958,6 +6984,7 @@
             document.getElementById('speed-slow').disabled = !hasModel;
             document.getElementById('speed-medium').disabled = !hasModel;
             document.getElementById('speed-fast').disabled = !hasModel;
+            document.getElementById('toggle-token-anim').disabled = !hasModel;
             document.getElementById('toggle-charge-viz').disabled = !hasModel;
             document.getElementById('toggle-strength-viz').disabled = !hasModel;
             document.getElementById('show-results-window').disabled = !hasModel;
@@ -9214,20 +9241,34 @@
         
         function applyGAToScenario() {
             if (!window._gaResult || !window._gaResult.bestAllocation) {
-                alert('No GA result available.');
+                alert('No GA result available. Please run the optimizer first.');
+                return;
+            }
+            if (!diffusionGraph) {
+                alert('Diffusion graph not ready. Please initialize diffusion first.');
                 return;
             }
             
             const alloc = window._gaResult.bestAllocation;
             const totalTokens = Object.values(alloc).reduce((a, b) => a + b, 0);
+            const activeNodeCount = Object.keys(alloc).filter(k => alloc[k] > 0).length;
             
-            // Set mode to deterministic forward (since GA uses deterministic)
-            document.getElementById('diffusion-mode-select').value = 'deterministic';
-            currentDiffusionMode = 'deterministic';
-            onDiffusionModeChange();
+            // Set mode to deterministic (since GA uses deterministic)
+            const modeSelect = document.getElementById('diffusion-mode-select');
+            if (modeSelect) {
+                modeSelect.value = 'deterministic';
+                currentDiffusionMode = 'deterministic';
+                onDiffusionModeChange();
+            }
             
-            document.getElementById('diffusion-direction-select').value = document.getElementById('ga-direction').value;
-            currentDiffusionDirection = document.getElementById('ga-direction').value;
+            // Set direction to match GA direction
+            const gaDir = document.getElementById('ga-direction').value || 'forward';
+            const dirSelect = document.getElementById('diffusion-direction-select');
+            if (dirSelect) {
+                dirSelect.value = gaDir;
+                currentDiffusionDirection = gaDir;
+                onDiffusionDirectionChange();
+            }
             
             // Create the model directly
             diffusionModel = new DeterministicDiffusionModel(diffusionGraph, alloc, currentDiffusionDirection);
@@ -9237,20 +9278,58 @@
             document.getElementById('reset-diffusion-btn').disabled = false;
             document.getElementById('show-results-window').disabled = false;
             
+            // Update scenario status
             const statusDiv = document.getElementById('diffusion-status');
-            statusDiv.textContent = `GA allocation applied (${Object.keys(alloc).filter(k => alloc[k] > 0).length} nodes, ${totalTokens} total) - ready to run`;
+            statusDiv.textContent = `GA optimal allocation applied (${activeNodeCount} nodes, ${totalTokens} tokens) — hit Run to simulate`;
             statusDiv.className = 'simulation-status status-ready';
             
-            console.log('✅ GA result applied to scenario:', alloc);
+            // Expand the Scenario section and scroll to it
+            const scenarioContent = document.getElementById('diffusion-container');
+            if (scenarioContent) {
+                const sectionContent = scenarioContent.closest('.filter-section-content');
+                if (sectionContent && !sectionContent.classList.contains('expanded')) {
+                    sectionContent.classList.add('expanded');
+                    const toggle = sectionContent.previousElementSibling?.querySelector('.filter-section-toggle');
+                    if (toggle) toggle.innerHTML = '&minus;';
+                }
+                scenarioContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Flash confirmation on the Apply button
+            const btn = document.getElementById('ga-apply-scenario');
+            if (btn) {
+                const orig = btn.textContent;
+                btn.textContent = 'Applied!';
+                btn.style.opacity = '0.8';
+                setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; }, 1500);
+            }
+            
+            console.log('GA result applied to scenario:', alloc);
         }
         
         function applyGAToEnsemble() {
             if (!window._gaResult || !window._gaResult.bestAllocation) {
-                alert('No GA result available.');
+                alert('No GA result available. Please run the optimizer first.');
+                return;
+            }
+            if (!diffusionGraph) {
+                alert('Diffusion graph not ready. Please initialize diffusion first.');
                 return;
             }
             
-            ensembleTokenAllocation = Object.assign({}, window._gaResult.bestAllocation);
+            const alloc = window._gaResult.bestAllocation;
+            const activeNodeCount = Object.keys(alloc).filter(k => alloc[k] > 0).length;
+            const totalTokens = Object.values(alloc).reduce((a, b) => a + b, 0);
+            
+            ensembleTokenAllocation = Object.assign({}, alloc);
+            
+            // Set ensemble direction to match GA direction
+            const gaDir = document.getElementById('ga-direction').value || 'forward';
+            const ensembleDirSelect = document.getElementById('ensemble-direction-select');
+            if (ensembleDirSelect) {
+                ensembleDirSelect.value = gaDir;
+                currentEnsembleDirection = gaDir;
+            }
             
             // Make sure ensemble is initialized
             if (!ensembleModel || !ensembleModel.initialized) {
@@ -9258,14 +9337,51 @@
             }
             
             // Enable run button
-            document.getElementById('run-ensemble-btn').disabled = false;
+            const runBtn = document.getElementById('run-ensemble-btn');
+            if (runBtn) runBtn.disabled = false;
             
+            // Update ensemble status
             const statusElement = document.getElementById('ensemble-status');
-            const nodeCount = Object.keys(ensembleTokenAllocation).filter(k => ensembleTokenAllocation[k] > 0).length;
-            statusElement.textContent = `Status: GA allocation applied (${nodeCount} nodes) - ready to run`;
-            statusElement.className = 'simulation-status status-ready';
+            if (statusElement) {
+                statusElement.textContent = `GA optimal allocation applied (${activeNodeCount} nodes, ${totalTokens} tokens) — hit Run Ensemble`;
+                statusElement.className = 'simulation-status status-ready';
+            }
             
-            console.log('✅ GA result applied to ensemble:', ensembleTokenAllocation);
+            // Show allocation summary in the ensemble variable nodes list
+            const nodesListDiv = document.getElementById('ensemble-variable-nodes-list');
+            if (nodesListDiv) {
+                const entries = Object.entries(alloc)
+                    .filter(([_, v]) => v > 0)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(([nodeId, count]) => {
+                        const label = diffusionGraph.nodes[nodeId]?.label || nodeId;
+                        return `<span style="display:inline-block; margin:2px 4px; padding:2px 6px; background:rgba(100,181,246,0.15); border-radius:3px; font-size:10px;">${label}: ${count}</span>`;
+                    }).join('');
+                nodesListDiv.innerHTML = entries;
+            }
+            
+            // Expand the Ensemble section and scroll to it
+            const ensembleContent = document.getElementById('ensemble-container');
+            if (ensembleContent) {
+                const sectionContent = ensembleContent.closest('.filter-section-content');
+                if (sectionContent && !sectionContent.classList.contains('expanded')) {
+                    sectionContent.classList.add('expanded');
+                    const toggle = sectionContent.previousElementSibling?.querySelector('.filter-section-toggle');
+                    if (toggle) toggle.innerHTML = '&minus;';
+                }
+                ensembleContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Flash confirmation on the Apply button
+            const btn = document.getElementById('ga-apply-ensemble');
+            if (btn) {
+                const orig = btn.textContent;
+                btn.textContent = 'Applied!';
+                btn.style.opacity = '0.8';
+                setTimeout(() => { btn.textContent = orig; btn.style.opacity = '1'; }, 1500);
+            }
+            
+            console.log('GA result applied to ensemble:', ensembleTokenAllocation);
         }
         
         function toggleEnsembleResultsWindow() {

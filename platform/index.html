@@ -2635,7 +2635,7 @@ graph LR
                     </div>
                     <ul>
                         <li><strong>Step 1 &mdash; Diagnostics Lab:</strong> Explore the system structure. Identify feedback loops, clusters, and key structural features.</li>
-                        <li><strong>Step 2 &mdash; Intervention Lab:</strong> Simulate changes using token diffusion. Trace how interventions propagate through causal chains.</li>
+                        <li><strong>Step 2 &mdash; Intervention Lab:</strong> Simulate changes using causal diffusion (probabilistic or deterministic, forward or backward). Trace how interventions propagate through causal chains, perform root-cause analysis, and optimise resource allocation with genetic algorithms.</li>
                         <li><strong>Step 3 &mdash; Monitoring Lab:</strong> Use centrality analysis to identify the most influential variables and design monitoring programs.</li>
                     </ul>
                     <div class="doc-highlight">
@@ -2862,7 +2862,7 @@ graph LR
                 </div>
             </div>
 
-            <p class="panel-subtitle">The Intervention Lab uses a token-based diffusion simulation to model how interventions spread through the causal network. Tokens represent units of causal influence that propagate along the edges of the system map, respecting polarity, strength, and temporal delays.</p>
+            <p class="panel-subtitle">The Intervention Lab uses causal diffusion simulation to model how interventions spread through the causal network. It offers two complementary algorithms &mdash; <strong>probabilistic</strong> (stochastic random-walk tokens) and <strong>deterministic</strong> (proportional flow splitting) &mdash; in both <strong>forward</strong> (cause&rarr;effect) and <strong>backward</strong> (effect&rarr;cause) directions. An integrated <strong>genetic algorithm optimizer</strong> can automatically discover the best allocation of intervention resources to maximise impact on a target variable.</p>
 
             <!-- Collapsible: Token Diffusion Concept -->
             <div class="doc-collapsible open" id="coll-token-concept">
@@ -2874,15 +2874,25 @@ graph LR
                     <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
                 <div class="doc-collapsible-body">
-                    <p>Imagine dropping a pebble into a pond. The ripples spread outward, interacting with obstacles and reflecting back. Token diffusion works similarly: you introduce a change (tokens) at one or more nodes, and watch how the effect ripples through the network.</p>
-                    <p>Each <strong>token</strong> is an autonomous agent that:</p>
+                    <p>Imagine dropping a pebble into a pond. The ripples spread outward, interacting with obstacles and reflecting back. Causal diffusion works similarly: you introduce a change at one or more nodes, and watch how the effect ripples through the network. The platform offers two complementary simulation algorithms:</p>
+                    <p><strong>Probabilistic mode (agent-based):</strong> Each <strong>token</strong> is an autonomous agent that:</p>
                     <ul>
                         <li>Carries a <strong>charge</strong> (+1 for positive change, &minus;1 for negative change)</li>
-                        <li>Travels along outgoing edges, choosing its path based on <strong>edge strength</strong> (stronger edges attract more tokens)</li>
+                        <li>Travels along outgoing edges, choosing its path via <strong>weighted random selection</strong> based on edge strength (stronger edges attract more tokens)</li>
                         <li><strong>Flips its charge</strong> when traversing an opposite-direction edge (a positive increase becoming a decrease)</li>
                         <li>Respects <strong>temporal delays</strong> &mdash; slow relationships take more simulation steps to traverse</li>
                         <li><strong>Accumulates</strong> at dead ends (nodes with no outgoing edges)</li>
                     </ul>
+                    <p><strong>Deterministic mode (flow-based):</strong> Instead of individual tokens making random choices, a continuous <strong>flow</strong> of causal influence:</p>
+                    <ul>
+                        <li>Starts as a specified amount at each injection node</li>
+                        <li><strong>Splits proportionally</strong> across outgoing edges based on normalised edge strength &mdash; no randomness involved</li>
+                        <li>Obeys the same polarity-flipping and delay rules as probabilistic tokens</li>
+                        <li>Produces <strong>identical results every run</strong> for the same inputs, making it ideal for precise comparison and optimisation</li>
+                    </ul>
+                    <div class="doc-highlight">
+                        <p><strong>When to use which?</strong> <em>Probabilistic</em> mode captures the inherent uncertainty in complex systems &mdash; run it many times (ensemble mode) to build confidence intervals. <em>Deterministic</em> mode gives a clean, repeatable &ldquo;expected value&rdquo; signal &mdash; ideal for single-scenario exploration, backward analysis, and optimisation.</p>
+                    </div>
                     <div class="doc-diagram doc-diagram-compact">
                         <div class="mermaid">
 graph TD
@@ -3010,16 +3020,24 @@ graph TD
                     <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </div>
                 <div class="doc-collapsible-body">
-                    <p>The Intervention Lab offers two modes of analysis:</p>
+                    <p>The Intervention Lab offers two modes of analysis, each with configurable algorithm settings:</p>
                     <div class="concept-grid">
                         <div class="concept-card">
                             <h4>Scenario Mode</h4>
-                            <p>Run a single simulation with step-by-step control. Watch tokens propagate in real time. Ideal for <strong>exploring and understanding</strong> how a specific intervention ripples through the system. Includes play/pause, step-by-step advancement, and speed control.</p>
+                            <p>Run a single simulation with step-by-step control. Watch tokens or flow propagate in real time. Includes play/pause, step-by-step advancement, and speed control. You can choose:</p>
+                            <ul>
+                                <li><strong>Algorithm:</strong> Probabilistic (stochastic tokens) or Deterministic (proportional flow)</li>
+                                <li><strong>Direction:</strong> Forward (cause&rarr;effect) or Backward (effect&rarr;cause)</li>
+                            </ul>
+                            <p>Ideal for <strong>exploring and understanding</strong> how a specific intervention ripples through the system, or tracing backward to discover root causes.</p>
                         </div>
                         <div class="concept-card">
                             <h4>Ensemble Mode</h4>
-                            <p>Run 10&ndash;1000 simulations with different random seeds to produce <strong>statistical distributions</strong> of outcomes. This accounts for the stochastic nature of token routing and provides confidence intervals for predictions. Ideal for <strong>robust decision-making</strong>.</p>
+                            <p>Run 10&ndash;1000 simulations with different random seeds to produce <strong>statistical distributions</strong> of outcomes. Uses the <strong>probabilistic algorithm</strong> (the stochastic variation is what makes ensembles meaningful). Supports both forward and backward directions. Ideal for <strong>robust decision-making</strong> with confidence intervals.</p>
                         </div>
+                    </div>
+                    <div class="doc-highlight">
+                        <p><strong>Algorithm settings</strong> are configured in the &ldquo;Algorithm Settings&rdquo; panel within each mode. In Scenario mode, both algorithms and both directions are available. In Ensemble mode, the algorithm is locked to Probabilistic (deterministic runs produce identical outcomes, so ensembles would be redundant), but direction is selectable.</p>
                     </div>
                 </div>
             </div>
@@ -3214,6 +3232,237 @@ graph TD
                     </div>
 
                     <p>These results help stakeholders compare intervention strategies, identify unintended side effects, and build consensus around preferred approaches.</p>
+                </div>
+            </div>
+
+            <!-- Collapsible: Probabilistic vs Deterministic Diffusion -->
+            <div class="doc-collapsible" id="coll-prob-vs-det">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-prob-vs-det')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        Probabilistic vs. Deterministic Diffusion
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>The two algorithms model causal propagation at different levels of abstraction. Both respect the same network topology, polarities, strengths, and delays &mdash; they differ only in how influence is routed at branch points.</p>
+
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>Property</th><th>Probabilistic (Agent-Based)</th><th>Deterministic (Flow-Based)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Unit of influence</strong></td>
+                                <td>Discrete tokens (integer agents)</td>
+                                <td>Continuous flow (fractional values)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Routing at branch points</strong></td>
+                                <td>Each token makes a <em>weighted random choice</em> among outgoing edges</td>
+                                <td>Flow <em>splits proportionally</em> by normalised edge strength &mdash; strong (1.0), medium (0.6), weak (0.3)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Repeatability</strong></td>
+                                <td>Stochastic &mdash; each run produces slightly different results</td>
+                                <td>Deterministic &mdash; identical results every run</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ensemble suitability</strong></td>
+                                <td>Ideal &mdash; variation across runs produces meaningful distributions</td>
+                                <td>Not applicable &mdash; every run is identical, so ensembles add no information</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Optimization suitability</strong></td>
+                                <td>Possible but noisy fitness landscape</td>
+                                <td>Ideal &mdash; smooth, repeatable fitness landscape for genetic algorithm search</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Best for</strong></td>
+                                <td>Ensemble analysis, Monte Carlo confidence intervals, capturing system uncertainty</td>
+                                <td>Single-scenario exploration, backward root-cause analysis, GA optimization, precise comparisons</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="doc-diagram doc-diagram-compact">
+                        <div class="mermaid">
+graph LR
+    CV3["Catch Volume<br/>flow = 10.0"] -->|"strong (1.0)<br/>53%"| MP3["Market Price<br/>receives 5.3"]
+    CV3 -->|"medium (0.6)<br/>32%"| CW3["Community Wellbeing<br/>receives 3.2"]
+    CV3 -->|"weak (0.3)<br/>16%"| PR3["Public Revenue<br/>receives 1.6"]
+
+    style CV3 fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style MP3 fill:#1a3a2a,stroke:#66bb6a,color:#e0e6ed
+    style CW3 fill:#1a3a2a,stroke:#66bb6a,color:#e0e6ed
+    style PR3 fill:#1a3a2a,stroke:#66bb6a,color:#e0e6ed
+
+    linkStyle 0 stroke:#66bb6a,stroke-width:6px
+    linkStyle 1 stroke:#66bb6a,stroke-width:4px
+    linkStyle 2 stroke:#66bb6a,stroke-width:2px
+                        </div>
+                        <p class="diagram-caption"><strong>Deterministic flow splitting.</strong> When 10.0 units of flow arrive at Catch Volume, the deterministic algorithm splits them proportionally: strong edges receive 1.0/(1.0+0.6+0.3) = 53% of the flow, medium edges 32%, and weak edges 16%. There is no randomness &mdash; the split is the same every time. In probabilistic mode, each of 10 individual tokens would independently roll weighted dice, producing slightly different distributions each run.</p>
+                    </div>
+
+                    <div class="doc-highlight">
+                        <p><strong>In practice:</strong> Start with <em>deterministic mode</em> to understand the expected causal pathways clearly. Then switch to <em>probabilistic ensemble mode</em> to quantify the uncertainty around those expectations. The two algorithms are complementary lenses on the same system.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Backward Diffusion & Root-Cause Analysis -->
+            <div class="doc-collapsible" id="coll-backward">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-backward')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        Backward Diffusion &amp; Root-Cause Analysis
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>Standard (forward) diffusion answers: <em>&ldquo;If I intervene here, what happens downstream?&rdquo;</em> But often the more pressing question is the reverse: <em>&ldquo;This outcome variable matters to me &mdash; what are the most effective upstream levers to influence it?&rdquo;</em></p>
+
+                    <p><strong>Backward diffusion</strong> reverses the direction of propagation. Instead of following outgoing edges from intervention points, tokens or flow travel along <strong>incoming edges</strong> from a target variable of interest, tracing influence <strong>backward through the causal chain</strong> to its upstream drivers.</p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(30, 136, 229, 0.15);">&#x27A1;</div>
+                            <h4>Forward Diffusion</h4>
+                            <p><strong>Question:</strong> &ldquo;What happens if I change X?&rdquo;</p>
+                            <p><strong>Direction:</strong> Cause &rarr; Effect</p>
+                            <p><strong>Inject at:</strong> Intervention nodes (intervenable variables)</p>
+                            <p><strong>Reveals:</strong> Downstream impacts, side effects, controllability</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(76, 175, 80, 0.15);">&#x2B05;</div>
+                            <h4>Backward Diffusion</h4>
+                            <p><strong>Question:</strong> &ldquo;What drives Y?&rdquo;</p>
+                            <p><strong>Direction:</strong> Effect &rarr; Cause</p>
+                            <p><strong>Inject at:</strong> Target variable(s) of interest (e.g., a focal factor)</p>
+                            <p><strong>Reveals:</strong> Root causes, influence pathways, upstream leverage points</p>
+                        </div>
+                    </div>
+
+                    <div class="doc-diagram doc-diagram-compact">
+                        <div class="mermaid">
+graph RL
+    FS4["Fish Stock<br/>TARGET"] -->|"backward along<br/>opposite / strong"| FE4["Fishing Effort<br/>influence: high"]
+    FS4 -->|"backward along<br/>same / strong"| WQ4["Water Quality<br/>influence: medium"]
+    FS4 -->|"backward along<br/>opposite / medium"| SST4["Sea Surface Temp.<br/>influence: medium"]
+    FE4 -->|"backward along<br/>same / medium"| MP4["Market Price<br/>influence: indirect"]
+    FE4 -->|"backward along<br/>opposite / strong"| HQ4["Harvest Quota<br/>influence: indirect"]
+
+    style FS4 fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style FE4 fill:#2a1a3a,stroke:#ce93d8,color:#e0e6ed
+    style WQ4 fill:#2a1a3a,stroke:#ce93d8,color:#e0e6ed
+    style SST4 fill:#2a1a3a,stroke:#ce93d8,color:#e0e6ed
+    style MP4 fill:#1a2a3a,stroke:#5a7a96,color:#e0e6ed
+    style HQ4 fill:#1a2a3a,stroke:#5a7a96,color:#e0e6ed
+
+    linkStyle 0 stroke:#ce93d8,stroke-width:5px
+    linkStyle 1 stroke:#ce93d8,stroke-width:4px
+    linkStyle 2 stroke:#ce93d8,stroke-width:3px
+    linkStyle 3 stroke:#5a7a96,stroke-width:2px
+    linkStyle 4 stroke:#5a7a96,stroke-width:2px
+                        </div>
+                        <p class="diagram-caption"><strong>Backward diffusion from Fish Stock.</strong> Tokens are injected at the target variable (Fish Stock) and propagate backward along incoming edges. <span style="color:#ce93d8">Purple nodes</span> are direct upstream drivers discovered in the first wave; <span style="color:#5a7a96">grey nodes</span> are indirect drivers discovered in subsequent waves. The accumulated token flow at each upstream node quantifies its <strong>relative influence</strong> on the target.</p>
+                    </div>
+
+                    <p>After a backward diffusion run, the platform provides an <strong>Influence Ranking</strong> &mdash; a bar chart showing the cumulative causal influence (area under the curve) of each upstream variable on the target. This ranking directly answers the question: <em>&ldquo;Which variables have the greatest influence on my outcome of interest?&rdquo;</em></p>
+
+                    <div class="doc-highlight">
+                        <p><strong>Use cases for backward diffusion:</strong></p>
+                        <ul>
+                            <li><strong>Root-cause diagnosis:</strong> A fishery manager concerned about declining stock biomass can run backward diffusion from Fish Stock to discover which upstream variables contribute most.</li>
+                            <li><strong>Prioritising interventions:</strong> The influence ranking reveals which levers have the strongest causal pathway to the outcome &mdash; not just which are directly connected, but which have the strongest <em>cumulative</em> effect through potentially long causal chains.</li>
+                            <li><strong>Identifying indirect drivers:</strong> Variables two or three steps upstream may be more influential than direct neighbours if they feed through strong, reinforcing pathways.</li>
+                            <li><strong>Stakeholder engagement:</strong> Backward diffusion provides an intuitive answer to the question stakeholders naturally ask: &ldquo;What do we need to change to improve this outcome?&rdquo;</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible: Token Allocation Optimizer (GA) -->
+            <div class="doc-collapsible" id="coll-ga-optimizer">
+                <div class="doc-collapsible-header" onclick="toggleCollapsible('coll-ga-optimizer')">
+                    <h4>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/><path d="M2 20h20"/></svg>
+                        Token Allocation Optimizer (Genetic Algorithm)
+                    </h4>
+                    <svg class="collapse-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+                <div class="doc-collapsible-body">
+                    <p>When designing interventions, a fundamental question arises: <em>&ldquo;Given a limited budget of resources, how should I distribute them across available intervention points to maximise the impact on my target variable?&rdquo;</em></p>
+
+                    <p>The <strong>Token Allocation Optimizer</strong> answers this question automatically using a <strong>genetic algorithm (GA)</strong> &mdash; an evolutionary search technique inspired by natural selection. Rather than testing every possible allocation (which is combinatorially infeasible), the GA evolves a population of candidate allocations over many generations, selecting the fittest, recombining their features, and introducing random mutations to explore the search space efficiently.</p>
+
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(255, 167, 38, 0.15);">&#x1f3af;</div>
+                            <h4>The Optimisation Problem</h4>
+                            <p>Given <em>B</em> total tokens (your resource budget) and <em>N</em> eligible intervention nodes, find the allocation [b<sub>1</sub>, b<sub>2</sub>, &hellip; b<sub>N</sub>] where b<sub>1</sub>&nbsp;+&nbsp;b<sub>2</sub>&nbsp;+&nbsp;&hellip;&nbsp;+&nbsp;b<sub>N</sub>&nbsp;=&nbsp;B that <strong>maximises the cumulative causal effect</strong> (area under the flow curve) on a chosen target variable over a given time horizon.</p>
+                        </div>
+                        <div class="concept-card">
+                            <div class="card-icon" style="background: rgba(30, 136, 229, 0.15);">&#x1f9ec;</div>
+                            <h4>How the GA Works</h4>
+                            <p>A population of random allocations (individuals) is created. Each individual is evaluated by running a deterministic diffusion simulation and measuring the cumulative effect on the target. The fittest individuals are selected to produce the next generation through crossover (blending two allocations) and mutation (shifting tokens between nodes). Over 50&ndash;200 generations, the population converges on the optimal allocation.</p>
+                        </div>
+                    </div>
+
+                    <div class="doc-diagram doc-diagram-compact">
+                        <div class="mermaid">
+graph TD
+    S["Seed Population<br/>Random allocations"] --> E["Evaluate Fitness<br/>Run diffusion, compute AUC"]
+    E --> R{"Converged?"}
+    R -->|"No"| SEL["Select Fittest<br/>Tournament selection"]
+    SEL --> CX["Crossover<br/>Blend parent allocations"]
+    CX --> MUT["Mutate<br/>Shift tokens between nodes"]
+    MUT --> E
+    R -->|"Yes"| OPT["Optimal Allocation<br/>Best token distribution found"]
+
+    style S fill:#1a2a4a,stroke:#64b5f6,color:#e0e6ed
+    style E fill:#1a2a4a,stroke:#64b5f6,color:#e0e6ed
+    style R fill:#3a2a0a,stroke:#FF8C00,color:#e0e6ed
+    style SEL fill:#1a2a4a,stroke:#64b5f6,color:#e0e6ed
+    style CX fill:#1a2a4a,stroke:#64b5f6,color:#e0e6ed
+    style MUT fill:#1a2a4a,stroke:#64b5f6,color:#e0e6ed
+    style OPT fill:#1a4a2a,stroke:#66bb6a,color:#e0e6ed
+                        </div>
+                        <p class="diagram-caption"><strong>Genetic algorithm optimisation cycle.</strong> Starting from random allocations, each generation evaluates fitness (cumulative effect on the target variable via deterministic diffusion), selects the fittest, recombines and mutates them, and repeats. The process converges toward the allocation that maximises causal impact.</p>
+                    </div>
+
+                    <p><strong>Optimizer configuration:</strong></p>
+                    <table class="step-example-table">
+                        <thead>
+                            <tr><th>Setting</th><th>Description</th><th>Default</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Target Node</strong></td><td>The variable whose cumulative effect you want to maximise. Typically a focal factor.</td><td>&mdash;</td></tr>
+                            <tr><td><strong>Optimisation Goal</strong></td><td><em>Maximise positive</em> (increase the target), <em>maximise absolute</em> (largest effect regardless of sign), or <em>minimise negative</em> (reduce the target)</td><td>Maximise positive</td></tr>
+                            <tr><td><strong>Direction</strong></td><td>Forward (allocate tokens at upstream nodes to affect the target) or Backward (discover which upstream nodes matter most)</td><td>Forward</td></tr>
+                            <tr><td><strong>Total Budget</strong></td><td>Total number of tokens to distribute across eligible nodes</td><td>100</td></tr>
+                            <tr><td><strong>Time Steps</strong></td><td>Number of simulation steps to run for each fitness evaluation</td><td>200</td></tr>
+                            <tr><td><strong>Eligible Nodes</strong></td><td>Which nodes can receive tokens. Defaults to intervenable variables; can be expanded.</td><td>Intervenable nodes</td></tr>
+                            <tr><td><strong>Population Size</strong></td><td>Number of candidate allocations per generation</td><td>50</td></tr>
+                            <tr><td><strong>Generations</strong></td><td>Maximum number of evolutionary cycles</td><td>100</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>Optimizer outputs:</strong></p>
+                    <ul>
+                        <li><strong>Convergence chart:</strong> Shows how the best and mean fitness evolve over generations, indicating whether the search has converged.</li>
+                        <li><strong>Optimal allocation bar chart:</strong> Visualises how tokens should be distributed across eligible nodes.</li>
+                        <li><strong>Best fitness score:</strong> The cumulative area-under-curve achieved by the optimal allocation.</li>
+                        <li><strong>Apply buttons:</strong> One click applies the discovered optimal allocation to a Scenario or Ensemble run for detailed exploration.</li>
+                    </ul>
+
+                    <div class="doc-highlight">
+                        <p><strong>Why genetic algorithms?</strong> The token allocation problem is a constrained combinatorial optimisation problem. With 10 eligible nodes and a budget of 100 tokens, there are millions of possible allocations. Exhaustive search is infeasible. The GA efficiently searches this space by exploiting the structure of the problem &mdash; allocations that are close to the optimum in &ldquo;genotype space&rdquo; tend to have similar fitness, allowing the evolutionary process to home in on good solutions within 50&ndash;200 generations (typically seconds of computation).</p>
+                    </div>
+
+                    <div class="doc-highlight">
+                        <p><strong>Technical note:</strong> The GA runs entirely in your browser using a Web Worker thread, so the UI remains responsive during optimisation. The deterministic diffusion algorithm is used internally for fitness evaluation, ensuring smooth, repeatable fitness landscapes that the GA can navigate efficiently.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3501,7 +3750,7 @@ graph TD
                         </div>
                         <div class="concept-card">
                             <h4>2. Scenario Testing Before Acting</h4>
-                            <p>The Intervention Lab allows managers to <strong>test interventions computationally before implementing them</strong> in the real world. Token diffusion reveals cascading effects, trade-offs, and unintended consequences &mdash; at zero cost and zero risk.</p>
+                            <p>The Intervention Lab allows managers to <strong>test interventions computationally before implementing them</strong> in the real world. Causal diffusion (forward and backward, probabilistic and deterministic) reveals cascading effects, trade-offs, root causes, and unintended consequences &mdash; at zero cost and zero risk. The genetic algorithm optimizer can even discover the optimal allocation of resources automatically.</p>
                         </div>
                         <div class="concept-card">
                             <h4>3. Targeted Monitoring Design</h4>
@@ -3613,8 +3862,8 @@ graph TD
                                 <td>In Mediterranean fisheries, identifying that ecological and socio-economic variables form separate clusters connected by &ldquo;market price&rdquo; led to joint meetings between fisheries biologists and economists (Coll et al., 2013).</td>
                             </tr>
                             <tr>
-                                <td><strong>Token diffusion results</strong><br/>(Intervention Lab)</td>
-                                <td>Compare intervention strategies, quantify trade-offs, identify unintended side effects</td>
+                                <td><strong>Causal diffusion results</strong><br/>(Intervention Lab)</td>
+                                <td>Compare intervention strategies (forward diffusion), identify root causes (backward diffusion), quantify trade-offs, optimise resource allocation (GA optimizer), and identify unintended side effects</td>
                                 <td>In Chilean salmon aquaculture, diffusion modelling showed that regulating stocking density had stronger downstream effects on disease and water quality than regulating feed inputs &mdash; reversing the expected priority order (Niklitschek et al., 2013).</td>
                             </tr>
                             <tr>
@@ -3668,7 +3917,7 @@ graph TD
                         <li><strong>Participatory data input</strong> via Google Sheets &mdash; stakeholders can contribute factors and relationships without needing specialised software.</li>
                         <li><strong>Interactive visualisation</strong> &mdash; the system map is not a static image but a live, filterable, explorable network.</li>
                         <li><strong>Computational analysis</strong> &mdash; feedback loop detection, community detection, and centrality analysis run in the browser via Pyodide (Python in WebAssembly), requiring no server infrastructure.</li>
-                        <li><strong>Simulation before action</strong> &mdash; token diffusion lets stakeholders experiment with interventions computationally, building intuition and consensus before committing resources.</li>
+                        <li><strong>Simulation before action</strong> &mdash; causal diffusion (forward/backward, probabilistic/deterministic) and genetic algorithm optimization let stakeholders experiment with interventions computationally, discover root causes, and find optimal resource allocations &mdash; building intuition and consensus before committing resources.</li>
                         <li><strong>Evidence-based monitoring design</strong> &mdash; centrality metrics provide a rigorous, defensible basis for allocating monitoring budgets.</li>
                         <li><strong>Iterative by design</strong> &mdash; the platform is built for repeated use. As new data arrives, the system map is updated, interventions are re-evaluated, and monitoring priorities are refined.</li>
                     </ul>
@@ -5854,7 +6103,7 @@ graph TD
             <span class="tag">months</span>
             <span class="tag">years</span>
         </div>
-        <p>Delay indicates how quickly the causal effect propagates. Used in diffusion and scenario analyses.</p>
+        <p>Delay indicates how quickly the causal effect propagates. Used in causal diffusion simulations (probabilistic/deterministic, forward/backward), ensemble analyses, and GA optimization.</p>
 
         <!-- Example -->
         <h3>4. Example</h3>
