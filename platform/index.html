@@ -4148,6 +4148,12 @@ graph TD
         </div>
 
         <div class="form-group">
+            <label>About This System</label>
+            <textarea id="edit-about" placeholder="Describe what this system is, its key characteristics, geographic scope, and why it matters..." style="min-height:120px; resize:vertical;"></textarea>
+            <p class="hint">A longer paragraph displayed on the system overview page. Use this to explain the system in detail.</p>
+        </div>
+
+        <div class="form-group">
             <label>Category <span class="required">*</span></label>
             <div style="display:flex; gap:8px; align-items:center;">
                 <select id="edit-category" style="flex:1; padding:10px 14px; background:rgba(10,22,40,0.6); border:1px solid rgba(100,181,246,0.15); border-radius:8px; color:#e0e6ed; font-size:0.95em; font-family:inherit;">
@@ -4165,6 +4171,29 @@ graph TD
                 <option value="literature_review">Literature Review</option>
                 <option value="gen_ai">Gen AI (Agentic Workflow)</option>
             </select>
+        </div>
+
+        <div class="form-group">
+            <label>Google Sheets URL (Main) <span class="required">*</span></label>
+            <input type="url" id="edit-sheet-url-main" placeholder="https://docs.google.com/spreadsheets/d/...">
+            <p class="hint">The main Google Sheets data source for this system map.</p>
+        </div>
+
+        <div class="form-group">
+            <label>Google Sheets URL (Draft)</label>
+            <input type="url" id="edit-sheet-url-draft" placeholder="https://docs.google.com/spreadsheets/d/...">
+            <p class="hint">Optional draft version of the spreadsheet.</p>
+        </div>
+
+        <div class="form-group">
+            <label>System Image</label>
+            <div id="edit-image-preview" style="margin-bottom:10px;"></div>
+            <div class="file-upload">
+                <label class="file-upload-btn" for="edit-image-file">Choose New Image</label>
+                <input type="file" id="edit-image-file" accept="image/*" onchange="handleFileSelect(this, 'edit-image-filename')">
+                <span class="filename" id="edit-image-filename">No file chosen</span>
+            </div>
+            <p class="hint">Upload a new image to replace the current one. Used on the overview page and catalogue card.</p>
         </div>
 
         <div class="form-group">
@@ -4233,6 +4262,12 @@ graph TD
             <div class="form-group">
                 <label>Description</label>
                 <textarea id="system-description" placeholder="Brief description of the system map..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>About This System</label>
+                <textarea id="system-about" placeholder="Describe what this system is, its key characteristics, geographic scope, and why it matters..." style="min-height:120px; resize:vertical;"></textarea>
+                <p class="hint">A longer paragraph displayed on the system overview page. Use this to explain the system in detail.</p>
             </div>
 
             <div class="form-group">
@@ -5125,7 +5160,30 @@ graph TD
             if (res.ok) config = await res.json();
         } catch(e) { console.error('Failed to load config for edit:', e); }
 
-        // Populate location and gdrive fields
+        // Populate spreadsheet URLs
+        const mainSheetId = (config.spreadsheets && config.spreadsheets.main) || '';
+        const draftSheetId = (config.spreadsheets && config.spreadsheets.draft) || '';
+        document.getElementById('edit-sheet-url-main').value = mainSheetId
+            ? `https://docs.google.com/spreadsheets/d/${mainSheetId}/edit`
+            : '';
+        document.getElementById('edit-sheet-url-draft').value = (draftSheetId && draftSheetId !== mainSheetId)
+            ? `https://docs.google.com/spreadsheets/d/${draftSheetId}/edit`
+            : '';
+
+        // Populate about, image preview, location and gdrive fields
+        document.getElementById('edit-about').value = config.about || '';
+
+        // Image preview
+        const previewEl = document.getElementById('edit-image-preview');
+        if (config.images && config.images.systemImage && config.images.systemImage.src) {
+            const imgSrc = `../systems/${systemId}/${config.images.systemImage.src}?_=${Date.now()}`;
+            previewEl.innerHTML = `<img src="${imgSrc}" alt="${config.images.systemImage.alt || 'System image'}" style="max-height:120px; max-width:100%; border-radius:8px; border:1px solid rgba(100,181,246,0.15); object-fit:contain;" onerror="this.outerHTML='<span style=\\'color:#5a7a96; font-size:0.9em;\\'>No current image</span>'">`;
+        } else {
+            previewEl.innerHTML = '<span style="color:#5a7a96; font-size:0.9em;">No current image</span>';
+        }
+        document.getElementById('edit-image-file').value = '';
+        document.getElementById('edit-image-filename').textContent = 'No file chosen';
+
         document.getElementById('edit-location-name').value = (config.location && config.location.name) || '';
         document.getElementById('edit-location-lat').value = (config.location && config.location.lat) || '';
         document.getElementById('edit-location-lng').value = (config.location && config.location.lng) || '';
@@ -5189,8 +5247,11 @@ graph TD
         const systemId = document.getElementById('edit-system-id').value;
         const name = document.getElementById('edit-name').value.trim();
         const description = document.getElementById('edit-description').value.trim();
+        const about = document.getElementById('edit-about').value.trim();
         const category = document.getElementById('edit-category').value.trim();
         const sourceType = document.getElementById('edit-source-type').value;
+        const mainSheetUrl = document.getElementById('edit-sheet-url-main').value.trim();
+        const draftSheetUrl = document.getElementById('edit-sheet-url-draft').value.trim();
 
         if (!name) {
             alert('System name is required.');
@@ -5200,15 +5261,29 @@ graph TD
             alert('Please select or create a category.');
             return;
         }
+        if (!mainSheetUrl) {
+            alert('Google Sheets URL (Main) is required.');
+            return;
+        }
+
+        const mainId = extractSpreadsheetId(mainSheetUrl);
+        if (!mainId) {
+            alert('Invalid Google Sheets URL for the main spreadsheet.');
+            return;
+        }
+        const draftId = extractSpreadsheetId(draftSheetUrl) || mainId;
 
         const btn = document.getElementById('edit-save-btn');
         btn.disabled = true;
         btn.innerHTML = '<span class="loading-spinner"></span> Saving...';
 
         try {
-            const payload = { name, description, category };
+            const payload = { name, description, category, about };
             if (sourceType) payload.source_type = sourceType;
             else payload.source_type = null;
+
+            // Spreadsheets
+            payload.spreadsheets = { main: mainId, draft: draftId };
 
             // Location
             const editLat = document.getElementById('edit-location-lat').value.trim();
@@ -5228,6 +5303,14 @@ graph TD
             // Google Drive folder
             const editGdrive = document.getElementById('edit-gdrive-folder').value.trim();
             payload.gdrive_md_folder = editGdrive || null;
+
+            // System image
+            const editImageFile = document.getElementById('edit-image-file').files[0];
+            if (editImageFile) {
+                const imageBase64 = await fileToBase64(editImageFile);
+                payload.systemImage_base64 = imageBase64;
+                payload.thumbnail_base64 = imageBase64;
+            }
 
             const response = await fetch(`/api/systems/${systemId}`, {
                 method: 'PUT',
@@ -5315,6 +5398,7 @@ graph TD
         document.getElementById('system-name').value = '';
         document.getElementById('system-id').value = '';
         document.getElementById('system-description').value = '';
+        document.getElementById('system-about').value = '';
         document.getElementById('system-source-type').value = '';
         document.getElementById('sheet-url-main').value = '';
         document.getElementById('sheet-url-draft').value = '';
@@ -5464,6 +5548,7 @@ graph TD
         const name = document.getElementById('system-name').value.trim();
         const id = document.getElementById('system-id').value.trim();
         const description = document.getElementById('system-description').value.trim();
+        const about = document.getElementById('system-about').value.trim();
         const category = document.getElementById('system-category').value.trim();
         const sourceType = document.getElementById('system-source-type').value;
         const mainUrl = document.getElementById('sheet-url-main').value;
@@ -5501,6 +5586,7 @@ graph TD
                 name: name,
                 title: `${name} Systems Map - Interactive Visualization`,
                 description: description,
+                about: about,
                 category: category,
                 spreadsheets: {
                     main: mainId,

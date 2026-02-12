@@ -223,6 +223,8 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
             }
 
             # Optional new fields
+            if data.get('about'):
+                config['about'] = data['about']
             if data.get('source_type'):
                 config['source_type'] = data['source_type']
             if data.get('location'):
@@ -358,12 +360,38 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                     config['title'] = f"{data['name']} Systems Map - Interactive Visualization"
                 if 'description' in data:
                     config['description'] = data['description']
+                if 'about' in data:
+                    config['about'] = data['about']
+                if 'spreadsheets' in data:
+                    config['spreadsheets'] = data['spreadsheets']
                 if 'source_type' in data:
                     config['source_type'] = data['source_type']
                 if 'location' in data:
                     config['location'] = data['location']
                 if 'gdrive_md_folder' in data:
                     config['gdrive_md_folder'] = data['gdrive_md_folder']
+
+                # Handle base64-encoded images if provided
+                system_dir = SYSTEMS_DIR / system_id
+                for img_key in ['systemImage', 'thumbnail']:
+                    img_data = data.get(f'{img_key}_base64')
+                    if img_data:
+                        match = re.match(r'data:image/(\w+);base64,(.*)', img_data)
+                        if match:
+                            ext = match.group(1)
+                            if ext == 'jpeg':
+                                ext = 'jpg'
+                            img_bytes = base64.b64decode(match.group(2))
+                            filename = f'{img_key.replace("Image", "-image")}.{ext}'
+                            with open(system_dir / filename, 'wb') as f:
+                                f.write(img_bytes)
+                            if 'images' not in config:
+                                config['images'] = {}
+                            config['images'][img_key] = {
+                                'src': filename,
+                                'alt': data.get('name', config.get('name', system_id))
+                            }
+
                 with open(config_path, 'w') as f:
                     json.dump(config, f, indent=2)
 
@@ -380,6 +408,14 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                         system['category'] = data['category']
                     if 'source_type' in data:
                         system['source_type'] = data['source_type']
+                    # Update thumbnail in catalogue if image was uploaded
+                    if config_path.exists() and data.get('thumbnail_base64'):
+                        with open(config_path, 'r') as f:
+                            updated_config = json.load(f)
+                        if updated_config.get('images', {}).get('thumbnail', {}).get('src'):
+                            system['thumbnail'] = f"{system_id}/{updated_config['images']['thumbnail']['src']}"
+                        elif updated_config.get('images', {}).get('systemImage', {}).get('src'):
+                            system['thumbnail'] = f"{system_id}/{updated_config['images']['systemImage']['src']}"
                     updated = True
                     break
 

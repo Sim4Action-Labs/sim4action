@@ -1,0 +1,13 @@
+{
+  "id": "non_urban_water_compliance",
+  "name": "non urban water compliance",
+  "title": "non urban water compliance Systems Map - Interactive Visualization",
+  "description": "",
+  "spreadsheets": {
+    "main": "1uz1Z0pVoQIi9Oob9-YhmUfTJjKUSLB4RO0BRarBXO1U",
+    "draft": "1uz1Z0pVoQIi9Oob9-YhmUfTJjKUSLB4RO0BRarBXO1U"
+  },
+  "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
+  "images": {},
+  "source_type": "gen_ai"
+}

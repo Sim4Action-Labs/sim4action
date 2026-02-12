@@ -67,6 +67,14 @@
       "thumbnail": "northwest_shelf_trap_fishery/thumbnail.png",
       "category": "Fisheries",
       "source_type": "gen_ai"
+    },
+    {
+      "id": "non_urban_water_compliance",
+      "name": "non urban water compliance",
+      "description": "",
+      "thumbnail": null,
+      "category": "Water Resources",
+      "source_type": "gen_ai"
     }
   ]
 }

@@ -188,7 +188,7 @@
             color: #8eacc5;
             line-height: 1.7;
             margin-top: 12px;
-            max-width: 800px;
+            max-width: 100%;
         }
 
         /* ============================
@@ -295,6 +295,69 @@
             color: #5a7a96;
             text-transform: uppercase;
             letter-spacing: 0.05em;
+        }
+
+        /* ============================
+           ABOUT THIS SYSTEM (expandable)
+           ============================ */
+        .about-expander {
+            background: linear-gradient(145deg, rgba(26, 42, 74, 0.6), rgba(13, 31, 60, 0.7));
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            border-radius: 16px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .about-expander summary {
+            padding: 18px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            color: #8eacc5;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .about-expander summary:hover {
+            background: rgba(100, 181, 246, 0.06);
+        }
+
+        .about-expander summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .about-expander summary::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid #64b5f6;
+            border-bottom: 2px solid #64b5f6;
+            transform: rotate(-45deg);
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+
+        .about-expander[open] summary::after {
+            transform: rotate(45deg);
+        }
+
+        .about-expander[open] summary {
+            border-bottom: 1px solid rgba(100, 181, 246, 0.08);
+        }
+
+        .about-expander .about-body {
+            padding: 20px 28px 24px;
+            font-size: 1.02em;
+            color: #c8d8e8;
+            line-height: 1.75;
+            width: 100%;
         }
 
         /* ============================
@@ -444,67 +507,62 @@
            DOCUMENTS TAB
            ============================ */
         .docs-container {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
             min-height: 400px;
         }
 
-        @media (max-width: 768px) {
-            .docs-container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .docs-sidebar {
-            background: linear-gradient(145deg, rgba(26, 42, 74, 0.7), rgba(13, 31, 60, 0.8));
-            border: 1px solid rgba(100, 181, 246, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .docs-sidebar-title {
-            padding: 14px 16px;
-            font-size: 0.88em;
-            font-weight: 600;
-            color: #b0cfe0;
-            border-bottom: 1px solid rgba(100, 181, 246, 0.1);
-        }
-
-        .docs-file-list {
-            list-style: none;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .docs-file-list li {
-            padding: 10px 16px;
-            cursor: pointer;
-            font-size: 0.88em;
-            color: #7a9ab5;
-            border-bottom: 1px solid rgba(100, 181, 246, 0.05);
+        .docs-selector-bar {
             display: flex;
             align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
+            gap: 12px;
         }
 
-        .docs-file-list li:hover {
-            background: rgba(100, 181, 246, 0.08);
-            color: #b0cfe0;
+        .docs-selector-bar label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: #8eacc5;
+            white-space: nowrap;
         }
 
-        .docs-file-list li.active {
-            background: rgba(100, 181, 246, 0.15);
-            color: #64b5f6;
-            border-left: 3px solid #64b5f6;
+        .docs-selector-bar select {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(10, 22, 40, 0.6);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            border-radius: 8px;
+            color: #e0e6ed;
+            font-size: 0.95em;
+            font-family: inherit;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364b5f6' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            padding-right: 36px;
+            transition: border-color 0.2s ease;
         }
 
-        .docs-file-list li svg {
-            width: 16px;
-            height: 16px;
-            flex-shrink: 0;
-            opacity: 0.5;
+        .docs-selector-bar select:hover {
+            border-color: rgba(100, 181, 246, 0.35);
+        }
+
+        .docs-selector-bar select:focus {
+            outline: none;
+            border-color: #64b5f6;
+        }
+
+        .docs-selector-bar select option {
+            background: #0e1e38;
+            color: #e0e6ed;
+        }
+
+        .docs-file-count {
+            font-size: 0.82em;
+            color: #5a7a96;
+            white-space: nowrap;
         }
 
         .docs-content {
@@ -863,6 +921,7 @@
     // ============================================
     // STATE
     // ============================================
+    const DRIVE_API_KEY = 'AIzaSyAhfzw_IT71vk5RAnMG2Hd_cN37H5TEkLw';
     let CONFIG = null;
     let catalogueEntry = null;  // system entry from catalogue.json (has category, source_type)
     let systemId = null;
@@ -1055,6 +1114,15 @@
                 </div>
             </div>
 
+            <!-- About This System -->
+            ${CONFIG.about
+                ? `<details class="about-expander" open>
+                    <summary>About This System</summary>
+                    <div class="about-body">${CONFIG.about}</div>
+                  </details>`
+                : ''
+            }
+
             <!-- Tabs -->
             <div class="tabs-container">
                 <div class="tab-nav">
@@ -1112,19 +1180,17 @@
                 ${hasDocuments ? `
                 <div class="tab-panel" id="tab-documents">
                     <div class="docs-container">
-                        <div class="docs-sidebar">
-                            <div class="docs-sidebar-title">Documents</div>
-                            <ul class="docs-file-list" id="docs-file-list">
-                                <li style="justify-content:center; color:#5a7a96;">
-                                    <span class="loading-spinner"></span>
-                                    Loading files...
-                                </li>
-                            </ul>
+                        <div class="docs-selector-bar">
+                            <label for="docs-file-select">Document:</label>
+                            <select id="docs-file-select" onchange="loadDocFile(this.value)">
+                                <option value="">Loading documents...</option>
+                            </select>
+                            <span class="docs-file-count" id="docs-file-count"></span>
                         </div>
                         <div class="docs-content" id="docs-content">
                             <div class="docs-placeholder">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
-                                <p>Select a document from the sidebar to view its contents.</p>
+                                <p>Select a document to view its contents.</p>
                             </div>
                         </div>
                     </div>
@@ -1374,13 +1440,13 @@
             return;
         }
 
-        const fileListEl = document.getElementById('docs-file-list');
-        if (!fileListEl) return;
+        const selectEl = document.getElementById('docs-file-select');
+        if (!selectEl) return;
 
         try {
             // List files in the folder
             // We search for both text/markdown and text/plain (some .md files are served as text/plain)
-            const apiKey = CONFIG.apiKey;
+            const apiKey = CONFIG.driveApiKey || DRIVE_API_KEY;
             const query = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
             const fields = encodeURIComponent('files(id,name,mimeType,modifiedTime)');
             const url = `https://www.googleapis.com/drive/v3/files?q=${query}&key=${apiKey}&fields=${fields}&orderBy=name&pageSize=100`;
@@ -1399,39 +1465,42 @@
 
             renderDocsList(driveFiles);
 
-            // Auto-select first file
+            // Auto-select and load first file
             if (driveFiles.length > 0) {
                 loadDocFile(driveFiles[0].id);
             }
         } catch (e) {
             console.error('Failed to load Drive files:', e);
-            fileListEl.innerHTML = `
-                <li style="color:#ef5350; font-size:0.85em; flex-direction:column; align-items:flex-start; gap:4px;">
-                    <span>Failed to load documents.</span>
-                    <span style="color:#7a5a5a; font-size:0.85em;">${e.message}</span>
-                    <span style="color:#5a7a96; font-size:0.8em; margin-top:4px;">Ensure the Google Drive folder is shared publicly and the Drive API is enabled for the API key.</span>
-                </li>
-            `;
+            selectEl.innerHTML = '<option value="">Failed to load documents</option>';
+            const contentEl = document.getElementById('docs-content');
+            if (contentEl) {
+                contentEl.innerHTML = `
+                    <div class="docs-placeholder" style="color:#ef5350;">
+                        <p>Failed to load documents: ${e.message}</p>
+                        <p style="color:#5a7a96; font-size:0.85em; margin-top:8px;">Ensure the Google Drive folder is shared publicly and the Drive API is enabled for the API key.</p>
+                    </div>
+                `;
+            }
         }
     }
 
     function renderDocsList(files) {
-        const fileListEl = document.getElementById('docs-file-list');
-        if (!fileListEl) return;
+        const selectEl = document.getElementById('docs-file-select');
+        const countEl = document.getElementById('docs-file-count');
+        if (!selectEl) return;
 
         if (files.length === 0) {
-            fileListEl.innerHTML = `
-                <li style="color:#5a7a96; justify-content:center;">No markdown files found.</li>
-            `;
+            selectEl.innerHTML = '<option value="">No markdown files found</option>';
+            if (countEl) countEl.textContent = '';
             return;
         }
 
-        const fileIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
-
-        fileListEl.innerHTML = files.map(f => {
-            const displayName = f.name.replace(/\.md$/i, '');
-            return `<li onclick="loadDocFile('${f.id}')" data-file-id="${f.id}">${fileIcon}<span>${displayName}</span></li>`;
+        selectEl.innerHTML = files.map(f => {
+            const displayName = f.name.replace(/\.md$/i, '').replace(/_/g, ' ');
+            return `<option value="${f.id}">${displayName}</option>`;
         }).join('');
+
+        if (countEl) countEl.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
     }
 
     // ============================================
@@ -1599,12 +1668,13 @@
 
     async function loadDocFile(fileId) {
         const contentEl = document.getElementById('docs-content');
-        if (!contentEl) return;
+        if (!contentEl || !fileId) return;
 
-        // Update active state in sidebar
-        document.querySelectorAll('.docs-file-list li').forEach(li => {
-            li.classList.toggle('active', li.dataset.fileId === fileId);
-        });
+        // Sync dropdown selection
+        const selectEl = document.getElementById('docs-file-select');
+        if (selectEl && selectEl.value !== fileId) {
+            selectEl.value = fileId;
+        }
 
         contentEl.innerHTML = `
             <div class="docs-loading">
@@ -1614,7 +1684,7 @@
         `;
 
         try {
-            const apiKey = CONFIG.apiKey;
+            const apiKey = CONFIG.driveApiKey || DRIVE_API_KEY;
             const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`;
             const response = await fetch(url);
 
