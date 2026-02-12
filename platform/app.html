@@ -2844,6 +2844,144 @@
         #centrality-popup::-webkit-scrollbar-thumb:hover {
             background: rgba(100, 181, 246, 0.35);
         }
+
+        /* ========================================
+           Layout Settings — Global Viz Controls
+           ======================================== */
+
+        #layout-settings-wrapper {
+            position: relative;
+            margin-left: 16px;
+        }
+
+        #layout-settings-btn {
+            background: transparent;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            border-radius: 6px;
+            color: #8eacc5;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 10px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        #layout-settings-btn:hover {
+            background: rgba(100, 181, 246, 0.12);
+            color: #e0e6ed;
+            border-color: rgba(100, 181, 246, 0.35);
+        }
+
+        #layout-settings-btn.active {
+            background: rgba(100, 181, 246, 0.18);
+            color: #64b5f6;
+            border-color: rgba(100, 181, 246, 0.4);
+        }
+
+        .layout-popover {
+            position: absolute;
+            top: 44px;
+            left: 0;
+            width: 290px;
+            background: rgba(13, 27, 42, 0.97);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            border-radius: 10px;
+            padding: 16px 18px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+            z-index: 1100;
+            backdrop-filter: blur(12px);
+        }
+
+        .layout-popover-header {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64b5f6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.12);
+        }
+
+        .layout-slider-group {
+            margin-bottom: 12px;
+        }
+
+        .layout-slider-group label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #b0c4de;
+            margin-bottom: 5px;
+        }
+
+        .layout-slider-group label span {
+            color: #64b5f6;
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        .layout-slider-group input[type="range"] {
+            width: 100%;
+            height: 4px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(100, 181, 246, 0.15);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .layout-slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #64b5f6;
+            border: 2px solid rgba(10, 22, 40, 0.9);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+
+        .layout-slider-group input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .layout-slider-group input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #64b5f6;
+            border: 2px solid rgba(10, 22, 40, 0.9);
+            cursor: pointer;
+        }
+
+        .layout-reset-btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 6px 0;
+            font-size: 11px;
+            color: #8eacc5;
+            background: rgba(100, 181, 246, 0.08);
+            border: 1px solid rgba(100, 181, 246, 0.15);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .layout-reset-btn:hover {
+            background: rgba(100, 181, 246, 0.15);
+            color: #e0e6ed;
+        }
+
     </style>
 </head>
 <body>
@@ -2859,6 +2997,43 @@
             &#x1F50D; Monitoring Lab
         </button>
     </div>
+        <!-- Global Layout Settings (visualization physics) -->
+        <div id="layout-settings-wrapper">
+            <button id="layout-settings-btn" onclick="toggleLayoutSettings()" title="Layout Settings">
+                &#x1F441;&#xFE0F; Layout
+            </button>
+            <div id="layout-settings-popover" class="layout-popover" style="display: none;">
+                <div class="layout-popover-header">Layout Settings</div>
+
+                <div class="layout-slider-group">
+                    <label>Link Distance <span id="layout-ld-val">100</span></label>
+                    <input type="range" id="layout-ld-slider" min="30" max="400" value="100" step="5">
+                </div>
+
+                <div class="layout-slider-group">
+                    <label>Repulsion Force <span id="layout-ch-val">-300</span></label>
+                    <input type="range" id="layout-ch-slider" min="-1500" max="-10" value="-300" step="10">
+                </div>
+
+                <div class="layout-slider-group">
+                    <label>Collision Radius <span id="layout-col-val">30</span></label>
+                    <input type="range" id="layout-col-slider" min="5" max="80" value="30" step="1">
+                </div>
+
+                <div class="layout-slider-group">
+                    <label>Velocity Decay <span id="layout-vd-val">0.40</span></label>
+                    <input type="range" id="layout-vd-slider" min="0.05" max="0.95" value="0.40" step="0.05">
+                </div>
+
+                <div class="layout-slider-group">
+                    <label>Cool-down Speed <span id="layout-ad-val">0.023</span></label>
+                    <input type="range" id="layout-ad-slider" min="0.005" max="0.15" value="0.023" step="0.001">
+                </div>
+
+                <button class="layout-reset-btn" onclick="resetLayoutDefaults()">Reset Defaults</button>
+            </div>
+        </div>
+
         <div id="top-controls" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
             <div class="mode-container" style="margin: 0; padding: 0; border: none;">
             <span class="mode-label">Live Mode</span>
@@ -11528,11 +11703,14 @@
             });
             
                 // Update force simulation to handle new node sizes
+                // Uses layoutParams.collisionRadius as the minimum base value
                 if (typeof simulation !== 'undefined') {
+                    const baseRadius = (typeof layoutParams !== 'undefined') ? layoutParams.collisionRadius : 30;
                     simulation.force("collision", d3.forceCollide().radius(d => {
-                        if (!d) return 12; // Default radius if no data
+                        if (!d) return baseRadius;
                         const circle = d3.select(`#node-${d.id}`).select('circle');
-                        return circle.node() ? parseFloat(circle.attr('r')) + 2 : 12;
+                        const nodeR = circle.node() ? parseFloat(circle.attr('r')) + 2 : 12;
+                        return Math.max(nodeR, baseRadius);
                     }));
                     simulation.alpha(0.3).restart();
                 }
@@ -14537,6 +14715,117 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
                 item.classList.remove('selected');
             });
         }
+
+        // =====================================================
+        //  Global Layout Settings — Force Simulation Controls
+        // =====================================================
+
+        const LAYOUT_DEFAULTS = {
+            linkDistance: 100,
+            chargeStrength: -300,
+            collisionRadius: 30,
+            velocityDecay: 0.40,
+            alphaDecay: 0.0228
+        };
+
+        // Store current layout values (used by dynamic collision to read the base radius)
+        const layoutParams = { ...LAYOUT_DEFAULTS };
+
+        function toggleLayoutSettings() {
+            const popover = document.getElementById('layout-settings-popover');
+            const btn = document.getElementById('layout-settings-btn');
+            const isOpen = popover.style.display !== 'none';
+            popover.style.display = isOpen ? 'none' : 'block';
+            btn.classList.toggle('active', !isOpen);
+        }
+
+        // Close popover when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('layout-settings-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const popover = document.getElementById('layout-settings-popover');
+                const btn = document.getElementById('layout-settings-btn');
+                if (popover) popover.style.display = 'none';
+                if (btn) btn.classList.remove('active');
+            }
+        });
+
+        function applyLayoutParam(param, value) {
+            if (typeof simulation === 'undefined' || !simulation) return;
+
+            switch (param) {
+                case 'linkDistance':
+                    simulation.force("link").distance(value);
+                    break;
+                case 'chargeStrength':
+                    simulation.force("charge").strength(value);
+                    break;
+                case 'collisionRadius':
+                    simulation.force("collision", d3.forceCollide().radius(value));
+                    break;
+                case 'velocityDecay':
+                    simulation.velocityDecay(value);
+                    break;
+                case 'alphaDecay':
+                    simulation.alphaDecay(value);
+                    break;
+            }
+            layoutParams[param] = value;
+            simulation.alpha(0.3).restart();
+        }
+
+        function resetLayoutDefaults() {
+            // Reset stored params
+            Object.assign(layoutParams, LAYOUT_DEFAULTS);
+
+            // Reset slider values and displayed numbers
+            const sliderMap = {
+                'layout-ld-slider':  { val: 'layout-ld-val',  key: 'linkDistance',    fmt: v => v },
+                'layout-ch-slider':  { val: 'layout-ch-val',  key: 'chargeStrength',  fmt: v => v },
+                'layout-col-slider': { val: 'layout-col-val', key: 'collisionRadius', fmt: v => v },
+                'layout-vd-slider':  { val: 'layout-vd-val',  key: 'velocityDecay',   fmt: v => v.toFixed(2) },
+                'layout-ad-slider':  { val: 'layout-ad-val',  key: 'alphaDecay',      fmt: v => v.toFixed(3) }
+            };
+
+            for (const [sliderId, info] of Object.entries(sliderMap)) {
+                const defVal = LAYOUT_DEFAULTS[info.key];
+                document.getElementById(sliderId).value = defVal;
+                document.getElementById(info.val).textContent = info.fmt(defVal);
+            }
+
+            // Apply all defaults to the simulation
+            if (typeof simulation !== 'undefined' && simulation) {
+                simulation.force("link").distance(LAYOUT_DEFAULTS.linkDistance);
+                simulation.force("charge").strength(LAYOUT_DEFAULTS.chargeStrength);
+                simulation.force("collision", d3.forceCollide().radius(LAYOUT_DEFAULTS.collisionRadius));
+                simulation.velocityDecay(LAYOUT_DEFAULTS.velocityDecay);
+                simulation.alphaDecay(LAYOUT_DEFAULTS.alphaDecay);
+                simulation.alpha(0.3).restart();
+            }
+        }
+
+        // Wire up slider event listeners once DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliders = [
+                { id: 'layout-ld-slider',  valId: 'layout-ld-val',  param: 'linkDistance',    parse: Number,      fmt: v => v },
+                { id: 'layout-ch-slider',  valId: 'layout-ch-val',  param: 'chargeStrength',  parse: Number,      fmt: v => v },
+                { id: 'layout-col-slider', valId: 'layout-col-val', param: 'collisionRadius', parse: Number,      fmt: v => v },
+                { id: 'layout-vd-slider',  valId: 'layout-vd-val',  param: 'velocityDecay',   parse: parseFloat,  fmt: v => parseFloat(v).toFixed(2) },
+                { id: 'layout-ad-slider',  valId: 'layout-ad-val',  param: 'alphaDecay',      parse: parseFloat,  fmt: v => parseFloat(v).toFixed(3) }
+            ];
+
+            sliders.forEach(s => {
+                const el = document.getElementById(s.id);
+                if (!el) return;
+                el.addEventListener('input', function(e) {
+                    const raw = e.target.value;
+                    const value = s.parse(raw);
+                    document.getElementById(s.valId).textContent = s.fmt(raw);
+                    applyLayoutParam(s.param, value);
+                });
+            });
+        });
+
     </script>
     <!-- Load Chart.js properly at the end of the body for better performance -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
