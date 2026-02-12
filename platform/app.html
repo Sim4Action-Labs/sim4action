@@ -2408,10 +2408,23 @@
             border-color: rgba(100, 181, 246, 0.3);
         }
 
+        .viz-toggle-button.active {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.6) 0%, rgba(32, 201, 151, 0.6) 100%);
+            color: #ffffff;
+            border-color: rgba(40, 167, 69, 0.7);
+            font-weight: 600;
+        }
+
         .viz-toggle-button:disabled {
             background: rgba(26, 42, 74, 0.2);
             color: rgba(176, 196, 222, 0.25);
             border-color: rgba(100, 181, 246, 0.05);
+        }
+
+        .viz-toggle-button.active:disabled {
+            background: rgba(40, 167, 69, 0.15);
+            color: rgba(176, 196, 222, 0.35);
+            border-color: rgba(40, 167, 69, 0.2);
         }
 
         /* Dashboard */
@@ -3093,6 +3106,7 @@
         let showTokenAnimation = true; // Token flow animation on canvas (on by default)
         let showChargeVisualization = false;
         let showStrengthVisualization = false;
+        let showNodeInflation = false; // Node Pulse — inflate node circles by flow magnitude
         let visualTokenIdCounter = 0;
         // links already declared above as global variable
         let svg; // Make svg global to access it during reload
@@ -4112,9 +4126,12 @@
                     <!-- Visualization Controls -->
                     <div style="margin-bottom: 10px;">
                         <label style="font-size: 11px; color: #8ab4d8; display: block; margin-bottom: 3px;">Canvas Animation:</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
                             <button id="toggle-token-anim" class="viz-toggle-button active" onclick="toggleTokenAnimation()" disabled>
                                 Token Flow
+                            </button>
+                            <button id="toggle-node-inflate" class="viz-toggle-button" onclick="toggleNodeInflation()" disabled>
+                                Node Pulse
                             </button>
                             <button id="toggle-charge-viz" class="viz-toggle-button" onclick="toggleChargeVisualization()" disabled>
                                 Charge Color
@@ -6396,6 +6413,7 @@
                 // Deterministic mode: use flow heatmap on nodes
                 diffusionModel.step();
                 if (showTokenAnimation) updateFlowHeatmap();
+                if (showNodeInflation) updateNodeInflation();
                 updateDashboard();
                 updateResultsWindow();
             } else {
@@ -6404,6 +6422,7 @@
                 diffusionModel.step();
                 setTimeout(() => {
                     if (showTokenAnimation) updateTokenVisualization();
+                    if (showNodeInflation) updateNodeInflation();
                     updateDashboard();
                     updateResultsWindow();
                 }, 100);
@@ -6465,21 +6484,36 @@
         }
         
         function animateTokenMovement(token, fromNode, toNode, duration = 1000) {
-            if (!window.tokenOverlay) return;
+            if (!window.tokenOverlay || !showTokenAnimation) return;
             
             const fromPos = getNodePosition(fromNode);
             const toPos = getNodePosition(toNode);
             
             if (!fromPos || !toPos) return;
             
-            // Create white dot token
+            // Determine fill color based on charge visualization
+            let fillColor = '#ffffff';
+            if (showChargeVisualization && token) {
+                const charge = token.charge || 1;
+                fillColor = charge > 0 ? '#66bb6a' : '#ef5350';
+            }
+            
+            // Determine radius based on strength visualization
+            let radius = 3;
+            if (showStrengthVisualization && token && selectedNodes && selectedNodes.has(fromNode)) {
+                const nodeData = selectedNodes.get(fromNode);
+                const strength = nodeData && nodeData.tokenCount ? nodeData.tokenCount : 1;
+                radius = 2 + Math.min(strength, 8);
+            }
+            
+            // Create token dot
             const animatedToken = window.tokenOverlay.append('circle')
                 .attr('class', 'token-circle in-transit')
-                .attr('r', 3)
+                .attr('r', radius)
                 .attr('cx', fromPos.x)
                 .attr('cy', fromPos.y)
-                .style('fill', '#ffffff')
-                .style('stroke', 'rgba(255,255,255,0.4)')
+                .style('fill', fillColor)
+                .style('stroke', 'rgba(255,255,255,0.3)')
                 .style('stroke-width', 1);
             
             // Simple straight-line movement
@@ -6489,10 +6523,8 @@
                 .attr('cx', toPos.x)
                 .attr('cy', toPos.y)
                 .on('end', function() {
-                    // Remove the animated token when animation completes
                     d3.select(this).remove();
-                    // Update visualization to show new token count
-                    updateTokenVisualization();
+                    if (showTokenAnimation) updateTokenVisualization();
                 });
         }
         
@@ -6801,6 +6833,9 @@
             // Clear flow heatmap if in deterministic mode
             clearFlowHeatmap();
             
+            // Reset node inflation
+            resetNodeInflation();
+            
             // Reset independent visual token system
             stopVisualTokenAnimation();
             visualTokens = [];
@@ -6944,15 +6979,14 @@
             
             const button = document.getElementById('toggle-charge-viz');
             if (button) {
-                if (showChargeVisualization) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
+                button.classList.toggle('active', showChargeVisualization);
             }
             
-            // Immediately update token visualization
-            if (showTokenAnimation) updateTransitTokens();
+            // Immediately restyle all on-screen tokens
+            if (showTokenAnimation) {
+                updateTransitTokens();
+                restyleAllTokens();
+            }
             
             console.log(`Charge visualization: ${showChargeVisualization ? 'ON' : 'OFF'}`);
         }
@@ -6962,17 +6996,137 @@
             
             const button = document.getElementById('toggle-strength-viz');
             if (button) {
-                if (showStrengthVisualization) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
+                button.classList.toggle('active', showStrengthVisualization);
             }
             
-            // Immediately update token visualization
-            if (showTokenAnimation) updateTransitTokens();
+            // Immediately restyle all on-screen tokens
+            if (showTokenAnimation) {
+                updateTransitTokens();
+                restyleAllTokens();
+            }
             
             console.log(`Strength visualization: ${showStrengthVisualization ? 'ON' : 'OFF'}`);
+        }
+        
+        /**
+         * Re-apply charge color and strength size to all token elements currently
+         * on the canvas (both .transit-token and .token-circle).
+         */
+        function restyleAllTokens() {
+            if (!window.tokenOverlay) return;
+            
+            // Restyle .token-circle elements (from animateTokenMovement)
+            window.tokenOverlay.selectAll('.token-circle')
+                .style('fill', function() {
+                    if (showChargeVisualization) {
+                        // Try to infer charge from position — fallback to white
+                        return '#ffffff'; // token-circles don't carry charge data; next ones will
+                    }
+                    return '#ffffff';
+                });
+            
+            // Restyle .transit-token elements (from visual token system)  
+            window.tokenOverlay.selectAll('.transit-token')
+                .style('fill', d => {
+                    if (showChargeVisualization && d) {
+                        let charge = d.charge || 1;
+                        if (visualTokenCharges && visualTokenCharges.has(d.currentNode)) {
+                            charge = visualTokenCharges.get(d.currentNode);
+                        }
+                        return charge > 0 ? '#66bb6a' : '#ef5350';
+                    }
+                    return '#ffffff';
+                })
+                .attr('r', d => {
+                    if (showStrengthVisualization && d && selectedNodes && selectedNodes.has(d.currentNode)) {
+                        const nodeData = selectedNodes.get(d.currentNode);
+                        const strength = nodeData && nodeData.tokenCount ? nodeData.tokenCount : 1;
+                        return 3 + Math.min(strength * 2, 15);
+                    }
+                    return 5;
+                });
+        }
+        
+        // ===== NODE PULSE (INFLATION) VISUALIZATION =====
+        
+        /**
+         * Toggle node inflation on/off.
+         * When active, node circles scale proportionally to their current flow magnitude.
+         */
+        function toggleNodeInflation() {
+            showNodeInflation = !showNodeInflation;
+            
+            const button = document.getElementById('toggle-node-inflate');
+            if (button) {
+                button.classList.toggle('active', showNodeInflation);
+            }
+            
+            if (showNodeInflation) {
+                // Apply immediately with current flow data
+                updateNodeInflation();
+            } else {
+                // Reset nodes to their base size
+                resetNodeInflation();
+            }
+            
+            console.log(`Node Pulse: ${showNodeInflation ? 'ON' : 'OFF'}`);
+        }
+        
+        /**
+         * Update node circle radii based on current flow magnitude.
+         * Uses sqrt scaling so circle *area* is proportional to flow value,
+         * which is perceptually correct for comparing magnitudes.
+         */
+        function updateNodeInflation() {
+            if (!showNodeInflation || !diffusionModel || !window.nodeSelection) return;
+            
+            // Get latest node flows from whichever model is active
+            let nodeFlows = {};
+            if (diffusionModel.nodeFlowsOverTime && diffusionModel.nodeFlowsOverTime.length > 0) {
+                nodeFlows = diffusionModel.nodeFlowsOverTime[diffusionModel.nodeFlowsOverTime.length - 1] || {};
+            } else if (typeof diffusionModel.getNodeFlows === 'function') {
+                nodeFlows = diffusionModel.getNodeFlows();
+            }
+            
+            // Compute max absolute flow for normalization
+            const absFlows = Object.values(nodeFlows).map(Math.abs);
+            const maxFlow = Math.max(1, ...absFlows);
+            
+            // sqrt scale: area ∝ flow → radius ∝ √(flow / maxFlow)
+            // Range: [baseRadius, baseRadius × maxMultiplier]
+            const maxMultiplier = 3.5;
+            
+            window.nodeSelection.each(function(d) {
+                const baseRadius = d.domain === 'FOCAL FACTORS' ? 12 : 10;
+                const flow = Math.abs(nodeFlows[d.id] || 0);
+                
+                // Normalized value 0..1
+                const normalized = flow / maxFlow;
+                // sqrt scale — keeps small values visible, prevents huge nodes
+                const inflatedRadius = baseRadius + (baseRadius * (maxMultiplier - 1)) * Math.sqrt(normalized);
+                
+                d3.select(this).select('circle')
+                    .transition()
+                    .duration(400)
+                    .ease(d3.easeCubicOut)
+                    .attr('r', inflatedRadius);
+            });
+        }
+        
+        /**
+         * Reset all node circles to their base radii.
+         */
+        function resetNodeInflation() {
+            if (!window.nodeSelection) return;
+            
+            window.nodeSelection.each(function(d) {
+                const baseRadius = d.domain === 'FOCAL FACTORS' ? 12 : 10;
+                d3.select(this).select('circle')
+                    .transition()
+                    .duration(400)
+                    .ease(d3.easeCubicOut)
+                    .attr('r', baseRadius);
+            });
         }
         
         // Update button states when diffusion is initialized
@@ -6985,6 +7139,7 @@
             document.getElementById('speed-medium').disabled = !hasModel;
             document.getElementById('speed-fast').disabled = !hasModel;
             document.getElementById('toggle-token-anim').disabled = !hasModel;
+            document.getElementById('toggle-node-inflate').disabled = !hasModel;
             document.getElementById('toggle-charge-viz').disabled = !hasModel;
             document.getElementById('toggle-strength-viz').disabled = !hasModel;
             document.getElementById('show-results-window').disabled = !hasModel;
