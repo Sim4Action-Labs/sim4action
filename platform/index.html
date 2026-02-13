@@ -2435,7 +2435,7 @@
             Platform Guide &amp; Systems Thinking Primer
         </h2>
         <div class="doc-toggle-actions">
-            <a href="presentation.html" target="_blank" class="btn-presentation" onclick="event.stopPropagation()">
+            <a href="#" class="btn-presentation" onclick="event.stopPropagation(); event.preventDefault();" style="opacity:0.5; cursor:default;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                 Presentation
             </a>
@@ -2629,7 +2629,7 @@ graph LR
 graph LR
     U["1. Understand<br/>Diagnostics Lab"] --> I["2. Intervene<br/>Intervention Lab"]
     I --> M["3. Monitor<br/>Monitoring Lab"]
-    M -.->|"learn &amp; adapt"| U
+    M -->|"learn, adapt, repeat"| U
                         </div>
                         <p class="diagram-caption">The SIM4Action analytical cycle aligns with adaptive management: understand the system, design and test interventions, monitor outcomes, and use what you learn to refine your understanding. Each iteration deepens insight and improves management decisions.</p>
                     </div>
