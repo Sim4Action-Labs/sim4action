@@ -2982,6 +2982,87 @@
             color: #e0e6ed;
         }
 
+        /* Export Dropdown Styles */
+        .export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .export-dropdown .export-menu {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            min-width: 220px;
+            background: #1a2a4a;
+            border: 1px solid rgba(100, 181, 246, 0.25);
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            padding: 4px 0;
+            margin-bottom: 4px;
+        }
+
+        .export-dropdown .export-menu.show {
+            display: block;
+        }
+
+        .export-dropdown .export-menu button {
+            display: block;
+            width: 100%;
+            padding: 8px 14px;
+            border: none;
+            background: transparent;
+            color: #b0cfe0;
+            font-size: 12px;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .export-dropdown .export-menu button:hover {
+            background: rgba(100, 181, 246, 0.15);
+            color: #e0e6ed;
+        }
+
+        .export-dropdown .export-menu .export-menu-divider {
+            height: 1px;
+            background: rgba(100, 181, 246, 0.12);
+            margin: 4px 0;
+        }
+
+        .export-dropdown .export-menu .export-menu-header {
+            padding: 4px 14px;
+            font-size: 10px;
+            color: #5a7a96;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: default;
+        }
+
+        .export-dropdown .export-menu .export-menu-header:hover {
+            background: transparent;
+            color: #5a7a96;
+        }
+
+        /* Small export button for filter panel sections */
+        .export-small-btn {
+            padding: 4px 10px;
+            font-size: 10px;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            background: rgba(26, 42, 74, 0.5);
+            color: #8ab4d8;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-small-btn:hover {
+            background: rgba(100, 181, 246, 0.1);
+            border-color: #1e88e5;
+            color: #e0e6ed;
+        }
+
     </style>
 </head>
 <body>
@@ -3078,7 +3159,18 @@
 
                 <button class="results-button" onclick="showSingleNodeChart()">Single Node</button>
                 <button id="influence-ranking-btn" class="results-button" onclick="showInfluenceRanking()" style="display: none;">Influence Ranking</button>
-                <button class="results-button" onclick="exportResults()">Export Data</button>
+                <div class="export-dropdown" style="display: inline-block;">
+                    <button class="results-button" onclick="toggleExportMenu(this)">Export Data &#9662;</button>
+                    <div class="export-menu">
+                        <div class="export-menu-header">CSV Exports</div>
+                        <button onclick="exportNodeFlowsCSV()">Node Flows (CSV)</button>
+                        <button onclick="exportEdgeFlowsCSV()">Edge Flows (CSV)</button>
+                        <button onclick="exportSummaryStatisticsCSV()">Summary Statistics (CSV)</button>
+                        <div class="export-menu-divider"></div>
+                        <div class="export-menu-header">Report</div>
+                        <button onclick="exportScenarioMarkdown()">Full Report (Markdown)</button>
+                    </div>
+                </div>
                 <button class="results-button" onclick="clearResults()">Clear</button>
             </div>
             
@@ -3144,7 +3236,11 @@
     <div id="centrality-popup">
         <div id="centrality-popup-header">
             <h2>Comprehensive Centrality Analysis</h2>
-            <button id="centrality-popup-close" onclick="hideComprehensiveCentrality()">&times;</button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <button class="export-small-btn" onclick="exportComprehensiveCentralityCSV()" title="Export all centrality data as CSV" style="font-size: 11px; padding: 5px 12px;">Export CSV</button>
+                <button class="export-small-btn" onclick="exportComprehensiveCentralityMarkdown()" title="Export comprehensive report as Markdown" style="font-size: 11px; padding: 5px 12px;">Export Report</button>
+                <button id="centrality-popup-close" onclick="hideComprehensiveCentrality()">&times;</button>
+            </div>
         </div>
         <div id="centrality-popup-content">
             <div class="centrality-section">
@@ -3993,6 +4089,10 @@
                         <div style="border-bottom: 1px solid #dee2e6; padding: 4px 0; text-align: right;" id="stat-decade-relationships">-</div>
                     </div>
                 </div>
+                <div style="margin-top: 8px; display: flex; gap: 4px;">
+                    <button class="export-small-btn" onclick="exportDiagnosticsFullCSV()" title="Export full diagnostics data as CSV">Export CSV</button>
+                    <button class="export-small-btn" onclick="exportDiagnosticsFullMarkdown()" title="Export full diagnostics report as Markdown">Export Full Report</button>
+                </div>
             `;
             diagnosticsDiv.appendChild(systemStatsSection);
             
@@ -4108,6 +4208,10 @@
                     <div id="feedback-loop-stats"></div>
                     <div id="feedback-loop-list" style="max-height: 120px; overflow-y: auto; margin-top: 5px;"></div>
                 </div>
+                <div id="feedback-export-btns" style="display: none; margin-top: 6px; gap: 4px;">
+                    <button class="export-small-btn" onclick="exportFeedbackLoopsCSV()" title="Export loops as CSV">Export CSV</button>
+                    <button class="export-small-btn" onclick="exportFeedbackLoopsMarkdown()" title="Export loops report as Markdown">Export Report</button>
+                </div>
             `;
             diagnosticsDiv.appendChild(feedbackSection);
 
@@ -4174,6 +4278,10 @@
                 <div id="cluster-info" style="font-size: 11px; color: #7a8fa5; margin-top: 8px; display: none;">
                     <div id="cluster-stats"></div>
                     <div id="cluster-legend" style="margin-top: 8px;"></div>
+                    <div id="cluster-export-btns" style="margin-top: 6px; display: flex; gap: 4px;">
+                        <button class="export-small-btn" onclick="exportClustersCSV()" title="Export clusters as CSV">Export CSV</button>
+                        <button class="export-small-btn" onclick="exportClustersMarkdown()" title="Export clusters report as Markdown">Export Report</button>
+                    </div>
                 </div>
             `;
             diagnosticsDiv.appendChild(clusterSection);
@@ -4646,13 +4754,28 @@
                         
                         <div id="ga-result-stats" style="font-size: 10px; color: #b0cfe0; margin-bottom: 8px;"></div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
                             <button id="ga-apply-scenario" class="diffusion-button" onclick="applyGAToScenario()" style="font-size: 10px; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: 1px solid #20c997;">
                                 Apply to Scenario
                             </button>
                             <button id="ga-apply-ensemble" class="diffusion-button" onclick="applyGAToEnsemble()" style="font-size: 10px; background: linear-gradient(135deg, #6f42c1 0%, #8e44ad 100%); color: white; border: 1px solid #8e44ad;">
                                 Apply to Ensemble
                             </button>
+                        </div>
+                        
+                        <div class="export-dropdown" style="width: 100%;">
+                            <button class="diffusion-button" onclick="toggleExportMenu(this)" style="width: 100%; font-size: 10px; background: rgba(26, 42, 74, 0.6); color: #8ab4d8; border: 1px solid rgba(100,181,246,0.2);">
+                                Export Results &#9662;
+                            </button>
+                            <div class="export-menu" style="width: 100%; bottom: auto; top: 100%; margin-top: 4px; margin-bottom: 0;">
+                                <div class="export-menu-header">CSV Exports</div>
+                                <button onclick="exportGAAllocationCSV()">Allocation (CSV)</button>
+                                <button onclick="exportGAConvergenceCSV()">Convergence (CSV)</button>
+                                <button onclick="exportGATargetFlowsCSV()">Target Flows (CSV)</button>
+                                <div class="export-menu-divider"></div>
+                                <div class="export-menu-header">Report</div>
+                                <button onclick="exportGAMarkdown()">Full Report (Markdown)</button>
+                            </div>
                         </div>
                     </div>
                     
@@ -4736,6 +4859,9 @@
                     <h4>Why it's useful</h4>
                     <p class="metric-usefulness"></p>
                     <div id="centrality-table-container"></div>
+                    <div id="centrality-export-btn" style="margin-top: 6px; display: none;">
+                        <button class="export-small-btn" onclick="exportCentralityCSV()" title="Export current centrality metric as CSV">Export CSV</button>
+                    </div>
                 </div>
             `;
 
@@ -8474,49 +8600,1082 @@
                 .text('Initialize diffusion to see results');
         }
         
+        // ============================================================
+        // SHARED EXPORT UTILITIES
+        // ============================================================
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function generateTimestamp() {
+            const now = new Date();
+            return now.getFullYear().toString() +
+                String(now.getMonth() + 1).padStart(2, '0') +
+                String(now.getDate()).padStart(2, '0') + '_' +
+                String(now.getHours()).padStart(2, '0') +
+                String(now.getMinutes()).padStart(2, '0') +
+                String(now.getSeconds()).padStart(2, '0');
+        }
+
+        function getSystemPrefix() {
+            const name = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'system');
+            return name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_|_$/g, '').toLowerCase();
+        }
+
+        function exportFilename(exportType, ext) {
+            return `${getSystemPrefix()}_${exportType}_${generateTimestamp()}.${ext}`;
+        }
+
+        function csvEscape(value) {
+            if (value === null || value === undefined) return '';
+            const str = String(value);
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                return '"' + str.replace(/"/g, '""') + '"';
+            }
+            return str;
+        }
+
+        function toggleExportMenu(btn) {
+            const menu = btn.nextElementSibling;
+            const isOpen = menu.classList.contains('show');
+            // Close all other menus first
+            document.querySelectorAll('.export-menu.show').forEach(m => m.classList.remove('show'));
+            if (!isOpen) {
+                menu.classList.add('show');
+                // Close on outside click
+                const closeHandler = (e) => {
+                    if (!btn.parentElement.contains(e.target)) {
+                        menu.classList.remove('show');
+                        document.removeEventListener('click', closeHandler);
+                    }
+                };
+                setTimeout(() => document.addEventListener('click', closeHandler), 0);
+            }
+        }
+
+        function getNodeLabel(nodeId) {
+            if (diffusionGraph && diffusionGraph.nodes[nodeId]) {
+                return diffusionGraph.nodes[nodeId].label || nodeId;
+            }
+            const factor = factors.find(f => f.id === nodeId);
+            return factor ? factor.name : nodeId;
+        }
+
+        function getNodeDomain(nodeId) {
+            const factor = factors.find(f => f.id === nodeId);
+            return factor ? factor.domain_name : '';
+        }
+
+        // ============================================================
+        // SCENARIO TOKEN DIFFUSION EXPORTS
+        // ============================================================
+
+        function exportNodeFlowsCSV() {
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime || diffusionModel.nodeFlowsOverTime.length === 0) {
+                alert('No scenario diffusion results to export. Please run a simulation first.');
+                return;
+            }
+
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            const headers = ['Step', ...nodeIds.map(id => csvEscape(getNodeLabel(id)))];
+            let csv = headers.join(',') + '\n';
+
+            diffusionModel.nodeFlowsOverTime.forEach((snapshot, step) => {
+                const row = [step, ...nodeIds.map(id => (snapshot[id] || 0).toFixed(4))];
+                csv += row.join(',') + '\n';
+            });
+
+            downloadFile(csv, exportFilename('scenario_node_flows', 'csv'), 'text/csv');
+        }
+
+        function exportEdgeFlowsCSV() {
+            if (!diffusionModel || !diffusionModel.edgeFlowsOverTime || diffusionModel.edgeFlowsOverTime.length === 0) {
+                alert('No scenario diffusion results to export. Please run a simulation first.');
+                return;
+            }
+
+            const allEdgeKeys = new Set();
+            diffusionModel.edgeFlowsOverTime.forEach(snapshot => {
+                Object.keys(snapshot).forEach(k => allEdgeKeys.add(k));
+            });
+            const edgeKeys = Array.from(allEdgeKeys).sort();
+
+            const headers = ['Step', ...edgeKeys.map(k => {
+                const parts = k.split(',');
+                return csvEscape(`${getNodeLabel(parts[0])}->${getNodeLabel(parts[1])}`);
+            })];
+            let csv = headers.join(',') + '\n';
+
+            diffusionModel.edgeFlowsOverTime.forEach((snapshot, step) => {
+                const row = [step, ...edgeKeys.map(k => (snapshot[k] || 0).toFixed(4))];
+                csv += row.join(',') + '\n';
+            });
+
+            downloadFile(csv, exportFilename('scenario_edge_flows', 'csv'), 'text/csv');
+        }
+
+        function exportSummaryStatisticsCSV() {
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime || diffusionModel.nodeFlowsOverTime.length === 0) {
+                alert('No scenario diffusion results to export. Please run a simulation first.');
+                return;
+            }
+
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            const lastStep = diffusionModel.nodeFlowsOverTime[diffusionModel.nodeFlowsOverTime.length - 1];
+            const totalSteps = diffusionModel.nodeFlowsOverTime.length;
+
+            // Compute per-node stats
+            let csv = 'Metric,Value\n';
+            csv += `Total Steps,${totalSteps}\n`;
+            csv += `Total Nodes,${nodeIds.length}\n`;
+
+            // Active nodes (non-zero final value)
+            const activeNodes = nodeIds.filter(id => Math.abs(lastStep[id] || 0) > 0.001).length;
+            csv += `Active Nodes (final step),${activeNodes}\n`;
+
+            // Peak token count across all steps
+            let peakCount = 0;
+            let peakNode = '';
+            nodeIds.forEach(id => {
+                diffusionModel.nodeFlowsOverTime.forEach(snap => {
+                    const val = Math.abs(snap[id] || 0);
+                    if (val > peakCount) {
+                        peakCount = val;
+                        peakNode = id;
+                    }
+                });
+            });
+            csv += `Peak Token Count,${peakCount.toFixed(4)}\n`;
+            csv += `Most Active Node,${csvEscape(getNodeLabel(peakNode))}\n`;
+
+            csv += '\n';
+            csv += 'Node_ID,Node_Name,Domain,Final_Value,Abs_Final_Value\n';
+            nodeIds.forEach(id => {
+                const finalVal = lastStep[id] || 0;
+                csv += `${id},${csvEscape(getNodeLabel(id))},${csvEscape(getNodeDomain(id))},${finalVal.toFixed(4)},${Math.abs(finalVal).toFixed(4)}\n`;
+            });
+
+            downloadFile(csv, exportFilename('scenario_summary', 'csv'), 'text/csv');
+        }
+
+        // ============================================================
+        // SCENARIO MARKDOWN EXPORT
+        // ============================================================
+
+        function exportScenarioMarkdown() {
+            if (!diffusionModel || !diffusionModel.nodeFlowsOverTime || diffusionModel.nodeFlowsOverTime.length === 0) {
+                alert('No scenario diffusion results to export. Please run a simulation first.');
+                return;
+            }
+
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            const lastStep = diffusionModel.nodeFlowsOverTime[diffusionModel.nodeFlowsOverTime.length - 1];
+            const totalSteps = diffusionModel.nodeFlowsOverTime.length;
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+
+            let md = `# Token Diffusion Scenario Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n`;
+            md += `**Total Steps:** ${totalSteps}\n\n`;
+
+            // Initial token allocation
+            const firstStep = diffusionModel.nodeFlowsOverTime[0];
+            const allocatedNodes = nodeIds.filter(id => Math.abs(firstStep[id] || 0) > 0.001);
+            if (allocatedNodes.length > 0) {
+                md += `## Initial Token Allocation\n\n`;
+                md += `| Node | Domain | Tokens |\n`;
+                md += `|------|--------|--------|\n`;
+                allocatedNodes.forEach(id => {
+                    md += `| ${getNodeLabel(id)} | ${getNodeDomain(id)} | ${(firstStep[id] || 0).toFixed(2)} |\n`;
+                });
+                md += '\n';
+            }
+
+            // Summary statistics
+            let peakCount = 0, peakNode = '';
+            nodeIds.forEach(id => {
+                diffusionModel.nodeFlowsOverTime.forEach(snap => {
+                    const val = Math.abs(snap[id] || 0);
+                    if (val > peakCount) { peakCount = val; peakNode = id; }
+                });
+            });
+            const activeNodes = nodeIds.filter(id => Math.abs(lastStep[id] || 0) > 0.001).length;
+
+            md += `## Summary Statistics\n\n`;
+            md += `| Metric | Value |\n`;
+            md += `|--------|-------|\n`;
+            md += `| Total Steps | ${totalSteps} |\n`;
+            md += `| Total Nodes | ${nodeIds.length} |\n`;
+            md += `| Active Nodes (final) | ${activeNodes} |\n`;
+            md += `| Peak Token Count | ${peakCount.toFixed(4)} |\n`;
+            md += `| Most Active Node | ${getNodeLabel(peakNode)} |\n\n`;
+
+            // Top 10 most affected nodes
+            const sorted = nodeIds
+                .map(id => ({ id, label: getNodeLabel(id), domain: getNodeDomain(id), finalVal: lastStep[id] || 0 }))
+                .sort((a, b) => Math.abs(b.finalVal) - Math.abs(a.finalVal))
+                .slice(0, 10);
+
+            md += `## Top 10 Most Affected Nodes\n\n`;
+            md += `| Rank | Node | Domain | Final Value |\n`;
+            md += `|------|------|--------|-------------|\n`;
+            sorted.forEach((n, i) => {
+                md += `| ${i + 1} | ${n.label} | ${n.domain} | ${n.finalVal.toFixed(4)} |\n`;
+            });
+            md += '\n';
+
+            // Increasing / Decreasing
+            const increasing = nodeIds.filter(id => (lastStep[id] || 0) > 0.001).map(id => getNodeLabel(id));
+            const decreasing = nodeIds.filter(id => (lastStep[id] || 0) < -0.001).map(id => getNodeLabel(id));
+
+            md += `## Node Direction\n\n`;
+            md += `**Increasing (${increasing.length}):** ${increasing.join(', ') || 'None'}\n\n`;
+            md += `**Decreasing (${decreasing.length}):** ${decreasing.join(', ') || 'None'}\n\n`;
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('scenario_report', 'md'), 'text/markdown');
+        }
+
+        // Legacy wrapper for the old exportResults button
         async function exportResults() {
-            alert('Export functionality is not yet implemented. This feature will be available in a future update.');
-            console.log('Export Data button clicked - placeholder function');
+            exportNodeFlowsCSV();
         }
-        
-        async function exportToExcel() {
-            // Placeholder function - not implemented
-            console.log('exportToExcel called - placeholder function');
+
+        // ============================================================
+        // ENSEMBLE TOKEN DIFFUSION EXPORTS
+        // ============================================================
+
+        function exportEnsembleTimeSeriesCSV() {
+            if (!ensembleModel || !ensembleModel.nodeTimeSeriesStats || Object.keys(ensembleModel.nodeTimeSeriesStats).length === 0) {
+                alert('No ensemble time series data to export. Please run an ensemble simulation first.');
+                return;
+            }
+
+            const nodeIds = Object.keys(ensembleModel.nodeTimeSeriesStats);
+            const firstNode = ensembleModel.nodeTimeSeriesStats[nodeIds[0]];
+            const numSteps = firstNode.meanSeries ? firstNode.meanSeries.length : 0;
+
+            if (numSteps === 0) {
+                alert('No ensemble time series data available.');
+                return;
+            }
+
+            // Build headers: Step, Node1_Mean, Node1_Min, Node1_Max, ...
+            let headers = ['Step'];
+            nodeIds.forEach(id => {
+                const label = getNodeLabel(id);
+                headers.push(csvEscape(label + '_Mean'), csvEscape(label + '_Min'), csvEscape(label + '_Max'));
+            });
+            let csv = headers.join(',') + '\n';
+
+            for (let step = 0; step < numSteps; step++) {
+                let row = [step];
+                nodeIds.forEach(id => {
+                    const stats = ensembleModel.nodeTimeSeriesStats[id];
+                    row.push(
+                        (stats.meanSeries[step] || 0).toFixed(4),
+                        (stats.minSeries[step] || 0).toFixed(4),
+                        (stats.maxSeries[step] || 0).toFixed(4)
+                    );
+                });
+                csv += row.join(',') + '\n';
+            }
+
+            downloadFile(csv, exportFilename('ensemble_timeseries', 'csv'), 'text/csv');
         }
-        
-        function exportNodeFlowsCSV(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportNodeFlowsCSV called - placeholder function');
+
+        function exportEnsemblePerRunCSV() {
+            if (!ensembleResults || ensembleResults.length === 0) {
+                alert('No ensemble per-run data to export. Please run an ensemble simulation first.');
+                return;
+            }
+
+            const nodeIds = Object.keys(diffusionGraph.nodes);
+            const headers = ['Run', ...nodeIds.map(id => csvEscape(getNodeLabel(id)))];
+            let csv = headers.join(',') + '\n';
+
+            ensembleResults.forEach((run, idx) => {
+                const row = [idx + 1, ...nodeIds.map(id => ((run.finalNodeFlows && run.finalNodeFlows[id]) || 0).toFixed(4))];
+                csv += row.join(',') + '\n';
+            });
+
+            downloadFile(csv, exportFilename('ensemble_per_run', 'csv'), 'text/csv');
         }
-        
-        function exportEdgeFlowsCSV(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportEdgeFlowsCSV called - placeholder function');
+
+        // ============================================================
+        // ENSEMBLE MARKDOWN EXPORT
+        // ============================================================
+
+        function exportEnsembleMarkdown() {
+            if (!ensembleModel || ensembleModel.completedRuns === 0) {
+                alert('No ensemble results to export.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+            const nodeIds = Object.keys(ensembleModel.nodeStats);
+
+            let md = `# Ensemble Token Diffusion Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n`;
+            md += `**Total Runs:** ${ensembleModel.completedRuns}\n`;
+            md += `**Time Steps per Run:** ${ensembleModel.timeSteps || 'N/A'}\n\n`;
+
+            // Summary statistics table
+            md += `## Node Summary Statistics\n\n`;
+            md += `| Node | Domain | Min | Max | Mean | Std Dev |\n`;
+            md += `|------|--------|-----|-----|------|---------|\n`;
+
+            const nodeRows = [];
+            nodeIds.forEach(nodeId => {
+                const stats = ensembleModel.nodeStats[nodeId];
+                if (stats.values.length > 0) {
+                    const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
+                    const stdDev = Math.sqrt(variance);
+                    nodeRows.push({
+                        id: nodeId,
+                        label: getNodeLabel(nodeId),
+                        domain: getNodeDomain(nodeId),
+                        min: stats.min,
+                        max: stats.max,
+                        mean: stats.mean,
+                        stdDev: stdDev,
+                        range: stats.max - stats.min
+                    });
+                }
+            });
+
+            nodeRows.forEach(n => {
+                md += `| ${n.label} | ${n.domain} | ${n.min.toFixed(3)} | ${n.max.toFixed(3)} | ${n.mean.toFixed(3)} | ${n.stdDev.toFixed(3)} |\n`;
+            });
+            md += '\n';
+
+            // Most positive / negative / variable
+            const byMean = [...nodeRows].sort((a, b) => b.mean - a.mean);
+            const byNegMean = [...nodeRows].sort((a, b) => a.mean - b.mean);
+            const byRange = [...nodeRows].sort((a, b) => b.range - a.range);
+
+            md += `## Most Positive Impact (Top 5)\n\n`;
+            byMean.slice(0, 5).forEach((n, i) => {
+                md += `${i + 1}. **${n.label}** (Mean: ${n.mean.toFixed(3)})\n`;
+            });
+            md += '\n';
+
+            md += `## Most Negative Impact (Top 5)\n\n`;
+            byNegMean.filter(n => n.mean < 0).slice(0, 5).forEach((n, i) => {
+                md += `${i + 1}. **${n.label}** (Mean: ${n.mean.toFixed(3)})\n`;
+            });
+            md += '\n';
+
+            md += `## Highest Variability (Top 5)\n\n`;
+            byRange.slice(0, 5).forEach((n, i) => {
+                md += `${i + 1}. **${n.label}** (Range: ${n.range.toFixed(3)}, StdDev: ${n.stdDev.toFixed(3)})\n`;
+            });
+            md += '\n';
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('ensemble_report', 'md'), 'text/markdown');
         }
-        
-        function exportTokenJourneyCSV(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportTokenJourneyCSV called - placeholder function');
+
+        // ============================================================
+        // GA OPTIMIZATION EXPORTS
+        // ============================================================
+
+        function exportGAAllocationCSV() {
+            if (!window._gaResult || !window._gaResult.bestAllocation) {
+                alert('No GA optimization results to export. Please run the optimizer first.');
+                return;
+            }
+
+            const alloc = window._gaResult.bestAllocation;
+            let csv = 'Node_ID,Node_Name,Domain,Allocated_Tokens\n';
+
+            Object.keys(alloc)
+                .sort((a, b) => alloc[b] - alloc[a])
+                .forEach(nodeId => {
+                    csv += `${nodeId},${csvEscape(getNodeLabel(nodeId))},${csvEscape(getNodeDomain(nodeId))},${alloc[nodeId]}\n`;
+                });
+
+            downloadFile(csv, exportFilename('ga_allocation', 'csv'), 'text/csv');
         }
-        
-        function exportNetworkStructureCSV(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportNetworkStructureCSV called - placeholder function');
+
+        function exportGAConvergenceCSV() {
+            if (!gaGenerationHistory || gaGenerationHistory.length === 0) {
+                alert('No GA convergence data to export. Please run the optimizer first.');
+                return;
+            }
+
+            let csv = 'Generation,Best_Fitness,Mean_Fitness\n';
+            gaGenerationHistory.forEach(g => {
+                csv += `${g.generation},${g.bestFitness.toFixed(6)},${(g.meanFitness || 0).toFixed(6)}\n`;
+            });
+
+            downloadFile(csv, exportFilename('ga_convergence', 'csv'), 'text/csv');
         }
-        
-        function exportSummaryStatisticsCSV(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportSummaryStatisticsCSV called - placeholder function');
+
+        function exportGATargetFlowsCSV() {
+            if (!window._gaResult || !window._gaResult.targetNodeFlows) {
+                alert('No GA target flow data to export. Please run the optimizer first.');
+                return;
+            }
+
+            const targetNodeId = document.getElementById('ga-target-node').value;
+            const targetName = getNodeLabel(targetNodeId);
+            let csv = `Step,${csvEscape(targetName + '_Flow')}\n`;
+
+            window._gaResult.targetNodeFlows.forEach((val, step) => {
+                csv += `${step},${(val || 0).toFixed(6)}\n`;
+            });
+
+            downloadFile(csv, exportFilename('ga_target_flows', 'csv'), 'text/csv');
         }
-        
-        function exportOriginalJSON(timestamp) {
-            // Placeholder function - not implemented
-            console.log('exportOriginalJSON called - placeholder function');
+
+        function exportGAMarkdown() {
+            if (!window._gaResult || !window._gaResult.bestAllocation) {
+                alert('No GA optimization results to export. Please run the optimizer first.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+            const result = window._gaResult;
+            const alloc = result.bestAllocation;
+            const targetNodeId = document.getElementById('ga-target-node').value;
+            const targetName = getNodeLabel(targetNodeId);
+
+            // Read config from DOM
+            const goal = document.querySelector('input[name="ga-goal"]:checked')?.value || 'maximize_positive';
+            const direction = document.getElementById('ga-direction').value || 'forward';
+            const budget = document.getElementById('ga-budget').value || '100';
+            const timeSteps = document.getElementById('ga-timesteps').value || '200';
+            const population = document.getElementById('ga-population').value || '50';
+            const generations = document.getElementById('ga-generations').value || '100';
+            const mutationRate = document.getElementById('ga-mutation').value || '0.3';
+            const crossoverRate = document.getElementById('ga-crossover').value || '0.8';
+
+            let md = `# GA Optimization Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n\n`;
+
+            md += `## Configuration\n\n`;
+            md += `| Parameter | Value |\n`;
+            md += `|-----------|-------|\n`;
+            md += `| Target Node | ${targetName} |\n`;
+            md += `| Optimization Goal | ${goal.replace(/_/g, ' ')} |\n`;
+            md += `| Direction | ${direction} |\n`;
+            md += `| Total Budget | ${budget} |\n`;
+            md += `| Time Steps | ${timeSteps} |\n`;
+            md += `| Population Size | ${population} |\n`;
+            md += `| Generations | ${generations} |\n`;
+            md += `| Mutation Rate | ${mutationRate} |\n`;
+            md += `| Crossover Rate | ${crossoverRate} |\n\n`;
+
+            md += `## Results Summary\n\n`;
+            md += `| Metric | Value |\n`;
+            md += `|--------|-------|\n`;
+            md += `| Best Fitness (AUC) | ${result.bestFitness.toFixed(4)} |\n`;
+            md += `| Elapsed Time | ${(result.elapsedMs / 1000).toFixed(1)}s |\n`;
+            md += `| Generations Run | ${result.generations} |\n`;
+            if (result.stats) {
+                md += `| Final Gen Max Fitness | ${result.stats.maximum.toFixed(4)} |\n`;
+                md += `| Final Gen Mean Fitness | ${result.stats.mean.toFixed(4)} |\n`;
+                md += `| Final Gen Std Dev | ${result.stats.stdev.toFixed(4)} |\n`;
+            }
+            md += '\n';
+
+            // Convergence summary
+            if (gaGenerationHistory && gaGenerationHistory.length >= 2) {
+                const first = gaGenerationHistory[0];
+                const last = gaGenerationHistory[gaGenerationHistory.length - 1];
+                const improvement = last.bestFitness - first.bestFitness;
+                const pctImprovement = first.bestFitness !== 0 ? ((improvement / Math.abs(first.bestFitness)) * 100).toFixed(1) : 'N/A';
+
+                md += `## Convergence Summary\n\n`;
+                md += `| Metric | Value |\n`;
+                md += `|--------|-------|\n`;
+                md += `| Initial Best Fitness | ${first.bestFitness.toFixed(4)} |\n`;
+                md += `| Final Best Fitness | ${last.bestFitness.toFixed(4)} |\n`;
+                md += `| Improvement | ${improvement.toFixed(4)} (${pctImprovement}%) |\n\n`;
+            }
+
+            // Optimal allocation table
+            const sortedAlloc = Object.keys(alloc).sort((a, b) => alloc[b] - alloc[a]);
+            md += `## Optimal Token Allocation\n\n`;
+            md += `| Node | Domain | Tokens |\n`;
+            md += `|------|--------|--------|\n`;
+            sortedAlloc.forEach(nodeId => {
+                if (alloc[nodeId] > 0) {
+                    md += `| ${getNodeLabel(nodeId)} | ${getNodeDomain(nodeId)} | ${alloc[nodeId]} |\n`;
+                }
+            });
+            md += '\n';
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('ga_report', 'md'), 'text/markdown');
         }
-        
+
+        // ============================================================
+        // DIAGNOSTICS LAB EXPORTS
+        // ============================================================
+
+        function exportFeedbackLoopsCSV() {
+            if (!window.feedbackLoops || (window.feedbackLoops.reinforcing.length === 0 && window.feedbackLoops.balancing.length === 0)) {
+                alert('No feedback loops to export. Please run feedback loop search first.');
+                return;
+            }
+
+            let csv = 'Loop_ID,Type,Length,Path\n';
+            let loopId = 1;
+
+            window.feedbackLoops.reinforcing.forEach(loop => {
+                const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                csv += `${loopId},Reinforcing,${loop.length || loop.nodes?.length || 0},${csvEscape(path)}\n`;
+                loopId++;
+            });
+
+            window.feedbackLoops.balancing.forEach(loop => {
+                const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                csv += `${loopId},Balancing,${loop.length || loop.nodes?.length || 0},${csvEscape(path)}\n`;
+                loopId++;
+            });
+
+            downloadFile(csv, exportFilename('feedback_loops', 'csv'), 'text/csv');
+        }
+
+        function exportFeedbackLoopsMarkdown() {
+            if (!window.feedbackLoops || (window.feedbackLoops.reinforcing.length === 0 && window.feedbackLoops.balancing.length === 0)) {
+                alert('No feedback loops to export. Please run feedback loop search first.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+            const totalR = window.feedbackLoops.reinforcing.length;
+            const totalB = window.feedbackLoops.balancing.length;
+
+            let md = `# Feedback Loops Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n`;
+            md += `**Total Loops:** ${totalR + totalB} (${totalR} Reinforcing, ${totalB} Balancing)\n\n`;
+
+            if (totalR > 0) {
+                md += `## Reinforcing Loops (${totalR})\n\n`;
+                window.feedbackLoops.reinforcing.forEach((loop, i) => {
+                    const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                    md += `${i + 1}. ${path} (length: ${loop.length || loop.nodes?.length || 0})\n`;
+                });
+                md += '\n';
+            }
+
+            if (totalB > 0) {
+                md += `## Balancing Loops (${totalB})\n\n`;
+                window.feedbackLoops.balancing.forEach((loop, i) => {
+                    const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                    md += `${i + 1}. ${path} (length: ${loop.length || loop.nodes?.length || 0})\n`;
+                });
+                md += '\n';
+            }
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('feedback_loops_report', 'md'), 'text/markdown');
+        }
+
+        function exportClustersCSV() {
+            if (!currentClusters || !currentClusters.clusters) {
+                alert('No cluster data to export. Please run cluster detection first.');
+                return;
+            }
+
+            let csv = '# Cluster Detection Results\n';
+            csv += `# Algorithm: ${currentClusters.algorithm || 'N/A'}\n`;
+            csv += `# Clusters: ${currentClusters.statistics.num_clusters}\n`;
+            csv += `# Modularity: ${(currentClusters.statistics.modularity || 0).toFixed(4)}\n\n`;
+            csv += 'Node_ID,Node_Name,Domain,Cluster_ID\n';
+
+            currentClusters.clusters.forEach(cluster => {
+                cluster.nodes.forEach(nodeId => {
+                    csv += `${nodeId},${csvEscape(getNodeLabel(nodeId))},${csvEscape(getNodeDomain(nodeId))},${cluster.id}\n`;
+                });
+            });
+
+            downloadFile(csv, exportFilename('clusters', 'csv'), 'text/csv');
+        }
+
+        function exportClustersMarkdown() {
+            if (!currentClusters || !currentClusters.clusters) {
+                alert('No cluster data to export. Please run cluster detection first.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+            const stats = currentClusters.statistics;
+
+            let md = `# Cluster Detection Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n`;
+            md += `**Algorithm:** ${currentClusters.algorithm || 'N/A'}\n\n`;
+
+            md += `## Summary\n\n`;
+            md += `| Metric | Value |\n`;
+            md += `|--------|-------|\n`;
+            md += `| Number of Clusters | ${stats.num_clusters} |\n`;
+            md += `| Total Nodes | ${stats.total_nodes} |\n`;
+            md += `| Average Cluster Size | ${stats.avg_cluster_size.toFixed(1)} |\n`;
+            md += `| Modularity | ${(stats.modularity || 0).toFixed(4)} |\n\n`;
+
+            md += `## Cluster Members\n\n`;
+            currentClusters.clusters.forEach(cluster => {
+                md += `### Cluster ${cluster.id} (${cluster.size || cluster.nodes.length} nodes)\n\n`;
+                cluster.nodes.forEach(nodeId => {
+                    md += `- ${getNodeLabel(nodeId)} (${getNodeDomain(nodeId)})\n`;
+                });
+                md += '\n';
+            });
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('clusters_report', 'md'), 'text/markdown');
+        }
+
+        // ============================================================
+        // DIAGNOSTICS LAB — FULL REPORT EXPORTS
+        // ============================================================
+
+        function exportDiagnosticsFullCSV() {
+            if (!factors || factors.length === 0) {
+                alert('No system data loaded. Please wait for the map to finish loading.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            let csv = '';
+
+            // --- Section 1: System Statistics ---
+            csv += '# SYSTEM STATISTICS\n';
+            csv += 'Metric,Value\n';
+
+            const totalNodes = nodes.length;
+            const totalRels = links.length;
+            const sameDir = links.filter(l => l.type === 'same').length;
+            const oppDir = links.filter(l => l.type === 'opposite').length;
+            const strong = links.filter(l => l.strength === 'strong').length;
+            const medium = links.filter(l => l.strength === 'medium').length;
+            const weak = links.filter(l => l.strength === 'weak').length;
+            const days = links.filter(l => l.delay === 'days').length;
+            const months = links.filter(l => l.delay === 'months').length;
+            const years = links.filter(l => l.delay === 'years').length;
+            const decade = links.filter(l => l.delay === 'decade').length;
+            const possibleConns = totalNodes * (totalNodes - 1);
+            const density = possibleConns > 0 ? (totalRels / possibleConns).toFixed(4) : '0';
+            const avgConns = totalNodes > 0 ? (totalRels / totalNodes).toFixed(2) : '0';
+
+            // Most connected node
+            const nodeConns = {};
+            links.forEach(l => {
+                const sId = typeof l.source === 'object' ? l.source.id : l.source;
+                const tId = typeof l.target === 'object' ? l.target.id : l.target;
+                nodeConns[sId] = (nodeConns[sId] || 0) + 1;
+                nodeConns[tId] = (nodeConns[tId] || 0) + 1;
+            });
+            let mostConnId = '', mostConnCount = 0;
+            Object.entries(nodeConns).forEach(([id, c]) => { if (c > mostConnCount) { mostConnCount = c; mostConnId = id; } });
+
+            csv += `System Name,${csvEscape(sysName)}\n`;
+            csv += `Total Nodes,${totalNodes}\n`;
+            csv += `Total Relationships,${totalRels}\n`;
+            csv += `Same Direction,${sameDir}\n`;
+            csv += `Opposite Direction,${oppDir}\n`;
+            csv += `Strong Relationships,${strong}\n`;
+            csv += `Medium Relationships,${medium}\n`;
+            csv += `Weak Relationships,${weak}\n`;
+            csv += `Network Density,${density}\n`;
+            csv += `Avg Connections Per Node,${avgConns}\n`;
+            csv += `Most Connected Node,${csvEscape(getNodeLabel(mostConnId))} (${mostConnCount})\n`;
+            csv += `Days Scale,${days}\n`;
+            csv += `Months Scale,${months}\n`;
+            csv += `Years Scale,${years}\n`;
+            csv += `Decade+ Scale,${decade}\n`;
+
+            // Feedback loops counts
+            const rLoops = window.feedbackLoops ? window.feedbackLoops.reinforcing.length : 0;
+            const bLoops = window.feedbackLoops ? window.feedbackLoops.balancing.length : 0;
+            csv += `Reinforcing Loops,${rLoops}\n`;
+            csv += `Balancing Loops,${bLoops}\n`;
+
+            // --- Section 2: Domain Distribution ---
+            csv += '\n# DOMAIN DISTRIBUTION\n';
+            csv += 'Domain,Node_Count\n';
+            const domCounts = {};
+            nodes.forEach(n => { const d = n.domain || 'Uncategorized'; domCounts[d] = (domCounts[d] || 0) + 1; });
+            Object.entries(domCounts).sort((a, b) => b[1] - a[1]).forEach(([dom, cnt]) => {
+                csv += `${csvEscape(dom)},${cnt}\n`;
+            });
+
+            // --- Section 3: All Factors ---
+            csv += '\n# FACTORS (NODES)\n';
+            csv += 'Factor_ID,Name,Domain,Intervenable,Connections,Definition\n';
+            factors.forEach(f => {
+                const conns = nodeConns[f.id] || 0;
+                csv += `${f.id},${csvEscape(f.name)},${csvEscape(f.domain_name)},${csvEscape(f.intervenable || '')},${conns},${csvEscape(f.definition || '')}\n`;
+            });
+
+            // --- Section 4: All Relationships ---
+            csv += '\n# RELATIONSHIPS (EDGES)\n';
+            csv += 'Relationship_ID,From_ID,From_Name,To_ID,To_Name,Polarity,Strength,Temporal_Scale,Definition\n';
+            relationships.forEach(r => {
+                csv += `${r.id},${r.from_factor_id},${csvEscape(r.from)},${r.to_factor_id},${csvEscape(r.to)},${r.polarity},${r.strength},${r.delay},${csvEscape(r.definition || '')}\n`;
+            });
+
+            // --- Section 5: Feedback Loops (if available) ---
+            if (window.feedbackLoops && (window.feedbackLoops.reinforcing.length > 0 || window.feedbackLoops.balancing.length > 0)) {
+                csv += '\n# FEEDBACK LOOPS\n';
+                csv += 'Loop_ID,Type,Length,Path\n';
+                let loopId = 1;
+                window.feedbackLoops.reinforcing.forEach(loop => {
+                    const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                    csv += `${loopId},Reinforcing,${loop.length || loop.nodes?.length || 0},${csvEscape(path)}\n`;
+                    loopId++;
+                });
+                window.feedbackLoops.balancing.forEach(loop => {
+                    const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                    csv += `${loopId},Balancing,${loop.length || loop.nodes?.length || 0},${csvEscape(path)}\n`;
+                    loopId++;
+                });
+            }
+
+            // --- Section 6: Clusters (if available) ---
+            if (currentClusters && currentClusters.clusters) {
+                csv += '\n# CLUSTERS\n';
+                csv += `# Algorithm: ${currentClusters.algorithm}, Modularity: ${(currentClusters.statistics.modularity || 0).toFixed(4)}\n`;
+                csv += 'Node_ID,Node_Name,Domain,Cluster_ID\n';
+                currentClusters.clusters.forEach(cluster => {
+                    cluster.nodes.forEach(nodeId => {
+                        csv += `${nodeId},${csvEscape(getNodeLabel(nodeId))},${csvEscape(getNodeDomain(nodeId))},${cluster.id}\n`;
+                    });
+                });
+            }
+
+            downloadFile(csv, exportFilename('diagnostics_full', 'csv'), 'text/csv');
+        }
+
+        function exportDiagnosticsFullMarkdown() {
+            if (!factors || factors.length === 0) {
+                alert('No system data loaded. Please wait for the map to finish loading.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+
+            // Compute stats
+            const totalNodes = nodes.length;
+            const totalRels = links.length;
+            const sameDir = links.filter(l => l.type === 'same').length;
+            const oppDir = links.filter(l => l.type === 'opposite').length;
+            const strong = links.filter(l => l.strength === 'strong').length;
+            const medium = links.filter(l => l.strength === 'medium').length;
+            const weak = links.filter(l => l.strength === 'weak').length;
+            const days = links.filter(l => l.delay === 'days').length;
+            const months = links.filter(l => l.delay === 'months').length;
+            const years = links.filter(l => l.delay === 'years').length;
+            const decade = links.filter(l => l.delay === 'decade').length;
+            const possibleConns = totalNodes * (totalNodes - 1);
+            const density = possibleConns > 0 ? (totalRels / possibleConns).toFixed(4) : '0';
+            const avgConns = totalNodes > 0 ? (totalRels / totalNodes).toFixed(2) : '0';
+
+            const nodeConns = {};
+            links.forEach(l => {
+                const sId = typeof l.source === 'object' ? l.source.id : l.source;
+                const tId = typeof l.target === 'object' ? l.target.id : l.target;
+                nodeConns[sId] = (nodeConns[sId] || 0) + 1;
+                nodeConns[tId] = (nodeConns[tId] || 0) + 1;
+            });
+            let mostConnId = '', mostConnCount = 0;
+            Object.entries(nodeConns).forEach(([id, c]) => { if (c > mostConnCount) { mostConnCount = c; mostConnId = id; } });
+
+            const rLoops = window.feedbackLoops ? window.feedbackLoops.reinforcing.length : 0;
+            const bLoops = window.feedbackLoops ? window.feedbackLoops.balancing.length : 0;
+
+            // --- Build Markdown ---
+            let md = `# Diagnostics Lab — Full System Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n\n`;
+
+            // System Statistics
+            md += `## System Statistics\n\n`;
+            md += `| Metric | Value |\n`;
+            md += `|--------|-------|\n`;
+            md += `| Total Nodes | ${totalNodes} |\n`;
+            md += `| Total Relationships | ${totalRels} |\n`;
+            md += `| Same Direction | ${sameDir} |\n`;
+            md += `| Opposite Direction | ${oppDir} |\n`;
+            md += `| Strong Relationships | ${strong} |\n`;
+            md += `| Medium Relationships | ${medium} |\n`;
+            md += `| Weak Relationships | ${weak} |\n`;
+            md += `| Network Density | ${density} |\n`;
+            md += `| Avg. Connections Per Node | ${avgConns} |\n`;
+            md += `| Most Connected Node | ${getNodeLabel(mostConnId)} (${mostConnCount} connections) |\n`;
+            md += `| Days Scale | ${days} |\n`;
+            md += `| Months Scale | ${months} |\n`;
+            md += `| Years Scale | ${years} |\n`;
+            md += `| Decade+ Scale | ${decade} |\n`;
+            md += `| Reinforcing Feedback Loops | ${rLoops} |\n`;
+            md += `| Balancing Feedback Loops | ${bLoops} |\n\n`;
+
+            // Domain Distribution
+            const domCounts = {};
+            nodes.forEach(n => { const d = n.domain || 'Uncategorized'; domCounts[d] = (domCounts[d] || 0) + 1; });
+            const sortedDoms = Object.entries(domCounts).sort((a, b) => b[1] - a[1]);
+
+            md += `## Domain Distribution\n\n`;
+            md += `| Domain | Nodes | % of Total |\n`;
+            md += `|--------|-------|------------|\n`;
+            sortedDoms.forEach(([dom, cnt]) => {
+                md += `| ${dom} | ${cnt} | ${(cnt / totalNodes * 100).toFixed(1)}% |\n`;
+            });
+            md += '\n';
+
+            // Top Connected Nodes
+            const topConnected = Object.entries(nodeConns)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            md += `## Top 10 Most Connected Nodes\n\n`;
+            md += `| Rank | Node | Domain | Connections |\n`;
+            md += `|------|------|--------|-------------|\n`;
+            topConnected.forEach(([id, cnt], i) => {
+                md += `| ${i + 1} | ${getNodeLabel(id)} | ${getNodeDomain(id)} | ${cnt} |\n`;
+            });
+            md += '\n';
+
+            // All Factors
+            md += `## All Factors (${factors.length})\n\n`;
+            md += `| ID | Name | Domain | Intervenable | Connections |\n`;
+            md += `|----|------|--------|--------------|-------------|\n`;
+            factors
+                .sort((a, b) => (nodeConns[b.id] || 0) - (nodeConns[a.id] || 0))
+                .forEach(f => {
+                    md += `| ${f.id} | ${f.name} | ${f.domain_name} | ${f.intervenable || '-'} | ${nodeConns[f.id] || 0} |\n`;
+                });
+            md += '\n';
+
+            // All Relationships
+            md += `## All Relationships (${relationships.length})\n\n`;
+            md += `| ID | From | To | Polarity | Strength | Temporal Scale |\n`;
+            md += `|----|------|----|----------|----------|----------------|\n`;
+            relationships.forEach(r => {
+                md += `| ${r.id} | ${r.from} | ${r.to} | ${r.polarity} | ${r.strength} | ${r.delay} |\n`;
+            });
+            md += '\n';
+
+            // Feedback Loops (if available)
+            if (window.feedbackLoops && (rLoops > 0 || bLoops > 0)) {
+                md += `## Feedback Loops (${rLoops + bLoops} total)\n\n`;
+
+                if (rLoops > 0) {
+                    md += `### Reinforcing Loops (${rLoops})\n\n`;
+                    window.feedbackLoops.reinforcing.forEach((loop, i) => {
+                        const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                        md += `${i + 1}. ${path} *(length: ${loop.length || loop.nodes?.length || 0})*\n`;
+                    });
+                    md += '\n';
+                }
+
+                if (bLoops > 0) {
+                    md += `### Balancing Loops (${bLoops})\n\n`;
+                    window.feedbackLoops.balancing.forEach((loop, i) => {
+                        const path = (loop.nodes || loop.node_names || []).join(' -> ');
+                        md += `${i + 1}. ${path} *(length: ${loop.length || loop.nodes?.length || 0})*\n`;
+                    });
+                    md += '\n';
+                }
+            }
+
+            // Clusters (if available)
+            if (currentClusters && currentClusters.clusters) {
+                const cStats = currentClusters.statistics;
+                md += `## Cluster Analysis\n\n`;
+                md += `**Algorithm:** ${currentClusters.algorithm || 'N/A'}\n`;
+                md += `**Number of Clusters:** ${cStats.num_clusters}\n`;
+                md += `**Modularity:** ${(cStats.modularity || 0).toFixed(4)}\n`;
+                md += `**Average Cluster Size:** ${cStats.avg_cluster_size.toFixed(1)}\n\n`;
+
+                currentClusters.clusters.forEach(cluster => {
+                    md += `### Cluster ${cluster.id} (${cluster.size || cluster.nodes.length} nodes)\n\n`;
+                    md += `| Node | Domain |\n`;
+                    md += `|------|--------|\n`;
+                    cluster.nodes.forEach(nodeId => {
+                        md += `| ${getNodeLabel(nodeId)} | ${getNodeDomain(nodeId)} |\n`;
+                    });
+                    md += '\n';
+                });
+            }
+
+            // Relationship definitions appendix (if any have definitions)
+            const relsWithDefs = relationships.filter(r => r.definition && r.definition.trim());
+            if (relsWithDefs.length > 0) {
+                md += `## Appendix: Relationship Definitions\n\n`;
+                relsWithDefs.forEach(r => {
+                    md += `- **${r.from} -> ${r.to}** (${r.id}): ${r.definition}\n`;
+                });
+                md += '\n';
+            }
+
+            // Factor definitions appendix (if any have definitions)
+            const factorsWithDefs = factors.filter(f => f.definition && f.definition.trim());
+            if (factorsWithDefs.length > 0) {
+                md += `## Appendix: Factor Definitions\n\n`;
+                factorsWithDefs.forEach(f => {
+                    md += `- **${f.name}** (${f.id}, ${f.domain_name}): ${f.definition}\n`;
+                });
+                md += '\n';
+            }
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('diagnostics_full_report', 'md'), 'text/markdown');
+        }
+
+        // ============================================================
+        // MONITORING LAB EXPORTS (CENTRALITY)
+        // ============================================================
+
+        function exportCentralityCSV(metric) {
+            if (!metric) metric = activeCentralityMetric;
+            if (!metric || !centralityResults[metric]) {
+                alert('No centrality data to export. Please run a centrality analysis first.');
+                return;
+            }
+
+            const data = centralityResults[metric];
+            let csv = `Rank,Node_ID,Node_Name,Domain,${metric.charAt(0).toUpperCase() + metric.slice(1)}_Centrality\n`;
+
+            data.forEach((node, i) => {
+                csv += `${i + 1},${node.id},${csvEscape(node.label)},${csvEscape(getNodeDomain(node.id))},${node.value.toFixed(4)}\n`;
+            });
+
+            downloadFile(csv, exportFilename(`centrality_${metric}`, 'csv'), 'text/csv');
+        }
+
+        function exportComprehensiveCentralityCSV() {
+            const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+            const available = metrics.filter(m => centralityResults[m] && centralityResults[m].length > 0);
+
+            if (available.length === 0) {
+                alert('No comprehensive centrality data to export. Please run the comprehensive analysis first.');
+                return;
+            }
+
+            // Build a map of nodeId -> metric values
+            const nodeMap = {};
+            available.forEach(metric => {
+                centralityResults[metric].forEach(node => {
+                    if (!nodeMap[node.id]) {
+                        nodeMap[node.id] = { id: node.id, label: node.label };
+                    }
+                    nodeMap[node.id][metric] = node.value;
+                });
+            });
+
+            const headers = ['Node_ID', 'Node_Name', 'Domain', ...available.map(m => m.charAt(0).toUpperCase() + m.slice(1))];
+            let csv = headers.join(',') + '\n';
+
+            Object.values(nodeMap).forEach(node => {
+                const row = [node.id, csvEscape(node.label), csvEscape(getNodeDomain(node.id))];
+                available.forEach(m => row.push((node[m] || 0).toFixed(4)));
+                csv += row.join(',') + '\n';
+            });
+
+            downloadFile(csv, exportFilename('centrality_comprehensive', 'csv'), 'text/csv');
+        }
+
+        function exportComprehensiveCentralityMarkdown() {
+            const metrics = ['degree', 'betweenness', 'closeness', 'eigenvector', 'katz'];
+            const available = metrics.filter(m => centralityResults[m] && centralityResults[m].length > 0);
+
+            if (available.length === 0) {
+                alert('No comprehensive centrality data to export. Please run the comprehensive analysis first.');
+                return;
+            }
+
+            const sysName = (CONFIG && CONFIG.name) ? CONFIG.name : (systemId || 'System');
+            const now = new Date().toISOString();
+
+            let md = `# Comprehensive Centrality Analysis Report\n\n`;
+            md += `**System:** ${sysName}\n`;
+            md += `**Date:** ${now}\n`;
+            md += `**Metrics Analyzed:** ${available.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(', ')}\n\n`;
+
+            // Key variables (appear in top 10 across >= 3 metrics)
+            const appearances = {};
+            available.forEach(metric => {
+                centralityResults[metric].forEach((node, idx) => {
+                    if (!appearances[node.id]) {
+                        appearances[node.id] = { id: node.id, label: node.label, metrics: [], avgRank: 0 };
+                    }
+                    appearances[node.id].metrics.push(metric);
+                    appearances[node.id].avgRank += idx + 1;
+                });
+            });
+
+            Object.values(appearances).forEach(n => {
+                n.avgRank = n.avgRank / n.metrics.length;
+            });
+
+            const keyVars = Object.values(appearances)
+                .filter(n => n.metrics.length >= 3)
+                .sort((a, b) => a.avgRank - b.avgRank);
+
+            if (keyVars.length > 0) {
+                md += `## Key Influential Variables\n\n`;
+                md += `Variables appearing in top 10 across 3+ metrics:\n\n`;
+                md += `| Variable | Appears In | Avg. Rank | Metrics |\n`;
+                md += `|----------|------------|-----------|--------|\n`;
+                keyVars.forEach(n => {
+                    md += `| ${n.label} | ${n.metrics.length} metrics | ${n.avgRank.toFixed(1)} | ${n.metrics.join(', ')} |\n`;
+                });
+                md += '\n';
+            }
+
+            // Comparison table
+            md += `## Centrality Comparison (Top 10)\n\n`;
+            const headerRow = `| Rank | ${available.map(m => m.charAt(0).toUpperCase() + m.slice(1)).join(' | ')} |`;
+            const dividerRow = `|------|${available.map(() => '------').join('|')}|`;
+            md += headerRow + '\n' + dividerRow + '\n';
+
+            for (let rank = 0; rank < 10; rank++) {
+                const cells = available.map(m => {
+                    const node = centralityResults[m][rank];
+                    return node ? `${node.label} (${node.value.toFixed(1)})` : '-';
+                });
+                md += `| ${rank + 1} | ${cells.join(' | ')} |\n`;
+            }
+            md += '\n';
+
+            md += `---\n*Generated by SIM4Action Platform*\n`;
+
+            downloadFile(md, exportFilename('centrality_comprehensive_report', 'md'), 'text/markdown');
+        }
+
+        // Legacy placeholder kept for backward compatibility
         function downloadCSV(csvContent, filename) {
-            // Placeholder function - not implemented
-            console.log('downloadCSV called - placeholder function');
+            downloadFile(csvContent, filename, 'text/csv');
         }
         
         function clearResults() {
@@ -10697,29 +11856,22 @@
                 return;
             }
             
-            // Create CSV data
-            let csvContent = 'Node,Min,Max,Mean,StdDev,Runs\n';
+            // Create CSV data with metadata header
+            let csvContent = `# Ensemble Summary Stats - ${ensembleModel.completedRuns} runs, ${ensembleModel.timeSteps || 'N/A'} time steps\n`;
+            csvContent += 'Node,Min,Max,Mean,StdDev,Runs\n';
             
             Object.keys(ensembleModel.nodeStats).forEach(nodeId => {
                 const stats = ensembleModel.nodeStats[nodeId];
                 if (stats.values.length > 0) {
-                    const node = diffusionGraph.nodes[nodeId];
-                    const nodeName = node ? node.label : nodeId;
+                    const nodeName = getNodeLabel(nodeId);
                     const variance = stats.values.reduce((sum, v) => sum + Math.pow(v - stats.mean, 2), 0) / stats.values.length;
                     const stdDev = Math.sqrt(variance);
                     
-                    csvContent += `"${nodeName}",${stats.min.toFixed(3)},${stats.max.toFixed(3)},${stats.mean.toFixed(3)},${stdDev.toFixed(3)},${stats.values.length}\n`;
+                    csvContent += `${csvEscape(nodeName)},${stats.min.toFixed(3)},${stats.max.toFixed(3)},${stats.mean.toFixed(3)},${stdDev.toFixed(3)},${stats.values.length}\n`;
                 }
             });
             
-            // Download CSV
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ensemble_results_${ensembleModel.completedRuns}_runs.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            downloadFile(csvContent, exportFilename('ensemble_summary', 'csv'), 'text/csv');
         }
         
         function clearEnsembleResults() {
@@ -11737,6 +12889,10 @@
                 </table>`;
                 
                 container.innerHTML = tableHTML;
+
+                // Show centrality export button
+                const exportBtn = document.getElementById('centrality-export-btn');
+                if (exportBtn) exportBtn.style.display = 'block';
 
             } catch (error) {
                 console.error('Error in showCentrality:', error);
@@ -14416,6 +15572,10 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
                 document.getElementById('stat-reinforcing-loops').textContent = allLoops.reinforcing.length;
                 document.getElementById('stat-balancing-loops').textContent = allLoops.balancing.length;
                 
+                // Show export buttons for feedback loops
+                const feedbackExportBtns = document.getElementById('feedback-export-btns');
+                if (feedbackExportBtns) feedbackExportBtns.style.display = 'flex';
+
                 // Display all loops
                 displayFeedbackLoopsList(allLoops);
                 
@@ -14460,6 +15620,10 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
             // Clear stored loops
             window.feedbackLoops = null;
             window.currentLoopFilter = null;
+
+            // Hide feedback export buttons
+            const feedbackExportBtns = document.getElementById('feedback-export-btns');
+            if (feedbackExportBtns) feedbackExportBtns.style.display = 'none';
             
             // Reset feedback loop statistics in the system statistics section
             document.getElementById('stat-reinforcing-loops').textContent = '0';
@@ -14839,7 +16003,18 @@ def detect_clusters(algorithm='louvain', num_clusters=None):
             <div class="results-controls">
                 <button class="results-button active" onclick="showEnsembleAllNodesIndividual()">All Nodes Time Series</button>
                 <button class="results-button" onclick="showEnsembleGoalsIndividual()">Goals</button>
-                <button class="results-button" onclick="exportEnsembleResults()">Export Data</button>
+                <div class="export-dropdown" style="display: inline-block;">
+                    <button class="results-button" onclick="toggleExportMenu(this)">Export Data &#9662;</button>
+                    <div class="export-menu">
+                        <div class="export-menu-header">CSV Exports</div>
+                        <button onclick="exportEnsembleResults()">Summary Stats (CSV)</button>
+                        <button onclick="exportEnsembleTimeSeriesCSV()">Time Series (CSV)</button>
+                        <button onclick="exportEnsemblePerRunCSV()">Per-Run Data (CSV)</button>
+                        <div class="export-menu-divider"></div>
+                        <div class="export-menu-header">Report</div>
+                        <button onclick="exportEnsembleMarkdown()">Full Report (Markdown)</button>
+                    </div>
+                </div>
                 <button class="results-button" onclick="clearEnsembleResults()">Clear</button>
             </div>
             
