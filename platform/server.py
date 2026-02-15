@@ -6,8 +6,11 @@ Serves the SIM4Action platform with support for multiple system maps.
 Handles static file serving from platform/ and systems/ directories,
 plus API endpoints for adding new system maps.
 
+Includes session-based authentication: all pages and API endpoints require
+a valid session cookie. Use manage_users.py to create user accounts.
+
 Usage:
-    python platform/server.py [--port PORT]
+    python platform/server.py [--port PORT] [--session-expiry HOURS]
 
     Run from the project root directory, or the server will auto-detect paths.
 """
@@ -20,7 +23,11 @@ import json
 import argparse
 import re
 import base64
+import hashlib
+import secrets
 import shutil
+import time
+from http.cookies import SimpleCookie
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs
 
@@ -38,6 +45,66 @@ PROJECT_ROOT = find_project_root()
 PLATFORM_DIR = PROJECT_ROOT / 'platform'
 SYSTEMS_DIR = PROJECT_ROOT / 'systems'
 CATALOGUE_FILE = SYSTEMS_DIR / 'catalogue.json'
+USERS_FILE = PROJECT_ROOT / 'users.json'
+
+# Session store: {token: {"username": str, "created": float}}
+active_sessions = {}
+
+# Default session expiry (overridden by --session-expiry CLI arg)
+SESSION_EXPIRY_HOURS = 24
+
+# Paths that do NOT require authentication
+PUBLIC_PATHS = {
+    'login.html',
+    'api/login',
+}
+PUBLIC_PREFIXES = (
+    'assets/',          # Logo and static assets needed by login page
+)
+
+PBKDF2_ITERATIONS = 100_000
+
+
+# ── Authentication helpers ──────────────────────────────────────────────────
+
+def load_users():
+    """Load the users file."""
+    if USERS_FILE.exists():
+        with open(USERS_FILE, 'r') as f:
+            return json.load(f)
+    return {"users": []}
+
+
+def verify_password(password, stored_hash):
+    """Verify a password against a PBKDF2-SHA256 hash (salt:hex_digest)."""
+    salt, expected = stored_hash.split(':')
+    h = hashlib.pbkdf2_hmac('sha256', password.encode(), salt.encode(), PBKDF2_ITERATIONS)
+    return secrets.compare_digest(h.hex(), expected)
+
+
+def create_session(username):
+    """Create a new session token for a user, cleaning up expired sessions."""
+    # Purge expired sessions
+    now = time.time()
+    expired = [t for t, s in active_sessions.items()
+               if now - s['created'] > SESSION_EXPIRY_HOURS * 3600]
+    for t in expired:
+        del active_sessions[t]
+
+    token = secrets.token_urlsafe(32)
+    active_sessions[token] = {'username': username, 'created': now}
+    return token
+
+
+def validate_session(token):
+    """Check if a session token is valid and not expired. Returns username or None."""
+    session = active_sessions.get(token)
+    if not session:
+        return None
+    if time.time() - session['created'] > SESSION_EXPIRY_HOURS * 3600:
+        del active_sessions[token]
+        return None
+    return session['username']
 
 
 def load_catalogue():
@@ -57,6 +124,68 @@ def save_catalogue(catalogue):
 
 class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
     """Custom HTTP handler for the SIM4Action platform."""
+
+    # ── Authentication ──────────────────────────────────────────────────
+
+    def is_public_path(self):
+        """Check if the current request path is publicly accessible (no auth)."""
+        parsed = urlparse(self.path)
+        url_path = parsed.path.strip('/')
+        if url_path in PUBLIC_PATHS:
+            return True
+        for prefix in PUBLIC_PREFIXES:
+            if url_path.startswith(prefix):
+                return True
+        return False
+
+    def get_session_token(self):
+        """Extract the session token from the Cookie header."""
+        cookie_header = self.headers.get('Cookie', '')
+        cookie = SimpleCookie()
+        try:
+            cookie.load(cookie_header)
+        except Exception:
+            return None
+        morsel = cookie.get('session')
+        return morsel.value if morsel else None
+
+    def check_auth(self):
+        """Check if the request has a valid session. Returns username or None."""
+        token = self.get_session_token()
+        if not token:
+            return None
+        return validate_session(token)
+
+    def require_auth(self):
+        """Enforce auth on the current request. Returns True if authorized, False if denied.
+        
+        For HTML page requests, redirects to /login.html.
+        For API requests, returns a 401 JSON error.
+        """
+        if self.is_public_path():
+            return True
+
+        # If no users file exists or it's empty, skip auth (first-run experience)
+        users_data = load_users()
+        if not users_data.get('users'):
+            return True
+
+        if self.check_auth():
+            return True
+
+        # Not authenticated — respond appropriately
+        parsed = urlparse(self.path)
+        url_path = parsed.path.strip('/')
+        if url_path.startswith('api/'):
+            self.send_error_response(401, 'Authentication required')
+        else:
+            self.send_response(302)
+            self.send_header('Location', '/login.html')
+            self.send_header('Cache-Control', 'no-store')
+            self.end_headers()
+        return False
+
+    # ── URL routing ─────────────────────────────────────────────────────
 
     def translate_path(self, path):
         """Map URL paths to filesystem paths.
@@ -92,7 +221,8 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
             'drawing-layer.js',
             'drawing-integration.js', 'drawing-controls.css',
             'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
-            'networkx_loader.py', 'diffusion_demo.html', 'presentation.html'
+            'networkx_loader.py', 'diffusion_demo.html', 'presentation.html',
+            'login.html'
         ]
         
         # Check if it's a known platform file
@@ -113,6 +243,9 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """Handle GET requests."""
+        if not self.require_auth():
+            return
+
         parsed = urlparse(self.path)
         url_path = parsed.path.strip('/')
 
@@ -134,13 +267,35 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_response(404, f'System "{system_id}" not found')
             return
 
+        # API: Check auth status (useful for frontend)
+        if url_path == 'api/auth/status':
+            username = self.check_auth()
+            self.send_json_response({
+                'authenticated': username is not None,
+                'username': username
+            })
+            return
+
         # Default file serving
         super().do_GET()
 
     def do_POST(self):
-        """Handle POST requests for creating new system maps."""
+        """Handle POST requests."""
         parsed = urlparse(self.path)
         url_path = parsed.path.strip('/')
+
+        # Login endpoint (public — no auth required)
+        if url_path == 'api/login':
+            self.handle_login()
+            return
+
+        # Logout endpoint (public — works whether authenticated or not)
+        if url_path == 'api/logout':
+            self.handle_logout()
+            return
+
+        if not self.require_auth():
+            return
 
         if url_path == 'api/systems':
             self.handle_create_system()
@@ -155,6 +310,9 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_PUT(self):
         """Handle PUT requests."""
+        if not self.require_auth():
+            return
+
         parsed = urlparse(self.path)
         url_path = parsed.path.strip('/')
 
@@ -173,6 +331,9 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_DELETE(self):
         """Handle DELETE requests."""
+        if not self.require_auth():
+            return
+
         parsed = urlparse(self.path)
         url_path = parsed.path.strip('/')
 
@@ -192,6 +353,79 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+
+    # ── Login / Logout handlers ──────────────────────────────────────────
+
+    def handle_login(self):
+        """Authenticate a user and issue a session cookie."""
+        try:
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+
+            username = data.get('username', '').strip()
+            password = data.get('password', '')
+
+            if not username or not password:
+                self.send_error_response(400, 'Username and password are required')
+                return
+
+            # Look up user
+            users_data = load_users()
+            user = None
+            for u in users_data.get('users', []):
+                if u['username'] == username:
+                    user = u
+                    break
+
+            if not user or not verify_password(password, user['password_hash']):
+                self.send_error_response(401, 'Invalid username or password')
+                return
+
+            # Create session
+            token = create_session(username)
+            max_age = int(SESSION_EXPIRY_HOURS * 3600)
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header(
+                'Set-Cookie',
+                f'session={token}; HttpOnly; Path=/; SameSite=Strict; Max-Age={max_age}'
+            )
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': True,
+                'username': username
+            }).encode('utf-8'))
+
+            self.log_message('Login: user "%s" authenticated', username)
+
+        except json.JSONDecodeError:
+            self.send_error_response(400, 'Invalid JSON')
+        except Exception as e:
+            self.send_error_response(500, str(e))
+
+    def handle_logout(self):
+        """Clear the session cookie and remove the session."""
+        token = self.get_session_token()
+        username = None
+        if token and token in active_sessions:
+            username = active_sessions[token].get('username')
+            del active_sessions[token]
+
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header(
+            'Set-Cookie',
+            'session=; HttpOnly; Path=/; SameSite=Strict; Max-Age=0'
+        )
+        self.end_headers()
+        self.wfile.write(json.dumps({'success': True}).encode('utf-8'))
+
+        if username:
+            self.log_message('Logout: user "%s"', username)
+
+    # ── System management handlers ──────────────────────────────────────
 
     def handle_create_system(self):
         """Create a new system map directory and config."""
@@ -504,16 +738,29 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def main():
+    global SESSION_EXPIRY_HOURS
+
     parser = argparse.ArgumentParser(description='SIM4Action Platform Server')
     parser.add_argument('--port', type=int, default=8000, help='Port to serve on (default: 8000)')
+    parser.add_argument('--session-expiry', type=int, default=24,
+                        help='Session expiry in hours (default: 24)')
     args = parser.parse_args()
 
     PORT = args.port
+    SESSION_EXPIRY_HOURS = args.session_expiry
 
     # Ensure systems directory and catalogue exist
     SYSTEMS_DIR.mkdir(parents=True, exist_ok=True)
     if not CATALOGUE_FILE.exists():
         save_catalogue({"systems": []})
+
+    # Check authentication status
+    users_data = load_users()
+    user_count = len(users_data.get('users', []))
+    if user_count > 0:
+        auth_status = f"ENABLED ({user_count} user(s), sessions expire in {SESSION_EXPIRY_HOURS}h)"
+    else:
+        auth_status = "DISABLED (no users — run: python3 manage_users.py add <username>)"
 
     # Change to project root so relative paths work
     os.chdir(str(PROJECT_ROOT))
@@ -525,6 +772,7 @@ def main():
         print(f"  Landing page:  http://localhost:{PORT}/")
         print(f"  Platform dir:  {PLATFORM_DIR}")
         print(f"  Systems dir:   {SYSTEMS_DIR}")
+        print(f"  Auth:          {auth_status}")
         print(f"{'='*60}")
         print(f"  Press Ctrl+C to stop the server")
         print(f"{'='*60}\n")

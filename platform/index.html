@@ -29,6 +29,35 @@
             position: relative;
         }
 
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(26, 42, 74, 0.6);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            color: #8eacc5;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 83, 80, 0.15);
+            border-color: rgba(239, 83, 80, 0.4);
+            color: #ef5350;
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .header h1 {
             font-size: 2.8em;
             font-weight: 700;
@@ -2419,6 +2448,14 @@
 <body>
 
 <div class="header">
+    <button class="logout-btn" id="logout-btn" onclick="handleLogout()" title="Sign out" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign Out
+    </button>
     <h1>SIM4Action</h1>
     <p class="subtitle">Interactive platform for social-environmental systems mapping and causal analysis</p>
     <p class="tagline">Explore, intervene, and monitor complex system dynamics</p>
@@ -4807,6 +4844,30 @@ graph TD
 </script>
 
 <script>
+    // ============================================
+    // AUTHENTICATION
+    // ============================================
+    async function checkAuthStatus() {
+        try {
+            const res = await fetch('/api/auth/status');
+            const data = await res.json();
+            if (data.authenticated) {
+                const btn = document.getElementById('logout-btn');
+                if (btn) btn.style.display = 'flex';
+            }
+        } catch (e) { /* ignore — auth may be disabled */ }
+    }
+
+    async function handleLogout() {
+        try {
+            await fetch('/api/logout', { method: 'POST' });
+        } catch (e) { /* ignore */ }
+        window.location.href = '/login.html';
+    }
+
+    // Check auth on load to show/hide logout button
+    checkAuthStatus();
+
     // ============================================
     // CONSTANTS & STATE
     // ============================================

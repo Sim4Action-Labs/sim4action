@@ -3129,6 +3129,12 @@
         <button onclick="resetFilters()">Reset Filters</button>
         <button id="viewDataBtn" onclick="openDataSource()">View Data Source</button>
         <button onclick="reloadData()" style="background-color: #2e7d32; color: white; border-color: #1b5e20;">Reload Data</button>
+        <button id="logout-btn" onclick="handleLogout()" title="Sign out"
+                style="display: none; background: rgba(26,42,74,0.6); border: 1px solid rgba(100,181,246,0.2); color: #8eacc5; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85em; transition: all 0.2s ease;"
+                onmouseover="this.style.background='rgba(239,83,80,0.15)'; this.style.borderColor='rgba(239,83,80,0.4)'; this.style.color='#ef5350';"
+                onmouseout="this.style.background='rgba(26,42,74,0.6)'; this.style.borderColor='rgba(100,181,246,0.2)'; this.style.color='#8eacc5';">
+            Sign Out
+        </button>
     </div>
     </div>
     <img id="logo" src="assets/sim4action-logo.png" alt="SIM4Action">
@@ -3330,6 +3336,25 @@
     <div id="error" style="display: none; position: fixed; top: 20px; right: 20px; background: #ff4444; color: white; padding: 15px 20px; border-radius: 4px; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-size: 14px;"></div>
 
     <script>
+        // ============================================
+        // AUTHENTICATION
+        // ============================================
+        (async function checkAuthStatus() {
+            try {
+                const res = await fetch('/api/auth/status');
+                const data = await res.json();
+                if (data.authenticated) {
+                    const btn = document.getElementById('logout-btn');
+                    if (btn) btn.style.display = 'inline-block';
+                }
+            } catch (e) { /* ignore — auth may be disabled */ }
+        })();
+
+        async function handleLogout() {
+            try { await fetch('/api/logout', { method: 'POST' }); } catch (e) { /* ignore */ }
+            window.location.href = '/login.html';
+        }
+
         // ============================================
         // CONFIGURATION LOADER
         // ============================================
