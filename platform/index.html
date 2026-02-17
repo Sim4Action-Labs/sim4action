@@ -5431,7 +5431,7 @@ graph TD
             const response = await fetch(`/api/systems/${systemId}`, {
                 method: 'DELETE'
             });
-            const result = await response.json();
+            const result = await safeJsonResponse(response, `DELETE /api/systems/${systemId}`);
 
             if (result.success) {
                 closeDeleteConfirm();
@@ -5627,7 +5627,7 @@ graph TD
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
-            const result = await response.json();
+            const result = await safeJsonResponse(response, `PUT /api/systems/${systemId}`);
 
             if (result.success) {
                 closeEditModal();
@@ -5938,7 +5938,7 @@ graph TD
                 body: JSON.stringify(systemData)
             });
 
-            const result = await response.json();
+            const result = await safeJsonResponse(response, 'POST /api/systems');
 
             if (result.success) {
                 document.getElementById('form-view').style.display = 'none';
@@ -5965,6 +5965,30 @@ graph TD
             reader.onerror = reject;
             reader.readAsDataURL(file);
         });
+    }
+
+    async function safeJsonResponse(response, context) {
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok) {
+            if (contentType.includes('text/html')) {
+                throw new Error(
+                    `Server returned ${response.status} HTML instead of JSON for ${context}. ` +
+                    `This usually means Nginx is not proxying this request method to the backend. ` +
+                    `Check that the Nginx config proxies all methods (GET, POST, PUT, DELETE) for /api/ routes.`
+                );
+            }
+            const text = await response.text();
+            let parsed;
+            try { parsed = JSON.parse(text); } catch (_) { /* ignore */ }
+            throw new Error(parsed?.error || `Server error ${response.status}: ${text.slice(0, 200)}`);
+        }
+        if (contentType.includes('text/html')) {
+            throw new Error(
+                `Server returned HTML instead of JSON for ${context}. ` +
+                `The Nginx reverse proxy may not be forwarding this request to the backend.`
+            );
+        }
+        return response.json();
     }
 
     // ============================================
