@@ -70,9 +70,17 @@
     },
     {
       "id": "non_urban_water_compliance",
-      "name": "non urban water compliance",
+      "name": "Non-urban Water Compliance (NSW, Australia)",
       "description": "",
-      "thumbnail": null,
+      "thumbnail": "non_urban_water_compliance/thumbnail.jpg",
+      "category": "Water Resources",
+      "source_type": "gen_ai"
+    },
+    {
+      "id": "salar_de_atacama_lithium",
+      "name": "Salar de Atacama Lithium",
+      "description": "The Salar de Atacama represents one of Earth's most critical and contested socio-environmental systems, where the global imperative for lithium\u2014essential for electric vehicle batteries and renewable energy storage\u2014intersects with extreme ecological fragility, indigenous territorial rights, and complex hydrogeological dynamics.",
+      "thumbnail": "salar_de_atacama_lithium/thumbnail.png",
       "category": "Water Resources",
       "source_type": "gen_ai"
     }
