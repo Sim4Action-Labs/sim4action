@@ -2,220 +2,233 @@
 
 **Social-Environmental Interactive Mapping Platform for Action**
 
-An interactive web platform for social-environmental systems mapping and causal analysis. SIM4Action lets you visualize, explore, and simulate complex socio-environmental system dynamics through configurable network graphs—with one shared engine serving multiple system maps (e.g. fisheries, water resources, ecosystems) from a single deployment.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![CI](https://github.com/Sim4Action-Labs/sim4action/actions/workflows/ci.yml/badge.svg)](https://github.com/Sim4Action-Labs/sim4action/actions)
+
+An interactive web platform for social-environmental systems mapping and causal analysis. SIM4Action lets you visualise, explore, and simulate complex socio-environmental system dynamics through configurable network graphs—with one shared engine serving multiple system maps from a single deployment.
+
+---
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/Sim4Action-Labs/sim4action.git
+cd sim4action
+
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Start the server (serves the included demo system)
+python platform/server.py
+
+# Open http://localhost:8000/
+```
+
+The demo system (based on the SESSF fishery) is included in the repository and works out of the box.
+
+Custom port:
+
+```bash
+python platform/server.py --port 9000
+```
+
+### Requirements
+
+- Python 3.8+
+- Modern browser (Chrome, Firefox, Safari, Edge)
+- Internet connection (Google Sheets API, CDN assets)
 
 ---
 
 ## Features
 
-### Landing page (catalogue)
+### Interactive Systems Mapping
+- **Force-directed network graph** powered by D3.js with drag, zoom, and pan
+- **Google Sheets data source** — define factors and relationships in a spreadsheet, see them rendered as an interactive network
 
-- **System map catalogue** — Browse all registered system maps from one entry point.
-- **Categories** — Organise maps by category (e.g. Fisheries, Water Resources). Filter by category and view grouped by category.
-- **View modes** — **Cards** (default), **List**, or **Compact** for different levels of detail.
-- **Add system map** — Wizard to register a new map: name, category, description, Google Sheets URL(s), optional image. Built-in validation of sheet structure and an **info popup** explaining required tabs and columns.
-- **Edit system map** — Update name, description, or category from the catalogue (edit icon on each card/row).
-- **Remove system map** — Delete a map from the catalogue (and remove its config directory) with confirmation.
+### Three Analysis Labs
+- **Diagnostics Lab** — Filter by domain, relationship type, strength, and temporal scale
+- **Intervention Lab** — Token diffusion simulation (probabilistic and deterministic) for causal analysis, with forward and backward propagation
+- **Monitoring Lab** — Centrality analysis (degree, betweenness, closeness, eigenvector, Katz) to identify leverage points
 
-### Interactive map (per system)
+### Network Analysis
+- **Feedback loops** — Detect and visualise reinforcing and balancing feedback loops
+- **Community detection** — Louvain and Girvan–Newman algorithms
+- **Drawing layer** — Annotate maps with shapes and text
 
-- **Interactive network** — D3.js force-directed graph with drag, zoom, and pan.
-- **Three analysis labs**:
-  - **Diagnostics Lab** — Filter by domain, relationship type, strength, and temporal scale. Domains are **auto-populated from the spreadsheet** (FACTORS → `domain_name`).
-  - **Intervention Lab** — Token diffusion (single and ensemble) for causal analysis.
-  - **Monitoring Lab** — Centrality (degree, betweenness, closeness, eigenvector, Katz) to find leverage points.
-- **Feedback loops** — Detect and visualise reinforcing and balancing loops.
-- **Clustering** — Louvain and Girvan–Newman community detection.
-- **Drawing layer** — Annotate maps with shapes and text.
-
-### Architecture
-
-- **Single engine** — One codebase (`platform/`) serves all system maps; each map is defined by a config file and optional image(s).
-- **Config-driven** — System-specific data (title, Google Sheet IDs, images) lives in `systems/{id}/config.json`; the app loads by URL: `app.html?system={id}`.
+### Multi-System Architecture
+- **Single engine** — One codebase (`platform/`) serves all system maps
+- **Config-driven** — Each system is defined by `systems/{id}/config.json`; loaded via `app.html?system={id}`
+- **Catalogue browser** — Landing page with filterable catalogue of all registered systems
 
 ---
 
-## Project structure
+## Core Libraries
 
-```
-Fishery-Systems-Mapping/
-├── platform/                     # Shared engine (single source of truth)
-│   ├── index.html               # Landing page: catalogue, add/edit/delete
-│   ├── app.html                 # Main app (generic, config-driven)
-│   ├── server.py                 # HTTP server + API (see below)
-│   ├── diffusion.js
-│   ├── diffusion.py
-│   ├── browser_analysis.py
-│   ├── feedback_loops.py
-│   ├── networkx_loader.py
-│   ├── drawing-layer.js
-│   ├── drawing-integration.js
-│   ├── drawing-controls.css
-│   └── assets/
-│       └── sim4action-logo.png
-│
-├── systems/
-│   ├── catalogue.json           # Master list + categories (see schema below)
-│   └── {system_id}/             # One folder per system map
-│       ├── config.json          # id, name, title, description, category, spreadsheets, apiKey, images
-│       ├── system-image.png     # Optional (map view + catalogue thumbnail)
-│       └── thumbnail.png        # Optional; if missing, system-image.png is used for cards
-│
-└── README.md
-```
+SIM4Action's analytical capabilities are implemented as standalone libraries with zero browser dependencies. They can be used outside the web interface in any Python or Node.js environment.
 
-### Catalogue schema (`systems/catalogue.json`)
+### Python (`platform/`)
 
-```json
-{
-  "categories": ["Fisheries", "Water Resources"],
-  "systems": [
-    {
-      "id": "sessf",
-      "name": "SESSF Fishery",
-      "description": "...",
-      "thumbnail": "sessf/system-image.png",
-      "category": "Fisheries"
-    }
-  ]
-}
-```
+| Library | Purpose |
+|---------|---------|
+| `browser_analysis.py` | Network centrality, community detection, graph metrics (NetworkX) |
+| `feedback_loops.py` | Cycle enumeration, polarity classification, deduplication |
+| `networkx_loader.py` | `build_graph_from_data()` — graph construction from tabular data |
 
----
+### JavaScript (`platform/`)
 
-## Quick start
+| Library | Purpose |
+|---------|---------|
+| `diffusion.js` | Probabilistic and deterministic causal diffusion simulation |
 
-### 1. Start the server
-
-From the repository root:
+### Standalone Usage
 
 ```bash
-python3 platform/server.py
+# Python: network analysis + feedback loops
+python examples/analyze_network.py
+
+# Node.js: diffusion simulation
+node examples/run_diffusion.mjs
 ```
 
-Default URL: **http://localhost:8000/**
-
-Custom port:
-
-```bash
-python3 platform/server.py --port 9000
-```
-
-### 2. Use the platform
-
-1. Open **http://localhost:8000/** — landing page with the system map catalogue.
-2. Filter by category or switch view (Cards / List / Compact).
-3. Click **Launch** on a system to open the interactive map.
-4. Use **Add New System Map** to register a map from a Google Sheet; use the **info** button for spreadsheet structure guidance.
-
-### 3. Requirements
-
-- **Python 3.8+**
-- Modern browser (Chrome, Firefox, Safari, Edge)
-- Internet (Google Sheets API, CDN assets)
+See `examples/` for complete working scripts.
 
 ---
 
-## Adding and editing system maps
+## Using with Your Own Systems
 
-### Via the web UI
+### Via the Web UI
 
-1. On the landing page, click **Add New System Map** (or the + card in List/Compact view).
-2. Enter **name**, **category** (choose existing or “+ New”), **description**, and **Google Sheets URL (Main)**. Optional: draft sheet URL, one **system image** (used for both map view and catalogue card; a transparent PNG works best).
-3. Click **Validate Google Sheet Structure** to check FACTORS and RELATIONSHIPS tabs.
-4. Click **Create System Map**. The server creates `systems/{id}/` and updates the catalogue.
-
-To **edit** a system (name, description, category): click the **edit** (pencil) icon on its card/row, change fields, and **Save Changes**.
-
-To **remove** a system: click the **delete** (trash) icon and confirm. The system folder and catalogue entry are removed.
+1. Open the landing page and click **Add New System Map**
+2. Enter name, category, description, and Google Sheets URL
+3. Click **Validate Google Sheet Structure**, then **Create System Map**
 
 ### Manually
 
-1. Create `systems/my_system/` and add `config.json`:
+Create `systems/my_system/config.json`:
 
 ```json
 {
   "id": "my_system",
   "name": "My System",
   "title": "My System - SIM4Action",
-  "description": "Short description for the catalogue.",
-  "spreadsheets": { "main": "SPREADSHEET_ID", "draft": "SPREADSHEET_ID_OR_SAME" },
+  "description": "A brief description.",
+  "spreadsheets": { "main": "GOOGLE_SHEET_ID" },
   "apiKey": "YOUR_GOOGLE_SHEETS_API_KEY",
   "images": {
-    "systemImage": { "src": "system-image.png", "alt": "My System" },
-    "thumbnail": { "src": "system-image.png", "alt": "My System" }
+    "systemImage": { "src": "system-image.png", "alt": "My System" }
   }
 }
 ```
 
-2. Add `systems/my_system/system-image.png` (optional).
-3. Append the system to `systems/catalogue.json` in both `categories` (if new) and `systems` with `id`, `name`, `description`, `thumbnail`, `category`.
+Add the system to `systems/catalogue.json` and restart the server.
+
+### External Systems Directory
+
+Keep your system maps in a separate directory (useful for private data):
+
+```bash
+python platform/server.py --systems-dir /path/to/my/systems --users-file /path/to/users.json
+```
 
 ---
 
-## Google Sheets structure
+## Google Sheets Structure
 
-Each system map is driven by a **single Google Sheet** with two tabs. Share the sheet with **“Anyone with the link” → Viewer**.
+Each system map is driven by a Google Sheet with two tabs. Share it with **"Anyone with the link" → Viewer**.
 
-| Tab           | Purpose                          |
-|---------------|-----------------------------------|
-| **FACTORS**   | One row per factor (node)         |
-| **RELATIONSHIPS** | One row per directed link   |
+**FACTORS** (columns A–E): `factor_id`, `name`, `domain_name`, `intervenable`, `definition`
 
-### FACTORS (columns A–E, row 1 = headers)
-
-| Column | Header       | Required | Notes |
-|--------|--------------|----------|--------|
-| A      | factor_id    | Yes      | e.g. V1, V2 |
-| B      | name         | Yes      | Display name |
-| C      | domain_name  | Yes      | Used for colours and filters (e.g. Environmental, Management) |
-| D      | intervenable | No       | Yes/No |
-| E      | definition   | No       | Shown in tooltips |
-
-### RELATIONSHIPS (columns A–I, row 1 = headers)
-
-| Column | Header         | Required | Notes |
-|--------|----------------|----------|--------|
-| A      | relationship_id | No     | e.g. R1, R2 |
-| B      | from           | No       | Source name (informational) |
-| C      | to             | No       | Target name (informational) |
-| D      | from_factor_id | Yes      | Must match FACTORS column A |
-| E      | to_factor_id   | Yes      | Must match FACTORS column A |
-| F      | polarity       | No       | same / opposite |
-| G      | strength       | No       | strong / medium / weak |
-| H      | delay          | No       | days / months / years |
-| I      | definition     | No       | Optional description |
-
-On the **Add New System Map** form, the **“How should my spreadsheet be configured?”** button opens a detailed guide (including recognised domain names and allowed values).
+**RELATIONSHIPS** (columns A–I): `relationship_id`, `from`, `to`, `from_factor_id`, `to_factor_id`, `polarity`, `strength`, `delay`, `definition`
 
 ---
 
-## Server API
+## Project Structure
 
-The server (`platform/server.py`) serves static files and provides REST endpoints used by the landing page:
-
-| Method | Path                  | Purpose |
-|--------|-----------------------|---------|
-| GET    | `/`                   | Landing page (`platform/index.html`) |
-| GET    | `/api/catalogue`      | Return `systems/catalogue.json` |
-| GET    | `/api/systems/:id/config` | Return `systems/:id/config.json` |
-| POST   | `/api/systems`        | Create a new system (body: id, name, description, category, spreadsheets, apiKey, images, optional base64 images) |
-| PUT    | `/api/systems/:id`    | Update system metadata (body: name, description, category) |
-| PUT    | `/api/catalogue`      | Replace `systems/catalogue.json` (body: full catalogue JSON) |
-| DELETE | `/api/systems/:id`    | Remove system directory and catalogue entry |
+```
+sim4action/
+├── platform/                # Shared engine
+│   ├── index.html          # Landing page (catalogue browser)
+│   ├── app.html            # Main app (config-driven per system)
+│   ├── server.py           # Python HTTP server + REST API
+│   ├── diffusion.js        # Token diffusion (JS, standalone)
+│   ├── browser_analysis.py # Network analysis (Python, standalone)
+│   ├── feedback_loops.py   # Feedback loops (Python, standalone)
+│   └── networkx_loader.py  # Graph construction (Python, standalone)
+├── systems/
+│   ├── catalogue.json      # System registry
+│   └── demo_fishery/       # Included demo system
+├── examples/               # Standalone usage examples
+├── tests/                  # Automated test suite
+├── paper/                  # JOSS paper
+├── LICENSE                 # AGPL-3.0
+├── CITATION.cff
+├── CONTRIBUTING.md
+└── requirements.txt
+```
 
 ---
 
-## Technology stack
+## Technology Stack
 
-- **Frontend:** HTML5, JavaScript (ES6), D3.js v7, Chart.js
-- **Graph:** Graphology (client), NetworkX via Pyodide
-- **In-browser Python:** Pyodide (NetworkX, feedback loops, centrality, diffusion)
-- **Data:** Google Sheets API v4
-- **Server:** Python 3 `http.server` (custom handler for routes and APIs)
+| Layer | Technology |
+|-------|-----------|
+| Frontend | HTML5, CSS3, JavaScript (ES6+) — no build step |
+| Visualisation | D3.js v7 |
+| Charts | Chart.js |
+| Graph (client) | Graphology |
+| Graph (analysis) | NetworkX via Pyodide (in-browser Python) |
+| Data source | Google Sheets API v4 |
+| Server | Python 3 `http.server` |
+| Diffusion | Custom `diffusion.js` (probabilistic + deterministic) |
 
 ---
 
-## License and attribution
+## Testing
 
-Part of the **Futures of Seafood** work under the [Blue Economy CRC](https://blueeconomycrc.com.au). For more on the program and research context, see the repository and linked project documentation.
+```bash
+# Python tests
+pytest tests/ -v
+
+# Node.js diffusion tests
+node tests/test_diffusion_node.mjs
+
+# Lint
+ruff check platform/*.py tests/*.py
+```
+
+---
+
+## Citation
+
+If you use SIM4Action in your research, please cite:
+
+```bibtex
+@software{castilla_rho_sim4action,
+  author    = {Castilla-Rho, Javier},
+  title     = {SIM4Action: Social-Environmental Interactive Mapping Platform for Action},
+  year      = {2026},
+  url       = {https://github.com/Sim4Action-Labs/sim4action}
+}
+```
+
+See `CITATION.cff` for the full citation metadata.
+
+---
+
+## Contributing
+
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## License
+
+SIM4Action is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
+
+---
+
+## Acknowledgements
+
+Development of SIM4Action has been supported by the ITLA Foundation (Finland), the Walton Foundation, the Mindaro Foundation through WIOMSA, and the Blue Economy Cooperative Research Centre with CSIRO under the Seafood Futures programme.

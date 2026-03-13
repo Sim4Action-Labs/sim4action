@@ -11,8 +11,11 @@ a valid session cookie. Use manage_users.py to create user accounts.
 
 Usage:
     python platform/server.py [--port PORT] [--session-expiry HOURS]
+                              [--systems-dir PATH] [--users-file PATH]
 
     Run from the project root directory, or the server will auto-detect paths.
+    Use --systems-dir to serve system maps from an external directory (e.g. a
+    private atlas repository). Use --users-file to locate users.json elsewhere.
 """
 
 import http.server
@@ -597,7 +600,7 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                 'title': data.get('title', f"{data.get('name', system_id)} - SIM4Action"),
                 'description': data.get('description', ''),
                 'spreadsheets': data.get('spreadsheets', {}),
-                'apiKey': data.get('apiKey', 'AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA'),
+                'apiKey': data.get('apiKey', ''),
                 'images': data.get('images', {})
             }
 
@@ -882,16 +885,30 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def main():
-    global SESSION_EXPIRY_HOURS
+    global SYSTEMS_DIR, CATALOGUE_FILE, USERS_FILE, SESSION_EXPIRY_HOURS
 
     parser = argparse.ArgumentParser(description='SIM4Action Platform Server')
     parser.add_argument('--port', type=int, default=8000, help='Port to serve on (default: 8000)')
     parser.add_argument('--session-expiry', type=int, default=24,
                         help='Session expiry in hours (default: 24)')
+    parser.add_argument('--systems-dir', type=str, default=None,
+                        help='Path to systems directory (default: PROJECT_ROOT/systems)')
+    parser.add_argument('--users-file', type=str, default=None,
+                        help='Path to users.json file (default: PROJECT_ROOT/users.json)')
     args = parser.parse_args()
 
     PORT = args.port
     SESSION_EXPIRY_HOURS = args.session_expiry
+
+    if args.systems_dir:
+        SYSTEMS_DIR = Path(args.systems_dir).resolve()
+        if not SYSTEMS_DIR.exists():
+            print(f"Error: systems directory does not exist: {SYSTEMS_DIR}")
+            sys.exit(1)
+    CATALOGUE_FILE = SYSTEMS_DIR / 'catalogue.json'
+
+    if args.users_file:
+        USERS_FILE = Path(args.users_file).resolve()
 
     # Ensure systems directory and catalogue exist
     SYSTEMS_DIR.mkdir(parents=True, exist_ok=True)
@@ -919,6 +936,7 @@ def main():
         print(f"  Landing page:  http://localhost:{PORT}/")
         print(f"  Platform dir:  {PLATFORM_DIR}")
         print(f"  Systems dir:   {SYSTEMS_DIR}")
+        print(f"  Users file:    {USERS_FILE}")
         print(f"  Auth:          {auth_status}")
         print(f"{'='*60}")
         print(f"  Press Ctrl+C to stop the server")

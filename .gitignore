@@ -7,19 +7,38 @@ credentials.json
 users.json
 *.pem
 *.key
+.env
 
 # Python
 __pycache__/
 *.pyc
 *.pyo
-.env
+.pytest_cache/
 
 # IDE
 .vscode/
 .idea/
+.cursor/
 
 # Generated files
 *.pdf
 
 # Archives (if recreated)
 _archive/
+
+# Node
+node_modules/
+
+# Private systems data (only demo_fishery is tracked in the public repo)
+systems/sessf/
+systems/coastal_basins/
+systems/jfs/
+systems/octopus_*/
+systems/southern_hake/
+systems/northern_prawn_fishery/
+systems/northwest_shelf_trap_fishery/
+systems/non_urban_water_compliance/
+systems/salar_de_atacama_lithium/
+
+# Keep demo system tracked
+!systems/demo_fishery/

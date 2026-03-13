@@ -1,0 +1,9 @@
+# SIM4Action Platform — Python Dependencies
+#
+# Core libraries used by the analysis engine (also used by Pyodide in-browser):
+networkx>=3.0
+pandas>=2.0
+
+# Development and testing:
+pytest>=7.0
+ruff>=0.1
