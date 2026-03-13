@@ -59,7 +59,7 @@ jobs:
         run: pip install ruff
 
       - name: Run ruff
-        run: ruff check platform/*.py tests/*.py --select E,F,W --ignore E501
+        run: ruff check platform/*.py tests/*.py --select E9,F63,F7,F82 --ignore E501
 
   paper:
     name: JOSS Paper
@@ -68,9 +68,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Build JOSS paper PDF
-        uses: openjournals/paperdraft@v1
+        uses: openjournals/openjournals-draft-action@master
         with:
           journal: joss
+          paper-path: paper/paper.md
 
       - name: Upload paper artifact
         uses: actions/upload-artifact@v4

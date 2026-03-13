@@ -1,8 +1,5 @@
 """Tests for platform/server.py — HTTP server and REST API."""
 import json
-import os
-import shutil
-import signal
 import subprocess
 import sys
 import time
