@@ -1003,8 +1003,17 @@
             // Load config and catalogue in parallel
             const [configResponse, catalogueResponse] = await Promise.all([
                 fetch(`../systems/${systemId}/config.json?_=${Date.now()}`),
-                fetch(`../systems/catalogue.json?_=${Date.now()}`)
+                fetch(`/api/catalogue?_=${Date.now()}`)
             ]);
+            if (configResponse.status === 403) {
+                document.getElementById('main-content').innerHTML = `
+                    <div style="text-align:center; padding:80px 20px; color:#8eacc5;">
+                        <h2 style="color:#ef5350; margin-bottom:12px;">Access Denied</h2>
+                        <p>You do not have permission to view this system map.</p>
+                        <a href="index.html" style="color:#64b5f6; margin-top:16px; display:inline-block;">Return to catalogue</a>
+                    </div>`;
+                return;
+            }
             if (!configResponse.ok) throw new Error(`System "${systemId}" not found`);
             CONFIG = await configResponse.json();
 

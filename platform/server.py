@@ -75,6 +75,57 @@ def load_users():
     return {"users": []}
 
 
+def save_users(data):
+    """Write users data back to disk."""
+    with open(USERS_FILE, 'w') as f:
+        json.dump(data, f, indent=2)
+
+
+def migrate_users():
+    """Auto-add role and allowed_systems fields to user entries that lack them.
+
+    Users named 'admin' get role='admin' and allowed_systems=['*'].
+    All others get role='user' and allowed_systems=[] (no access until granted).
+    """
+    data = load_users()
+    if not data.get('users'):
+        return
+    changed = False
+    for user in data['users']:
+        if 'role' not in user:
+            user['role'] = 'admin' if user['username'] == 'admin' else 'user'
+            changed = True
+        if 'allowed_systems' not in user:
+            user['allowed_systems'] = ['*'] if user['role'] == 'admin' else []
+            changed = True
+    if changed:
+        save_users(data)
+
+
+def get_user_record(username):
+    """Return the full user dict for a username, or None."""
+    data = load_users()
+    for u in data.get('users', []):
+        if u['username'] == username:
+            return u
+    return None
+
+
+def user_can_access_system(username, system_id):
+    """Check whether a user is allowed to access a given system map."""
+    user = get_user_record(username)
+    if not user:
+        return False
+    allowed = user.get('allowed_systems', [])
+    return '*' in allowed or system_id in allowed
+
+
+def is_admin(username):
+    """Return True if the given user has the admin role."""
+    user = get_user_record(username)
+    return user is not None and user.get('role') == 'admin'
+
+
 def verify_password(password, stored_hash):
     """Verify a password against a PBKDF2-SHA256 hash (salt:hex_digest)."""
     salt, expected = stored_hash.split(':')
@@ -249,15 +300,29 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         url_path = parsed.path.strip('/')
 
-        # API: Get catalogue
+        # API: Get catalogue (filtered by user's allowed_systems)
         if url_path == 'api/catalogue':
             catalogue = load_catalogue()
+            username = self.check_auth()
+            if username:
+                user = get_user_record(username)
+                allowed = user.get('allowed_systems', []) if user else []
+                if '*' not in allowed:
+                    catalogue = dict(catalogue)
+                    catalogue['systems'] = [
+                        s for s in catalogue.get('systems', [])
+                        if s.get('id') in allowed
+                    ]
             self.send_json_response(catalogue)
             return
 
-        # API: Get system config
+        # API: Get system config (access-controlled)
         if url_path.startswith('api/systems/') and url_path.endswith('/config'):
             system_id = url_path.split('/')[2]
+            username = self.check_auth()
+            if username and not user_can_access_system(username, system_id):
+                self.send_error_response(403, 'You do not have access to this system map')
+                return
             config_path = SYSTEMS_DIR / system_id / 'config.json'
             if config_path.exists():
                 with open(config_path, 'r') as f:
@@ -267,14 +332,49 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_response(404, f'System "{system_id}" not found')
             return
 
+        # API: Get access-control matrix (admin only)
+        if url_path == 'api/access-control':
+            username = self.check_auth()
+            if not username or not is_admin(username):
+                self.send_error_response(403, 'Admin access required')
+                return
+            users_data = load_users()
+            catalogue = load_catalogue()
+            users_list = [
+                {'username': u['username'], 'role': u.get('role', 'user'),
+                 'allowed_systems': u.get('allowed_systems', [])}
+                for u in users_data.get('users', [])
+            ]
+            systems_list = [
+                {'id': s['id'], 'name': s.get('name', s['id'])}
+                for s in catalogue.get('systems', [])
+            ]
+            self.send_json_response({'users': users_list, 'systems': systems_list})
+            return
+
         # API: Check auth status (useful for frontend)
         if url_path == 'api/auth/status':
             username = self.check_auth()
+            role = None
+            if username:
+                user = get_user_record(username)
+                role = user.get('role', 'user') if user else 'user'
             self.send_json_response({
                 'authenticated': username is not None,
-                'username': username
+                'username': username,
+                'role': role
             })
             return
+
+        # Guard access to system files (images, configs, etc.)
+        if url_path.startswith('systems/'):
+            parts = url_path.split('/')
+            if len(parts) >= 2:
+                system_id = parts[1]
+                username = self.check_auth()
+                if username and not user_can_access_system(username, system_id):
+                    self.send_error_response(403, 'You do not have access to this system map')
+                    return
 
         # Default file serving
         super().do_GET()
@@ -318,6 +418,11 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
         if url_path == 'api/catalogue':
             self.handle_update_catalogue()
+            return
+
+        # PUT /api/access-control — update per-user permissions (admin only)
+        if url_path == 'api/access-control':
+            self.handle_update_access_control()
             return
 
         # PUT /api/systems/<id>  — update system metadata
@@ -424,6 +529,45 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
         if username:
             self.log_message('Logout: user "%s"', username)
+
+    # ── Access control handler ────────────────────────────────────────────
+
+    def handle_update_access_control(self):
+        """Update per-user allowed_systems. Admin only."""
+        try:
+            username = self.check_auth()
+            if not username or not is_admin(username):
+                self.send_error_response(403, 'Admin access required')
+                return
+
+            content_length = int(self.headers.get('Content-Length', 0))
+            post_data = self.rfile.read(content_length)
+            data = json.loads(post_data.decode('utf-8'))
+
+            permissions = data.get('permissions', [])
+            if not isinstance(permissions, list):
+                self.send_error_response(400, 'permissions must be an array')
+                return
+
+            users_data = load_users()
+            perm_map = {p['username']: p['allowed_systems'] for p in permissions
+                        if 'username' in p and 'allowed_systems' in p}
+
+            for user in users_data.get('users', []):
+                if user['username'] in perm_map:
+                    # Never downgrade admin's own wildcard access
+                    if user.get('role') == 'admin':
+                        continue
+                    user['allowed_systems'] = perm_map[user['username']]
+
+            save_users(users_data)
+            self.send_json_response({'success': True})
+            self.log_message('Access control updated by admin "%s"', username)
+
+        except json.JSONDecodeError:
+            self.send_error_response(400, 'Invalid JSON')
+        except Exception as e:
+            self.send_error_response(500, str(e))
 
     # ── System management handlers ──────────────────────────────────────
 
@@ -753,6 +897,9 @@ def main():
     SYSTEMS_DIR.mkdir(parents=True, exist_ok=True)
     if not CATALOGUE_FILE.exists():
         save_catalogue({"systems": []})
+
+    # Migrate existing users (add role/allowed_systems if missing)
+    migrate_users()
 
     # Check authentication status
     users_data = load_users()

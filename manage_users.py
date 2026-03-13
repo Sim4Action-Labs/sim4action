@@ -78,7 +78,7 @@ def prompt_password() -> str:
 
 # ── Commands ────────────────────────────────────────────────────────────────
 
-def cmd_add(username: str) -> None:
+def cmd_add(username: str, admin: bool = False) -> None:
     """Add a new user."""
     data = load_users()
 
@@ -88,16 +88,20 @@ def cmd_add(username: str) -> None:
             print(f"  Error: User '{username}' already exists. Use 'reset' to change the password.")
             sys.exit(1)
 
-    print(f"  Adding user: {username}")
+    role = 'admin' if admin else 'user'
+    allowed = ['*'] if admin else []
+    print(f"  Adding user: {username} (role: {role})")
     password = prompt_password()
 
     data['users'].append({
         'username': username,
-        'password_hash': hash_password(password)
+        'password_hash': hash_password(password),
+        'role': role,
+        'allowed_systems': allowed
     })
 
     save_users(data)
-    print(f"  User '{username}' added successfully.")
+    print(f"  User '{username}' added successfully (role: {role}).")
 
 
 def cmd_remove(username: str) -> None:
@@ -123,7 +127,10 @@ def cmd_list() -> None:
 
     print(f"  Registered users ({len(data['users'])}):")
     for user in data['users']:
-        print(f"    - {user['username']}")
+        role = user.get('role', 'user')
+        allowed = user.get('allowed_systems', [])
+        access = 'all systems' if '*' in allowed else f"{len(allowed)} system(s)"
+        print(f"    - {user['username']}  (role: {role}, access: {access})")
 
 
 def cmd_reset(username: str) -> None:
@@ -169,6 +176,8 @@ Examples:
     # add
     add_parser = subparsers.add_parser('add', help='Add a new user')
     add_parser.add_argument('username', help='Username to create')
+    add_parser.add_argument('--admin', action='store_true',
+                            help='Grant admin role (full access to all systems)')
 
     # remove
     remove_parser = subparsers.add_parser('remove', help='Remove an existing user')
@@ -188,7 +197,7 @@ Examples:
     print("  " + "=" * 40)
 
     if args.command == 'add':
-        cmd_add(args.username)
+        cmd_add(args.username, admin=args.admin)
     elif args.command == 'remove':
         cmd_remove(args.username)
     elif args.command == 'list':

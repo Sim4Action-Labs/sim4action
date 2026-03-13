@@ -29,10 +29,16 @@
             position: relative;
         }
 
-        .logout-btn {
+        .header-actions {
             position: absolute;
             top: 20px;
             right: 20px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .logout-btn, .admin-btn {
             background: rgba(26, 42, 74, 0.6);
             border: 1px solid rgba(100, 181, 246, 0.2);
             color: #8eacc5;
@@ -53,7 +59,13 @@
             color: #ef5350;
         }
 
-        .logout-btn svg {
+        .admin-btn:hover {
+            background: rgba(100, 181, 246, 0.15);
+            border-color: rgba(100, 181, 246, 0.4);
+            color: #64b5f6;
+        }
+
+        .logout-btn svg, .admin-btn svg {
             width: 16px;
             height: 16px;
         }
@@ -1367,6 +1379,207 @@
         }
 
         /* ============================
+           ACCESS CONTROL MODAL
+           ============================ */
+        .acl-modal {
+            background: linear-gradient(145deg, #1a2a4a, #0d1f3c);
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            border-radius: 16px;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            padding: 32px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .acl-modal h2 {
+            font-size: 1.5em;
+            margin: 0 0 6px 0;
+            color: #e0e6ed;
+        }
+
+        .acl-modal .acl-subtitle {
+            color: #7a9ab5;
+            font-size: 0.9em;
+            margin: 0 0 20px 0;
+        }
+
+        .acl-table-wrap {
+            overflow: auto;
+            flex: 1;
+            border: 1px solid rgba(100, 181, 246, 0.12);
+            border-radius: 8px;
+        }
+
+        .acl-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85em;
+        }
+
+        .acl-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .acl-table th {
+            background: rgba(10, 22, 40, 0.95);
+            color: #8eacc5;
+            font-weight: 600;
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.2);
+            white-space: nowrap;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .acl-table th.acl-user-col {
+            text-align: left;
+            padding-left: 14px;
+            min-width: 120px;
+            position: sticky;
+            left: 0;
+            z-index: 3;
+        }
+
+        .acl-table th.acl-system-col {
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            max-width: 44px;
+            height: 120px;
+            padding: 8px 4px;
+            line-height: 1.2;
+        }
+
+        .acl-table th.acl-toggle-col {
+            min-width: 70px;
+        }
+
+        .acl-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(100, 181, 246, 0.08);
+            text-align: center;
+            color: #b0cfe0;
+        }
+
+        .acl-table td.acl-user-cell {
+            text-align: left;
+            padding-left: 14px;
+            font-weight: 500;
+            position: sticky;
+            left: 0;
+            background: rgba(26, 42, 74, 0.95);
+            z-index: 1;
+        }
+
+        .acl-table td.acl-toggle-cell {
+            min-width: 70px;
+        }
+
+        .acl-table tr:hover td {
+            background: rgba(100, 181, 246, 0.05);
+        }
+        .acl-table tr:hover td.acl-user-cell {
+            background: rgba(26, 42, 74, 0.98);
+        }
+
+        .acl-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #1e88e5;
+        }
+
+        .acl-row-toggle, .acl-col-toggle {
+            background: transparent;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+            color: #8eacc5;
+            padding: 3px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.78em;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .acl-row-toggle:hover, .acl-col-toggle:hover {
+            background: rgba(100, 181, 246, 0.12);
+            color: #64b5f6;
+        }
+
+        .acl-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(100, 181, 246, 0.12);
+        }
+
+        .acl-footer .btn-save {
+            background: linear-gradient(135deg, #1e88e5, #1565c0);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .acl-footer .btn-save:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+        .acl-footer .btn-save:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .acl-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 22px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            z-index: 2000;
+            animation: acl-slide-in 0.3s ease;
+            color: white;
+        }
+        .acl-toast.success { background: rgba(46, 125, 50, 0.92); }
+        .acl-toast.error { background: rgba(211, 47, 47, 0.92); }
+        @keyframes acl-slide-in {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .acl-empty {
+            text-align: center;
+            padding: 40px;
+            color: #5a7a96;
+        }
+
+        .acl-user-role-badge {
+            display: inline-block;
+            font-size: 0.72em;
+            padding: 1px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: 400;
+        }
+        .acl-user-role-badge.admin {
+            background: rgba(100, 181, 246, 0.15);
+            color: #64b5f6;
+        }
+
+        /* ============================
            DELETE CONFIRMATION MODAL
            ============================ */
         .confirm-overlay {
@@ -2448,14 +2661,22 @@
 <body>
 
 <div class="header">
-    <button class="logout-btn" id="logout-btn" onclick="handleLogout()" title="Sign out" style="display: none;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-        </svg>
-        Sign Out
-    </button>
+    <div class="header-actions">
+        <button class="admin-btn" id="manage-access-btn" onclick="openAccessControlModal()" title="Manage user access to system maps" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Manage Access
+        </button>
+        <button class="logout-btn" id="logout-btn" onclick="handleLogout()" title="Sign out" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Sign Out
+        </button>
+    </div>
     <h1>SIM4Action</h1>
     <p class="subtitle">Interactive platform for social-environmental systems mapping and causal analysis</p>
     <p class="tagline">Explore, intervene, and monitor complex system dynamics</p>
@@ -4405,6 +4626,23 @@ graph TD
 </div>
 
 <!-- Delete Confirmation Modal -->
+<!-- ============================================ -->
+<!-- ACCESS CONTROL MODAL                         -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="acl-modal" onclick="if(event.target===this)closeAccessControlModal()">
+    <div class="acl-modal">
+        <h2>Manage User Access</h2>
+        <p class="acl-subtitle">Control which system maps each user can see. Admin users always have full access.</p>
+        <div id="acl-content">
+            <div class="acl-empty">Loading...</div>
+        </div>
+        <div class="acl-footer">
+            <button class="btn-secondary" onclick="closeAccessControlModal()">Cancel</button>
+            <button class="btn-save" id="acl-save-btn" onclick="saveAccessControl()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
 <div class="confirm-overlay" id="delete-confirm" onclick="if(event.target===this)closeDeleteConfirm()">
     <div class="confirm-box">
         <h3>Remove System Map</h3>
@@ -4847,6 +5085,8 @@ graph TD
     // ============================================
     // AUTHENTICATION
     // ============================================
+    let userRole = null;
+
     async function checkAuthStatus() {
         try {
             const res = await fetch('/api/auth/status');
@@ -4854,6 +5094,11 @@ graph TD
             if (data.authenticated) {
                 const btn = document.getElementById('logout-btn');
                 if (btn) btn.style.display = 'flex';
+                userRole = data.role || 'user';
+                if (userRole === 'admin') {
+                    const adminBtn = document.getElementById('manage-access-btn');
+                    if (adminBtn) adminBtn.style.display = 'flex';
+                }
             }
         } catch (e) { /* ignore — auth may be disabled */ }
     }
@@ -4865,8 +5110,7 @@ graph TD
         window.location.href = '/login.html';
     }
 
-    // Check auth on load to show/hide logout button
-    checkAuthStatus();
+    // Auth check is awaited before catalogue loads (see DOMContentLoaded below)
 
     // ============================================
     // CONSTANTS & STATE
@@ -4989,7 +5233,7 @@ graph TD
     // ============================================
     async function loadCatalogue() {
         try {
-            const response = await fetch(`../systems/catalogue.json?_=${Date.now()}`);
+            const response = await fetch(`/api/catalogue?_=${Date.now()}`);
             currentCatalogue = await response.json();
             renderCategoryFilters();
             renderCatalogue();
@@ -5138,11 +5382,13 @@ graph TD
             const catBadge = system.category ? `<span class="card-category-badge">${system.category}</span>` : '';
             const sourceBadge = getSourceBadgeHtml(system.source_type);
 
-            card.innerHTML = `
+            const adminOverlay = userRole === 'admin' ? `
                 <div class="card-actions-overlay">
                     <button class="btn-card-icon btn-card-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system">${EDIT_SVG}</button>
                     <button class="btn-card-icon btn-card-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system">${TRASH_SVG}</button>
-                </div>
+                </div>` : '';
+            card.innerHTML = `
+                ${adminOverlay}
                 <div class="card-thumbnail">
                     ${catBadge}
                     ${thumbnailSrc
@@ -5180,6 +5426,9 @@ graph TD
             const thumbnailSrc = system.thumbnail ? `../systems/${system.thumbnail}` : null;
             const sourceBadge = getSourceBadgeHtml(system.source_type);
 
+            const listAdminBtns = userRole === 'admin' ? `
+                    <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system">${EDIT_SVG}</button>
+                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system">${TRASH_SVG}</button>` : '';
             item.innerHTML = `
                 <div class="list-thumb">
                     ${thumbnailSrc
@@ -5194,8 +5443,7 @@ graph TD
                 </div>
                 <div class="list-actions">
                     <a class="btn-launch" href="overview.html?system=${system.id}" onclick="event.stopPropagation();">View Details</a>
-                    <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system">${EDIT_SVG}</button>
-                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system">${TRASH_SVG}</button>
+                    ${listAdminBtns}
                 </div>
             `;
             list.appendChild(item);
@@ -5231,8 +5479,9 @@ graph TD
                 </div>
                 <div class="compact-actions">
                     <a class="btn-launch" href="overview.html?system=${system.id}" onclick="event.stopPropagation();" style="padding:5px 12px; font-size:0.78em;">View</a>
+                    ${userRole === 'admin' ? `
                     <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${system.id}')" title="Edit system" style="width:28px;height:28px;">${EDIT_SVG}</button>
-                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system" style="width:28px;height:28px;">${TRASH_SVG}</button>
+                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); openDeleteConfirm('${system.id}', '${system.name.replace(/'/g, "\\'")}')" title="Remove system" style="width:28px;height:28px;">${TRASH_SVG}</button>` : ''}
                 </div>
             `;
             grid.appendChild(item);
@@ -5368,6 +5617,7 @@ graph TD
     // ADD BUTTON (adapts to view mode)
     // ============================================
     function appendAddButton(container) {
+        if (userRole !== 'admin') return;
         if (currentView === 'cards') {
             // Find the last card-grid, or create a new one
             let lastGrid = container.querySelector('.card-grid:last-of-type');
@@ -5992,9 +6242,138 @@ graph TD
     }
 
     // ============================================
+    // ACCESS CONTROL MODAL
+    // ============================================
+    let aclData = null;
+
+    async function openAccessControlModal() {
+        document.getElementById('acl-modal').classList.add('active');
+        document.getElementById('acl-content').innerHTML = '<div class="acl-empty">Loading...</div>';
+        try {
+            const res = await fetch('/api/access-control');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            aclData = await res.json();
+            renderAccessControlMatrix();
+        } catch (e) {
+            document.getElementById('acl-content').innerHTML =
+                `<div class="acl-empty">Failed to load access data: ${e.message}</div>`;
+        }
+    }
+
+    function closeAccessControlModal() {
+        document.getElementById('acl-modal').classList.remove('active');
+        aclData = null;
+    }
+
+    function renderAccessControlMatrix() {
+        const container = document.getElementById('acl-content');
+        const nonAdminUsers = aclData.users.filter(u => u.role !== 'admin');
+        const systems = aclData.systems;
+
+        if (nonAdminUsers.length === 0) {
+            container.innerHTML = '<div class="acl-empty">No non-admin users to manage. Add users with <code>python3 manage_users.py add &lt;username&gt;</code></div>';
+            return;
+        }
+        if (systems.length === 0) {
+            container.innerHTML = '<div class="acl-empty">No system maps in the catalogue yet.</div>';
+            return;
+        }
+
+        let html = '<div class="acl-table-wrap"><table class="acl-table"><thead><tr>';
+        html += '<th class="acl-user-col">User</th>';
+        html += '<th class="acl-toggle-col">All</th>';
+        systems.forEach(s => {
+            html += `<th class="acl-system-col" title="${s.name}">${s.name}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        nonAdminUsers.forEach(user => {
+            const allowed = user.allowed_systems || [];
+            const allChecked = systems.every(s => allowed.includes(s.id));
+            html += '<tr>';
+            html += `<td class="acl-user-cell">${user.username}</td>`;
+            html += `<td class="acl-toggle-cell"><button class="acl-row-toggle" onclick="toggleAclRow('${user.username}')">${allChecked ? 'None' : 'All'}</button></td>`;
+            systems.forEach(s => {
+                const checked = allowed.includes(s.id) ? 'checked' : '';
+                html += `<td><input type="checkbox" data-user="${user.username}" data-system="${s.id}" ${checked}></td>`;
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        container.innerHTML = html;
+    }
+
+    function toggleAclRow(username) {
+        const checkboxes = document.querySelectorAll(`#acl-content input[data-user="${username}"]`);
+        const allChecked = [...checkboxes].every(cb => cb.checked);
+        checkboxes.forEach(cb => cb.checked = !allChecked);
+        renderToggleButtons();
+    }
+
+    function renderToggleButtons() {
+        if (!aclData) return;
+        const nonAdminUsers = aclData.users.filter(u => u.role !== 'admin');
+        const systems = aclData.systems;
+        nonAdminUsers.forEach(user => {
+            const checkboxes = document.querySelectorAll(`#acl-content input[data-user="${user.username}"]`);
+            const allChecked = [...checkboxes].every(cb => cb.checked);
+            const btn = [...document.querySelectorAll('.acl-row-toggle')].find(b =>
+                b.getAttribute('onclick').includes(`'${user.username}'`));
+            if (btn) btn.textContent = allChecked ? 'None' : 'All';
+        });
+    }
+
+    async function saveAccessControl() {
+        const btn = document.getElementById('acl-save-btn');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+
+        try {
+            const nonAdminUsers = aclData.users.filter(u => u.role !== 'admin');
+            const permissions = nonAdminUsers.map(user => {
+                const checkboxes = document.querySelectorAll(`#acl-content input[data-user="${user.username}"]`);
+                const allowedSystems = [...checkboxes].filter(cb => cb.checked).map(cb => cb.dataset.system);
+                return { username: user.username, allowed_systems: allowedSystems };
+            });
+
+            const res = await fetch('/api/access-control', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ permissions })
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const result = await res.json();
+            if (!result.success) throw new Error(result.error || 'Unknown error');
+
+            showAclToast('Access permissions saved successfully', 'success');
+            closeAccessControlModal();
+        } catch (e) {
+            showAclToast(`Failed to save: ${e.message}`, 'error');
+        }
+
+        btn.disabled = false;
+        btn.textContent = 'Save Changes';
+    }
+
+    function showAclToast(message, type) {
+        const existing = document.querySelector('.acl-toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = `acl-toast ${type}`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
+    }
+
+    // ============================================
     // INITIALIZATION
     // ============================================
-    document.addEventListener('DOMContentLoaded', loadCatalogue);
+    document.addEventListener('DOMContentLoaded', async () => {
+        await checkAuthStatus();
+        await loadCatalogue();
+    });
 
     document.getElementById('add-modal').addEventListener('click', function(e) {
         if (e.target === this) closeAddModal();

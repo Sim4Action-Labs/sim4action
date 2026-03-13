@@ -5625,6 +5625,16 @@
 
             try {
                 const configResponse = await fetch(`../systems/${systemId}/config.json`);
+                if (configResponse.status === 403) {
+                    const errorDiv = document.getElementById('error');
+                    if (errorDiv) {
+                        errorDiv.innerHTML = 'Access Denied — You do not have permission to view this system map.<br><a href="index.html" style="color:#64b5f6;">Return to catalogue</a>';
+                        errorDiv.style.display = 'block';
+                    }
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                    return;
+                }
                 if (!configResponse.ok) {
                     throw new Error(`HTTP ${configResponse.status}: Could not load config for system "${systemId}"`);
                 }
