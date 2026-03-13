@@ -1,87 +1,14 @@
 {
   "categories": [
-    "Fisheries",
-    "Water Resources"
+    "Fisheries"
   ],
   "systems": [
     {
-      "id": "sessf",
-      "name": "SESSF Fishery",
-      "description": "Southern and Eastern Scalefish and Shark Fishery systems map covering biological, economic, environmental, management, and social domains.",
-      "thumbnail": "sessf/system-image.png",
+      "id": "demo_fishery",
+      "name": "Demo Fishery (SESSF)",
+      "description": "Demonstration system map based on the Southern and Eastern Scalefish and Shark Fishery (SESSF), covering biological, economic, environmental, management, and social domains.",
+      "thumbnail": "demo_fishery/system-image.png",
       "category": "Fisheries",
-      "source_type": "gen_ai"
-    },
-    {
-      "id": "coastal_basins",
-      "name": "Coastal Basins",
-      "description": "Coastal basin social-environmental systems map exploring interactions between biological, economic, environmental, management, and social factors.",
-      "thumbnail": "coastal_basins/system-image.png",
-      "category": "Water Resources",
-      "source_type": "workshop"
-    },
-    {
-      "id": "jfs",
-      "name": "Jumbo Flying Squid",
-      "description": "Jumbo Flying Squid (Dosidicus gigas) fishery systems map from the Humboldt Current system.",
-      "thumbnail": "jfs/system-image.png",
-      "category": "Fisheries",
-      "source_type": "workshop"
-    },
-    {
-      "id": "octopus_chile",
-      "name": "Octopus Chile",
-      "description": "Chilean octopus fishery systems map from the Humboldt Current system.",
-      "thumbnail": "octopus_chile/system-image.png",
-      "category": "Fisheries",
-      "source_type": "workshop"
-    },
-    {
-      "id": "octopus_peru",
-      "name": "Octopus Peru",
-      "description": "Peruvian octopus (Octopus mimus) fishery systems map from the Humboldt Current system.",
-      "thumbnail": "octopus_peru/system-image.png",
-      "category": "Fisheries",
-      "source_type": "workshop"
-    },
-    {
-      "id": "southern_hake",
-      "name": "Southern Hake",
-      "description": "Southern Hake (Merluccius australis) fishery systems map from the Humboldt Current system.",
-      "thumbnail": "southern_hake/system-image.png",
-      "category": "Fisheries",
-      "source_type": "workshop"
-    },
-    {
-      "id": "northern_prawn_fishery",
-      "name": "Northern Prawn Fishery",
-      "description": "The Northern Prawn Fishery (NPF) is a multi-species trawl fishery operating in the Gulf of Carpentaria",
-      "thumbnail": "northern_prawn_fishery/thumbnail.png",
-      "category": "Fisheries",
-      "source_type": "gen_ai"
-    },
-    {
-      "id": "northwest_shelf_trap_fishery",
-      "name": "Northwest Shelf Trap Fishery",
-      "description": "",
-      "thumbnail": "northwest_shelf_trap_fishery/thumbnail.png",
-      "category": "Fisheries",
-      "source_type": "gen_ai"
-    },
-    {
-      "id": "non_urban_water_compliance",
-      "name": "Non-urban Water Compliance (NSW, Australia)",
-      "description": "",
-      "thumbnail": "non_urban_water_compliance/thumbnail.jpg",
-      "category": "Water Resources",
-      "source_type": "gen_ai"
-    },
-    {
-      "id": "salar_de_atacama_lithium",
-      "name": "Salar de Atacama Lithium",
-      "description": "The Salar de Atacama represents one of Earth's most critical and contested socio-environmental systems, where the global imperative for lithium\u2014essential for electric vehicle batteries and renewable energy storage\u2014intersects with extreme ecological fragility, indigenous territorial rights, and complex hydrogeological dynamics.",
-      "thumbnail": "salar_de_atacama_lithium/thumbnail.png",
-      "category": "Water Resources",
       "source_type": "gen_ai"
     }
   ]
