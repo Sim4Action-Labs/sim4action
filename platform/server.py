@@ -265,9 +265,10 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
         if url_path.startswith('platform/'):
             return str(PROJECT_ROOT / url_path)
 
-        # Explicit systems/ prefix
+        # Explicit systems/ prefix — use SYSTEMS_DIR (may differ from PROJECT_ROOT/systems via --systems-dir)
         if url_path.startswith('systems/'):
-            return str(PROJECT_ROOT / url_path)
+            relative = url_path[len('systems/'):]
+            return str(SYSTEMS_DIR / relative)
 
         # Platform engine files (served from platform/)
         platform_files = [
@@ -929,6 +930,7 @@ def main():
     # Change to project root so relative paths work
     os.chdir(str(PROJECT_ROOT))
 
+    socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), SIM4ActionHandler) as httpd:
         print(f"\n{'='*60}")
         print(f"  SIM4Action Platform Server")
