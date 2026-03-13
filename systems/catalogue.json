@@ -1,14 +1,32 @@
 {
   "categories": [
-    "Fisheries"
+    "Fisheries",
+    "Water Resources",
+    "Mining & Extractives"
   ],
   "systems": [
     {
-      "id": "demo_fishery",
-      "name": "Demo Fishery (SESSF)",
-      "description": "Demonstration system map based on the Southern and Eastern Scalefish and Shark Fishery (SESSF), covering biological, economic, environmental, management, and social domains.",
-      "thumbnail": "demo_fishery/system-image.png",
+      "id": "octopus_chile",
+      "name": "Octopus Chile",
+      "description": "Chilean octopus fishery systems map from the Humboldt Current system.",
+      "thumbnail": "octopus_chile/system-image.png",
       "category": "Fisheries",
+      "source_type": "workshop"
+    },
+    {
+      "id": "non_urban_water_compliance",
+      "name": "Non-urban Water Compliance (NSW, Australia)",
+      "description": "Systems map of non-urban water compliance in New South Wales, Australia, exploring interactions between regulatory, environmental, economic, and social factors.",
+      "thumbnail": "non_urban_water_compliance/thumbnail.jpg",
+      "category": "Water Resources",
+      "source_type": "gen_ai"
+    },
+    {
+      "id": "salar_de_atacama_lithium",
+      "name": "Salar de Atacama Lithium",
+      "description": "The Salar de Atacama represents one of Earth's most critical and contested socio-environmental systems, where the global imperative for lithium intersects with extreme ecological fragility, indigenous territorial rights, and complex hydrogeological dynamics.",
+      "thumbnail": "salar_de_atacama_lithium/thumbnail.png",
+      "category": "Mining & Extractives",
       "source_type": "gen_ai"
     }
   ]
