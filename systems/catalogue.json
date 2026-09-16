@@ -2,7 +2,8 @@
   "categories": [
     "Fisheries",
     "Water Resources",
-    "Mining & Extractives"
+    "Mining & Extractives",
+    "Conflict & Security"
   ],
   "systems": [
     {
@@ -27,6 +28,30 @@
       "description": "The Salar de Atacama represents one of Earth's most critical and contested socio-environmental systems, where the global imperative for lithium intersects with extreme ecological fragility, indigenous territorial rights, and complex hydrogeological dynamics.",
       "thumbnail": "salar_de_atacama_lithium/thumbnail.png",
       "category": "Mining & Extractives",
+      "source_type": "gen_ai"
+    },
+    {
+      "id": "snowy_water_inquiry_outcomes_implementation_deed_s",
+      "name": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID)",
+      "description": "Systems map of the SWIOID system spanning the Upper Murrumbidgee and ACT, exploring interactions between water allocation, hydroelectric generation, environmental flows, and urban water security for Canberra's growing population.",
+      "thumbnail": "snowy_water_inquiry_outcomes_implementation_deed_s/thumbnail.jpg",
+      "category": "Water Resources",
+      "source_type": "gen_ai"
+    },
+    {
+      "id": "armed_conflict_impacts_on_groundwater_resources_an",
+      "name": "Armed Conflict Impacts on Groundwater Resources and Water Security",
+      "description": "Systems map of armed conflict impacts on groundwater resources and water security (2023\u20132026), exploring how conflicts in Ukraine, Gaza, the Middle East, and Sudan have created unprecedented cascading water crises.",
+      "thumbnail": "armed_conflict_impacts_on_groundwater_resources_an/thumbnail.webp",
+      "category": "Conflict & Security",
+      "source_type": "gen_ai"
+    },
+    {
+      "id": "lake_burley_griffin_water_quality_and_cyanobacteri",
+      "name": "Lake Burley Griffin Water Quality and Cyanobacterial Bloom Management",
+      "description": "Systems map of Lake Burley Griffin's complex socio-environmental system, exploring how urban development, legacy contamination, invasive species, and climate change interact to drive recurring cyanobacterial blooms threatening recreation, public health, and ecosystem integrity.",
+      "thumbnail": "lake_burley_griffin_water_quality_and_cyanobacteri/thumbnail.jpg",
+      "category": "Water Resources",
       "source_type": "gen_ai"
     }
   ]

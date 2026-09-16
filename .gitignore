@@ -8,6 +8,7 @@ users.json
 *.pem
 *.key
 .env
+platform/ops/docker/searxng/config/settings.yml
 
 # Python
 __pycache__/
@@ -22,6 +23,8 @@ __pycache__/
 
 # Generated files
 *.pdf
+*.bak
+**/relevance_cache.json
 
 # Archives (if recreated)
 _archive/
@@ -43,3 +46,6 @@ systems/demo_fishery/
 !systems/octopus_chile/
 !systems/non_urban_water_compliance/
 !systems/salar_de_atacama_lithium/
+!systems/armed_conflict_impacts_on_groundwater_resources_an/
+!systems/lake_burley_griffin_water_quality_and_cyanobacteri/
+!systems/snowy_water_inquiry_outcomes_implementation_deed_s/

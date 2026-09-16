@@ -1,0 +1,625 @@
+{
+  "meta": {
+    "system_id": "salar_de_atacama_lithium",
+    "version": 2,
+    "generated_at": "2026-08-25T09:23:06+00:00",
+    "model": "qwen3:32b",
+    "source_hash": "2d3e7b60e1d4f1c0ff4e529c258691bf5e12e9817398b773f5e4fa35186d6ff6"
+  },
+  "summary": "This map explores the Salar de Atacama lithium system, a globally significant but ecologically fragile region. It includes 81 factors and 160 relationships across 7 distinct thematic clusters, with a strong focus on environmental, economic, and indigenous dynamics.",
+  "clusters": [
+    {
+      "id": 0,
+      "name": "Economic and Policy Governance",
+      "factor_ids": [
+        "V16",
+        "V28",
+        "V29",
+        "V30",
+        "V32",
+        "V36",
+        "V50",
+        "V54",
+        "V55",
+        "V58",
+        "V72",
+        "V76",
+        "V80"
+      ],
+      "dominant_domain": "Economics-Markets",
+      "size": 13,
+      "bridge_factor_ids": [
+        "V16",
+        "V28",
+        "V50",
+        "V54",
+        "V55",
+        "V58",
+        "V72",
+        "V80"
+      ],
+      "summary": "This cluster focuses on economic forces and policy structures shaping lithium extraction and investment in the region."
+    },
+    {
+      "id": 1,
+      "name": "Extraction and Environmental Regulation",
+      "factor_ids": [
+        "V1",
+        "V17",
+        "V20",
+        "V21",
+        "V22",
+        "V23",
+        "V51",
+        "V56",
+        "V60",
+        "V68",
+        "V85"
+      ],
+      "dominant_domain": "Management",
+      "size": 11,
+      "bridge_factor_ids": [
+        "V1",
+        "V17",
+        "V21",
+        "V22",
+        "V23",
+        "V68"
+      ],
+      "summary": "This cluster centers on technical and regulatory aspects of lithium extraction and its environmental oversight."
+    },
+    {
+      "id": 2,
+      "name": "Indigenous and Community Dynamics",
+      "factor_ids": [
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V37",
+        "V53",
+        "V64",
+        "V65",
+        "V66",
+        "V71",
+        "V73",
+        "V78",
+        "V83",
+        "V84"
+      ],
+      "dominant_domain": "Indigenous",
+      "size": 14,
+      "bridge_factor_ids": [
+        "V24",
+        "V25",
+        "V26",
+        "V37",
+        "V53",
+        "V65",
+        "V66"
+      ],
+      "summary": "This cluster highlights the social and indigenous impacts of lithium extraction, including water access and cultural viability."
+    },
+    {
+      "id": 3,
+      "name": "Aquatic and Biodiversity Impacts",
+      "factor_ids": [
+        "V10",
+        "V11",
+        "V12",
+        "V14",
+        "V38",
+        "V44",
+        "V45",
+        "V46",
+        "V47",
+        "V52",
+        "V59",
+        "V6",
+        "V63",
+        "V81"
+      ],
+      "dominant_domain": "Environmental-Ecosystem",
+      "size": 14,
+      "bridge_factor_ids": [
+        "V10",
+        "V38",
+        "V52",
+        "V59",
+        "V81"
+      ],
+      "summary": "This cluster focuses on the ecological effects of lithium extraction, particularly on water bodies and wildlife like flamingos."
+    },
+    {
+      "id": 4,
+      "name": "Global Lithium Demand",
+      "factor_ids": [
+        "V33",
+        "V34",
+        "V35",
+        "V61",
+        "V62"
+      ],
+      "dominant_domain": "Economics-Markets",
+      "size": 5,
+      "bridge_factor_ids": [
+        "V62"
+      ],
+      "summary": "This cluster represents the global market forces driving lithium demand, especially from electric vehicles and energy storage."
+    },
+    {
+      "id": 5,
+      "name": "Production and Technology",
+      "factor_ids": [
+        "V15",
+        "V18",
+        "V19",
+        "V31",
+        "V48",
+        "V69",
+        "V74",
+        "V75",
+        "V79",
+        "V86"
+      ],
+      "dominant_domain": "Stock",
+      "size": 10,
+      "bridge_factor_ids": [
+        "V15",
+        "V18",
+        "V31",
+        "V48"
+      ],
+      "summary": "This cluster centers on the technical and economic factors influencing lithium production and recovery methods."
+    },
+    {
+      "id": 6,
+      "name": "Hydrological and Climate Systems",
+      "factor_ids": [
+        "V13",
+        "V2",
+        "V3",
+        "V39",
+        "V4",
+        "V40",
+        "V41",
+        "V49",
+        "V5",
+        "V57",
+        "V7",
+        "V70",
+        "V88",
+        "V9"
+      ],
+      "dominant_domain": "Environmental-Ecosystem",
+      "size": 14,
+      "bridge_factor_ids": [
+        "V13",
+        "V2",
+        "V40",
+        "V49",
+        "V5"
+      ],
+      "summary": "This cluster focuses on the region's groundwater and climate dynamics, including recharge and land surface changes."
+    }
+  ],
+  "landmarks": [
+    {
+      "factor_id": "V1",
+      "name": "Brine Extraction Rate",
+      "reason": "Brine Extraction Rate is a leverage point because it directly influences environmental and regulatory outcomes in lithium production.",
+      "kind": "leverage",
+      "score": 0.3493,
+      "metrics": {
+        "degree": 0.2,
+        "betweenness": 0.3493,
+        "closeness": 0.312,
+        "katz": 0.1791
+      }
+    },
+    {
+      "factor_id": "V2",
+      "name": "Groundwater Table Depth",
+      "reason": "Groundwater Table Depth is a leverage point because it reflects the long-term sustainability of water resources in the region.",
+      "kind": "leverage",
+      "score": 0.2796,
+      "metrics": {
+        "degree": 0.1375,
+        "betweenness": 0.1993,
+        "closeness": 0.2796,
+        "katz": 0.1513
+      }
+    },
+    {
+      "factor_id": "V15",
+      "name": "Lithium Production Volume",
+      "reason": "Lithium Production Volume is a leverage point because it drives economic activity and environmental impact in the region.",
+      "kind": "leverage",
+      "score": 0.3071,
+      "metrics": {
+        "degree": 0.1875,
+        "betweenness": 0.2964,
+        "closeness": 0.3071,
+        "katz": 0.1948
+      }
+    },
+    {
+      "factor_id": "V5",
+      "name": "Freshwater Recharge Rate",
+      "reason": "Freshwater Recharge Rate is a sentinel variable because it indicates the health of the region's water systems over time.",
+      "kind": "sentinel",
+      "score": 0.1903,
+      "metrics": {
+        "degree": 0.0875,
+        "betweenness": 0.0454,
+        "closeness": 0.1903,
+        "katz": 0.1293
+      }
+    },
+    {
+      "factor_id": "V26",
+      "name": "Indigenous Water Access",
+      "reason": "Indigenous Water Access is a sentinel variable because it reflects the social and environmental justice implications of lithium extraction.",
+      "kind": "sentinel",
+      "score": 0.2663,
+      "metrics": {
+        "degree": 0.0625,
+        "betweenness": 0.0924,
+        "closeness": 0.2663,
+        "katz": 0.1194
+      }
+    },
+    {
+      "factor_id": "V11",
+      "name": "Flamingo Population Size",
+      "reason": "Flamingo Population Size is a bridge variable because it connects ecological health with public awareness and conservation efforts.",
+      "kind": "bridge",
+      "score": 0.2408,
+      "metrics": {
+        "degree": 0.05,
+        "betweenness": 0.0981,
+        "closeness": 0.2408,
+        "katz": 0.1224
+      }
+    },
+    {
+      "factor_id": "V16",
+      "name": "Lithium Spot Price",
+      "reason": "Lithium Spot Price is a bridge variable because it links global market forces to local extraction and investment decisions.",
+      "kind": "bridge",
+      "score": 0.2016,
+      "metrics": {
+        "degree": 0.1,
+        "betweenness": 0.1205,
+        "closeness": 0.2016,
+        "katz": 0.1078
+      }
+    },
+    {
+      "factor_id": "V14",
+      "name": "Artemia Population Density",
+      "reason": "Artemia Population Density is an outcome variable because it reflects the ecological health of the region's aquatic ecosystems.",
+      "kind": "outcome",
+      "score": 0.2336,
+      "metrics": {
+        "degree": 0.05,
+        "betweenness": 0.0339,
+        "closeness": 0.2336,
+        "katz": 0.123
+      }
+    }
+  ],
+  "passport": {
+    "headline": "How lithium extraction, ecology, and indigenous rights intersect in Salar de Atacama",
+    "provenance": "gen_ai",
+    "focal_factor_ids": [
+      "V1",
+      "V15",
+      "V68"
+    ],
+    "vitals": {
+      "factors": 81,
+      "edges": 160,
+      "districts": 7,
+      "loops": 70,
+      "dominant_delay": "months"
+    }
+  },
+  "bridges": [
+    {
+      "districts": [
+        0,
+        5
+      ],
+      "edges": [
+        [
+          "V15",
+          "V80"
+        ],
+        [
+          "V15",
+          "V28"
+        ],
+        [
+          "V15",
+          "V58"
+        ],
+        [
+          "V16",
+          "V15"
+        ],
+        [
+          "V50",
+          "V15"
+        ],
+        [
+          "V54",
+          "V18"
+        ],
+        [
+          "V72",
+          "V31"
+        ]
+      ],
+      "summary": "Lithium production in district 0 directly affects the supply-demand balance, state revenue, and global market share in district 5.",
+      "fragile": true
+    },
+    {
+      "districts": [
+        1,
+        5
+      ],
+      "edges": [
+        [
+          "V1",
+          "V15"
+        ],
+        [
+          "V15",
+          "V1"
+        ],
+        [
+          "V18",
+          "V17"
+        ],
+        [
+          "V23",
+          "V15"
+        ],
+        [
+          "V48",
+          "V1"
+        ]
+      ],
+      "summary": "Brine extraction and lithium production in district 1 are tightly linked through extraction rate and recovery technology in district 5.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        1,
+        6
+      ],
+      "edges": [
+        [
+          "V1",
+          "V2"
+        ],
+        [
+          "V1",
+          "V40"
+        ],
+        [
+          "V2",
+          "V22"
+        ],
+        [
+          "V5",
+          "V68"
+        ]
+      ],
+      "summary": "Brine extraction in district 1 lowers the groundwater table and alters the freshwater-brine interface in district 6.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        1,
+        3
+      ],
+      "edges": [
+        [
+          "V1",
+          "V10"
+        ],
+        [
+          "V1",
+          "V38"
+        ],
+        [
+          "V52",
+          "V1"
+        ],
+        [
+          "V68",
+          "V81"
+        ]
+      ],
+      "summary": "Brine extraction in district 1 reduces lagoon water levels and increases brine salinity in district 3.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        3,
+        6
+      ],
+      "edges": [
+        [
+          "V2",
+          "V10"
+        ],
+        [
+          "V5",
+          "V81"
+        ],
+        [
+          "V40",
+          "V10"
+        ],
+        [
+          "V81",
+          "V2"
+        ]
+      ],
+      "summary": "Groundwater table depth and aquifer water volume in district 3 directly influence lagoon water levels in district 6.",
+      "fragile": true
+    },
+    {
+      "districts": [
+        0,
+        2
+      ],
+      "edges": [
+        [
+          "V16",
+          "V65"
+        ],
+        [
+          "V25",
+          "V72"
+        ],
+        [
+          "V53",
+          "V72"
+        ],
+        [
+          "V55",
+          "V24"
+        ]
+      ],
+      "summary": "Lithium prices and indigenous mobilization in district 0 influence foreign investment confidence in district 2.",
+      "fragile": true
+    }
+  ],
+  "stories": {
+    "headline": "A system of reinforcing subsidence and lithium depletion, balanced by regulatory and recharge feedbacks.",
+    "loops": [
+      {
+        "id": "L1",
+        "name": "The subsidence spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V3",
+          "V39",
+          "V4",
+          "V3"
+        ],
+        "story": "Lower land elevation leads to greater soil compaction (strong, over months), which reduces aquifer storage capacity (strong, over years), and that loss of storage causes further land subsidence (strong, over months), completing a reinforcing cycle of irreversible degradation."
+      },
+      {
+        "id": "L2",
+        "name": "The aquifer alert loop",
+        "type": "balancing",
+        "factor_ids": [
+          "V1",
+          "V2",
+          "V22",
+          "V1"
+        ],
+        "story": "Higher brine extraction lowers the water table (strong, over months), which triggers alert system activations (strong, over days), which in turn force extraction reductions (strong, over days), forming a balancing loop that temporarily stabilizes aquifer conditions."
+      },
+      {
+        "id": "L3",
+        "name": "The recharge compensation loop",
+        "type": "balancing",
+        "factor_ids": [
+          "V2",
+          "V4",
+          "V5",
+          "V2"
+        ],
+        "story": "A deeper water table reduces aquifer storage capacity (strong, over years), which slows freshwater recharge (medium, over months), which in turn raises the water table slightly (strong, over months), forming a balancing loop that attempts to restore equilibrium."
+      },
+      {
+        "id": "L4",
+        "name": "The lithium price loop",
+        "type": "balancing",
+        "factor_ids": [
+          "V15",
+          "V80",
+          "V16",
+          "V15"
+        ],
+        "story": "Higher production increases supply, pushing the supply-demand balance toward surplus (strong, over months), which lowers the spot price (strong, over months), which in turn encourages more production (strong, over months), forming a balancing loop that stabilizes market conditions."
+      },
+      {
+        "id": "L5",
+        "name": "The lithium depletion spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V15",
+          "V79",
+          "V74",
+          "V15"
+        ],
+        "story": "More lithium production increases cumulative removal (strong, over years), which lowers brine concentration (medium, over years), which in turn reduces production efficiency (medium, over months), completing a reinforcing loop that accelerates resource depletion."
+      }
+    ]
+  },
+  "tour": [
+    {
+      "step": 1,
+      "say": "We\u2019re looking at how lithium extraction, ecology, and indigenous rights come together in the Salar de Atacama.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    },
+    {
+      "step": 2,
+      "say": "This section shows how lithium mining affects local communities, especially in terms of water and cultural sustainability.",
+      "action": {
+        "type": "focusCluster",
+        "params": {
+          "clusterId": 2
+        }
+      }
+    },
+    {
+      "step": 3,
+      "say": "Here, we see Brine Extraction Rate\u2014a key factor that shapes both environmental and regulatory outcomes in lithium production.",
+      "action": {
+        "type": "highlightLandmark",
+        "params": {
+          "factorId": "V1"
+        }
+      }
+    },
+    {
+      "step": 4,
+      "say": "This reinforcing loop shows how land subsidence leads to compaction, reduced water storage, and more subsidence\u2014creating a cycle of environmental harm.",
+      "action": {
+        "type": "showLoop",
+        "params": {
+          "loopId": "L1"
+        }
+      }
+    },
+    {
+      "step": 5,
+      "say": "This connection shows how lithium production here directly impacts the economy and global market dynamics\u2014though it\u2019s a fragile link.",
+      "action": {
+        "type": "showBridge",
+        "params": {
+          "bridgeIndex": 0
+        }
+      }
+    },
+    {
+      "step": 6,
+      "say": "From here, you might want to explore the Diagnostics, Intervention, and Monitoring sections to see how this system can be better understood and managed.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    }
+  ]
+}

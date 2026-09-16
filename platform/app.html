@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <title>SIM4Action - Systems Map</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <!-- Sensemaking (Orient) Lab: Atlas districts, Compass causal-cone doors,
+         URL-serializable view state (standalone module; supersedes entry-modal.js) -->
+    <script src="sensemaking-lab.js"></script>
+    <!-- Concierge: grounded chat drawer over the Concierge service (spec §6),
+         available from any lab. Standalone module, loosely coupled to
+         sensemaking-lab.js (only calls its existing applyViewState/
+         highlightLandmark entrypoints, same as a human click would). -->
+    <script src="concierge.js"></script>
     <!-- Add Google Sheets API -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
@@ -215,6 +223,9 @@
         }
         body[data-active-lab="intervention"] #filters {
             width: 260px;
+        }
+        body[data-active-lab="sensemaking"] #filters {
+            width: 300px;
         }
         .filter-section {
             margin-bottom: 15px;
@@ -569,7 +580,8 @@
         /* Lab-specific sections */
         .diagnostics-lab,
         .intervention-lab,
-        .monitoring-lab {
+        .monitoring-lab,
+        .sensemaking-lab {
             display: none;
         }
 
@@ -583,6 +595,10 @@
         }
 
         body[data-active-lab="monitoring"] .monitoring-lab {
+            display: block;
+        }
+
+        body[data-active-lab="sensemaking"] .sensemaking-lab {
             display: block;
         }
 
@@ -2155,6 +2171,17 @@
             stroke: #64b5f6;
         }
 
+        /* Declutter: hide labels when zoomed out, except for nodes the user is
+           already attending to (hover, highlighted/cone, or focal). */
+        svg.s4a-labels-zoomed-out .node text {
+            display: none;
+        }
+        svg.s4a-labels-zoomed-out .node:hover text,
+        svg.s4a-labels-zoomed-out .node.highlighted text,
+        svg.s4a-labels-zoomed-out .node.focal text {
+            display: inline;
+        }
+
         /* Tooltip */
         #tooltip {
             background-color: rgba(13, 27, 42, 0.95);
@@ -2791,6 +2818,33 @@
             color: #b0c4de !important;
         }
 
+        /* Handoff seed banner (docs/sensemaking-lab-spec.md §7) -- injected
+           at the top of a lab's content when it's activated via a door from
+           the Orient lab (landmark/loop/bridge/cone), seeded on one factor. */
+        .s4a-lab-seed-banner {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            background: rgba(40, 167, 69, 0.15);
+            border-left: 3px solid #28a745;
+            color: #e0e6ed;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .s4a-lab-seed-banner button {
+            background: none;
+            border: none;
+            color: #8ab4d8;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
         #filters .filter-section-content div[style*="background: #f8f9fa"],
         #filters .filter-section-content div[style*="background:#f8f9fa"] {
             background: rgba(26, 42, 74, 0.4) !important;
@@ -3068,7 +3122,10 @@
 <body>
     <div id="lab-selector-buttons">
         <div style="display: flex; gap: 10px;">
-        <button class="lab-selector-button active" data-lab="diagnostics" onclick="switchLab('diagnostics')">
+        <button class="lab-selector-button active" data-lab="sensemaking" onclick="switchLab('sensemaking')">
+            &#x1F9ED; Sensemaking Lab
+        </button>
+        <button class="lab-selector-button" data-lab="diagnostics" onclick="switchLab('diagnostics')">
             &#x1F52C; Diagnostics Lab
         </button>
         <button class="lab-selector-button" data-lab="intervention" onclick="switchLab('intervention')">
@@ -3410,6 +3467,12 @@
         let selectedLoopLengths = []; // Track selected feedback loop lengths
         let allFeedbackLoops = {}; // Store all fetched feedback loops
 
+        // Sensemaking Lab / Compass (see sensemaking-lab.js): true once the user has
+        // asked a question (a Compass door, or explicitly "just explore"), so the
+        // auto zoom-to-fit on simulation settle doesn't override a causal cone the
+        // user is looking at.
+        window.__sim4actionEntryChoiceMade = false;
+
         // Initialize filter sets
         const activeDomains = new Set();
         const activeTypes = new Set();
@@ -3516,6 +3579,27 @@
                         updateLoadingProgress(80, "Building visualization...");
                         initializeVisualization();
                         updateLoadingProgress(100, "Complete!");
+
+                        // Sensemaking (Orient) Lab: Atlas districts and Compass causal-cone
+                        // doors, instead of dropping the user straight into the full network.
+                        // Initialized once the loading overlay has finished hiding (see the
+                        // 800ms delay below).
+                        if (window.SIM4ActionSensemaking) {
+                            setTimeout(() => {
+                                window.SIM4ActionSensemaking.init({
+                                    systemId: systemId,
+                                    systemName: CONFIG.name,
+                                    nodes: nodes,
+                                    links: links
+                                });
+                            }, 900);
+                        }
+
+                        // Concierge chat drawer (spec §6) -- available from any lab
+                        // once a system is loaded.
+                        if (window.SIM4ActionConcierge) {
+                            window.SIM4ActionConcierge.init({ systemId: systemId });
+                        }
                         
                     } catch (error) {
                         console.error('Detailed API Error:', error);
@@ -3739,6 +3823,8 @@
                     transform = event.transform;
                     // Update cluster hulls on zoom/pan
                     updateClusterHulls();
+                    // Declutter: fade labels out when zoomed out
+                    updateLabelVisibility(event.transform.k);
                 });
 
             svg.call(zoom);
@@ -3808,8 +3894,25 @@
                 }
             });
 
+            // Declutter default: once the force layout settles, zoom-to-fit automatically —
+            // but only if the user hasn't already made an entry choice (a causal cone or an
+            // explicit "just explore") that set its own view.
+            simulation.on("end", () => {
+                if (!window.__sim4actionEntryChoiceMade) {
+                    resetView();
+                }
+            });
+
             // Create filters
             createFilterSections();
+
+            // ?lab=<id> lets a link open directly into a specific lab (default is
+            // 'sensemaking'/Orient). A richer ?view= state, if present, is applied
+            // later by sensemaking-lab.js's init() and takes precedence over this.
+            const urlLab = new URLSearchParams(window.location.search).get('lab');
+            if (urlLab && document.querySelector(`.lab-selector-button[data-lab="${urlLab}"]`)) {
+                switchLab(urlLab);
+            }
 
             // Add tooltips
             node.on("mouseover", showTooltip)
@@ -4041,7 +4144,15 @@
         function createFilterSections() {
             const filtersDiv = document.getElementById("filters");
             filtersDiv.innerHTML = ''; // Clear existing content
-            
+
+            // SENSEMAKING (ORIENT) LAB — content is populated entirely by
+            // sensemaking-lab.js (self-contained module, same pattern as the
+            // retired entry-modal.js) once orientation.json has loaded.
+            const sensemakingDiv = document.createElement('div');
+            sensemakingDiv.className = 'sensemaking-lab';
+            sensemakingDiv.innerHTML = '<div id="sensemaking-lab-root"></div>';
+            filtersDiv.appendChild(sensemakingDiv);
+
             // DIAGNOSTICS LAB SECTIONS
             const diagnosticsDiv = document.createElement('div');
             diagnosticsDiv.className = 'diagnostics-lab';
@@ -4813,8 +4924,9 @@
             
             filtersDiv.appendChild(interventionDiv);
 
-            // Set initial lab
-            document.body.dataset.activeLab = 'diagnostics';
+            // Set initial lab — Orient opens by default so first-time viewers
+            // get a guided starting point instead of the raw network.
+            document.body.dataset.activeLab = 'sensemaking';
 
             // MONITORING LAB SECTIONS
             const monitoringDiv = document.createElement('div');
@@ -5391,14 +5503,19 @@
             );
         }
 
-        function resetView() {
+        function resetView(nodeFilter) {
             // Get the SVG element and its dimensions
             const svg = window.svgElement;
             const width = window.innerWidth;
             const height = window.innerHeight;
             
-            // Get the bounds of all nodes
-            const nodes = d3.selectAll('.node');
+            // Get the bounds of the relevant nodes. An optional predicate (datum -> boolean)
+            // lets callers fit the view to a subset (e.g. a causal cone) instead of everything.
+            let nodes = d3.selectAll('.node');
+            if (typeof nodeFilter === 'function') {
+                const filtered = nodes.filter(nodeFilter);
+                if (!filtered.empty()) nodes = filtered;
+            }
             let bounds = {
                 left: Infinity,
                 right: -Infinity,
@@ -5436,10 +5553,19 @@
                 .duration(750)
                 .call(
                     window.zoomBehavior.transform,
-                    d3.zoomIdentity
+                        d3.zoomIdentity
                         .translate(tx, ty)
                         .scale(scale)
                 );
+        }
+
+        // Declutter: below this zoom scale, node labels are hidden except for
+        // hovered, highlighted/cone, and focal nodes (see CSS .s4a-labels-zoomed-out).
+        const LABEL_ZOOM_THRESHOLD = 0.6;
+        function updateLabelVisibility(scale) {
+            if (window.svgElement) {
+                window.svgElement.classed('s4a-labels-zoomed-out', scale < LABEL_ZOOM_THRESHOLD);
+            }
         }
 
         function resetFilters() {
@@ -12665,6 +12791,83 @@
             
             // Show success message
             showNotification(`Switched to ${labMode.charAt(0).toUpperCase() + labMode.slice(1)} Lab`, 'success');
+
+            // Let the Sensemaking Lab keep its URL view-state in sync regardless of
+            // which entry point triggered the switch (button click, ?lab= on load,
+            // or — eventually — an LLM/MCP-driven action call; see sensemaking-lab.js).
+            if (window.SIM4ActionSensemaking) window.SIM4ActionSensemaking.onLabSwitch(labMode);
+        }
+
+        // ============================================
+        // Lab handoff seeds (docs/sensemaking-lab-spec.md §7): the Orient
+        // lab's "doors" (landmark/loop/bridge/cone) call switchLab() then
+        // window.SIM4ActionLabSeed(lab, seed) with a small plain-data seed.
+        // Kept intentionally minimal per the spec ("one seed parameter per
+        // lab in this scope") -- each receiving lab just highlights the
+        // seeded factor on the shared graph (handleNodeSelection already
+        // works regardless of which lab is visually active, since every
+        // lab's DOM section co-exists, just CSS-hidden) and shows a small
+        // dismissible banner explaining why it's seeded.
+        // ============================================
+        function escapeHandoffHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = String(str == null ? '' : str);
+            return div.innerHTML;
+        }
+
+        function showLabSeedBanner(lab, html) {
+            const existing = document.getElementById('s4a-lab-seed-banner');
+            if (existing) existing.remove();
+            const container = document.querySelector(`.${lab}-lab`);
+            if (!container) return;
+            const banner = document.createElement('div');
+            banner.id = 's4a-lab-seed-banner';
+            banner.className = 's4a-lab-seed-banner';
+            banner.innerHTML = `<span>${html}</span><button type="button" aria-label="Dismiss">&times;</button>`;
+            banner.querySelector('button').addEventListener('click', () => banner.remove());
+            container.insertBefore(banner, container.firstChild);
+        }
+
+        function applyDiagnosticsSeed(seed) {
+            const name = escapeHandoffHtml(seed.name || seed.factorId);
+            if (seed.factorId) {
+                const selector = document.getElementById('node-selector');
+                if (selector) selector.value = seed.factorId;
+                handleNodeSelection(seed.factorId);
+            }
+            showLabSeedBanner('diagnostics',
+                `Seeded from Sensemaking &mdash; analyzing <strong>${name}</strong>. See the Centrality Analysis and Node Selector sections below.`);
+        }
+
+        function applyInterventionSeed(seed) {
+            const name = escapeHandoffHtml(seed.name || seed.factorId);
+            if (seed.factorId) {
+                handleNodeSelection(seed.factorId);
+                // Not wired into the diffusion token-allocation modal itself
+                // (multi-step: init diffusion -> open modal -> pick node ->
+                // set tokens) -- stashed here so that flow can read it later
+                // without this handoff needing to know its internals.
+                window.__sim4actionInterventionSeed = seed;
+            }
+            showLabSeedBanner('intervention',
+                `Seeded from Sensemaking &mdash; ready to test a change on <strong>${name}</strong>. Initialize diffusion below, then choose this factor as your token source.`);
+        }
+
+        function applyMonitoringSeed(seed) {
+            if (seed.factorId) handleNodeSelection(seed.factorId);
+            const districts = Array.isArray(seed.districts) ? seed.districts.filter(Boolean) : [];
+            const districtText = districts.length === 2
+                ? ` between <strong>${escapeHandoffHtml(districts[0])}</strong> and <strong>${escapeHandoffHtml(districts[1])}</strong>`
+                : '';
+            showLabSeedBanner('monitoring',
+                `Sentinel recommendation from Sensemaking &mdash; this is a fragile coupling${districtText}. Run centrality analysis below to see how exposed it is.`);
+        }
+
+        function SIM4ActionLabSeed(lab, seed) {
+            if (!seed) return;
+            if (lab === 'diagnostics') return applyDiagnosticsSeed(seed);
+            if (lab === 'intervention') return applyInterventionSeed(seed);
+            if (lab === 'monitoring') return applyMonitoringSeed(seed);
         }
 
         // Add these functions to your JavaScript

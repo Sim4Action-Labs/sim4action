@@ -3,6 +3,9 @@
   "type": "module",
   "description": "SIM4Action Platform — ESM module support for Node.js testing",
   "scripts": {
-    "test": "node tests/test_diffusion_node.mjs"
+    "test": "node tests/test_diffusion_node.mjs && node platform/tests/concierge.test.mjs && node platform/tests/sensemaking-relevance.test.mjs && node platform/tests/sensemaking-pathfinder-narrate.test.mjs && node platform/tests/sensemaking-handoffs.test.mjs && node platform/tests/sensemaking-staleness.test.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
   }
 }

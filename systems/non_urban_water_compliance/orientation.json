@@ -1,0 +1,675 @@
+{
+  "meta": {
+    "system_id": "non_urban_water_compliance",
+    "version": 2,
+    "generated_at": "2026-08-25T08:48:23+00:00",
+    "model": "qwen3:32b",
+    "source_hash": "6e8d7fccdf2dfbcac6d1475932f963a460d9230e827a9400aceb65b832c688fc"
+  },
+  "summary": "This map explores the complex interplay of factors influencing water compliance in non-urban areas of New South Wales, Australia. It includes 82 factors connected by 184 relationships, organized into five distinct clusters. The most notable structural feature is the strong focus on environmental and management domains, with a central role for water governance and compliance behavior.",
+  "clusters": [
+    {
+      "id": 0,
+      "name": "Regulatory Capacity and Independence",
+      "factor_ids": [
+        "V15",
+        "V17",
+        "V21",
+        "V3",
+        "V4",
+        "V5",
+        "V56",
+        "V58",
+        "V59",
+        "V6",
+        "V61",
+        "V7",
+        "V72",
+        "V74",
+        "V77",
+        "V78",
+        "V87"
+      ],
+      "dominant_domain": "Management",
+      "size": 17,
+      "bridge_factor_ids": [
+        "V15",
+        "V21",
+        "V3",
+        "V4",
+        "V5",
+        "V56",
+        "V59",
+        "V61",
+        "V7",
+        "V72",
+        "V74",
+        "V77",
+        "V87"
+      ],
+      "summary": "This cluster includes factors related to the ability and independence of regulatory bodies to enforce water compliance."
+    },
+    {
+      "id": 1,
+      "name": "Monitoring and Compliance Behavior",
+      "factor_ids": [
+        "V1",
+        "V11",
+        "V12",
+        "V13",
+        "V14",
+        "V16",
+        "V18",
+        "V2",
+        "V24",
+        "V25",
+        "V26",
+        "V27",
+        "V37",
+        "V65",
+        "V69",
+        "V73",
+        "V8",
+        "V9",
+        "V90"
+      ],
+      "dominant_domain": "Management",
+      "size": 19,
+      "bridge_factor_ids": [
+        "V1",
+        "V13",
+        "V14",
+        "V16",
+        "V2",
+        "V24",
+        "V26",
+        "V27",
+        "V69",
+        "V73",
+        "V8",
+        "V9",
+        "V90"
+      ],
+      "summary": "This cluster includes factors related to the detection of non-compliance and the behavior of individuals and groups in adhering to water regulations."
+    },
+    {
+      "id": 2,
+      "name": "Environmental Conditions and Stock",
+      "factor_ids": [
+        "V28",
+        "V29",
+        "V30",
+        "V31",
+        "V33",
+        "V34",
+        "V46",
+        "V47",
+        "V48",
+        "V49",
+        "V60",
+        "V63",
+        "V66",
+        "V67",
+        "V68",
+        "V76",
+        "V80",
+        "V81",
+        "V82",
+        "V83",
+        "V84"
+      ],
+      "dominant_domain": "Environmental-Ecosystem",
+      "size": 21,
+      "bridge_factor_ids": [
+        "V28",
+        "V30",
+        "V34",
+        "V47",
+        "V63"
+      ],
+      "summary": "This cluster includes factors related to the environmental conditions of water systems and the stock of water resources."
+    },
+    {
+      "id": 3,
+      "name": "Water Use and Market Dynamics",
+      "factor_ids": [
+        "V10",
+        "V32",
+        "V35",
+        "V36",
+        "V38",
+        "V39",
+        "V40",
+        "V41",
+        "V42",
+        "V43",
+        "V44",
+        "V50",
+        "V64",
+        "V71",
+        "V75",
+        "V88"
+      ],
+      "dominant_domain": "Economics-Markets",
+      "size": 16,
+      "bridge_factor_ids": [
+        "V10",
+        "V32",
+        "V36",
+        "V40",
+        "V42",
+        "V50",
+        "V64",
+        "V75",
+        "V88"
+      ],
+      "summary": "This cluster includes factors related to the extraction, use, and trading of water resources."
+    },
+    {
+      "id": 4,
+      "name": "Indigenous Water Governance",
+      "factor_ids": [
+        "V22",
+        "V51",
+        "V52",
+        "V53",
+        "V54",
+        "V55",
+        "V85",
+        "V86",
+        "V89"
+      ],
+      "dominant_domain": "Indigenous",
+      "size": 9,
+      "bridge_factor_ids": [
+        "V22",
+        "V52",
+        "V85",
+        "V86",
+        "V89"
+      ],
+      "summary": "This cluster includes factors related to the role of Indigenous communities in water governance and their water-related activities."
+    }
+  ],
+  "landmarks": [
+    {
+      "factor_id": "V9",
+      "name": "Voluntary Compliance Rate",
+      "reason": "Voluntary Compliance Rate is a leverage point because it reflects the overall willingness of individuals to comply with water regulations, which is central to the system's effectiveness.",
+      "kind": "leverage",
+      "score": 0.3214,
+      "metrics": {
+        "degree": 0.1605,
+        "betweenness": 0.1861,
+        "closeness": 0.3214,
+        "katz": 0.2182
+      }
+    },
+    {
+      "factor_id": "V10",
+      "name": "Water Extraction Volume",
+      "reason": "Water Extraction Volume is a leverage point because it represents the core activity being regulated and has significant influence on environmental and market outcomes.",
+      "kind": "leverage",
+      "score": 0.2893,
+      "metrics": {
+        "degree": 0.1358,
+        "betweenness": 0.2883,
+        "closeness": 0.2893,
+        "katz": 0.17
+      }
+    },
+    {
+      "factor_id": "V22",
+      "name": "Water Governance Legitimacy",
+      "reason": "Water Governance Legitimacy is a leverage point because it affects the perceived fairness and authority of water governance systems, influencing compliance behavior.",
+      "kind": "leverage",
+      "score": 0.2803,
+      "metrics": {
+        "degree": 0.1481,
+        "betweenness": 0.1192,
+        "closeness": 0.2803,
+        "katz": 0.1868
+      }
+    },
+    {
+      "factor_id": "V1",
+      "name": "Detection Probability",
+      "reason": "Detection Probability is a sentinel because it indicates the likelihood of non-compliance being identified, which is crucial for understanding enforcement effectiveness.",
+      "kind": "sentinel",
+      "score": 0.2432,
+      "metrics": {
+        "degree": 0.1852,
+        "betweenness": 0.0804,
+        "closeness": 0.2432,
+        "katz": 0.1839
+      }
+    },
+    {
+      "factor_id": "V24",
+      "name": "Social Norm Compliance",
+      "reason": "Social Norm Compliance is a sentinel because it reflects the influence of social norms on individual compliance behavior, which can signal broader trends in the system.",
+      "kind": "sentinel",
+      "score": 0.2691,
+      "metrics": {
+        "degree": 0.0741,
+        "betweenness": 0.0115,
+        "closeness": 0.2691,
+        "katz": 0.13
+      }
+    },
+    {
+      "factor_id": "V32",
+      "name": "Storage Volume",
+      "reason": "Storage Volume is a bridge because it connects water availability with environmental conditions and market dynamics, making it a key factor in the system.",
+      "kind": "bridge",
+      "score": 0.2109,
+      "metrics": {
+        "degree": 0.037,
+        "betweenness": 0.096,
+        "closeness": 0.2109,
+        "katz": 0.1059
+      }
+    },
+    {
+      "factor_id": "V8",
+      "name": "Penalty-to-Value Ratio",
+      "reason": "Penalty-to-Value Ratio is an outcome because it represents the effectiveness of penalties in deterring non-compliance, which is a key result of the system's functioning.",
+      "kind": "outcome",
+      "score": 0.2485,
+      "metrics": {
+        "degree": 0.0494,
+        "betweenness": 0.0167,
+        "closeness": 0.2485,
+        "katz": 0.1235
+      }
+    },
+    {
+      "factor_id": "V27",
+      "name": "Reputational Risk Perception",
+      "reason": "Reputational Risk Perception is an outcome because it reflects how individuals perceive the social consequences of non-compliance, which is a key result of the system's functioning.",
+      "kind": "outcome",
+      "score": 0.2256,
+      "metrics": {
+        "degree": 0.0617,
+        "betweenness": 0.0057,
+        "closeness": 0.2256,
+        "katz": 0.1277
+      }
+    }
+  ],
+  "passport": {
+    "headline": "How water compliance, governance, and environmental conditions interact in non-urban NSW",
+    "provenance": "gen_ai",
+    "focal_factor_ids": [
+      "V9",
+      "V10",
+      "V34"
+    ],
+    "vitals": {
+      "factors": 82,
+      "edges": 184,
+      "districts": 5,
+      "loops": 186,
+      "dominant_delay": "months"
+    }
+  },
+  "bridges": [
+    {
+      "districts": [
+        0,
+        1
+      ],
+      "edges": [
+        [
+          "V3",
+          "V24"
+        ],
+        [
+          "V3",
+          "V27"
+        ],
+        [
+          "V4",
+          "V1"
+        ],
+        [
+          "V4",
+          "V73"
+        ],
+        [
+          "V4",
+          "V14"
+        ],
+        [
+          "V5",
+          "V9"
+        ],
+        [
+          "V7",
+          "V9"
+        ],
+        [
+          "V15",
+          "V1"
+        ],
+        [
+          "V21",
+          "V1"
+        ],
+        [
+          "V59",
+          "V2"
+        ],
+        [
+          "V59",
+          "V16"
+        ],
+        [
+          "V61",
+          "V24"
+        ],
+        [
+          "V61",
+          "V90"
+        ],
+        [
+          "V77",
+          "V9"
+        ],
+        [
+          "V87",
+          "V1"
+        ]
+      ],
+      "summary": "District 0 connects to District 1 through multiple edges, including the Prosecution Rate influencing Social Norm Compliance and Detection Probability, and Transparency of Information directly affecting Voluntary Compliance Rate \u2014 showing a dense, fragile web of enforcement and re",
+      "fragile": true
+    },
+    {
+      "districts": [
+        1,
+        3
+      ],
+      "edges": [
+        [
+          "V9",
+          "V10"
+        ],
+        [
+          "V36",
+          "V26"
+        ],
+        [
+          "V36",
+          "V8"
+        ],
+        [
+          "V42",
+          "V26"
+        ],
+        [
+          "V69",
+          "V10"
+        ],
+        [
+          "V75",
+          "V26"
+        ],
+        [
+          "V88",
+          "V1"
+        ]
+      ],
+      "summary": "District 1 connects to District 3 through the Voluntary Compliance Rate directly affecting Water Extraction Volume \u2014 a single, strong edge that shows how behavioral norms directly shape environmental outcomes.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        2,
+        3
+      ],
+      "edges": [
+        [
+          "V10",
+          "V30"
+        ],
+        [
+          "V10",
+          "V34"
+        ],
+        [
+          "V30",
+          "V32"
+        ],
+        [
+          "V30",
+          "V64"
+        ],
+        [
+          "V40",
+          "V34"
+        ],
+        [
+          "V50",
+          "V47"
+        ],
+        [
+          "V63",
+          "V10"
+        ]
+      ],
+      "summary": "District 2 connects to District 3 through Water Extraction Volume affecting Streamflow Volume and Environmental Flow Delivery Proportion \u2014 showing how extraction directly impacts ecological and hydrological conditions.",
+      "fragile": true
+    },
+    {
+      "districts": [
+        1,
+        4
+      ],
+      "edges": [
+        [
+          "V1",
+          "V22"
+        ],
+        [
+          "V22",
+          "V9"
+        ],
+        [
+          "V22",
+          "V90"
+        ],
+        [
+          "V73",
+          "V22"
+        ],
+        [
+          "V90",
+          "V22"
+        ]
+      ],
+      "summary": "District 1 connects to District 4 through Detection Probability and Compliance Education Effort influencing Water Governance Legitimacy \u2014 a cluster of edges showing how enforcement and communication shape institutional trust.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        0,
+        4
+      ],
+      "edges": [
+        [
+          "V3",
+          "V22"
+        ],
+        [
+          "V5",
+          "V22"
+        ],
+        [
+          "V7",
+          "V22"
+        ],
+        [
+          "V22",
+          "V56"
+        ],
+        [
+          "V61",
+          "V22"
+        ]
+      ],
+      "summary": "District 0 connects to District 4 through Transparency of Information and Prosecution Rate affecting Water Governance Legitimacy \u2014 showing how accountability and enforcement outcomes directly shape institutional credibility.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        2,
+        4
+      ],
+      "edges": [
+        [
+          "V30",
+          "V85"
+        ],
+        [
+          "V34",
+          "V89"
+        ],
+        [
+          "V52",
+          "V34"
+        ],
+        [
+          "V86",
+          "V34"
+        ]
+      ],
+      "summary": "District 2 connects to District 4 through Streamflow Volume and Environmental Flow Delivery Proportion affecting Aboriginal Water-Dependent Economic Activity \u2014 showing how ecological conditions directly support cultural and economic outcomes.",
+      "fragile": true
+    }
+  ],
+  "stories": {
+    "headline": "A system of reinforcing transparency and legitimacy loops, balanced by slower, stronger checks on water security and compliance.",
+    "loops": [
+      {
+        "id": "L1",
+        "name": "The transparency-reform spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V5",
+          "V56",
+          "V59",
+          "V5"
+        ],
+        "story": "Greater transparency in water governance empowers advocates, who in turn push for more reform, which in turn demands even more transparency, creating a reinforcing cycle of accountability and change."
+      },
+      {
+        "id": "L2",
+        "name": "The compliance-security feedback",
+        "type": "balancing",
+        "factor_ids": [
+          "V59",
+          "V61",
+          "V72",
+          "V64",
+          "V59"
+        ],
+        "story": "Post-crisis reforms improve enforcement consistency, which supports downstream water security, but when that security is threatened, it triggers new reform activity, forming a balancing loop that stabilizes the system over time."
+      },
+      {
+        "id": "L3",
+        "name": "The norm-compliance spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V9",
+          "V69",
+          "V24",
+          "V9"
+        ],
+        "story": "Higher voluntary compliance reduces undetected violations, which in turn weakens the social norm for non-compliance, reinforcing voluntary compliance further \u2014 a reinforcing loop that can tip in either direction."
+      },
+      {
+        "id": "L4",
+        "name": "The legitimacy-education cycle",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V22",
+          "V90",
+          "V73",
+          "V22"
+        ],
+        "story": "Strong governance legitimacy builds community trust, which makes compliance education more effective, which in turn reinforces perceptions of legitimacy \u2014 a slow but powerful reinforcing loop."
+      },
+      {
+        "id": "L5",
+        "name": "The legitimacy-reform spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "V5",
+          "V22",
+          "V56",
+          "V59",
+          "V5"
+        ],
+        "story": "Transparency builds legitimacy, which empowers advocates, who push for reform, which demands more transparency \u2014 a reinforcing loop that drives systemic change and accountability."
+      }
+    ]
+  },
+  "tour": [
+    {
+      "step": 1,
+      "say": "Welcome to this map, which explores how water compliance, governance, and environmental conditions interact in non-urban New South Wales.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    },
+    {
+      "step": 2,
+      "say": "Here we see the Environmental Conditions and Stock district, representing factors that shape the health and availability of water resources.",
+      "action": {
+        "type": "focusCluster",
+        "params": {
+          "clusterId": 2
+        }
+      }
+    },
+    {
+      "step": 3,
+      "say": "This is the Voluntary Compliance Rate, a key leverage point because it shows how willing people are to follow water regulations.",
+      "action": {
+        "type": "highlightLandmark",
+        "params": {
+          "factorId": "V9"
+        }
+      }
+    },
+    {
+      "step": 4,
+      "say": "This reinforcing loop, called the transparency-reform spiral, shows how openness in governance fuels ongoing reform and accountability.",
+      "action": {
+        "type": "showLoop",
+        "params": {
+          "loopId": "L1"
+        }
+      }
+    },
+    {
+      "step": 5,
+      "say": "This bridge between District 0 and District 1 shows how factors like transparency and prosecution influence compliance and enforcement\u2014forming a complex and delicate connection.",
+      "action": {
+        "type": "showBridge",
+        "params": {
+          "bridgeIndex": 0
+        }
+      }
+    },
+    {
+      "step": 6,
+      "say": "From here, you might want to explore the Diagnostics, Intervention, and Monitoring sections to see how the system can be understood and improved.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    }
+  ]
+}

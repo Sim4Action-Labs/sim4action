@@ -179,6 +179,9 @@ def save_catalogue(catalogue):
 class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
     """Custom HTTP handler for the SIM4Action platform."""
 
+    # Enable keepalive so nginx upstream keepalive works (avoids TIME_WAIT storm)
+    protocol_version = "HTTP/1.1"
+
     # ── Authentication ──────────────────────────────────────────────────
 
     def is_public_path(self):
@@ -236,6 +239,8 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
             self.send_response(302)
             self.send_header('Location', '/login.html')
             self.send_header('Cache-Control', 'no-store')
+            self.send_header('Content-Length', '0')
+            self.send_header('Connection', 'close')
             self.end_headers()
         return False
 
@@ -273,6 +278,7 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
         # Platform engine files (served from platform/)
         platform_files = [
             'app.html', 'overview.html', 'diffusion.js', 'ga-worker.js',
+            'sensemaking-lab.js', 'concierge.js',
             'drawing-layer.js',
             'drawing-integration.js', 'drawing-controls.css',
             'diffusion.py', 'browser_analysis.py', 'feedback_loops.py',
@@ -865,11 +871,13 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
 
     def send_json_response(self, data, status=200):
         """Send a JSON response."""
+        body = json.dumps(data).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json')
         self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Content-Length', str(len(body)))
         self.end_headers()
-        self.wfile.write(json.dumps(data).encode('utf-8'))
+        self.wfile.write(body)
 
     def send_error_response(self, status, message):
         """Send a JSON error response."""
@@ -879,6 +887,13 @@ class SIM4ActionHandler(http.server.SimpleHTTPRequestHandler):
         """Add CORS headers to all responses."""
         self.send_header('Access-Control-Allow-Origin', '*')
         super().end_headers()
+
+    def address_string(self):
+        """Work with both TCP (host, port) and Unix-socket clients."""
+        addr = self.client_address
+        if isinstance(addr, tuple) and addr:
+            return str(addr[0])
+        return 'unix'
 
     def log_message(self, format, *args):
         """Custom log format."""
@@ -890,6 +905,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='SIM4Action Platform Server')
     parser.add_argument('--port', type=int, default=8000, help='Port to serve on (default: 8000)')
+    parser.add_argument('--unix-socket', type=str, default=None,
+                        help='Listen on a Unix socket instead of TCP (avoids TIME_WAIT)')
     parser.add_argument('--session-expiry', type=int, default=24,
                         help='Session expiry in hours (default: 24)')
     parser.add_argument('--systems-dir', type=str, default=None,
@@ -930,12 +947,34 @@ def main():
     # Change to project root so relative paths work
     os.chdir(str(PROJECT_ROOT))
 
+    # Threading + localhost-only (or Unix socket): nginx is the only public entrypoint.
     socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", PORT), SIM4ActionHandler) as httpd:
+
+    unix_socket = args.unix_socket
+    if unix_socket:
+        class UnixThreadingHTTPServer(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
+            daemon_threads = True
+            allow_reuse_address = True
+
+        sock_path = Path(unix_socket)
+        sock_path.parent.mkdir(parents=True, exist_ok=True)
+        if sock_path.exists():
+            sock_path.unlink()
+        ServerClass = UnixThreadingHTTPServer
+        server_address = str(sock_path)
+        listen_desc = f"unix:{sock_path}"
+    else:
+        ServerClass = getattr(http.server, "ThreadingHTTPServer", socketserver.ThreadingTCPServer)
+        server_address = ("127.0.0.1", PORT)
+        listen_desc = f"http://127.0.0.1:{PORT}/"
+
+    with ServerClass(server_address, SIM4ActionHandler) as httpd:
+        if unix_socket:
+            os.chmod(unix_socket, 0o666)
         print(f"\n{'='*60}")
         print(f"  SIM4Action Platform Server")
         print(f"{'='*60}")
-        print(f"  Landing page:  http://localhost:{PORT}/")
+        print(f"  Listen:        {listen_desc}")
         print(f"  Platform dir:  {PLATFORM_DIR}")
         print(f"  Systems dir:   {SYSTEMS_DIR}")
         print(f"  Users file:    {USERS_FILE}")
@@ -949,6 +988,11 @@ def main():
         except KeyboardInterrupt:
             print("\nServer stopped.")
             httpd.server_close()
+            if unix_socket:
+                try:
+                    os.unlink(unix_socket)
+                except OSError:
+                    pass
 
 
 if __name__ == '__main__':

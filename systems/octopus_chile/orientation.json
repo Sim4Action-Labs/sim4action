@@ -1,0 +1,507 @@
+{
+  "meta": {
+    "system_id": "octopus_chile",
+    "version": 2,
+    "generated_at": "2026-08-25T09:18:08+00:00",
+    "model": "qwen3:32b",
+    "source_hash": "ae5f5f9e49348012a90b3caaada7734674b24bc17db7f3c3204c42608e7d8374"
+  },
+  "summary": "This map of Chile's octopus fishery includes 49 factors and 77 relationships, showing how biological, economic, and management domains interact. The system is organized into seven distinct clusters, with a strong focus on fisher behavior, market dynamics, and environmental conditions.",
+  "clusters": [
+    {
+      "id": 0,
+      "name": "Octopus Life Cycle",
+      "factor_ids": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "dominant_domain": "Biology",
+      "size": 6,
+      "bridge_factor_ids": [
+        "4",
+        "5"
+      ],
+      "summary": "Factors related to octopus biology and environmental conditions affecting their population."
+    },
+    {
+      "id": 1,
+      "name": "Illegal Fishing Practices",
+      "factor_ids": [
+        "12",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "44"
+      ],
+      "dominant_domain": "Management",
+      "size": 9,
+      "bridge_factor_ids": [
+        "12",
+        "16",
+        "19",
+        "44"
+      ],
+      "summary": "Factors related to non-compliance, enforcement, and illegal trade in the octopus fishery."
+    },
+    {
+      "id": 2,
+      "name": "Fisher Economics",
+      "factor_ids": [
+        "15",
+        "32",
+        "33",
+        "34",
+        "35",
+        "48",
+        "6",
+        "7",
+        "8"
+      ],
+      "dominant_domain": "Economics-Markets",
+      "size": 9,
+      "bridge_factor_ids": [
+        "48",
+        "7",
+        "8"
+      ],
+      "summary": "Factors related to fisher profitability, financial behavior, and operational costs."
+    },
+    {
+      "id": 3,
+      "name": "Market and Management Reputation",
+      "factor_ids": [
+        "25",
+        "26",
+        "27",
+        "28",
+        "45",
+        "46",
+        "47"
+      ],
+      "dominant_domain": "Economics-Markets",
+      "size": 7,
+      "bridge_factor_ids": [
+        "25",
+        "46",
+        "47"
+      ],
+      "summary": "Factors related to market demand, fishery quality, and management legitimacy."
+    },
+    {
+      "id": 4,
+      "name": "Fisher Activity and Market Demand",
+      "factor_ids": [
+        "10",
+        "11",
+        "13",
+        "14",
+        "23",
+        "24",
+        "31",
+        "9"
+      ],
+      "dominant_domain": "Management",
+      "size": 8,
+      "bridge_factor_ids": [
+        "10",
+        "14",
+        "24",
+        "31",
+        "9"
+      ],
+      "summary": "Factors related to fisher numbers, landings, and domestic and international market dynamics."
+    },
+    {
+      "id": 5,
+      "name": "Socioeconomic Behavior",
+      "factor_ids": [
+        "36",
+        "37",
+        "38",
+        "39"
+      ],
+      "dominant_domain": "Social",
+      "size": 4,
+      "bridge_factor_ids": [
+        "36",
+        "38"
+      ],
+      "summary": "Factors related to fisher wealth, decision-making, and future investment behavior."
+    },
+    {
+      "id": 6,
+      "name": "Sustainable Fishing Practices",
+      "factor_ids": [
+        "29",
+        "30",
+        "40",
+        "41",
+        "42",
+        "43"
+      ],
+      "dominant_domain": "Social",
+      "size": 6,
+      "bridge_factor_ids": [
+        "29",
+        "30",
+        "40",
+        "41"
+      ],
+      "summary": "Factors related to gear use, sustainability awareness, and collective fisher actions."
+    }
+  ],
+  "landmarks": [
+    {
+      "factor_id": "8",
+      "name": "Fisher profit",
+      "reason": "Fisher profit is a leverage point because it influences fisher behavior and effort, shaping the entire fishery's dynamics.",
+      "kind": "leverage",
+      "score": 0.2526,
+      "metrics": {
+        "degree": 0.1042,
+        "betweenness": 0.2465,
+        "closeness": 0.2526,
+        "katz": 0.177
+      }
+    },
+    {
+      "factor_id": "9",
+      "name": "Total landings",
+      "reason": "Total landings is a leverage point because it reflects overall fishery output and is influenced by both fisher behavior and management rules.",
+      "kind": "leverage",
+      "score": 0.25,
+      "metrics": {
+        "degree": 0.125,
+        "betweenness": 0.2191,
+        "closeness": 0.25,
+        "katz": 0.1654
+      }
+    },
+    {
+      "factor_id": "14",
+      "name": "Octopus landing price",
+      "reason": "Octopus landing price is a leverage point because it directly affects fisher profit and influences market demand and supply behavior.",
+      "kind": "leverage",
+      "score": 0.2412,
+      "metrics": {
+        "degree": 0.125,
+        "betweenness": 0.2007,
+        "closeness": 0.2412,
+        "katz": 0.1655
+      }
+    },
+    {
+      "factor_id": "2",
+      "name": "Larvae",
+      "reason": "Larvae is a sentinel factor because it reflects the health of the octopus population and is an early indicator of environmental or biological changes.",
+      "kind": "sentinel",
+      "score": 0.2286,
+      "metrics": {
+        "degree": 0.0625,
+        "betweenness": 0.0576,
+        "closeness": 0.2286,
+        "katz": 0.1488
+      }
+    },
+    {
+      "factor_id": "6",
+      "name": "Fisher effort",
+      "reason": "Fisher effort is a sentinel factor because it reflects how much work fishers are putting into catching octopus, indicating pressure on the resource.",
+      "kind": "sentinel",
+      "score": 0.1765,
+      "metrics": {
+        "degree": 0.0833,
+        "betweenness": 0.0683,
+        "closeness": 0.1765,
+        "katz": 0.1589
+      }
+    },
+    {
+      "factor_id": "31",
+      "name": "Landings with bad practices",
+      "reason": "Landings with bad practices is a bridge factor because it connects fisher behavior with enforcement and management outcomes.",
+      "kind": "bridge",
+      "score": 0.1778,
+      "metrics": {
+        "degree": 0.0625,
+        "betweenness": 0.1099,
+        "closeness": 0.1778,
+        "katz": 0.1529
+      }
+    },
+    {
+      "factor_id": "37",
+      "name": "Socio-economic status",
+      "reason": "Socio-economic status is a bridge factor because it connects fisher behavior with broader social and economic conditions.",
+      "kind": "bridge",
+      "score": 0.2438,
+      "metrics": {
+        "degree": 0.0417,
+        "betweenness": 0.2438,
+        "closeness": 0.1846,
+        "katz": 0.1339
+      }
+    }
+  ],
+  "passport": {
+    "headline": "How Chile's octopus fishery is shaped by biology, markets, and management",
+    "provenance": "workshop",
+    "focal_factor_ids": [
+      "4",
+      "16"
+    ],
+    "vitals": {
+      "factors": 49,
+      "edges": 77,
+      "districts": 7,
+      "loops": 12,
+      "dominant_delay": "days"
+    }
+  },
+  "bridges": [
+    {
+      "districts": [
+        1,
+        4
+      ],
+      "edges": [
+        [
+          "12",
+          "10"
+        ],
+        [
+          "14",
+          "12"
+        ],
+        [
+          "16",
+          "31"
+        ],
+        [
+          "24",
+          "19"
+        ]
+      ],
+      "summary": "District 1 and 4 are connected through price-driven informal fishing and compliance effects on bad practices.",
+      "fragile": true
+    },
+    {
+      "districts": [
+        1,
+        3
+      ],
+      "edges": [
+        [
+          "25",
+          "19"
+        ],
+        [
+          "44",
+          "46"
+        ],
+        [
+          "47",
+          "16"
+        ]
+      ],
+      "summary": "District 1 and 3 are connected through international demand, robust management, and legitimacy influencing illegal trade and compliance.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        2,
+        4
+      ],
+      "edges": [
+        [
+          "7",
+          "9"
+        ],
+        [
+          "14",
+          "8"
+        ]
+      ],
+      "summary": "District 2 and 4 are connected through landings and price-to-profit linkages.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        3,
+        6
+      ],
+      "edges": [
+        [
+          "29",
+          "25"
+        ],
+        [
+          "46",
+          "41"
+        ]
+      ],
+      "summary": "District 3 and 6 are connected through gear quality and management effectiveness.",
+      "fragile": false
+    },
+    {
+      "districts": [
+        0,
+        2
+      ],
+      "edges": [
+        [
+          "4",
+          "48"
+        ]
+      ],
+      "summary": "District 0 and 2 are connected only through octopus abundance affecting catch efficiency.",
+      "fragile": true
+    },
+    {
+      "districts": [
+        2,
+        5
+      ],
+      "edges": [
+        [
+          "8",
+          "36"
+        ]
+      ],
+      "summary": "District 2 and 5 are connected only through fisher profit increasing wealth.",
+      "fragile": true
+    }
+  ],
+  "stories": {
+    "headline": "A system of reinforcing fishing incentives and balancing market pressures, with fragile links to broader economic and ecological contexts.",
+    "loops": [
+      {
+        "id": "L1",
+        "name": "The fishing incentive spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "6",
+          "7",
+          "48",
+          "6"
+        ],
+        "story": "More Fisher effort leads to higher Fisher landings (strong, over days), which increases Catch per unit effort (strong, over days), further encouraging more Fisher effort (reinforcing)."
+      },
+      {
+        "id": "L2",
+        "name": "The market saturation loop",
+        "type": "balancing",
+        "factor_ids": [
+          "9",
+          "14",
+          "12",
+          "10",
+          "9"
+        ],
+        "story": "Higher Total landings reduce Octopus landing price (strong, over days), which attracts Unformalized fishers (strong, over days), increasing the Total number of fishers (strong, over days), which in turn raises Total landings again (strong, over months) \u2014 a self-correcting cycle."
+      },
+      {
+        "id": "L3",
+        "name": "The illegal trade spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "16",
+          "17",
+          "19",
+          "16"
+        ],
+        "story": "Better Fisher compliance reduces Off-season octopus landed (strong, over years), which lowers Illegal trade (strong, over days), but a thriving Illegal trade undermines Fisher compliance (strong, over days) \u2014 a reinforcing cycle."
+      },
+      {
+        "id": "L4",
+        "name": "The undersized catch spiral",
+        "type": "reinforcing",
+        "factor_ids": [
+          "16",
+          "18",
+          "19",
+          "16"
+        ],
+        "story": "Stronger Fisher compliance reduces Underweight octopus landed (strong, over years), which lowers Illegal trade (strong, over days), but a thriving Illegal trade undermines Fisher compliance (strong, over days) \u2014 another reinforcing cycle."
+      },
+      {
+        "id": "L5",
+        "name": "The debt trap",
+        "type": "reinforcing",
+        "factor_ids": [
+          "32",
+          "33",
+          "34",
+          "32"
+        ],
+        "story": "Higher Debt reduces Financial inclusion (medium, over days), which increases Dependency on informal financial services (medium, over days), which in turn sustains Debt (strong, over days) \u2014 a reinforcing cycle."
+      }
+    ]
+  },
+  "tour": [
+    {
+      "step": 1,
+      "say": "Welcome to this map exploring how Chile's octopus fishery is shaped by biology, markets, and management.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    },
+    {
+      "step": 2,
+      "say": "Here we see the district of Illegal Fishing Practices, which includes factors like non-compliance and enforcement in the fishery.",
+      "action": {
+        "type": "focusCluster",
+        "params": {
+          "clusterId": 1
+        }
+      }
+    },
+    {
+      "step": 3,
+      "say": "This is Fisher profit, a key leverage point because it directly influences how fishers behave and how much effort they put in.",
+      "action": {
+        "type": "highlightLandmark",
+        "params": {
+          "factorId": "8"
+        }
+      }
+    },
+    {
+      "step": 4,
+      "say": "This reinforcing loop shows how increased effort leads to higher landings and catch rates, which in turn encourages even more effort.",
+      "action": {
+        "type": "showLoop",
+        "params": {
+          "loopId": "L1"
+        }
+      }
+    },
+    {
+      "step": 5,
+      "say": "This connection shows how prices and compliance in one area can influence illegal practices in another\u2014though it's a fragile link.",
+      "action": {
+        "type": "showBridge",
+        "params": {
+          "bridgeIndex": 0
+        }
+      }
+    },
+    {
+      "step": 6,
+      "say": "From here, you might want to explore the Diagnostics, Intervention, and Monitoring sections to see how this system can be better understood and managed.",
+      "action": {
+        "type": "clearQuestion",
+        "params": {}
+      }
+    }
+  ]
+}

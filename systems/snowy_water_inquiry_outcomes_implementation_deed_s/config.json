@@ -1,0 +1,30 @@
+{
+  "id": "snowy_water_inquiry_outcomes_implementation_deed_s",
+  "name": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security",
+  "title": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security Systems Map - Interactive Visualization",
+  "description": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security",
+  "spreadsheets": {
+    "main": "1_y-2F3wweaNKosv1sbQW12Bgwui-w9c9bOLya0tlW5I",
+    "draft": "1_y-2F3wweaNKosv1sbQW12Bgwui-w9c9bOLya0tlW5I"
+  },
+  "apiKey": "AIzaSyBLQvxh102-K54qQ0y1vR2CwLlFwm8p2wA",
+  "images": {
+    "systemImage": {
+      "src": "system-image.jpg",
+      "alt": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security"
+    },
+    "thumbnail": {
+      "src": "thumbnail.jpg",
+      "alt": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security"
+    }
+  },
+  "about": "The Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) system represents one of Australia's most complex and consequential socio-environmental systems, where decisions about water allocation cascade through hydrological, ecological, economic, energy, and cultural domains. At its core, the system encompasses the Upper Murrumbidgee River catchment in southeastern Australia, the Snowy Mountains Scheme infrastructure, and the Australian Capital Territory's urban water supply network. The system's significance stems from its role in simultaneously managing water for hydroelectric generation (approximately 4 terawatt-hours annually from the original Snowy Scheme), irrigation supporting A$3 billion in agricultural value across the Murray-Darling Basin, environmental flows to restore degraded montane river ecosystems, and urban water security for Canberra's 482,000 residents projected to grow to 700,000 by 2050.\n\nThe fundamental tension structuring this system derives from the Snowy Mountains Scheme's original 1960s design, which diverted approximately 2,100 gigalitres annually from the Snowy River and Upper Murrumbidgee headwaters westward to the Murray and Murrumbidgee Rivers for irrigation and power generation. This massive inter-basin transfer\u2014capturing up to 99% of the Upper Murrumbidgee's natural flow at Tantangara Dam in dry years\u2014created profound ecological degradation while simultaneously establishing the hydrological foundation for agricultural development across southern New South Wales and northern Victoria. The 2002 SWIOID agreement attempted to partially restore environmental flows, mandating 27 gigalitres annually to the Upper Murrumbidgee (representing 30% of mean annual natural flow) and 212 gigalitres to the Snowy River. However, implementation has proven chronically inadequate, with environmental flow targets met in only five of fifteen years through 2022, representing a 33% achievement rate that has left the Upper Murrumbidgee severely degraded.\n\nThe system's complexity arises from multiple interacting subsystems operating across different spatial and temporal scales. The hydrological subsystem includes alpine snowmelt processes (declining 30-40% over four decades due to climate warming), rainfall patterns exhibiting high inter-annual variability, groundwater-surface water interactions in alluvial aquifers, and post-2019-2020 bushfire recovery dynamics that have altered catchment runoff coefficients. The ecological subsystem encompasses threatened native fish species (Macquarie perch, Trout cod, Stocky galaxias) existing in fragmented refuge populations, invasive species (common carp comprising 70-90% of fish biomass at some sites), riparian vegetation communities degraded by feral animals and historical clearing, and in-channel sedimentation that has smothered spawning habitat. The energy subsystem involves the National Electricity Market's transition toward renewable energy dominance (>50% renewable penetration achieved in Q4 2025), with Snowy 2.0 pumped hydro expansion adding 2,000 megawatts capacity and 350 gigawatt-hours of storage by 2028-2029 to support grid stability as coal plants retire. The irrigation subsystem includes approximately 2,500 farms in the Murrumbidgee Irrigation Area dependent on general security allocations that have ranged from 30-80% of entitlements, with farm operating surpluses declining from A$90,000 to A$5,900 when allocations fall from 80% to 30%.\n\nThe ACT's water security represents a critical vulnerability within this system. Canberra's water supply depends entirely on surface water from four reservoirs (total capacity 278 gigalitres) fed by the Cotter and Queanbeyan catchments, supplemented by potential extraction from the Murrumbidgee River when environmental flow protections permit. Climate change projections indicate 30-45% streamflow reductions by 2050 under moderate to extreme scenarios, which would reduce ACT storage levels to 14% or zero capacity, triggering water restrictions costing A$100-300 million annually. The ACT's institutional position within SWIOID governance is peculiar\u2014participating through intergovernmental committees but lacking formal \"Deed Party\" status despite absolute dependence on Upper Murrumbidgee flows\u2014creating coordination asymmetries where the ACT can influence but not determine water allocation outcomes critical to its water security.",
+  "source_type": "gen_ai",
+  "location": {
+    "lat": -35.385726,
+    "lng": 149.05426,
+    "name": "Snowy Water Inquiry Outcomes Implementation Deed (SWIOID) System - Upper Murrumbidgee and ACT Water Security",
+    "zoom": 5
+  },
+  "gdrive_md_folder": "https://drive.google.com/drive/folders/1M00kCcIzThmE6ant56ZlnSomcLTfjdcY?usp=sharing"
+}
