@@ -1,5 +1,8 @@
 {
   "private": true,
   "type": "module",
-  "description": "SIM4Action Platform — ESM module support for Node.js testing"
+  "description": "SIM4Action Platform — ESM module support for Node.js testing",
+  "scripts": {
+    "test": "node tests/test_diffusion_node.mjs"
+  }
 }

@@ -175,8 +175,12 @@ class CausalTokenModel:
             
         token_id = 0
         for node, count in initial_allocation.items():
-            for _ in range(count):
-                token = TokenAgent(token_id, self, node)
+            n = int(round(count or 0))
+            if n == 0:
+                continue
+            charge = -1 if n < 0 else 1
+            for _ in range(abs(n)):
+                token = TokenAgent(token_id, self, node, initial_charge=charge)
                 self.agents.append(token)
                 token_id += 1
         

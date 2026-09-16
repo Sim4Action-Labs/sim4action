@@ -252,7 +252,7 @@ class TokenAgent {
         this.targetNode = null;
         this.active = true;
 
-        debug(`Token ${uniqueId} initialized at node ${initialNode}`);
+        debug(`Token ${uniqueId} initialized at node ${initialNode} with charge ${initialCharge}`);
     }
 
     /**
@@ -456,7 +456,7 @@ class CausalTokenModel {
     /**
      * @param {Object} G - Graph representing the causal network
      * @param {number} numTokens - Number of tokens to create (default: 10)
-     * @param {Object} initialAllocation - Initial allocation of tokens to nodes
+     * @param {Object} initialAllocation - Signed token counts per node (negative = decrease)
      * @param {string} direction - 'forward' or 'backward' (default: 'forward')
      */
     constructor(G, numTokens = 10, initialAllocation = null, direction = DiffusionDirection.FORWARD) {
@@ -475,16 +475,19 @@ class CausalTokenModel {
 
         debug(`Initializing ${direction} probabilistic simulation with ${numTokens} tokens`);
 
-        // Initialize tokens according to initial_allocation or default to node '0'
+        // Initialize tokens according to initial_allocation or default to node '0'.
+        // Signed counts are supported: a negative value creates |n| tokens with charge -1.
         if (initialAllocation === null) {
             initialAllocation = {'0': numTokens};
         }
 
         let tokenId = 0;
         for (const [node, count] of Object.entries(initialAllocation)) {
-            debug(`Creating ${count} tokens at node ${node}`);
-            for (let i = 0; i < count; i++) {
-                const token = new TokenAgent(tokenId, this, node);
+            const { tokenCount, charge } = parseSignedTokenCount(count);
+            if (tokenCount === 0) continue;
+            debug(`Creating ${tokenCount} tokens at node ${node} with charge ${charge}`);
+            for (let i = 0; i < tokenCount; i++) {
+                const token = new TokenAgent(tokenId, this, node, 1.0, charge);
                 debug(`  Token ${tokenId}: charge=${token.charge}, node=${token.currentNode}`);
                 this.agents.push(token);
                 tokenId++;
@@ -774,6 +777,46 @@ class DeterministicDiffusionModel {
     }
 }
 
+// ── Allocation Helpers ────────────────────────────────────────────────
+
+/**
+ * Split a signed allocation count into a discrete token count and ±1 charge.
+ * Negative counts create |n| tokens with charge -1 (a decrease intervention).
+ *
+ * @param {number} count - Signed token count
+ * @returns {{ tokenCount: number, charge: number }}
+ */
+function parseSignedTokenCount(count) {
+    const n = Math.round(Number(count) || 0);
+    return {
+        tokenCount: Math.abs(n),
+        charge: n < 0 ? -1 : 1
+    };
+}
+
+/**
+ * Convert UI-style node selections into a signed initial allocation.
+ * Negative charge produces a negative count so both diffusion models
+ * inject a decrease rather than an increase.
+ *
+ * @param {Map|Object} selections - nodeId -> { tokenCount, charge }
+ * @returns {Object} { nodeId: signedCount }
+ */
+function signedAllocationFromSelections(selections) {
+    const entries = selections instanceof Map
+        ? selections.entries()
+        : Object.entries(selections || {});
+    const allocation = {};
+    for (const [nodeId, data] of entries) {
+        if (!data) continue;
+        const count = Math.round(Number(data.tokenCount ?? data.count ?? 0) || 0);
+        if (count <= 0) continue;
+        const charge = Number(data.charge) < 0 ? -1 : 1;
+        allocation[nodeId] = count * charge;
+    }
+    return allocation;
+}
+
 // ── Convenience Functions ──────────────────────────────────────────────
 
 /**
@@ -905,6 +948,8 @@ export {
     CausalTokenModel,
     DeterministicDiffusionModel,
     Graph,
+    parseSignedTokenCount,
+    signedAllocationFromSelections,
     runSimulation,
     runDeterministicSimulation,
     computeAUC,

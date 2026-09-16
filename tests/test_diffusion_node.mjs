@@ -17,7 +17,9 @@ import {
     Strength,
     Delay,
     computeAUC,
-    createCausalDiagram
+    createCausalDiagram,
+    parseSignedTokenCount,
+    signedAllocationFromSelections
 } from '../platform/diffusion.js';
 
 let passed = 0;
@@ -52,6 +54,14 @@ function buildTestGraph() {
         { source: 'V3', target: 'V1', polarity: 'opposite', strength: 'MEDIUM', delay: 'FAST' },
     ];
     return createCausalDiagram(factors, relationships);
+}
+
+function twoNodeGraph(polarity = Polarity.SAME) {
+    const G = new Graph();
+    G.addNode('A', { label: 'A', type: 'pass_through' });
+    G.addNode('B', { label: 'B', type: 'pass_through' });
+    G.addEdge('A', 'B', { polarity, strength: Strength.HIGH, delay: 1 });
+    return G;
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────
@@ -133,6 +143,115 @@ console.log('\n=== Polarity Flipping ===');
 
     const flows = model.nodeFlowsOverTime[model.nodeFlowsOverTime.length - 1];
     assertApprox(flows['B'], -100, 0.01, 'OPPOSITE polarity flips flow sign');
+}
+
+console.log('\n=== Signed / Negative Token Initialization ===');
+
+{
+    const parsed = parseSignedTokenCount(-7);
+    assert(parsed.tokenCount === 7, 'parseSignedTokenCount(-7) has count 7');
+    assert(parsed.charge === -1, 'parseSignedTokenCount(-7) has charge -1');
+}
+
+{
+    const parsed = parseSignedTokenCount(4);
+    assert(parsed.tokenCount === 4, 'parseSignedTokenCount(4) has count 4');
+    assert(parsed.charge === 1, 'parseSignedTokenCount(4) has charge +1');
+}
+
+{
+    const parsed = parseSignedTokenCount(0);
+    assert(parsed.tokenCount === 0, 'parseSignedTokenCount(0) has count 0');
+}
+
+{
+    const allocation = signedAllocationFromSelections({
+        A: { tokenCount: 5, charge: -1 },
+        B: { tokenCount: 3, charge: 1 },
+        C: { tokenCount: 0, charge: -1 }
+    });
+    assert(allocation.A === -5, 'UI negative charge becomes signed count -5');
+    assert(allocation.B === 3, 'UI positive charge stays +3');
+    assert(allocation.C === undefined, 'Zero tokenCount is omitted from allocation');
+}
+
+{
+    const selections = new Map([
+        ['X', { tokenCount: 10, charge: -1 }]
+    ]);
+    const allocation = signedAllocationFromSelections(selections);
+    assert(allocation.X === -10, 'Map selections produce signed allocation');
+}
+
+{
+    const G = twoNodeGraph();
+    const model = new CausalTokenModel(G, 5, { A: -5 }, DiffusionDirection.FORWARD);
+
+    assert(model.agents.length === 5, 'Negative allocation creates |n| probabilistic tokens');
+    assert(model.agents.every(a => a.charge === -1), 'Negative allocation tokens have charge -1');
+    assert(model.agents.every(a => a.currentNode === 'A'), 'Negative tokens start at the injection node');
+    assertApprox(model.getNodeFlows()['A'], -5, 0.01, 'Initial node flow is -5 for a negative intervention');
+    assertApprox(model.getNodeFlows()['B'], 0, 0.01, 'Downstream node starts at 0');
+}
+
+{
+    const G = twoNodeGraph();
+    const model = new CausalTokenModel(G, 5, { A: 5 }, DiffusionDirection.FORWARD);
+
+    assert(model.agents.length === 5, 'Positive allocation creates n probabilistic tokens');
+    assert(model.agents.every(a => a.charge === 1), 'Positive allocation tokens have charge +1');
+    assertApprox(model.getNodeFlows()['A'], 5, 0.01, 'Initial node flow is +5 for a positive intervention');
+}
+
+{
+    const G = twoNodeGraph();
+    G.addNode('C', { label: 'C', type: 'pass_through' });
+    const model = new CausalTokenModel(G, 7, { A: 4, B: -3 }, DiffusionDirection.FORWARD);
+
+    assert(model.agents.length === 7, 'Mixed allocation creates |pos| + |neg| tokens');
+    const atA = model.agents.filter(a => a.currentNode === 'A');
+    const atB = model.agents.filter(a => a.currentNode === 'B');
+    assert(atA.length === 4 && atA.every(a => a.charge === 1), 'Node A gets 4 positive tokens');
+    assert(atB.length === 3 && atB.every(a => a.charge === -1), 'Node B gets 3 negative tokens');
+    assertApprox(model.getNodeFlows()['A'], 4, 0.01, 'Mixed init: A flow is +4');
+    assertApprox(model.getNodeFlows()['B'], -3, 0.01, 'Mixed init: B flow is -3');
+}
+
+console.log('\n=== Negative Tokens Preserve / Flip Charge ===');
+
+{
+    const G = twoNodeGraph(Polarity.SAME);
+    const model = new CausalTokenModel(G, 5, { A: -5 }, DiffusionDirection.FORWARD);
+    model.step(); // start transit (charge applied on departure)
+    assert(model.agents.every(a => a.charge === -1), 'SAME polarity keeps negative charge in transit');
+    model.step(); // arrive at B
+    assertApprox(model.getNodeFlows()['B'], -5, 0.01, 'Negative tokens arrive at B still negative on SAME edge');
+}
+
+{
+    const G = twoNodeGraph(Polarity.OPPOSITE);
+    const model = new CausalTokenModel(G, 5, { A: -5 }, DiffusionDirection.FORWARD);
+    model.step(); // start transit — charge flips immediately
+    assert(model.agents.every(a => a.charge === 1), 'OPPOSITE polarity flips negative tokens to positive');
+    model.step(); // arrive at B
+    assertApprox(model.getNodeFlows()['B'], 5, 0.01, 'Flipped negative intervention arrives as +5');
+}
+
+{
+    const G = twoNodeGraph(Polarity.SAME);
+    const model = new DeterministicDiffusionModel(G, { A: -100 }, DiffusionDirection.FORWARD);
+    assertApprox(model._snapshotNodeFlows()['A'], -100, 0.01, 'Deterministic negative injection starts at A');
+    model.step();
+    assertApprox(model.nodeFlowsOverTime[model.nodeFlowsOverTime.length - 1]['B'], -100, 0.01,
+        'Deterministic SAME polarity preserves negative flow');
+}
+
+{
+    const G = twoNodeGraph(Polarity.OPPOSITE);
+    const model = new DeterministicDiffusionModel(G, { A: -100 }, DiffusionDirection.FORWARD);
+    model.step();
+    assertApprox(model.nodeFlowsOverTime[model.nodeFlowsOverTime.length - 1]['B'], 100, 0.01,
+        'Deterministic OPPOSITE polarity flips negative flow to positive');
 }
 
 console.log('\n=== computeAUC ===');

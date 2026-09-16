@@ -5715,7 +5715,7 @@
         // ============================================
         
         // Import diffusion classes (will be available after module loads)
-        let TokenAgent, CausalTokenModel, DeterministicDiffusionModel, Graph, Polarity, Strength, Delay, DiffusionMode, DiffusionDirection, computeAUC;
+        let TokenAgent, CausalTokenModel, DeterministicDiffusionModel, Graph, Polarity, Strength, Delay, DiffusionMode, DiffusionDirection, computeAUC, signedAllocationFromSelections;
         
         // Current diffusion settings
         let currentDiffusionMode = 'probabilistic';   // 'probabilistic' or 'deterministic'
@@ -5747,6 +5747,7 @@
                 DiffusionMode = diffusionModule.DiffusionMode;
                 DiffusionDirection = diffusionModule.DiffusionDirection;
                 computeAUC = diffusionModule.computeAUC;
+                signedAllocationFromSelections = diffusionModule.signedAllocationFromSelections;
                 
                 console.log('🔄 Classes extracted:');
                 console.log('  - TokenAgent:', typeof TokenAgent);
@@ -6126,6 +6127,7 @@
                 
                 nodeItem.addEventListener('click', (e) => {
                     if (e.target.classList.contains('node-token-input')) return;
+                    if (e.target.closest('.charge-selector')) return;
                     toggleNodeSelection(nodeId, nodeItem);
                 });
                 
@@ -6135,6 +6137,18 @@
             updateTokenCounts();
         }
         
+        function chargeFromNodeItem(nodeItem) {
+            const selected = nodeItem.querySelector('.charge-button.selected');
+            return (selected && selected.classList.contains('negative')) ? -1 : 1;
+        }
+
+        function resetChargeButtons(nodeItem) {
+            const buttons = nodeItem.querySelectorAll('.charge-button');
+            buttons.forEach(btn => btn.classList.remove('selected'));
+            const positive = nodeItem.querySelector('.charge-button.positive');
+            if (positive) positive.classList.add('selected');
+        }
+
         function toggleNodeSelection(nodeId, nodeItem) {
             const tokenInput = nodeItem.querySelector('.node-token-input');
             
@@ -6144,12 +6158,13 @@
                 tokenInput.disabled = true;
                 tokenInput.value = 0;
                 selectedNodes.delete(nodeId);
+                resetChargeButtons(nodeItem);
             } else {
-                // Select
+                // Select — keep whatever charge the +/- buttons currently show
                 nodeItem.classList.add('selected');
                 tokenInput.disabled = false;
                 tokenInput.value = 1;
-                selectedNodes.set(nodeId, {tokenCount: 1, charge: 1}); // Default to positive charge
+                selectedNodes.set(nodeId, {tokenCount: 1, charge: chargeFromNodeItem(nodeItem)});
             }
             
             updateTokenCounts();
@@ -6167,15 +6182,17 @@
         }
         
         function selectCharge(nodeId, charge, buttonElement) {
-            // Update the visual selection
+            // Update the visual selection without toggling node selection
             const chargeSelector = buttonElement.parentElement;
             const buttons = chargeSelector.querySelectorAll('.charge-button');
             buttons.forEach(btn => btn.classList.remove('selected'));
             buttonElement.classList.add('selected');
             
-            // Update the data structure
-            const existingData = selectedNodes.get(nodeId) || {tokenCount: 0, charge: 1};
-            selectedNodes.set(nodeId, {tokenCount: existingData.tokenCount, charge: charge});
+            // Only persist charge for nodes that are actually selected
+            if (selectedNodes.has(nodeId)) {
+                const existingData = selectedNodes.get(nodeId);
+                selectedNodes.set(nodeId, {tokenCount: existingData.tokenCount, charge: charge});
+            }
             
             console.log(`🎨 Node ${nodeId} charge set to ${charge > 0 ? 'positive' : 'negative'}`);
         }
@@ -6213,26 +6230,28 @@
             });
         }
         
-        function closeTokenAllocationModal() {
+        function closeTokenAllocationModal(keepSelection = false) {
             document.getElementById('token-allocation-modal').style.display = 'none';
-            selectedNodes.clear();
+            if (!keepSelection) {
+                selectedNodes.clear();
+            }
         }
         
         function applyTokenAllocation() {
             try {
                 const totalTokens = parseInt(document.getElementById('total-tokens').value) || 10;
                 
-                // Extract token counts for diffusion model (ignoring visual charges)
-                const allocation = {};
+                // Signed allocation: tokenCount * charge so negative interventions
+                // inject decrease tokens into both diffusion models.
+                const allocation = signedAllocationFromSelections(selectedNodes);
                 const charges = {};
                 
                 selectedNodes.forEach((data, nodeId) => {
-                    allocation[nodeId] = data.tokenCount;
-                    charges[nodeId] = data.charge;
+                    charges[nodeId] = data.charge < 0 ? -1 : 1;
                 });
                 
                 console.log('🎯 Applying token allocation:', allocation);
-                console.log('🎨 Visual charges:', charges);
+                console.log('🎨 Token charges:', charges);
                 
                 // Store visual charges globally for token visualization
                 visualTokenCharges.clear();
@@ -6262,8 +6281,8 @@
                 // Update dashboard
                 updateDashboard();
                 
-                // Close modal
-                closeTokenAllocationModal();
+                // Close modal but keep selection so visual tokens retain charge
+                closeTokenAllocationModal(true);
                 
                 // Initialize token visualization overlay
                 setTimeout(initializeTokenVisualization, 100);
@@ -6464,6 +6483,11 @@
                             
                             // Store the edge delay for movement duration calculation
                             visualToken.currentEdge = randomEdge;
+
+                            const polarity = randomEdge.polarity;
+                            if (polarity === Polarity.OPPOSITE || polarity === -1 || polarity === 'opposite') {
+                                visualToken.charge *= -1;
+                            }
                             
                             // Log the delay value being used for this token
                             console.log(`🎨 Visual token ${visualToken.id} starting move: ${visualToken.currentNode} → ${visualToken.targetNode} (delay: ${randomEdge.delay})`);
@@ -6506,11 +6530,6 @@
                         visualToken.progress = 0;
                         visualToken.stepsAtNode = 0;
                         visualToken.maxStepsAtNode = Math.floor(Math.random() * 8) + 3;
-                        
-                        // Update charge based on new node if user has set a visual charge
-                        if (visualTokenCharges.has(visualToken.currentNode)) {
-                            visualToken.charge = visualTokenCharges.get(visualToken.currentNode);
-                        }
                         
                         console.log(`🎨 Visual token ${visualToken.id} arrived at ${visualToken.currentNode}`);
                     }
@@ -9815,10 +9834,11 @@
                 }
                 
                 const tokens = parseInt(tokensInput.value) || 0;
-                console.log(`Node ${nodeId}: ${tokens} tokens`);
+                const charge = chargeFromNodeItem(nodeElement);
+                console.log(`Node ${nodeId}: ${tokens} tokens, charge ${charge}`);
                 
                 if (tokens > 0) {
-                    allocation[nodeId] = tokens;
+                    allocation[nodeId] = tokens * charge;
                     allocatedTokens += tokens;
                 }
             });
@@ -9966,14 +9986,16 @@
             const rng = seedRandom(seed);
             
             const variedAllocation = {};
-            const totalTokens = Object.values(ensembleTokenAllocation).reduce((sum, tokens) => sum + tokens, 0);
+            const totalTokens = Object.values(ensembleTokenAllocation).reduce((sum, tokens) => sum + Math.abs(tokens), 0);
             
-            // Add small random variations to token allocation (±10%)
+            // Add small random variations to token allocation (±10%), preserving sign
             Object.keys(ensembleTokenAllocation).forEach(nodeId => {
                 const baseTokens = ensembleTokenAllocation[nodeId];
+                const sign = baseTokens < 0 ? -1 : 1;
+                const absBase = Math.abs(baseTokens);
                 const variation = (rng() - 0.5) * 0.2; // ±10% variation
-                const variedTokens = Math.max(1, Math.round(baseTokens * (1 + variation)));
-                variedAllocation[nodeId] = variedTokens;
+                const variedAbs = Math.max(1, Math.round(absBase * (1 + variation)));
+                variedAllocation[nodeId] = variedAbs * sign;
             });
             
             // Create temporary model to store results (no custom token creation needed)
@@ -9991,7 +10013,6 @@
                 console.log('🔍 DEBUG: Total tokens:', totalTokens);
                 console.log('🔍 DEBUG: Available node IDs:', Object.keys(diffusionGraph.nodes));
                 
-                // Verify allocation contains only positive token counts
                 console.log('🔍 DEBUG: Allocation verification:');
                 Object.entries(variedAllocation).forEach(([nodeId, count]) => {
                     if (count !== 0) {
